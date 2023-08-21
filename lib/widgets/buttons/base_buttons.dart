@@ -1,18 +1,29 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+
 import 'package:verify_sa/theme.dart';
 
 class BaseButton extends StatelessWidget {
+  /// width of the button
+  final double? width;
+
+  /// height of the button
+  final double? height;
+
   /// text and icon color inside the widget
   final Color color;
 
   /// background  color of the widget
   final Color bgColor;
 
+  /// background color of the icon area
+  final Color? iconBgColor;
+
   /// flag to show and hide the left side icon of the button, usually branded
   final bool hasIcon;
 
   /// icon button show on the left side of the button, usually branded
-  final Widget buttonIcon;
+  final Widget? buttonIcon;
 
   final bool hasBorderLining;
 
@@ -21,22 +32,28 @@ class BaseButton extends StatelessWidget {
 
   final String label;
 
+  final void Function() onTap;
+
   const BaseButton({
     Key? key,
+    this.width,
+    this.height,
     this.color = Colors.black,
+    this.bgColor = Colors.white,
+    this.iconBgColor,
     this.hasIcon = true,
     required this.buttonIcon,
-    required this.label,
-    this.bgColor = Colors.white,
-    required this.buttonSize,
     required this.hasBorderLining,
+    required this.buttonSize,
+    required this.label,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Container(
         constraints: BoxConstraints(
-          minWidth: buttonSize == ButtonSize.small ? 140.0 : 300.0,
-          maxWidth: buttonSize == ButtonSize.small ? 164.0 : 350.0,
+          minWidth: width ?? (buttonSize == ButtonSize.small ? 140.0 : 300.0),
+          maxWidth: width ?? (buttonSize == ButtonSize.small ? 164.0 : 350.0),
         ),
         padding: const EdgeInsets.all(8.0),
         margin: const EdgeInsets.all(8.0),
@@ -48,7 +65,7 @@ class BaseButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.0),
         ),
         child: InkWell(
-          onTap: () {},
+          onTap: onTap,
           child: Row(
             children: [
               if (hasIcon)
@@ -57,7 +74,7 @@ class BaseButton extends StatelessWidget {
                   width: 40.0,
                   padding: const EdgeInsets.all(4.0),
                   decoration: BoxDecoration(
-                    color: neutralGrey,
+                    color: iconBgColor ?? neutralGrey,
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                   child: SizedBox(
