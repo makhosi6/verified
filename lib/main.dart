@@ -1,9 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:verify_sa/config.dart';
 import 'package:verify_sa/pages/landing_page.dart';
 import 'package:verify_sa/theme.dart';
-import 'package:verify_sa/widgets/bank_card/base_card.dart';
 import 'package:verify_sa/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verify_sa/widgets/buttons/base_buttons.dart';
 import 'package:verify_sa/widgets/buttons/trio_cta_buttons.dart';
@@ -25,12 +25,16 @@ class MyApp extends StatelessWidget {
 
     ///
     return MaterialApp(
+      debugShowCheckedModeBanner: kDebugMode || kProfileMode,
       theme: ThemeData.light(
         useMaterial3: true,
       ).copyWith(
         scaffoldBackgroundColor: Colors.white,
         textTheme: GoogleFonts.dmSansTextTheme(baseTheme.textTheme),
         primaryColor: primaryColor,
+        primaryColorLight: primaryColor,
+        splashColor: darkerPrimaryColor.withOpacity(0.4),
+        highlightColor: primaryColor.withOpacity(0.2),
         colorScheme: ColorScheme(
           brightness: baseTheme.brightness,
           primary: primaryColor,
@@ -43,6 +47,14 @@ class MyApp extends StatelessWidget {
           onBackground: Colors.black,
           surface: Colors.white,
           onSurface: Colors.black,
+        ),
+        scrollbarTheme: ScrollbarThemeData(
+          thumbVisibility: MaterialStateProperty.all(true),
+          thickness: MaterialStateProperty.all(10),
+          thumbColor: MaterialStateProperty.all(darkerPrimaryColor),
+          radius: const Radius.circular(10),
+          minThumbLength: 100,
+          interactive: true,
         ),
       ),
       title: displayAppName,
@@ -157,42 +169,6 @@ class HomePage extends StatelessWidget {
 }
 
 final _widgets = [
-  BaseButton(
-    key: UniqueKey(),
-    onTap: () {},
-    label: "Copy",
-    color: neutralGrey,
-    bgColor: primaryColor,
-    buttonIcon: Icon(
-      Icons.copy,
-      color: primaryColor,
-    ),
-    buttonSize: ButtonSize.small,
-    hasBorderLining: false,
-  ),
-  BaseButton(
-    key: UniqueKey(),
-    onTap: () {},
-    label: "Login with Google",
-    buttonIcon: const Image(
-      image: AssetImage("assets/icons/google.png"),
-    ),
-    buttonSize: ButtonSize.large,
-    hasBorderLining: true,
-  ),
-  BaseButton(
-    key: UniqueKey(),
-    onTap: () {},
-    label: "Facebook",
-    buttonIcon: const Image(
-      image: AssetImage("assets/icons/facebook.png"),
-    ),
-    buttonSize: ButtonSize.small,
-    hasBorderLining: true,
-  ),
-  BaseBankCard(
-    key: UniqueKey(),
-  ),
   const Balance(),
   TrioButtons(
     key: UniqueKey(),
@@ -204,6 +180,7 @@ final _widgets = [
       text: 'YESTERDAy',
     ),
   ),
+  const ListItemBanner(),
   const TransactionListItem(
     key: Key("history-list-item-3"),
     n: 3,

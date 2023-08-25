@@ -51,11 +51,11 @@ class _LandingPageContent extends StatelessWidget {
                       context: context,
                       builder: (context) => SingleChildScrollView(
                         child: Container(
+                          constraints: const BoxConstraints(minWidth: 500.0),
                           padding: const EdgeInsets.symmetric(vertical: 20.0),
                           child: Column(
                             children: [
                               /// sign in text
-
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 10.0),
@@ -63,7 +63,7 @@ class _LandingPageContent extends StatelessWidget {
                                   children: [
                                     ///
                                     const Text(
-                                      "Payment with QR Code",
+                                      "Sign in to continue",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 18.0,
@@ -83,22 +83,37 @@ class _LandingPageContent extends StatelessWidget {
                                             ),
                                             children: [
                                               const TextSpan(
-                                                text:
-                                                    "Enter your email and we will send you a link to reset your password. New to Wpay? ",
+                                                text: "New to Verify SA? ",
                                               ),
                                               TextSpan(
-                                                  text: "Sign Up",
-                                                  recognizer:
-                                                      TapGestureRecognizer()
-                                                        ..onTap = () => {},
-                                                  style:
-                                                      GoogleFonts.ibmPlexSans(
-                                                    fontWeight: FontWeight.w600,
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                    color: darkerPrimaryColor,
-                                                  )),
-                                              const TextSpan(text: ".")
+                                                text: "Sign Up",
+                                                recognizer:
+                                                    TapGestureRecognizer()
+                                                      ..onTap = () => {},
+                                                style: GoogleFonts.ibmPlexSans(
+                                                  fontWeight: FontWeight.w600,
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                  color: darkerPrimaryColor,
+                                                ),
+                                              ),
+                                              const TextSpan(text: "! \n \n"),
+                                              const TextSpan(
+                                                text:
+                                                    "By signing in, you agree to our ",
+                                              ),
+                                              TextSpan(
+                                                text: "Terms Of Use",
+                                                recognizer:
+                                                    TapGestureRecognizer()
+                                                      ..onTap = () => {},
+                                                style: GoogleFonts.ibmPlexSans(
+                                                  fontWeight: FontWeight.w600,
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                  color: darkerPrimaryColor,
+                                                ),
+                                              ),
                                             ]),
                                         textAlign: TextAlign.center,
                                       ),

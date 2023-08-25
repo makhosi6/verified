@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:verify_sa/theme.dart';
+import 'package:verify_sa/widgets/popups/sucessful_payment.dart';
 
 class TrioButtons extends StatelessWidget {
   const TrioButtons({super.key});
@@ -19,7 +20,10 @@ class TrioButtons extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _ClickableItem(
-            onTap: () {},
+            onTap: () => showDialog(
+              context: context,
+              builder: (context) => const SuccessfulPaymentModal(),
+            ),
             text: "Transfer",
             icon: Icons.sensor_occupied,
           ),

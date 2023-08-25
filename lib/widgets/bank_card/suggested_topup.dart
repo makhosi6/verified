@@ -46,7 +46,7 @@ class SuggestedTopUp extends StatelessWidget {
           ///
 
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30.0),
+            padding: const EdgeInsets.only(bottom: 30.0, top: 12.0),
             child: Center(
               child: Container(
                 constraints: const BoxConstraints(
@@ -54,7 +54,7 @@ class SuggestedTopUp extends StatelessWidget {
                   minWidth: 300.0,
                 ),
                 child: TextFormField(
-                  key: const Key("currrency-input"),
+                  key: const Key("currency-input"),
                   initialValue: r"R 120",
                   keyboardType: TextInputType.number,
                   inputFormatters: <TextInputFormatter>[
@@ -78,15 +78,11 @@ class SuggestedTopUp extends StatelessWidget {
           ),
           Wrap(children: [
             ThemedChip(
-              label: "R200",
+              label: "R50",
               onTap: () {},
             ),
             ThemedChip(
               label: "R100",
-              onTap: () {},
-            ),
-            ThemedChip(
-              label: "R50",
               onTap: () {},
             ),
             ThemedChip(
