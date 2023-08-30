@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
-import 'package:verify_sa/theme.dart';
-import 'package:verify_sa/widgets/popups/sucessful_payment.dart';
+import 'package:verify_sa/presentation/theme.dart';
+import 'package:verify_sa/presentation/widgets/popups/sucessful_payment.dart';
 
 class TrioButtons extends StatelessWidget {
   const TrioButtons({super.key});

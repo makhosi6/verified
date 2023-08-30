@@ -2,10 +2,10 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polygon/flutter_polygon.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:verify_sa/theme.dart';
-import 'package:verify_sa/utils/dotted_line.dart';
-import 'package:verify_sa/widgets/buttons/base_buttons.dart';
-import 'package:verify_sa/widgets/history/history_list_item.dart';
+import 'package:verify_sa/presentation/theme.dart';
+import 'package:verify_sa/presentation/utils/dotted_line.dart';
+import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verify_sa/presentation/widgets/history/history_list_item.dart';
 
 class SuccessfulPaymentModal extends StatefulWidget {
   const SuccessfulPaymentModal({super.key});

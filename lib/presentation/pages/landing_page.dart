@@ -1,12 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:verify_sa/pages/account_page.dart';
-import 'package:verify_sa/theme.dart';
-import 'package:verify_sa/widgets/bank_card/suggested_topup.dart';
-import 'package:verify_sa/widgets/buttons/app_bar_action_btn.dart';
-import 'package:verify_sa/widgets/buttons/base_buttons.dart';
-import 'package:verify_sa/widgets/profile/balance.dart';
+import 'package:verify_sa/presentation/pages/account_page.dart';
+import 'package:verify_sa/presentation/pages/input_form_page.dart';
+import 'package:verify_sa/presentation/theme.dart';
+import 'package:verify_sa/presentation/widgets/bank_card/suggested_topup.dart';
+import 'package:verify_sa/presentation/widgets/buttons/app_bar_action_btn.dart';
+import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verify_sa/presentation/widgets/profile/balance.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -221,7 +222,91 @@ class _LandingPageContent extends StatelessWidget {
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: _list,
+                  children: [
+                    Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          //image
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 20.0),
+                            child: const Image(
+                              image: AssetImage(
+                                  "assets/images/12704419_4968099.jpg"),
+                              height: 230.0,
+                            ),
+                          ),
+
+                          ///header for the explainer
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10.0),
+                            child: Text(
+                              "Payment with QR Code",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 18.0,
+                                fontStyle: FontStyle.normal,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+
+                          ///and description for the explainer
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 30.0),
+                            child: Text(
+                              "Please put your phone in front of your face Please put your phone in front put your phone in front of your face",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: neutralDarkGrey,
+                                fontSize: 14.0,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ]),
+                    SizedBox(
+                      child: Column(
+                        children: [
+                          BaseButton(
+                            key: UniqueKey(),
+                            onTap: () {},
+                            label: "Seek & Guide",
+                            color: neutralGrey,
+                            hasIcon: false,
+                            bgColor: neutralYellow,
+                            buttonIcon: Icon(
+                              Icons.grain_rounded,
+                              color: neutralYellow,
+                            ),
+                            buttonSize: ButtonSize.large,
+                            hasBorderLining: false,
+                          ),
+                          BaseButton(
+                            key: UniqueKey(),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) =>
+                                      const InputFormPage(),
+                                ),
+                              );
+                            },
+                            label: "Learn Quick",
+                            color: neutralGrey,
+                            hasIcon: false,
+                            bgColor: primaryColor,
+                            buttonIcon: Icon(
+                              Icons.lock_outline,
+                              color: primaryColor,
+                            ),
+                            buttonSize: ButtonSize.large,
+                            hasBorderLining: false,
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
@@ -231,78 +316,3 @@ class _LandingPageContent extends StatelessWidget {
     );
   }
 }
-
-var _list = [
-  Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-    //image
-    Container(
-      margin: const EdgeInsets.only(bottom: 20.0),
-      child: const Image(
-        image: AssetImage("assets/images/12704419_4968099.jpg"),
-        height: 230.0,
-      ),
-    ),
-
-    ///header for the explainer
-    const Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.0),
-      child: Text(
-        "Payment with QR Code",
-        style: TextStyle(
-          fontWeight: FontWeight.w700,
-          fontSize: 18.0,
-          fontStyle: FontStyle.normal,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    ),
-
-    ///and description for the explainer
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0),
-      child: Text(
-        "Please put your phone in front of your face Please put your phone in front put your phone in front of your face",
-        style: TextStyle(
-          fontWeight: FontWeight.w400,
-          color: neutralDarkGrey,
-          fontSize: 14.0,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    ),
-  ]),
-  SizedBox(
-    child: Column(
-      children: [
-        BaseButton(
-          key: UniqueKey(),
-          onTap: () {},
-          label: "Seek & Guide",
-          color: neutralGrey,
-          hasIcon: false,
-          bgColor: neutralYellow,
-          buttonIcon: Icon(
-            Icons.grain_rounded,
-            color: neutralYellow,
-          ),
-          buttonSize: ButtonSize.large,
-          hasBorderLining: false,
-        ),
-        BaseButton(
-          key: UniqueKey(),
-          onTap: () {},
-          label: "Learn Quick",
-          color: neutralGrey,
-          hasIcon: false,
-          bgColor: primaryColor,
-          buttonIcon: Icon(
-            Icons.lock_outline,
-            color: primaryColor,
-          ),
-          buttonSize: ButtonSize.large,
-          hasBorderLining: false,
-        ),
-      ],
-    ),
-  )
-];

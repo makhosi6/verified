@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:verify_sa/pages/transactions_page.dart';
-import 'package:verify_sa/theme.dart';
-import 'package:verify_sa/widgets/buttons/app_bar_action_btn.dart';
-import 'package:verify_sa/widgets/buttons/base_buttons.dart';
-import 'package:verify_sa/widgets/history/history_list_item.dart';
-import 'package:verify_sa/widgets/text/list_title.dart';
+import 'package:verify_sa/presentation/pages/transactions_page.dart';
+import 'package:verify_sa/presentation/theme.dart';
+import 'package:verify_sa/presentation/widgets/buttons/app_bar_action_btn.dart';
+import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verify_sa/presentation/widgets/history/history_list_item.dart';
+import 'package:verify_sa/presentation/widgets/text/list_title.dart';
 
 class SearchResultsPage extends StatelessWidget {
   const SearchResultsPage({super.key});

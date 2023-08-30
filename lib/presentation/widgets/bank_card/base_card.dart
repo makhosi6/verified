@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:verify_sa/theme.dart';
+import 'package:verify_sa/presentation/theme.dart';
 
 class BaseBankCard extends StatelessWidget {
   final BankCardSize? size;

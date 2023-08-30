@@ -2,9 +2,9 @@ import 'package:currency_text_input_formatter/currency_text_input_formatter.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:verify_sa/theme.dart';
-import 'package:verify_sa/widgets/buttons/base_buttons.dart';
-import 'package:verify_sa/widgets/chip/themed_chip.dart';
+import 'package:verify_sa/presentation/theme.dart';
+import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verify_sa/presentation/widgets/chip/themed_chip.dart';
 
 class SuggestedTopUp extends StatelessWidget {
   const SuggestedTopUp({super.key});
