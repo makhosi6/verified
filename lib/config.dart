@@ -1,2 +1,0 @@
-///
-const displayAppName = "Transparent+";

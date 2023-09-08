@@ -31,6 +31,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+/lib/app_config.dart
 
 # Symbolication related
 app.*.symbols
@@ -42,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+# Generated Dart files  
+**/*.g.dart
+**/*.freezed.dart
