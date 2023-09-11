@@ -1,0 +1,2536 @@
+{
+	"info": {
+		"_postman_id": "3c61d56b-674f-45c3-bab5-557bec654b07",
+		"name": "VerifyID API Documentation",
+		"description": "Documentation to get connected to VerifyID's API services\n\nContact Support:\n Email: info@verifyid.co.za",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10788255"
+	},
+	"item": [
+		{
+			"name": "my_credits",
+			"item": [
+				{
+					"name": "Check to see how many credits you have on system.",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/my_credits?api_key={{accessToken}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"my_credits"
+							],
+							"query": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function"
+								}
+							]
+						},
+						"description": "This Function will return how many credits you have left on the VerifyID System."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/my_credits?api_key={{accessToken}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"my_credits"
+									],
+									"query": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "my_sadl_credits",
+			"item": [
+				{
+					"name": "Check to see how many SADL credits you have on system.",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/my_sadl_credits?api_key={{accessToken}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"my_sadl_credits"
+							],
+							"query": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function"
+								}
+							]
+						},
+						"description": "This Function will return how many SADL credits you have left on the VerifyID System."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/my_sadl_credits?api_key={{accessToken}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"my_sadl_credits"
+									],
+									"query": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "generate_api_key",
+			"item": [
+				{
+					"name": "Uses username and password to generate new API Key",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email_address",
+									"value": "<string>",
+									"description": "(Required) username/email address used on VerifyID",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "<string>",
+									"description": "(Required) password used on VerifyID",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/generate_api_key",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"generate_api_key"
+							]
+						},
+						"description": "Generates new API Key, by using this Generate API Key endpoint you will change the API Key,\n which means all of your applications which are connected to our API services will be\n disconnected and will need to re-connected with the new API Key."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email_address",
+											"value": "<string>",
+											"description": "(Required) username/email address used on VerifyID",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "<string>",
+											"description": "(Required) password used on VerifyID",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/generate_api_key",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"generate_api_key"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "said_verification",
+			"item": [
+				{
+					"name": "South African ID number verification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "id_number",
+									"value": "<string>",
+									"description": "(Required) Consumers 13 digit ID Number",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/said_verification",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"said_verification"
+							]
+						},
+						"description": "Verifies a given South African ID number and its corresponding Consumer details. Please see Extended Documetation for further detailed explanations of how to use this service."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "id_number",
+											"value": "<string>",
+											"description": "(Required) Consumers 13 digit ID Number",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/said_verification",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"said_verification"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "home_affairs_real_time_idv",
+			"item": [
+				{
+					"name": "Real time live deceased status and name change ID number verification from Home Affairs",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "id_number",
+									"value": "<string>",
+									"description": "(Required) Consumers 13 digit ID Number",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/home_affairs_real_time_idv",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"home_affairs_real_time_idv"
+							]
+						},
+						"description": "South Africa ID number verification against the live Home Affairs Databases."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "id_number",
+											"value": "<string>",
+											"description": "(Required) Consumers 13 digit ID Number",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/home_affairs_real_time_idv",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"home_affairs_real_time_idv"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "home_affairs_id_photo",
+			"item": [
+				{
+					"name": "Real time Home Affairs ID Verification with ID Photo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "id_number",
+									"value": "<string>",
+									"description": "(Required) Consumers 13 digit ID Number",
+									"type": "text"
+								},
+								{
+									"key": "enquiry_reason",
+									"value": "<string>",
+									"description": "(Required) Your reason for doing the search",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/home_affairs_id_photo",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"home_affairs_id_photo"
+							]
+						},
+						"description": "South Africa ID number verification against the live Home Affairs Databases with ID PHOTO."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "id_number",
+											"value": "<string>",
+											"description": "(Required) Consumers 13 digit ID Number",
+											"type": "text"
+										},
+										{
+											"key": "enquiry_reason",
+											"value": "<string>",
+											"description": "(Required) Your reason for doing the search",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/home_affairs_id_photo",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"home_affairs_id_photo"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "bio_id_verfication",
+			"item": [
+				{
+					"name": "BioMetric ID Verification of Consumers photo and fingerprints",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "idNumber",
+									"value": "<string>",
+									"description": "(Required) Consumers 13 digit ID Number",
+									"type": "text"
+								},
+								{
+									"key": "firstname",
+									"value": "<string>",
+									"description": "(Required) Consumers First names",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "<string>",
+									"description": "(Required) Consumers Surname",
+									"type": "text"
+								},
+								{
+									"key": "leftThumb",
+									"value": "<string>",
+									"description": "(Required) Consumers left thumb fingerprint - 512x512 wsq format - base64 encoded",
+									"type": "text"
+								},
+								{
+									"key": "rightThumb",
+									"value": "<string>",
+									"description": "(Required) Consumers right thumb fingerprint - 512x512 wsq format - base64 encoded",
+									"type": "text"
+								},
+								{
+									"key": "yourReference",
+									"value": "<string>",
+									"description": "(Required) Your Search Reference - Internal use",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bio_id_verfication",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bio_id_verfication"
+							]
+						},
+						"description": "The VerifyID Biometric Fingerprint verification API gives the ability to verify the fingerprint and ID number associated with a valid 13-digit SA ID number and match photo on ID document to what’s on the Department of Home Affairs Database. The system requires both left and right thumbprints to be captured with a certified fingerprint capturing device, the images must be 512x512px and be a WSQ format(FBI Standard). Once the 2 thumbprints have been captured along with the 13-digit ID number and name details, the API will match those details to what’s available on the Department of Home Affairs database. If there's is a match the system will verify the details and if there is an ID photo on file, it will also display that image. If the fingerprints do not match the ID number, it will indicate this and output the details associated with that ID number for comparison."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "idNumber",
+											"value": "<string>",
+											"description": "(Required) Consumers 13 digit ID Number",
+											"type": "text"
+										},
+										{
+											"key": "firstname",
+											"value": "<string>",
+											"description": "(Required) Consumers First names",
+											"type": "text"
+										},
+										{
+											"key": "surname",
+											"value": "<string>",
+											"description": "(Required) Consumers Surname",
+											"type": "text"
+										},
+										{
+											"key": "leftThumb",
+											"value": "<string>",
+											"description": "(Required) Consumers left thumb fingerprint - 512x512 wsq format - base64 encoded",
+											"type": "text"
+										},
+										{
+											"key": "rightThumb",
+											"value": "<string>",
+											"description": "(Required) Consumers right thumb fingerprint - 512x512 wsq format - base64 encoded",
+											"type": "text"
+										},
+										{
+											"key": "yourReference",
+											"value": "<string>",
+											"description": "(Required) Your Search Reference - Internal use",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bio_id_verfication",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bio_id_verfication"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "contact_enquiry",
+			"item": [
+				{
+					"name": "Find the ID Number from a Contact Number",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "contact_number",
+									"value": "<string>",
+									"description": "(Required) Consumers 10 Digit Contact/Mobile/Telephone Number",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/contact_enquiry",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"contact_enquiry"
+							]
+						},
+						"description": "This API service provides an efficient and fast way to obtain the last 6 known South African  identities associated to a South African contact number EG: Landline 012 2215554 or mobile 082 333 6666 number as search criteria. Please see Extended Documetation for further detailed explanations of how to use this service."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "contact_number",
+											"value": "<string>",
+											"description": "(Required) Consumers 10 Digit Contact/Mobile/Telephone Number",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/contact_enquiry",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"contact_enquiry"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "consumer_trace",
+			"item": [
+				{
+					"name": "Tracing service to obtain address, contact and employment details of a given Consumer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "id_number",
+									"value": "<string>",
+									"description": "(Required) 13 Digit ID Number",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/consumer_trace",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"consumer_trace"
+							]
+						},
+						"description": "The Consumer Trace service enables a user to submit a South African ID Number and in return the user will receive the following information, Registered Names and Surname, Date of Birth., Age, Gender, Last 5 Know Addresses, Last 5 Know Telephones, Last 5 Know employers and Deceased Status. Please see Extended Documentation for further detailed explanations of how to use this service."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "id_number",
+											"value": "<string>",
+											"description": "(Required) 13 Digit ID Number",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/consumer_trace",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"consumer_trace"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "express_score",
+			"item": [
+				{
+					"name": "Express Consumer Credit Score",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "id_number",
+									"value": "<string>",
+									"description": "(Required) Consumers 13 Digit ID Number",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/express_score",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"express_score"
+							]
+						},
+						"description": "Get a Consumers Credit Score quickly with reasoning and score risk indicator.\n\n CPA score bands\n - less and equal to 605 : Very High Risk\n - 606 to 621 : High Risk\n - 622 to 641 : Average Risk\n - 642 to 667 : Low Risk\n - more than 667 : Minimum Risk.\n\n  NLR score bands\n - less and equal to 603 : Very High Risk\n - 604 to 618 : High Risk\n - 619 to 632 : Average Risk\n - 633 to 653 : Low Risk\n - more than 653 : Minimum Risk."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "id_number",
+											"value": "<string>",
+											"description": "(Required) Consumers 13 Digit ID Number",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/express_score",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"express_score"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "sadl_decode",
+			"item": [
+				{
+					"name": "Decoding of South African Drivers License",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "license",
+									"value": "<string>",
+									"description": "(Required) Base64 encode encrypted drivers license string received from your 2D scanner",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/sadl_decode",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"sadl_decode"
+							]
+						},
+						"description": "This API function is to allow activated clients the ability to a decode the South African driver’s license and receive a ID verification profile as well. Please see Extended Documentation for further detailed explanations of how to use this service."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "license",
+											"value": "<string>",
+											"description": "(Required) Base64 encode encrypted drivers license string received from your 2D scanner",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/sadl_decode",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"sadl_decode"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "sadl_image_decode",
+			"item": [
+				{
+					"name": "Decoding of South African Drivers License",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "license",
+									"value": "<string>",
+									"description": "(Required) Base64 Encoded string of either a PNG or JPG file containing the drivers license barcode.",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/sadl_image_decode",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"sadl_image_decode"
+							]
+						},
+						"description": "This API function is to allow activated clients the ability to a decode the South African driver’s license and receive a ID verification profile as well. Please see Extended Documentation for further detailed explanations of how to use this service.."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "license",
+											"value": "<string>",
+											"description": "(Required) Base64 Encoded string of either a PNG or JPG file containing the drivers license barcode.",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/sadl_image_decode",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"sadl_image_decode"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "bank_account_verification",
+			"item": [
+				{
+					"name": "Bank Account Verification Report",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "bank_name",
+									"value": "<string>",
+									"description": "(Required) One of the following(ABSA, ACCESS BANK, AFRICAN BANK, BIDVEST BANK, CAPITEC BANK, DISCOVERY BANK, FINBOND MUTAUL BANK, FNB, GRINROD BANK, INVESTEC BANK, MERCANTILE BANK, NEDBANK, SASFIN BANK, STANDARD BANK, TYME BANK, UBANK)",
+									"type": "text"
+								},
+								{
+									"key": "branch_code",
+									"value": "<string>",
+									"description": "(Required) Banks branch code of account holder - (ABSA - 632005, ACCESS BANK - 410506, AFRICAN BANK - 430000, BIDVEST BANK - 462005, CAPITEC BANK - 470010, DISCOVERY BANK - 679000, FINBOND MUTAUL BANK - 591000, FNB - 250655, GRINROD BANK - 223626, INVESTEC BANK - 580105, MERCANTILE BANK - 450905, NEDBANK - 198765, SASFIN BANK - 683000, STANDARD BANK - 051001, TYME BANK - 678910, UBANK - 430000)",
+									"type": "text"
+								},
+								{
+									"key": "account_number",
+									"value": "<string>",
+									"description": "(Required) Bank account number of account holder",
+									"type": "text"
+								},
+								{
+									"key": "account_type",
+									"value": "<number>",
+									"description": "(Required) Bank account type of account holder (1 - current, 2 - savings, 3 - transmission, 4 - bond, 5 - credit card, 0 - not known )",
+									"type": "text"
+								},
+								{
+									"key": "idnumber",
+									"value": "<string>",
+									"description": "(Required) ID Number of account holder or numeric part of Company registration number",
+									"type": "text"
+								},
+								{
+									"key": "initials",
+									"value": "<string>",
+									"description": "(Required) Initials of the account holder. if a Company a blank space must be used",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "<string>",
+									"description": "(Required) Surname of account holder or Company name",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bank_account_verification",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bank_account_verification"
+							]
+						},
+						"description": "This API service enables a 3rd party to do verifications on consumer bank account details to determine the state and validity of a South African bank account. The Following banks are supported ABSA, ACCESS BANK, AFRICAN BANK, BIDVEST BANK, CAPITEC BANK, DISCOVERY BANK, FINBOND MUTAUL BANK, FNB, GRINROD BANK, INVESTEC BANK, MERCANTILE BANK, NEDBANK, SASFIN BANK, STANDARD BANK, TYME BANK, UBANK. Processing Times – Although the service is available 24 x 7 x 365, records received after 17:00 on weekdays, will only be submitted on the next available working day. Records are only submitted for verification after 03:00 AM on normal weekdays. Responses may be available within 30 minutes, but it could take up to 3+ hours to receive responses from participating banks. Please see Extended Documetation for further detailed explanations of how to use this service."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "bank_name",
+											"value": "<string>",
+											"description": "(Required) One of the following(ABSA, ACCESS BANK, AFRICAN BANK, BIDVEST BANK, CAPITEC BANK, DISCOVERY BANK, FINBOND MUTAUL BANK, FNB, GRINROD BANK, INVESTEC BANK, MERCANTILE BANK, NEDBANK, SASFIN BANK, STANDARD BANK, TYME BANK, UBANK)",
+											"type": "text"
+										},
+										{
+											"key": "branch_code",
+											"value": "<string>",
+											"description": "(Required) Banks branch code of account holder - (ABSA - 632005, ACCESS BANK - 410506, AFRICAN BANK - 430000, BIDVEST BANK - 462005, CAPITEC BANK - 470010, DISCOVERY BANK - 679000, FINBOND MUTAUL BANK - 591000, FNB - 250655, GRINROD BANK - 223626, INVESTEC BANK - 580105, MERCANTILE BANK - 450905, NEDBANK - 198765, SASFIN BANK - 683000, STANDARD BANK - 051001, TYME BANK - 678910, UBANK - 430000)",
+											"type": "text"
+										},
+										{
+											"key": "account_number",
+											"value": "<string>",
+											"description": "(Required) Bank account number of account holder",
+											"type": "text"
+										},
+										{
+											"key": "account_type",
+											"value": "<number>",
+											"description": "(Required) Bank account type of account holder (1 - current, 2 - savings, 3 - transmission, 4 - bond, 5 - credit card, 0 - not known )",
+											"type": "text"
+										},
+										{
+											"key": "idnumber",
+											"value": "<string>",
+											"description": "(Required) ID Number of account holder or numeric part of Company registration number",
+											"type": "text"
+										},
+										{
+											"key": "initials",
+											"value": "<string>",
+											"description": "(Required) Initials of the account holder. if a Company a blank space must be used",
+											"type": "text"
+										},
+										{
+											"key": "surname",
+											"value": "<string>",
+											"description": "(Required) Surname of account holder or Company name",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bank_account_verification",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bank_account_verification"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "bank_account_verification_job_status",
+			"item": [
+				{
+					"name": "Bank Account Verification Job Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "job_id",
+									"value": "<string>",
+									"description": "(Required) JobId returned from the bank account verification API call",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bank_account_verification_job_status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bank_account_verification_job_status"
+							]
+						},
+						"description": "This API service is used with the response from the Bank Account Verification API, you will receive a JobID in the result of the verification which will be used to check on the status of the bank account verification. Please see Extended Documetation for further detailed explanations of how to use this service."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "job_id",
+											"value": "<string>",
+											"description": "(Required) JobId returned from the bank account verification API call",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bank_account_verification_job_status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bank_account_verification_job_status"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "cipc_company_match",
+			"item": [
+				{
+					"name": "CIPC - Search the CIPC Database to match results before final search",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "reg_1",
+									"value": "<string>",
+									"description": "Company registration number portion 1 - optional if Company name has been provided",
+									"type": "text"
+								},
+								{
+									"key": "reg_2",
+									"value": "<string>",
+									"description": "Company registration number portion 2 - optional if Company name has been provided",
+									"type": "text"
+								},
+								{
+									"key": "reg_3",
+									"value": "<string>",
+									"description": "Company registration number portion 3 - optional if Company name has been provided",
+									"type": "text"
+								},
+								{
+									"key": "company_name",
+									"value": "<string>",
+									"description": "Company Name",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cipc_company_match",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cipc_company_match"
+							]
+						},
+						"description": "The API service provides an efficient and fast way to retrieve commercial company principle (Directorship in different companies) information from CIPC (Companies and Intellectual Properties Commission)"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "reg_1",
+											"value": "<string>",
+											"description": "Company registration number portion 1 - optional if Company name has been provided",
+											"type": "text"
+										},
+										{
+											"key": "reg_2",
+											"value": "<string>",
+											"description": "Company registration number portion 2 - optional if Company name has been provided",
+											"type": "text"
+										},
+										{
+											"key": "reg_3",
+											"value": "<string>",
+											"description": "Company registration number portion 3 - optional if Company name has been provided",
+											"type": "text"
+										},
+										{
+											"key": "company_name",
+											"value": "<string>",
+											"description": "Company Name",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/cipc_company_match",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cipc_company_match"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "cipc_company_search",
+			"item": [
+				{
+					"name": "CIPC - Uses the EnquiryID and EnquiryResultID from the company-match function to get the final file on the company",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "EnquiryID",
+									"value": "<string>",
+									"description": "(Required) EnquiryID - returned from the Company Match Function",
+									"type": "text"
+								},
+								{
+									"key": "EnquiryResultID",
+									"value": "<string>",
+									"description": "(Required) EnquiryResultID - returned from the Company Match Function",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cipc_company_search",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cipc_company_search"
+							]
+						},
+						"description": "a.  The API service provides an efficient and fast way to retrieve commercial company principle (Directorship in different companies) information from CIPC (Companies and Intellectual Properties Commission)"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "EnquiryID",
+											"value": "<string>",
+											"description": "(Required) EnquiryID - returned from the Company Match Function",
+											"type": "text"
+										},
+										{
+											"key": "EnquiryResultID",
+											"value": "<string>",
+											"description": "(Required) EnquiryResultID - returned from the Company Match Function",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/cipc_company_search",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cipc_company_search"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "check-aml-pep",
+			"item": [
+				{
+					"name": "Anti Money Laundering (AML) and Know Your Customer (KYC)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "search_by",
+									"value": "<string>",
+									"description": "(Required) Search by person name or ID number - variable should be either name|id_number",
+									"type": "text"
+								},
+								{
+									"key": "id_number",
+									"value": "<string>",
+									"description": "(Required) Person's passport number, national ID number or driving license number etc.",
+									"type": "text"
+								},
+								{
+									"key": "persons_name",
+									"value": "<string>",
+									"description": "(Required) Person or organization's name or alias in any language.",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/check-aml-pep",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"check-aml-pep"
+							]
+						},
+						"description": "VerifyID's AML solutions allows you to monitor politically exposed persons (PEPs), and discover persons or organizations on under sanctions lists from worldwide governments. VerifyID's AML solutions allows you to check for comprehensive customer due diligence, Anti Money Laundering (AML) and Know Your Customer (KYC) programs.<br/><br/>Searches are performed on the following Sanctions and PEP lists.<br/><br/> <table class=\"table table-striped table-bordered center-text typography_list table_shortcode\">\n<thead>\n<tr>\n<th>Category</th>\n<th>Code</th>\n<th>Country</th>\n<th>Authority</th>\n<th>Website</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<th scope=\"row\">Sanction</th>\n<td>au_dfat</td>\n<td>Australia</td>\n<td>Depart of Foreign Affairs and Trade</td>\n<td><a href=\"http://dfat.gov.au/\" target=\"_blank\"> Visit Website</a></td>\n</tr>\n<tr>\n<th scope=\"row\">Sanction</th>\n<td>ca_dfatd</td>\n<td>Canada</td>\n<td>Department of Foreign Affairs, Trade and Development</td>\n<td><a href=\"https://www.international.gc.ca/global-affairs-affaires-mondiales/home-accueil.aspx?lang=eng\" target=\"_blank\"> Visit Website</a></td>\n</tr>\n<tr>\n<th scope=\"row\">Sanction</th>\n<td>ch_seco</td>\n<td>Switzerland</td>\n<td>State Secretariat for Economic Affairs</td>\n<td><a href=\"https://www.seco.admin.ch/seco/de/home.html\" target=\"_blank\"> Visit Website</a></td>\n</tr>\n<tr>\n<th scope=\"row\">Sanction</th>\n<td>eu_fsf</td>\n<td>European Union</td>\n<td>Consolidated list of sanctions</td>\n<td><a href=\"https://eur-lex.europa.eu/homepage.html?locale=en\" target=\"_blank\"> Visit Website</a></td>\n</tr>\n<tr>\n<th scope=\"row\">Sanction</th>\n<td>fr_tresor_gels_avoir</td>\n<td>France</td>\n<td>Direction générale du Trésor</td>\n<td><a href=\"https://gels-avoirs.dgtresor.gouv.fr/\" target=\"_blank\"> Visit Website</a></td>\n</tr>\n<tr>\n<th scope=\"row\">Sanction</th>\n<td>gb_hmt</td>\n<td>United Kingdom</td>\n<td>Consolidated list of sanctions</td>\n<td><a href=\"https://www.gov.uk/government/publications/financial-sanctions-consolidated-list-of-targets\" target=\"_blank\"> Visit Website</a></td>\n</tr>\n<tr>\n<th scope=\"row\">Sanction</th>\n<td>ua_sfms</td>\n<td>Ukraine</td>\n<td>State Financial Monitoring Service</td>\n<td><a href=\"https://fiu.gov.ua/\" target=\"_blank\"> Visit Website</a></td>\n</tr>\n<tr>\n<th scope=\"row\">Sanction</th>\n<td>un_sc</td>\n<td>United Nations</td>\n<td>Security Council</td>\n<td><a href=\"https://www.un.org/securitycouncil/sanctions/information\" target=\"_blank\"> Visit Website</a></td>\n</tr>\n<tr>\n<th scope=\"row\">Sanction</th>\n<td>us_ofac</td>\n<td>United States</td>\n<td>Office of Foreign Assets Control</td>\n<td><a href=\"https://www.treasury.gov/resource-center/sanctions/Pages/default.aspx\" target=\"_blank\"> Visit Website</a></td>\n</tr>\n<tr>\n<th scope=\"row\">PEP</th>\n<td>global_politicians</td>\n<td>-</td>\n<td>Global Politician List</td>\n<td>-</td>\n</tr>\n<tr>\n<th scope=\"row\">PEP</th>\n<td>eu_cor</td>\n<td>-</td>\n<td>European Committee of the Regions</td>\n<td><a href=\"https://cor.europa.eu/en\" target=\"_blank\"> Visit Website</a></td>\n</tr>\n<tr>\n<th scope=\"row\">PEP</th>\n<td>eu_meps</td>\n<td>-</td>\n<td>Members of the European Parliament</td>\n<td><a href=\"https://www.europarl.europa.eu/portal/en\" target=\"_blank\"> Visit Website</a></td>\n</tr>\n<tr>\n<th scope=\"row\">Crime</th>\n<td>interpol_red</td>\n<td>-</td>\n<td>Interpol Red Notices</td>\n<td><a href=\"https://www.interpol.int/en/How-we-work/Notices/View-Red-Notices\" target=\"_blank\"> Visit Website</a></td>\n</tr>\n</tbody>\n</table>"
+					},
+					"response": [
+						{
+							"name": "Match",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "search_by",
+											"value": "<string>",
+											"description": "(Required) Search by person name or ID number - variable should be either name|id_number",
+											"type": "text"
+										},
+										{
+											"key": "id_number",
+											"value": "<string>",
+											"description": "(Required) Person's passport number, national ID number or driving license number etc.",
+											"type": "text"
+										},
+										{
+											"key": "persons_name",
+											"value": "<string>",
+											"description": "(Required) Person or organization's name or alias in any language.",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/check-aml-pep",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"check-aml-pep"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "No Match",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "search_by",
+											"value": "<string>",
+											"description": "(Required) Search by person name or ID number - variable should be either name|id_number",
+											"type": "text"
+										},
+										{
+											"key": "id_number",
+											"value": "<string>",
+											"description": "(Required) Person's passport number, national ID number or driving license number etc.",
+											"type": "text"
+										},
+										{
+											"key": "persons_name",
+											"value": "<string>",
+											"description": "(Required) Person or organization's name or alias in any language.",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/check-aml-pep",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"check-aml-pep"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "kyc-verification",
+			"item": [
+				{
+					"name": "Know Your Customer (KYC)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "identity_document_type",
+									"value": "<string>",
+									"description": "(Required) Document type being submitted to the service - variable should be either id_card|driver_license|passport",
+									"type": "text"
+								},
+								{
+									"key": "selfie_photo",
+									"value": "<string>",
+									"description": "(Required) This variable will be required with all identity_document_type, it is a base64 string of the selfie photo taken byt the user.",
+									"type": "text"
+								},
+								{
+									"key": "id_card_front",
+									"value": "<string>",
+									"description": "If identity_document_type = id_card, This variable must be a base64 string of the front of the ID Card.",
+									"type": "text"
+								},
+								{
+									"key": "id_card_back",
+									"value": "<string>",
+									"description": "If identity_document_type = id_card,This variable must be a base64 string of the back of the ID Card.",
+									"type": "text"
+								},
+								{
+									"key": "driver_license_front",
+									"value": "<string>",
+									"description": "If identity_document_type = driver_license, This variable must be a base64 string of the front of the Drivers License.",
+									"type": "text"
+								},
+								{
+									"key": "driver_license_back",
+									"value": "<string>",
+									"description": "If identity_document_type = driver_license, This variable must be a base64 string of the back of the Drivers License.",
+									"type": "text"
+								},
+								{
+									"key": "passport",
+									"value": "<string>",
+									"description": "If identity_document_type = passport, This variable must be a base64 string of the biometric information page of the passport.",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kyc-verification",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc-verification"
+							]
+						},
+						"description": "VerifyID's KYC API allows you to build your own identity verification application by uploading images of government-issued documents. VerifyID's KYC API is capable of analyzing and performing OCR on document images to extract document information, additionally, VerifyID's KYC API can perform face verification, document authentication and data verification. <a href=\"https://www.verifyid.co.za/download-kyc-exdoc\" target=\"_blank\">Download Extended Documentation</a>"
+					},
+					"response": [
+						{
+							"name": "Match",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "identity_document_type",
+											"value": "<string>",
+											"description": "(Required) Document type being submitted to the service - variable should be either id_card|driver_license|passport",
+											"type": "text"
+										},
+										{
+											"key": "selfie_photo",
+											"value": "<string>",
+											"description": "(Required) This variable will be required with all identity_document_type, it is a base64 string of the selfie photo taken byt the user.",
+											"type": "text"
+										},
+										{
+											"key": "id_card_front",
+											"value": "<string>",
+											"description": "If identity_document_type = id_card, This variable must be a base64 string of the front of the ID Card.",
+											"type": "text"
+										},
+										{
+											"key": "id_card_back",
+											"value": "<string>",
+											"description": "If identity_document_type = id_card,This variable must be a base64 string of the back of the ID Card.",
+											"type": "text"
+										},
+										{
+											"key": "driver_license_front",
+											"value": "<string>",
+											"description": "If identity_document_type = driver_license, This variable must be a base64 string of the front of the Drivers License.",
+											"type": "text"
+										},
+										{
+											"key": "driver_license_back",
+											"value": "<string>",
+											"description": "If identity_document_type = driver_license, This variable must be a base64 string of the back of the Drivers License.",
+											"type": "text"
+										},
+										{
+											"key": "passport",
+											"value": "<string>",
+											"description": "If identity_document_type = passport, This variable must be a base64 string of the biometric information page of the passport.",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/kyc-verification",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"kyc-verification"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "identity_document_type",
+											"value": "<string>",
+											"description": "(Required) Document type being submitted to the service - variable should be either id_card|driver_license|passport",
+											"type": "text"
+										},
+										{
+											"key": "selfie_photo",
+											"value": "<string>",
+											"description": "(Required) This variable will be required with all identity_document_type, it is a base64 string of the selfie photo taken byt the user.",
+											"type": "text"
+										},
+										{
+											"key": "id_card_front",
+											"value": "<string>",
+											"description": "If identity_document_type = id_card, This variable must be a base64 string of the front of the ID Card.",
+											"type": "text"
+										},
+										{
+											"key": "id_card_back",
+											"value": "<string>",
+											"description": "If identity_document_type = id_card,This variable must be a base64 string of the back of the ID Card.",
+											"type": "text"
+										},
+										{
+											"key": "driver_license_front",
+											"value": "<string>",
+											"description": "If identity_document_type = driver_license, This variable must be a base64 string of the front of the Drivers License.",
+											"type": "text"
+										},
+										{
+											"key": "driver_license_back",
+											"value": "<string>",
+											"description": "If identity_document_type = driver_license, This variable must be a base64 string of the back of the Drivers License.",
+											"type": "text"
+										},
+										{
+											"key": "passport",
+											"value": "<string>",
+											"description": "If identity_document_type = passport, This variable must be a base64 string of the biometric information page of the passport.",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/kyc-verification",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"kyc-verification"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "vat_search",
+			"item": [
+				{
+					"name": "VAT Search",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "vat_search_type",
+									"value": "<string>",
+									"description": "(Required) Type of VAT Search, can be either companyName, companyRegNo or vatNumber.",
+									"type": "text"
+								},
+								{
+									"key": "company_name",
+									"value": "<string>",
+									"description": "if vat_search_type Type is companyName, this will be the Company Name",
+									"type": "text"
+								},
+								{
+									"key": "company_reg_no",
+									"value": "<string>",
+									"description": "if vat_search_type Type is companyRegNo, this will be the company registration number in the following format xxxx/xxxxxx/xx",
+									"type": "text"
+								},
+								{
+									"key": "vat_number",
+									"value": "<number>",
+									"description": "if vat_search_type Type is vatNumber, this will be the companies VAT Number",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vat_search",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vat_search"
+							]
+						},
+						"description": "This API service enables a 3rd party to do a VAT Search either via a Company Name, Company Registration number or via a VAT number. Please note you must specify the vatSearchType which can be either of the following. 1-companyName, to search via Company Name. 2-companyRegNo to search via Company Registration number. 3-vatNumber to search with the company VAT number. both the companyNAme and companyRegNo will give multiple results with a primaryKey and a DBKey which must be used in the vat-dbkey-search to get the final results. the vatNumber search will give the result immediately."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "vat_search_type",
+											"value": "<string>",
+											"description": "(Required) Type of VAT Search, can be either companyName, companyRegNo or vatNumber.",
+											"type": "text"
+										},
+										{
+											"key": "company_name",
+											"value": "<string>",
+											"description": "if vat_search_type Type is companyName, this will be the Company Name",
+											"type": "text"
+										},
+										{
+											"key": "company_reg_no",
+											"value": "<string>",
+											"description": "if vat_search_type Type is companyRegNo, this will be the company registration number in the following format xxxx/xxxxxx/xx",
+											"type": "text"
+										},
+										{
+											"key": "vat_number",
+											"value": "<number>",
+											"description": "if vat_search_type Type is vatNumber, this will be the companies VAT Number",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/vat_search",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vat_search"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "vat_dbkey_search",
+			"item": [
+				{
+					"name": "VAT Search with DBKey",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "api_key",
+									"value": "{{accessToken}}",
+									"description": "(Required) Api key obtained from the authentication function",
+									"type": "text"
+								},
+								{
+									"key": "dbkey",
+									"value": "<string>",
+									"description": "(Required) DBKey returned from the VAT Search API",
+									"type": "text"
+								},
+								{
+									"key": "primary_id",
+									"value": "<string>",
+									"description": "(Required) primaryID returned from the VAT Search API",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vat_dbkey_search",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vat_dbkey_search"
+							]
+						},
+						"description": "This API service is used with the response from the VAT Search API, you will receive a primaryID and a DBKey in the result of the search which will be used to fetch the VAT results."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "api_key",
+											"value": "{{accessToken}}",
+											"description": "(Required) Api key obtained from the authentication function",
+											"type": "text"
+										},
+										{
+											"key": "dbkey",
+											"value": "<string>",
+											"description": "(Required) DBKey returned from the VAT Search API",
+											"type": "text"
+										},
+										{
+											"key": "primary_id",
+											"value": "<string>",
+											"description": "(Required) primaryID returned from the VAT Search API",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/vat_dbkey_search",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vat_dbkey_search"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://www.verifyid.co.za/webservice"
+		},
+		{
+			"key": "accessToken",
+			"value": "API AUTH TOKEN",
+			"type": "string"
+		}
+	]
+}

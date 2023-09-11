@@ -1,30 +1,263 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:verify_sa/app_config.dart';
+import 'package:verify_sa/infrastructure/verifysa/repository.dart';
+import 'package:verify_sa/presentation/pages/landing_page.dart';
+import 'package:verify_sa/presentation/theme.dart';
+import 'package:verify_sa/presentation/widgets/buttons/trio_cta_buttons.dart';
+import 'package:verify_sa/presentation/widgets/history/history_list_item.dart';
+import 'package:verify_sa/presentation/widgets/profile/balance.dart';
+import 'package:verify_sa/presentation/widgets/text/list_title.dart';
+import 'package:flutter/foundation.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:verify_sa/services/dio.dart';
+
+import 'application/verify_sa/verify_sa_bloc.dart';
+import 'presentation/widgets/buttons/app_bar_action_btn.dart';
+import 'presentation/widgets/buttons/base_buttons.dart';
 
 void main() {
   runZonedGuarded(() {
     /// Fallback page onError
-    ErrorWidget.builder = (print as dynamic);
+    ErrorWidget.builder = (details) => MaterialApp(
+          title: 'Material App',
+          home: Scaffold(
+            appBar: AppBar(
+              title: const Text('Error'),
+            ),
+            body: Center(
+              child: Text(details.toString()),
+            ),
+          ),
+        );
 
-    runApp(const App());
+    ///
+    runApp(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<VerifySaBloc>(
+            create: (BuildContext context) => VerifySaBloc(
+              VerifySaRepository(
+                VerifySaDioClientService.instance,
+              ),
+            ),
+          ),
+        ],
+        child: const MyApp(),
+      ),
+    );
+
+    ///
   }, (error, stack) {
+    print(error);
+
     /// fb crush
   });
 }
 
-class App extends StatefulWidget {
-  const App({super.key});
+// https://api.flutter.dev/flutter/material/SliverAppBar-class.html
 
-  @override
-  State<App> createState() => _AppState();
-}
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      child: Text("90_90"),
+    ///
+    var baseTheme = ThemeData(brightness: Brightness.light);
+
+    ///
+    return MaterialApp(
+      debugShowCheckedModeBanner: kDebugMode || kProfileMode,
+      theme: ThemeData.light(
+        useMaterial3: true,
+      ).copyWith(
+        scaffoldBackgroundColor: Colors.white,
+        textTheme: GoogleFonts.dmSansTextTheme(baseTheme.textTheme),
+        primaryColor: primaryColor,
+        primaryColorLight: primaryColor,
+        splashColor: darkerPrimaryColor.withOpacity(0.4),
+        highlightColor: primaryColor.withOpacity(0.2),
+        colorScheme: ColorScheme(
+          brightness: baseTheme.brightness,
+          primary: primaryColor,
+          onPrimary: Colors.white,
+          secondary: neutralYellow,
+          onSecondary: Colors.white,
+          error: Colors.redAccent,
+          onError: Colors.white,
+          background: Colors.white,
+          onBackground: Colors.black,
+          surface: Colors.white,
+          onSurface: Colors.black,
+        ),
+        scrollbarTheme: ScrollbarThemeData(
+          thumbVisibility: MaterialStateProperty.all(true),
+          thickness: MaterialStateProperty.all(10),
+          thumbColor: MaterialStateProperty.all(darkerPrimaryColor),
+          radius: const Radius.circular(10),
+          minThumbLength: 100,
+          interactive: true,
+        ),
+      ),
+      title: displayAppName,
+      home: const HomePage(),
     );
   }
 }
+
+class HomePage extends StatelessWidget {
+  const HomePage({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Container(
+        width: 150.0,
+        height: 74.0,
+        decoration: BoxDecoration(
+          boxShadow: [
+            const BoxShadow(color: Colors.transparent),
+            BoxShadow(
+              offset: const Offset(1, 30),
+              blurRadius: 30,
+              color: darkerPrimaryColor.withOpacity(0.2),
+            ),
+          ],
+        ),
+        child: BaseButton(
+          key: UniqueKey(),
+          onTap: () {},
+          label: "Search & Trace",
+          color: Colors.white,
+          iconBgColor: neutralYellow,
+          bgColor: neutralYellow,
+          buttonIcon: const Image(
+            image: AssetImage("assets/icons/find-icon.png"),
+          ),
+          buttonSize: ButtonSize.large,
+          hasBorderLining: false,
+        ),
+      ),
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 500.0),
+          padding: primaryPadding,
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: <Widget>[
+              SliverAppBar(
+                stretch: true,
+                onStretchTrigger: () async {},
+                surfaceTintColor: Colors.transparent,
+                stretchTriggerOffset: 300.0,
+                expandedHeight: 90.0,
+                flexibleSpace: AppBar(
+                  automaticallyImplyLeading: true,
+                  centerTitle: false,
+                  title: const Text('SliverAppBar'),
+                ),
+                // flexibleSpace: const FlexibleSpaceBar(
+                //   title: Text('SliverAppBar'),
+                //   background: FlutterLogo(),
+                // ),
+                actions: [
+                  ActionButton(
+                    iconColor: Colors.black,
+                    bgColor: Colors.white,
+                    onTap: () {
+                      Navigator.of(context)
+                        ..pop()
+                        ..push(
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) =>
+                                const LandingPage(),
+                          ),
+                        );
+                    },
+                    icon: Icons.power_settings_new_sharp,
+                  ),
+                  ActionButton(
+                    iconColor: Colors.black,
+                    bgColor: Colors.white,
+                    onTap: () {
+                      Navigator.of(context)
+                        ..pop()
+                        ..push(
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) =>
+                                const LandingPage(),
+                          ),
+                        );
+                    },
+                    icon: Icons.settings,
+                  ),
+                ],
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) => _widgets[index],
+                  childCount: _widgets.length,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+final _widgets = [
+  const Balance(),
+  TrioButtons(
+    key: UniqueKey(),
+  ),
+  Container(
+    alignment: Alignment.centerLeft,
+    padding: const EdgeInsets.only(top: 20.0, bottom: 8.0),
+    child: const ListTitle(
+      text: 'YESTERDAy',
+    ),
+  ),
+  const ListItemBanner(),
+  const TransactionListItem(
+    key: Key("history-list-item-3"),
+    n: 3,
+  ),
+  const TransactionListItem(
+    key: Key("history-list-item-1"),
+    n: 1,
+  ),
+  const TransactionListItem(
+    key: Key("history-list-item-2"),
+    n: 2,
+  ),
+  const TransactionListItem(
+    key: Key("history-list-item-4"),
+    n: 4,
+  ),
+  Container(
+    alignment: Alignment.centerLeft,
+    padding: const EdgeInsets.only(top: 20.0, bottom: 8.0),
+    child: const ListTitle(
+      text: 'LAST month',
+    ),
+  ),
+  const TransactionListItem(
+    key: Key("history-list-item-5"),
+    n: 3,
+  ),
+  const TransactionListItem(
+    key: Key("history-list-item-6"),
+    n: 1,
+  ),
+  const TransactionListItem(
+    key: Key("history-list-item-7"),
+    n: 2,
+  ),
+];

@@ -49,7 +49,7 @@ class TransactionListItem extends StatelessWidget {
         isThreeLine: isThreeLine,
         leading: x,
         title: Text(
-          r"$250 top up successfully added",
+          r"VerifySa top up successfully added",
           style: GoogleFonts.dmSans(
             fontSize: 16.0,
             fontStyle: FontStyle.normal,
@@ -172,66 +172,65 @@ class ListItemBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          color: bgColor ?? primaryColor.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(16.0)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.only(
-          top: 8.0,
-          left: 12.0,
-          right: 12.0,
-        ),
-        isThreeLine: true,
-        leading: _LeadingIcon(
-          icon: leadingIcon ?? Icons.discount,
-          bgColor: leadingBgColor ?? primaryColor,
-          discountIndictor: true,
-        ),
-        title: Text(
-          r"$250 top up successfuly added",
-          style: GoogleFonts.dmSans(
-            fontSize: 16.0,
-            fontStyle: FontStyle.normal,
-            fontWeight: FontWeight.w500,
-            color: Colors.black,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
+            color: bgColor ?? primaryColor.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(16.0)),
+        child: ListTile(
+          contentPadding: EdgeInsets.zero,
+          isThreeLine: true,
+          leading: _LeadingIcon(
+            icon: leadingIcon ?? Icons.discount,
+            bgColor: leadingBgColor ?? primaryColor,
+            discountIndictor: true,
           ),
-        ),
-        subtitle: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (type == BannerType.defualt)
-              Text(
-                "8:00 AM",
-                style: GoogleFonts.dmSans(
-                  fontSize: 12.0,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w400,
-                  color: neutralDarkGrey,
-                ),
-              ),
-            GestureDetector(
-              onTap: () {},
-              child: Row(
-                children: [
-                  Text(
-                    "Top up now",
-                    style: GoogleFonts.dmSans(
-                        color: leadingBgColor ?? primaryColor),
+          title: Text(
+            r"VerifySa top up successfuly added",
+            style: GoogleFonts.dmSans(
+              fontSize: 16.0,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w500,
+              color: Colors.black,
+            ),
+          ),
+          subtitle: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (type == BannerType.defualt)
+                Text(
+                  "8:00 AM",
+                  style: GoogleFonts.dmSans(
+                    fontSize: 12.0,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w400,
+                    color: neutralDarkGrey,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                    child: Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: leadingBgColor ?? primaryColor,
-                      size: 14.0,
+                ),
+              GestureDetector(
+                onTap: () {},
+                child: Row(
+                  children: [
+                    Text(
+                      "Top up now",
+                      style: GoogleFonts.dmSans(
+                          color: leadingBgColor ?? primaryColor),
                     ),
-                  )
-                ],
-              ),
-            )
-          ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: leadingBgColor ?? primaryColor,
+                        size: 14.0,
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

@@ -6,10 +6,10 @@ part 'connectivity_event.dart';
 part 'connectivity_bloc.freezed.dart';
 
 class ConnectivityBloc extends Bloc<ConnectivityEvent, ConnectivityState> {
-  ConnectivityBloc(this._contectivityRepository)
+  ConnectivityBloc(this._connectivityRepository)
       : super(const ConnectivityState.initial()) {
     on((event, emit) => {});
   }
 
-  final Object _contectivityRepository;
+  final Object _connectivityRepository;
 }
