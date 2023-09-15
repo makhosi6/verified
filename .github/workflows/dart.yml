@@ -1,0 +1,67 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Dart
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  flutter_test:
+    name: Run flutter test and analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+      - run: flutter pub get
+      - run: flutter test
+
+  build_ios:
+    name: Build Flutter (iOS)
+    needs: [flutter_test]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+      - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '${'{{secrets.AUTH_TOKEN}}'}';" > {{github.workspace}}/lib/app_config.dart
+      - run: echo "version=$(cat {{github.workspace}}/lib/app_config.dart)" >> $GITHUB_OUTPUT
+      - run: flutter pub get
+      - run: flutter clean
+      - run: flutter build ios --release --no-codesign
+
+  build_apk:
+    name: Build Flutter (Android)
+    runs-on: ubuntu-latest
+    env:
+      JAVA_VERSION: "12.x"
+      FLUTTER_VERSION: "3.7.x"
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+      - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '${'{{secrets.AUTH_TOKEN}}'}';" > {{github.workspace}}/lib/app_config.dart
+      - run: echo "version=$(cat {{github.workspace}}/lib/app_config.dart)" >> $GITHUB_OUTPUT
+      - run: flutter pub get
+      - run: flutter build apk --split-per-abi
+      - name: Create a Release APK
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/apk/release/*.apk"

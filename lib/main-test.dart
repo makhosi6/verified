@@ -169,7 +169,7 @@ class HomePage extends StatelessWidget {
 
 final _widgets = [
   const Balance(),
-  TrioButtons(
+  TrioHomeButtons(
     key: UniqueKey(),
   ),
   Container(
