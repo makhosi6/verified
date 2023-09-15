@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:verify_sa/app_config.dart';
 import 'package:verify_sa/domain/interfaces/i_verify_sa_repository.dart';
 import 'package:verify_sa/domain/models/contact_tracing_response.dart';
-import 'package:verify_sa/domain/models/verify_Id_response.dart';
+import 'package:verify_sa/domain/models/verify_id_response.dart';
 
 class VerifySaRepository implements IVerifySaRepository {
   final Dio httpClient;
