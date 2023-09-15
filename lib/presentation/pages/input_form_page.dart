@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:verify_sa/presentation/pages/search_options_page.dart';
 import 'package:verify_sa/presentation/theme.dart';
 import 'package:verify_sa/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verify_sa/presentation/widgets/inputs/generic_input.dart';
-
-import 'landing_page.dart';
 
 class InputFormPage extends StatelessWidget {
   const InputFormPage({super.key});
@@ -27,7 +26,6 @@ class InputFormPage extends StatelessWidget {
                 expandedHeight: 90.0,
                 flexibleSpace: AppBar(
                   automaticallyImplyLeading: true,
-                  centerTitle: false,
                   title: const Text('Search by Name'),
                 ),
                 leading: Container(
@@ -46,14 +44,12 @@ class InputFormPage extends StatelessWidget {
                     iconColor: Colors.black,
                     bgColor: Colors.white,
                     onTap: () {
-                      Navigator.of(context)
-                        ..pop()
-                        ..pushReplacement(
-                          MaterialPageRoute<void>(
-                            builder: (BuildContext context) =>
-                                const LandingPage(),
-                          ),
-                        );
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) =>
+                              const SearchOptionsPage(),
+                        ),
+                      );
                     },
                     icon: Icons.settings,
                   ),

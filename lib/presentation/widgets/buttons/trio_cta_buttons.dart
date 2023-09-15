@@ -1,11 +1,9 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-
 import 'package:verify_sa/presentation/theme.dart';
-import 'package:verify_sa/presentation/widgets/popups/sucessful_payment.dart';
+import 'package:verify_sa/presentation/widgets/popups/successful_payment.dart';
 
-class TrioButtons extends StatelessWidget {
-  const TrioButtons({super.key});
+class TrioHomeButtons extends StatelessWidget {
+  const TrioHomeButtons({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,19 +23,28 @@ class TrioButtons extends StatelessWidget {
               builder: (context) => const SuccessfulPaymentModal(),
             ),
             text: "Transfer",
-            icon: Icons.sensor_occupied,
+            iconWidget: const Image(
+              height: 23.0,
+              image: AssetImage("assets/icons/find-icon.png"),
+            ),
           ),
           _separator,
           _ClickableItem(
             onTap: () {},
             text: "Top Up",
-            icon: Icons.credit_score,
+            iconWidget: const Icon(
+              Icons.credit_score,
+              color: Colors.white,
+            ),
           ),
           _separator,
           _ClickableItem(
             onTap: () {},
             text: "History",
-            icon: Icons.history_sharp,
+            iconWidget: const Icon(
+              Icons.history_sharp,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -46,7 +53,7 @@ class TrioButtons extends StatelessWidget {
 }
 
 class _ClickableItem extends StatelessWidget {
-  final IconData icon;
+  final Widget iconWidget;
 
   final String text;
 
@@ -54,7 +61,7 @@ class _ClickableItem extends StatelessWidget {
 
   const _ClickableItem({
     Key? key,
-    required this.icon,
+    required this.iconWidget,
     required this.text,
     required this.onTap,
   }) : super(key: key);
@@ -64,12 +71,9 @@ class _ClickableItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(
-            icon,
-            color: Colors.white,
-          ),
+          iconWidget,
           Text(
             text,
             style: const TextStyle(

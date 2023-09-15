@@ -14,7 +14,7 @@ class TransactionListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget x;
 
-    if (n == 1) {
+    if ((n as int).isEven) {
       x = _LeadingIcon(
         key: UniqueKey(),
         icon: Icons.credit_card_rounded,
@@ -22,7 +22,7 @@ class TransactionListItem extends StatelessWidget {
         decoratorIconBgColor: primaryColor,
         bgColor: darkerPrimaryColor,
       );
-    } else if (n == 2) {
+    } else if ((n as int).isOdd) {
       x = _LeadingIcon(
         key: UniqueKey(),
         icon: Icons.south_america_outlined,
@@ -73,7 +73,7 @@ class TransactionListItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: Text(
-            n > 2 ? "Promo" : "Info",
+            n.toInt().isEven ? "Promo" : "Info",
             style: GoogleFonts.dmSans(color: primaryColor),
           ),
         ),

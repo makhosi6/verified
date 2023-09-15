@@ -71,7 +71,6 @@ class TransactionPageContent extends StatelessWidget {
                 ),
               ),
               flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
                 background: Container(
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(

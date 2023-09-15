@@ -35,7 +35,10 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
         Center(
           child: Container(
             constraints: const BoxConstraints(
-                maxWidth: 500.0, minWidth: 400.0, maxHeight: 550.0),
+              maxWidth: 500.0,
+              minWidth: 400.0,
+              maxHeight: 550.0,
+            ),
             padding: primaryPadding,
             margin: primaryPadding,
             decoration: BoxDecoration(
@@ -64,7 +67,9 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 32.0, vertical: 12.0),
+                            horizontal: 32.0,
+                            vertical: 12.0,
+                          ),
                           child: Text(
                             "Your payment for Verify ZA has been successfully done",
                             style: TextStyle(
@@ -81,7 +86,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
 
                   ///
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: Column(
                       children: [
                         Text(
@@ -120,19 +125,22 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                     leadingBgColor: primaryColor,
                   ),
 
-                  BaseButton(
-                    key: UniqueKey(),
-                    onTap: () => Navigator.pop(context),
-                    label: "Done",
-                    color: neutralGrey,
-                    hasIcon: false,
-                    bgColor: primaryColor,
-                    buttonIcon: Icon(
-                      Icons.lock_outline,
-                      color: primaryColor,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: BaseButton(
+                      key: UniqueKey(),
+                      onTap: () => Navigator.pop(context),
+                      label: "Done",
+                      color: neutralGrey,
+                      hasIcon: false,
+                      bgColor: primaryColor,
+                      buttonIcon: Icon(
+                        Icons.lock_outline,
+                        color: primaryColor,
+                      ),
+                      buttonSize: ButtonSize.large,
+                      hasBorderLining: false,
                     ),
-                    buttonSize: ButtonSize.large,
-                    hasBorderLining: false,
                   ),
                 ],
               ),

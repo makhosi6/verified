@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:verify_sa/app_config.dart';
-import 'package:verify_sa/presentation/pages/landing_page.dart';
+import 'package:verify_sa/presentation/pages/search_options_page.dart';
 import 'package:verify_sa/presentation/theme.dart';
 import 'package:verify_sa/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
@@ -114,7 +114,6 @@ class HomePage extends StatelessWidget {
                 expandedHeight: 90.0,
                 flexibleSpace: AppBar(
                   automaticallyImplyLeading: true,
-                  centerTitle: false,
                   title: const Text('SliverAppBar'),
                 ),
                 // flexibleSpace: const FlexibleSpaceBar(
@@ -131,7 +130,7 @@ class HomePage extends StatelessWidget {
                         ..push(
                           MaterialPageRoute<void>(
                             builder: (BuildContext context) =>
-                                const LandingPage(),
+                                const SearchOptionsPage(),
                           ),
                         );
                     },
@@ -146,7 +145,7 @@ class HomePage extends StatelessWidget {
                         ..push(
                           MaterialPageRoute<void>(
                             builder: (BuildContext context) =>
-                                const LandingPage(),
+                                const SearchOptionsPage(),
                           ),
                         );
                     },
