@@ -44,7 +44,7 @@ FutureOr triggerAuthBottomSheet({
                             ),
                             children: [
                               const TextSpan(
-                                text: "New to Verify SA? ",
+                                text: "New to Verified? ",
                               ),
                               TextSpan(
                                 text: "Sign Up",

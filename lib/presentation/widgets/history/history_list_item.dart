@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -49,7 +51,7 @@ class TransactionListItem extends StatelessWidget {
         isThreeLine: isThreeLine,
         leading: x,
         title: Text(
-          r"$250 top up successfully added",
+          "R${Random().nextInt(300) + 100} top up successfully added",
           style: GoogleFonts.dmSans(
             fontSize: 16.0,
             fontStyle: FontStyle.normal,

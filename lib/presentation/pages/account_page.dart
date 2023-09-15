@@ -88,7 +88,7 @@ class AccountPageContent extends StatelessWidget {
                     padding: primaryPadding.copyWith(bottom: 0),
                     child: Column(
                       children: [
-                        Padding(
+                        Container(
                           padding: primaryPadding.copyWith(left: 0, right: 0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -98,7 +98,7 @@ class AccountPageContent extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Payment with QR Code",
+                                    "Delete payment details",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700,
@@ -108,11 +108,13 @@ class AccountPageContent extends StatelessWidget {
                                     textAlign: TextAlign.center,
                                   ),
                                   Text(
-                                    "Please put your phone in front",
+                                    "Default payment method used to top-up",
                                     style: TextStyle(
                                       fontWeight: FontWeight.w400,
                                       color: Colors.white,
+                                      fontStyle: FontStyle.italic,
                                       fontSize: 14.0,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
@@ -347,7 +349,7 @@ class _ProfileName extends StatelessWidget {
               children: [
                 /// name
                 Text(
-                  "Steve Jobs",
+                  "Sasha Jacobs",
                   style: TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.w700,
@@ -365,7 +367,7 @@ class _ProfileName extends StatelessWidget {
 
                 /// email
                 Text(
-                  "stevej@apple.com",
+                  "sasha902@gmail.com",
                   textAlign: TextAlign.left,
                 )
               ],

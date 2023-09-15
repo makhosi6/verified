@@ -59,7 +59,7 @@ class HomePageContents extends StatelessWidget {
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 500.0),
-          padding: primaryPadding.copyWith(bottom: 0),
+          padding: primaryPadding.copyWith(bottom: 0, top: 0),
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: <Widget>[
@@ -71,16 +71,15 @@ class HomePageContents extends StatelessWidget {
                 expandedHeight: 90.0,
                 flexibleSpace: AppBar(
                   automaticallyImplyLeading: true,
-                  title: const Text('Verify SA'),
+                  title: const Text('Verified'),
                 ),
                 actions: [
                   ActionButton(
                     iconColor: Colors.black,
                     bgColor: Colors.white,
                     onTap: () => showDefaultPopUp(context,
-                        title: "Payment Success",
-                        subtitle:
-                            "Your payment for Starbucks Coffee has been successfully done",
+                        title: "Close the App?",
+                        subtitle: "Are you sure you want to close the App.",
                         confirmBtnText: 'Okay',
                         declineBtnText: 'Nope',
                         onConfirm: () {},

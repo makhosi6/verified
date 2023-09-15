@@ -23,7 +23,6 @@ jobs:
       - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '{{secrets.AUTH_TOKEN}}';" > ./lib/app_config.dart
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
-      - run: echo "version=$(cat ./lib/app_config.dart)" >> $GITHUB_OUTPUT
       - run: flutter test
 
   build_ios:
@@ -38,9 +37,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: echo "version=$(cat ./lib/app_config.dart)" >> $GITHUB_OUTPUT
       - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '{{secrets.AUTH_TOKEN}}';" > ./lib/app_config.dart
-      - run: echo "version=$(cat ./lib/app_config.dart)" >> $GITHUB_OUTPUT
       - run: flutter pub get
       - run: flutter clean
       - run: dart run build_runner build --delete-conflicting-outputs
@@ -61,7 +58,6 @@ jobs:
         with:
           channel: "stable"
       - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '{{secrets.AUTH_TOKEN}}';" > ./lib/app_config.dart
-      - run: echo "version=$(cat ./lib/app_config.dart)" >> $GITHUB_OUTPUT
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter build apk --split-per-abi

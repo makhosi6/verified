@@ -71,7 +71,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                             vertical: 12.0,
                           ),
                           child: Text(
-                            "Your payment for Verify ZA has been successfully done",
+                            "Your payment for Verified has been successfully done",
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: neutralDarkGrey,
