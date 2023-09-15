@@ -42,10 +42,9 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: echo "version=$(cat {{github.workspace}}/lib/app_config.dart)" >> $GITHUB_OUTPUT
       - run: echo "version=$(cat ./lib/app_config.dart)" >> $GITHUB_OUTPUT
-      - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '{{secrets.AUTH_TOKEN}}';" > {{github.workspace}}/lib/app_config.dart
-      - run: echo "version=$(cat {{github.workspace}}/lib/app_config.dart)" >> $GITHUB_OUTPUT
+      - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '{{secrets.AUTH_TOKEN}}';" > ./lib/app_config.dart
+      - run: echo "version=$(cat ./lib/app_config.dart)" >> $GITHUB_OUTPUT
       - run: flutter pub get
       - run: flutter clean
       - run: flutter build ios --release --no-codesign
@@ -64,8 +63,8 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '{{secrets.AUTH_TOKEN}}';" > {{github.workspace}}/lib/app_config.dart
-      - run: echo "version=$(cat {{github.workspace}}/lib/app_config.dart)" >> $GITHUB_OUTPUT
+      - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '{{secrets.AUTH_TOKEN}}';" > ./lib/app_config.dart
+      - run: echo "version=$(cat ./lib/app_config.dart)" >> $GITHUB_OUTPUT
       - run: flutter pub get
       - run: flutter build apk --split-per-abi
       - name: Create a Release APK
