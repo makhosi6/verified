@@ -9,6 +9,8 @@ on:
   push:
     tags:
       - v*
+      
+permissions: write-all
 
 jobs:
   flutter_test:
