@@ -27,6 +27,7 @@ jobs:
           channel: "stable"
       - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '{{secrets.AUTH_TOKEN}}';" > ./lib/app_config.dart
       - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
       - run: echo "version=$(cat ./lib/app_config.dart)" >> $GITHUB_OUTPUT
       - run: flutter test
 
@@ -47,6 +48,7 @@ jobs:
       - run: echo "version=$(cat ./lib/app_config.dart)" >> $GITHUB_OUTPUT
       - run: flutter pub get
       - run: flutter clean
+      - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter build ios --release --no-codesign
 
   build_apk:
@@ -66,6 +68,7 @@ jobs:
       - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '{{secrets.AUTH_TOKEN}}';" > ./lib/app_config.dart
       - run: echo "version=$(cat ./lib/app_config.dart)" >> $GITHUB_OUTPUT
       - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter build apk --split-per-abi
       - name: Create a Release APK
         uses: ncipollo/release-action@v1
