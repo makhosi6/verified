@@ -59,7 +59,7 @@ class HomePageContents extends StatelessWidget {
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 500.0),
-          padding: primaryPadding,
+          padding: primaryPadding.copyWith(bottom: 0),
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: <Widget>[
