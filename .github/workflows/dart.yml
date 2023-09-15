@@ -10,7 +10,8 @@ on:
     tags:
       - v*
       
-permissions: write-all
+permissions:
+   contents: write
 
 jobs:
   flutter_test:
@@ -24,8 +25,8 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: flutter pub get
       - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '{{secrets.AUTH_TOKEN}}';" > {{github.workspace}}/lib/app_config.dart
+      - run: flutter pub get
       - run: echo "version=$(cat {{github.workspace}}/lib/app_config.dart)" >> $GITHUB_OUTPUT
       - run: flutter test
 
