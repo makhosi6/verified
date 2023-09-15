@@ -1,6 +1,6 @@
 ### Generate build script
 
-```bash 
+```bash
 dart run build_runner build --delete-conflicting-outputs
 ```
 
@@ -8,4 +8,10 @@ dart run build_runner build --delete-conflicting-outputs
 
 ```
 dart pub cache clean -f;flutter pub cache clean -f; flutter clean;flutter pub get
+```
+
+### Build for the web
+
+```
+flutter build web --web-renderer canvaskit
 ```
