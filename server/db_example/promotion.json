@@ -1,0 +1,13 @@
+{
+    "resource": [{
+
+        "id": "68885a60-ef41-40a1-8421-3bec6e59f55b",
+        "name": "Percent Off",
+        "displayText": "Percent off",
+        "credit": 1,
+        "isActive": true,
+        "picture": "https://placehold.it/32x32",
+        "promotionInfo": "just sample promotions",
+        "trigger": []
+    }]
+}

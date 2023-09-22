@@ -1,0 +1,17 @@
+{
+    "resource": [{
+        "id": "uuid",
+        "profileId": "user_profile_id_82911wdd312",
+        "balance": 0.8,
+        "isoCurrencyCode": "ZAR",
+        "accountHolderName": "JD Morgan",
+        "accountName": "----8211",
+        "expDate": "",
+        "card": "",
+        "lastDepositAt": 313131313,
+        "historyId": "21w13111",
+        "promotions": [],
+        "lastLoginAt": 18313939813,
+        "accountCreatedAt": 18313939813
+    }]
+}

@@ -109,15 +109,10 @@ class SearchResultsPageContent extends StatelessWidget {
                   ),
                 ),
               ),
-              leading: Container(
-                margin: const EdgeInsets.only(left: 12.0),
-                child: ActionButton(
-                  iconColor: Colors.white,
-                  bgColor: darkerPrimaryColor,
-                  onTap: () => Navigator.pop(context),
-                  icon: Icons.arrow_back_ios_new_rounded,
-                  padding: const EdgeInsets.all(0.0),
-                ),
+              leadingWidth: 80.0,
+              leading: VerifiedBackButton(
+                key: const Key("search-results-page-back-btn"),
+                onTap: () => Navigator.pop(context),
               ),
             ),
             SliverList(

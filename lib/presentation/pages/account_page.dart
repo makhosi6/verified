@@ -142,15 +142,10 @@ class AccountPageContent extends StatelessWidget {
                   ),
                 ),
               ),
-              leading: Container(
-                margin: const EdgeInsets.only(left: 12.0),
-                child: ActionButton(
-                  iconColor: Colors.white,
-                  bgColor: darkerPrimaryColor,
-                  onTap: () => Navigator.pop(context),
-                  icon: Icons.arrow_back_ios_new_rounded,
-                  padding: const EdgeInsets.all(0.0),
-                ),
+              leadingWidth: 80.0,
+              leading: VerifiedBackButton(
+                key: const Key("acc-page-back-btn"),
+                onTap: () => Navigator.pop(context),
               ),
             ),
             SliverList(
@@ -224,16 +219,26 @@ class AccountPageContent extends StatelessWidget {
                                       fontStyle: FontStyle.normal,
                                     ),
                                   ),
-                                  children: const [
-                                    Text('Big Bang'),
-                                    TransactionListItem(
-                                      n: 2,
-                                    ),
-                                    TransactionListItem(
-                                      n: 3,
-                                    ),
-                                    Text('Earth is Born'),
-                                  ],
+                                  children: (accountSettings[index]['text'] ==
+                                          "Personal")
+                                      ? List.generate(
+                                          5,
+                                          (index) => personalDetailsListItem(
+                                            key: "Key_$index",
+                                            value: "Value_$index",
+                                            isLast: index == 4,
+                                          ),
+                                        )
+                                      : [
+                                          const Text('Big Bang'),
+                                          const TransactionListItem(
+                                            n: 2,
+                                          ),
+                                          const TransactionListItem(
+                                            n: 3,
+                                          ),
+                                          const Text('Earth is Born'),
+                                        ],
                                 ),
                 ),
               ),
@@ -376,3 +381,27 @@ class _ProfileName extends StatelessWidget {
     );
   }
 }
+
+Widget personalDetailsListItem(
+        {required String key, required String value, bool isLast = false}) =>
+    Container(
+      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.only(
+        left: 16.0,
+        right: 16.0,
+        bottom: 0,
+        top: 20.0,
+      ),
+      child: Column(
+        children: [
+          DataItem(keyName: key, value: value),
+          (!isLast)
+              ? Divider(
+                  color: Colors.grey[400],
+                  indent: 0,
+                  endIndent: 0,
+                )
+              : const SizedBox.shrink(),
+        ],
+      ),
+    );

@@ -119,7 +119,9 @@ class _SearchOptionsPageContent extends StatelessWidget {
                               Navigator.of(context).push(
                                 MaterialPageRoute<void>(
                                   builder: (BuildContext context) =>
-                                      const InputFormPage(),
+                                      InputFormPage(
+                                    formType: FormType.phoneNumberForm,
+                                  ),
                                 ),
                               );
                             },

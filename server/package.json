@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c --watch",
+    "dev": "nodemon --ignore '**/db/**' index.js ",
+    "api": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.4",
+    "nodemon": "^3.0.1",
+    "rollup-obfuscator": "^4.0.0"
+  },
+  "dependencies": {
+    "json-server": "^0.17.3"
+  }
+}

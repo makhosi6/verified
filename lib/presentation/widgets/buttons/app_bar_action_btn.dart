@@ -59,3 +59,32 @@ class ActionButton extends StatelessWidget {
     );
   }
 }
+
+class VerifiedBackButton extends StatelessWidget {
+  final void Function() onTap;
+  final bool isLight;
+
+  const VerifiedBackButton({
+    super.key,
+    required this.onTap,
+    this.isLight = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: ActionButton(
+            iconColor: isLight ? Colors.black : Colors.white,
+            bgColor: isLight ? Colors.white : darkerPrimaryColor,
+            onTap: onTap,
+            icon: Icons.arrow_back_ios_new_rounded,
+            padding: const EdgeInsets.all(0.0),
+          ),
+        ),
+      ],
+    );
+  }
+}

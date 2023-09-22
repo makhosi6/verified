@@ -1,0 +1,18 @@
+{
+    "resource": [{
+        "actualName": "User Actual Name",
+        "active": false,
+        "avatar": "https://robohash.org/robo@robohash.org?gravatar=yes",
+        "softDeleted": false,
+        "displayName": "User Display Name",
+        "email": "user_082@mailbox.com",
+        "id": "User ID",
+        "name": "User Name",
+        "phone": "User Phone Number",
+        "profileId": "user_profile_id_82911wdd312",
+        "walletId": "8912310",
+        "historyId": "21w13111",
+        "last_login_at": 18313939813,
+        "account_created_at": 18313939813
+    }]
+}
