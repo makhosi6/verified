@@ -15,5 +15,11 @@ Color neutralYellow = const Color(0xFFFFAE58);
 /// common dark green color
 Color darkerPrimaryColor = const Color(0xFF105D38);
 
+/// common error color
+Color errorColor = Colors.redAccent;
+
+/// common error color
+Color warningColor = Colors.amberAccent[700] ?? Colors.amberAccent;
+
 ///
 EdgeInsets primaryPadding = const EdgeInsets.all(16.0);

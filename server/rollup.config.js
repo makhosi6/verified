@@ -1,26 +1,21 @@
 const pkg = require("./package.json");
-const {builtinModules} = require("module");
+const { builtinModules } = require("module");
 const commonjs = require('@rollup/plugin-commonjs');
 const { obfuscator } = require('rollup-obfuscator');
-
+const transform = require("./transform.config.json")
 
 module.exports = {
 	input: "nonce.source.js",
 	output: [
 		{
 			file: 'nonce.js',
-            format: 'cjs',
+			format: 'cjs',
 		},
 
 	],
 	plugins: [
-        commonjs(),
-        obfuscator({
-            compact: false,
-            deadCodeInjection: false,
-            deadCodeInjectionThreshold: 1,
-            splitStrings: true,
-        })
+		commonjs(),
+		obfuscator(transform)
 
 	],
 	external: [

@@ -85,6 +85,8 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData.light(
         useMaterial3: true,
       ).copyWith(
+        appBarTheme: const AppBarTheme(centerTitle: true),
+
         scaffoldBackgroundColor: Colors.white,
         textTheme: GoogleFonts.dmSansTextTheme(baseTheme.textTheme),
         primaryColor: primaryColor,

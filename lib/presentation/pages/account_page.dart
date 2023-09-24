@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:verify_sa/presentation/pages/search_results_page.dart';
+import 'package:verify_sa/presentation/pages/webviews/terms_of_use.dart';
 import 'package:verify_sa/presentation/theme.dart';
 import 'package:verify_sa/presentation/widgets/bank_card/base_card.dart';
 import 'package:verify_sa/presentation/widgets/buttons/app_bar_action_btn.dart';
@@ -155,91 +156,114 @@ class AccountPageContent extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20.0,
                   ),
-                  child: accountSettings[index]["text"] == "balance"
-                      ? Column(
-                          children: [
-                            const _ProfileName(),
-                            Divider(
-                              color: Colors.grey[400],
-                              indent: 0,
-                              endIndent: 0,
-                            ),
-                          ],
+                  child: (accountSettings[index]["type"] == "space")
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
                         )
-                      : (accountSettings[index]["text"] == "title")
-                          ? Container(
-                              alignment: Alignment.centerLeft,
-                              padding: primaryPadding.copyWith(bottom: 22.0),
-                              child: const ListTitle(
-                                text: 'Account Settings',
-                              ),
+                      : accountSettings[index]["text"] == "balance"
+                          ? Column(
+                              children: [
+                                const _ProfileName(),
+                                Divider(
+                                  color: Colors.grey[400],
+                                  indent: 0,
+                                  endIndent: 0,
+                                ),
+                              ],
                             )
-                          : accountSettings[index]['type'] == 'button'
-                              ? ListTile(
-                                  onTap: () {},
-                                  leading: Icon(
-                                    accountSettings[index]['icon'] as IconData?,
-                                    color: primaryColor,
-                                    size: 32.0,
-                                  ),
-                                  title: Text(
-                                    accountSettings[index]['text'] as String,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16.0,
-                                      fontStyle: FontStyle.normal,
-                                    ),
-                                  ),
-                                  contentPadding: EdgeInsets.zero,
-                                  enableFeedback: true,
-                                  trailing: const Icon(
-                                    Icons.arrow_forward_ios_sharp,
-                                    size: 16.0,
+                          : (accountSettings[index]["text"] == "title")
+                              ? Container(
+                                  alignment: Alignment.centerLeft,
+                                  padding:
+                                      primaryPadding.copyWith(bottom: 22.0),
+                                  child: const ListTitle(
+                                    text: 'Account Settings',
                                   ),
                                 )
-                              : ExpansionTile(
-                                  tilePadding: const EdgeInsets.all(0.0),
-                                  leading: Icon(
-                                    accountSettings[index]['icon'] as IconData?,
-                                    color: primaryColor,
-                                    size: 32.0,
-                                  ),
-                                  backgroundColor: Colors.grey[100],
-                                  collapsedBackgroundColor: Colors.white,
-                                  childrenPadding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0,
-                                  ),
-                                  title: Text(
-                                    accountSettings[index]['text'] as String,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16.0,
-                                      fontStyle: FontStyle.normal,
+                              : accountSettings[index]['type'] == 'button'
+                                  ? ListTile(
+                                      onTap: () {
+                                        if (accountSettings[index]['text'] ==
+                                            "Terms of Use") {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute<void>(
+                                                builder: (BuildContext
+                                                        context) =>
+                                                    const TermOfUseWebView()),
+                                          );
+                                        }
+                                      },
+                                      leading: Icon(
+                                        accountSettings[index]['icon']
+                                            as IconData?,
+                                        color: primaryColor,
+                                        size: 32.0,
+                                      ),
+                                      title: Text(
+                                        accountSettings[index]['text']
+                                            as String,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16.0,
+                                          fontStyle: FontStyle.normal,
+                                        ),
+                                      ),
+                                      contentPadding: EdgeInsets.zero,
+                                      enableFeedback: true,
+                                      trailing: const Icon(
+                                        Icons.arrow_forward_ios_sharp,
+                                        size: 16.0,
+                                      ),
+                                    )
+                                  : ExpansionTile(
+                                      tilePadding: const EdgeInsets.all(0.0),
+                                      leading: Icon(
+                                        accountSettings[index]['icon']
+                                            as IconData?,
+                                        color: primaryColor,
+                                        size: 32.0,
+                                      ),
+                                      backgroundColor: Colors.grey[100],
+                                      collapsedBackgroundColor: Colors.white,
+                                      childrenPadding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal: 20.0,
+                                      ),
+                                      title: Text(
+                                        accountSettings[index]['text']
+                                            as String,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16.0,
+                                          fontStyle: FontStyle.normal,
+                                        ),
+                                      ),
+                                      children: (accountSettings[index]
+                                                  ['text'] ==
+                                              "Personal")
+                                          ? List.generate(
+                                              5,
+                                              (index) =>
+                                                  personalDetailsListItem(
+                                                key: "Key_$index",
+                                                value: "Value_$index",
+                                                isLast: index == 4,
+                                              ),
+                                            )
+                                          : [
+                                              const Text('Big Bang'),
+                                              const TransactionListItem(
+                                                n: 2,
+                                              ),
+                                              const TransactionListItem(
+                                                n: 3,
+                                              ),
+                                              const Text('Earth is Born'),
+                                            ],
                                     ),
-                                  ),
-                                  children: (accountSettings[index]['text'] ==
-                                          "Personal")
-                                      ? List.generate(
-                                          5,
-                                          (index) => personalDetailsListItem(
-                                            key: "Key_$index",
-                                            value: "Value_$index",
-                                            isLast: index == 4,
-                                          ),
-                                        )
-                                      : [
-                                          const Text('Big Bang'),
-                                          const TransactionListItem(
-                                            n: 2,
-                                          ),
-                                          const TransactionListItem(
-                                            n: 3,
-                                          ),
-                                          const Text('Earth is Born'),
-                                        ],
-                                ),
                 ),
               ),
             ),
@@ -298,7 +322,11 @@ var accountSettings = [
     'type': 'button',
     'text': "Delete Account",
     'icon': Icons.delete_outline_outlined
-  }
+  },
+  {
+    'type': 'space',
+    'text': '',
+  },
 ];
 
 class _ProfileName extends StatelessWidget {
