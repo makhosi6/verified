@@ -107,7 +107,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                             hasIcon: false,
                             bgColor: neutralYellow,
                             buttonIcon: Icon(
-                              Icons.grain_rounded,
+                              Icons.grain_outlined,
                               color: neutralYellow,
                             ),
                             buttonSize: ButtonSize.large,

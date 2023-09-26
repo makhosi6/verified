@@ -84,7 +84,7 @@ class HomePageContents extends StatelessWidget {
                         declineBtnText: 'Nope',
                         onConfirm: () {},
                         onDecline: () {}),
-                    icon: Icons.add_chart,
+                    icon: Icons.info_outline_rounded,
                   ),
                   ActionButton(
                     iconColor: Colors.black,

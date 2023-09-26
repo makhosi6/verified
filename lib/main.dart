@@ -10,7 +10,6 @@ import 'package:verify_sa/presentation/widgets/history/history_list_item.dart';
 import 'package:verify_sa/presentation/widgets/text/list_title.dart';
 import 'package:flutter/foundation.dart';
 import 'package:verify_sa/services/dio.dart';
-
 import 'application/verify_sa/verify_sa_bloc.dart';
 
 void main() {
@@ -31,6 +30,13 @@ void main() {
     runApp(
       MultiBlocProvider(
         providers: [
+          BlocProvider<VerifySaBloc>(
+            create: (BuildContext context) => VerifySaBloc(
+              VerifySaRepository(
+                VerifySaDioClientService.instance,
+              ),
+            ),
+          ),
           BlocProvider<VerifySaBloc>(
             create: (BuildContext context) => VerifySaBloc(
               VerifySaRepository(

@@ -19,7 +19,7 @@ class TransactionListItem extends StatelessWidget {
     if ((n as int).isEven) {
       x = _LeadingIcon(
         key: UniqueKey(),
-        icon: Icons.credit_card_rounded,
+        icon: Icons.credit_card_outlined,
         decoratorIcon: Icons.check,
         decoratorIconBgColor: primaryColor,
         bgColor: darkerPrimaryColor,
@@ -36,7 +36,7 @@ class TransactionListItem extends StatelessWidget {
     } else {
       x = _LeadingIcon(
         key: UniqueKey(),
-        icon: Icons.today_rounded,
+        icon: Icons.today_outlined,
         decoratorIcon: Icons.check,
         withDecorator: false,
         decoratorIconBgColor: primaryColor,
@@ -186,7 +186,7 @@ class ListItemBanner extends StatelessWidget {
         ),
         isThreeLine: true,
         leading: _LeadingIcon(
-          icon: leadingIcon ?? Icons.discount,
+          icon: leadingIcon ?? Icons.discount_outlined,
           bgColor: leadingBgColor ?? primaryColor,
           discountIndictor: true,
         ),

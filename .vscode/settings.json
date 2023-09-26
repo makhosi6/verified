@@ -2,5 +2,7 @@
     "cSpell.words": [
         "defualt"
     ],
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "editor.minimap.maxColumn": 200,
+    "dart.lineLength": 120
 }

@@ -131,7 +131,7 @@ class AccountPageContent extends StatelessWidget {
                                     ),
                                   );
                                 },
-                                icon: Icons.delete_forever_rounded,
+                                icon: Icons.delete_forever_outlined,
                                 borderColor: neutralYellow,
                               )
                             ],
@@ -286,12 +286,12 @@ var accountSettings = [
   {
     'type': 'expandable',
     'text': "Personal",
-    'icon': Icons.person,
+    'icon': Icons.person_2_outlined,
   },
   {
     'type': 'expandable',
     'text': "Transactions",
-    'icon': Icons.payments_sharp,
+    'icon': Icons.payments_outlined,
   },
   {
     'type': 'button',
@@ -301,7 +301,7 @@ var accountSettings = [
   {
     'type': 'expandable',
     'text': "App Information",
-    'icon': Icons.app_settings_alt_rounded
+    'icon': Icons.app_settings_alt_outlined
   },
   {
     'type': 'button',
@@ -316,7 +316,7 @@ var accountSettings = [
   {
     'type': 'button',
     'text': "Terms of Use",
-    'icon': Icons.article,
+    'icon': Icons.article_outlined,
   },
   {
     'type': 'button',

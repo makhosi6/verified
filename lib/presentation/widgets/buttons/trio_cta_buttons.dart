@@ -33,7 +33,7 @@ class TrioHomeButtons extends StatelessWidget {
             onTap: () {},
             text: "Top Up",
             iconWidget: const Icon(
-              Icons.credit_score,
+              Icons.credit_score_outlined,
               color: Colors.white,
             ),
           ),
@@ -42,7 +42,7 @@ class TrioHomeButtons extends StatelessWidget {
             onTap: () {},
             text: "History",
             iconWidget: const Icon(
-              Icons.history_sharp,
+              Icons.history_outlined,
               color: Colors.white,
             ),
           ),

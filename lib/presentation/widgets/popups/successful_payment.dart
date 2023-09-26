@@ -214,7 +214,7 @@ class _Polygon8 extends StatelessWidget {
             child: Container(
               color: neutralYellow,
               child: const Icon(
-                Icons.close_rounded,
+                Icons.close_outlined,
                 color: Colors.white,
                 size: 54.0,
               ),
