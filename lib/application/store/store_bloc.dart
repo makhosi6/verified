@@ -18,12 +18,50 @@ part 'store_bloc.freezed.dart';
 class StoreBloc extends Bloc<StoreEvent, StoreState> {
   StoreBloc(this._storeRepository) : super(StoreState.initial()) {
     on<StoreEvent>((event, emit) async => event.map(
-          apiHealthCheck: (e) {
+          apiHealthCheck: (e) async {
+            final resourceHealthStatus = await _storeRepository.getHealthStatus();
+
+            emit(
+              state.copyWith(
+                resourceHealthStatus: resourceHealthStatus,
+              ),
+            );
+
             return null;
           },
 
           ///
-          requestHelp: (e) {
+          requestHelp: (e) async {
+            emit(
+              state.copyWith(
+                getHelpHasError: false,
+                getHelpDataLoading: true,
+                getHelpData: null,
+              ),
+            );
+
+            final response = await _storeRepository.requestHelp(e.helpRequest);
+
+            response.fold((error) {
+              emit(
+                state.copyWith(
+                  getHelpHasError: true,
+                  getHelpError: GenericApiError(
+                    error: error.toString(),
+                    status: "error",
+                  ),
+                  getHelpDataLoading: false,
+                  getHelpData: null,
+                ),
+              );
+            }, (data) {
+              emit(state.copyWith(
+                getHelpHasError: false,
+                getHelpError: null,
+                getHelpDataLoading: false,
+                getHelpData: data,
+              ));
+            });
             return null;
           },
 
@@ -35,95 +73,478 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               userProfileDataLoading: true,
             ));
 
-            final response = await _storeRepository.getUserProfile(e.id);
+            final response = await _storeRepository.getUserProfile(e.userId);
 
-            response.fold((e) {
+            response.fold((error) {
               emit(state.copyWith(
-                  userProfileError: null,
+                  userProfileError: GenericApiError(
+                    error: error.toString(),
+                    status: "error",
+                  ),
                   userProfileHasError: false,
-                  userProfileDataLoading: true,
+                  userProfileDataLoading: false,
                   userProfileData: null));
             }, (data) {
-              emit(state.copyWith(
-                  userProfileError: null,
-                  userProfileHasError: false,
-                  userProfileDataLoading: true,
-                  userProfileData: [data]));
+              emit(
+                state.copyWith(
+                    userProfileError: null,
+                    userProfileHasError: false,
+                    userProfileDataLoading: false,
+                    userProfileData: data),
+              );
             });
             return null;
           },
           createUserProfile: (e) async {
+            emit(state.copyWith(
+              userProfileError: null,
+              userProfileHasError: false,
+              userProfileDataLoading: true,
+            ));
+
+            final response = await _storeRepository.postUserProfile(e.user);
+
+            response.fold((error) {
+              emit(
+                state.copyWith(
+                  userProfileError: GenericApiError(
+                    error: error.toString(),
+                    status: "error",
+                  ),
+                  userProfileHasError: true,
+                  userProfileDataLoading: false,
+                  userProfileData: null,
+                ),
+              );
+            }, (data) {
+              emit(
+                state.copyWith(
+                  userProfileError: null,
+                  userProfileHasError: false,
+                  userProfileDataLoading: false,
+                  userProfileData: data,
+                ),
+              );
+            });
+
             return null;
           },
-          updateUserProfile: (e) {
+          updateUserProfile: (e) async {
+            emit(state.copyWith(
+              userProfileError: null,
+              userProfileHasError: false,
+              userProfileDataLoading: true,
+            ));
+
+            final response = await _storeRepository.postUserProfile(e.user);
+
+            response.fold((error) {
+              emit(
+                state.copyWith(
+                  userProfileError: GenericApiError(
+                    error: error.toString(),
+                    status: "error",
+                  ),
+                  userProfileHasError: true,
+                  userProfileDataLoading: false,
+                  userProfileData: null,
+                ),
+              );
+            }, (data) {
+              emit(
+                state.copyWith(
+                  userProfileError: null,
+                  userProfileHasError: false,
+                  userProfileDataLoading: false,
+                  userProfileData: data,
+                ),
+              );
+            });
+
             return null;
           },
-          deleteUserProfile: (e) {
+          deleteUserProfile: (e) async {
+            emit(state.copyWith(
+              userProfileError: null,
+              userProfileHasError: false,
+              userProfileDataLoading: true,
+            ));
+
+            final response = await _storeRepository.deleteUserProfile(e.userId);
+
+            response.fold((error) {
+              emit(
+                state.copyWith(
+                  userProfileError: GenericApiError(
+                    error: error.toString(),
+                    status: "error",
+                  ),
+                  userProfileHasError: true,
+                  userProfileDataLoading: false,
+                  userProfileData: null,
+                ),
+              );
+            }, (data) {
+              emit(
+                state.copyWith(
+                  userProfileError: null,
+                  userProfileHasError: false,
+                  userProfileDataLoading: false,
+                  userProfileData: null,
+                ),
+              );
+            });
+
             return null;
           },
 
           ///
           getTicket: (e) {
+            throw UnimplementedError();
+          },
+          getAllTickets: (e) async {
+            emit(state.copyWith(
+              ticketsError: null,
+              ticketsHasError: false,
+              ticketsDataLoading: true,
+              ticketsData: [],
+            ));
+
+            final response = await _storeRepository.getAllTickets(e.userId);
+
+            response.fold((error) {
+              emit(state.copyWith(
+                ticketsError: GenericApiError(
+                  error: error.toString(),
+                  status: "error",
+                ),
+                ticketsHasError: true,
+                ticketsDataLoading: false,
+                ticketsData: [],
+              ));
+            }, (data) {
+              emit(state.copyWith(
+                ticketsError: null,
+                ticketsHasError: false,
+                ticketsDataLoading: false,
+                ticketsData: List<HelpTicket>.from(data),
+              ));
+            });
+
             return null;
           },
-          getAllTickets: (e) {
-            return null;
-          },
-          createTicket: (e) {
+          createTicket: (e) async {
+            emit(state.copyWith(
+              ticketsError: null,
+              ticketsHasError: false,
+              ticketsDataLoading: true,
+              ticketsData: [],
+            ));
+
+            final response = await _storeRepository.postHelpTicket(e.helpTicket);
+
+            response.fold((error) {
+              emit(
+                state.copyWith(
+                  ticketsError: GenericApiError(
+                    error: error.toString(),
+                    status: "error",
+                  ),
+                  ticketsHasError: true,
+                  ticketsDataLoading: false,
+                  ticketsData: [],
+                ),
+              );
+            }, (data) {
+              emit(
+                state.copyWith(
+                    ticketsError: null,
+                    ticketsHasError: false,
+                    ticketsDataLoading: false,
+                    ticketsData: state.ticketsData..add(data)),
+              );
+            });
+
             return null;
           },
           updateTicket: (e) {
-            return null;
+            throw UnimplementedError();
           },
-          deleteTicket: (e) {
+          deleteTicket: (e) async {
+            emit(state.copyWith(
+              ticketsError: null,
+              ticketsHasError: false,
+              ticketsDataLoading: true,
+              ticketsData: [],
+            ));
+
+            final response = await _storeRepository.deleteHelpTicket(e.resourceId);
+
+            response.fold((error) {
+              emit(
+                state.copyWith(
+                  ticketsError: GenericApiError(
+                    error: error.toString(),
+                    status: "error",
+                  ),
+                  ticketsHasError: true,
+                  ticketsDataLoading: false,
+                  ticketsData: [],
+                ),
+              );
+            }, (data) {
+              emit(
+                state.copyWith(
+                  ticketsError: null,
+                  ticketsHasError: false,
+                  ticketsDataLoading: false,
+                  ticketsData: state.ticketsData
+                    ..removeWhere(
+                      (item) => e.resourceId == item.id.toString(),
+                    ),
+                ),
+              );
+            });
             return null;
           },
 
           ///
           getHistory: (e) {
+            throw UnimplementedError();
+          },
+          getAllHistory: (e) async {
+            emit(state.copyWith(
+              historyError: null,
+              historyHasError: false,
+              historyDataLoading: true,
+              historyData: [],
+            ));
+
+            final response = await _storeRepository.getAllUserTransaction(e.userId);
+
+            response.fold((error) {
+              emit(state.copyWith(
+                historyError: GenericApiError(
+                  error: error.toString(),
+                  status: "error",
+                ),
+                historyHasError: true,
+                historyDataLoading: false,
+                historyData: [],
+              ));
+            }, (data) {
+              emit(state.copyWith(
+                historyError: null,
+                historyHasError: false,
+                historyDataLoading: false,
+                historyData: data,
+              ));
+            });
             return null;
           },
-          getAllHistory: (e) {
-            return null;
-          },
-          createHistory: (e) {
+          createHistory: (e) async {
+            emit(state.copyWith(
+              historyError: null,
+              historyHasError: false,
+              historyDataLoading: true,
+              historyData: [],
+            ));
+
+            final response = await _storeRepository.postUserTransaction(e.transaction);
+
+            response.fold((error) {
+              emit(state.copyWith(
+                historyError: GenericApiError(
+                  error: error.toString(),
+                  status: "error",
+                ),
+                historyHasError: true,
+                historyDataLoading: false,
+                historyData: [],
+              ));
+            }, (data) {
+              emit(state.copyWith(
+                historyError: null,
+                historyHasError: false,
+                historyDataLoading: false,
+                historyData: state.historyData..add(data),
+              ));
+            });
             return null;
           },
           updateHistory: (e) {
-            return null;
+            throw UnimplementedError();
           },
-          deleteHistory: (e) {
+          deleteHistory: (e) async {
+            emit(state.copyWith(
+              historyError: null,
+              historyHasError: false,
+              historyDataLoading: true,
+              historyData: [],
+            ));
+
+            final response = await _storeRepository.deleteUserTransaction(e.id);
+
+            response.fold((error) {
+              emit(state.copyWith(
+                historyError: GenericApiError(
+                  error: error.toString(),
+                  status: "error",
+                ),
+                historyHasError: true,
+                historyDataLoading: false,
+                historyData: [],
+              ));
+            }, (data) {
+              emit(
+                state.copyWith(
+                  historyError: null,
+                  historyHasError: false,
+                  historyDataLoading: false,
+                  ticketsData: state.ticketsData
+                    ..removeWhere(
+                      (item) => e.id == item.id.toString(),
+                    ),
+                ),
+              );
+            });
             return null;
           },
 
           ////
-          getPromotion: (e) {
+          getPromotion: (e) async {
+            emit(state.copyWith(
+              promotionError: null,
+              promotionHasError: false,
+              promotionDataLoading: true,
+              promotionData: [],
+            ));
+
+            final response = await _storeRepository.getPromotion(e.resourceId);
+
+            response.fold((error) {
+              emit(state.copyWith(
+                promotionError: GenericApiError(
+                  error: error.toString(),
+                  status: "error",
+                ),
+                promotionHasError: true,
+                promotionDataLoading: false,
+              ));
+            }, (data) {
+              emit(state.copyWith(
+                promotionError: null,
+                promotionHasError: false,
+                promotionDataLoading: false,
+                promotionData: state.promotionData
+                  ..retainWhere((item) => item.id == data.id)
+                  ..add(data),
+              ));
+            });
             return null;
           },
           // getAllPromotions: (e) {
           //   return null;
           // },
           createPromotion: (e) {
-            return null;
+            throw UnimplementedError();
           },
           updatePromotion: (e) {
-            return null;
+            throw UnimplementedError();
           },
           deletePromotion: (e) {
-            return null;
+            throw UnimplementedError();
           },
 
           ///
-          getWallet: (e) {
+          getWallet: (e) async {
+            emit(state.copyWith(
+              walletError: null,
+              walletHasError: false,
+              walletDataLoading: true,
+              walletData: null,
+            ));
+
+            final response = await _storeRepository.getUserWallet(e.resourceId);
+
+            response.fold((error) {
+              emit(state.copyWith(
+                walletError: GenericApiError(
+                  error: error.toString(),
+                  status: "error",
+                ),
+                walletHasError: true,
+                walletDataLoading: false,
+              ));
+            }, (data) {
+              emit(state.copyWith(
+                walletError: null,
+                walletHasError: false,
+                walletDataLoading: false,
+                walletData: data,
+              ));
+            });
             return null;
           },
           createWallet: (e) {
+            throw UnimplementedError();
+          },
+          updateWallet: (e) async {
+            emit(state.copyWith(
+              walletError: null,
+              walletHasError: false,
+              walletDataLoading: true,
+              walletData: null,
+            ));
+
+            final response = await _storeRepository.putUserWallet(e.wallet);
+
+            response.fold((error) {
+              emit(state.copyWith(
+                walletError: GenericApiError(
+                  error: error.toString(),
+                  status: "error",
+                ),
+                walletHasError: true,
+                walletDataLoading: false,
+              ));
+            }, (data) {
+              emit(state.copyWith(
+                walletError: null,
+                walletHasError: false,
+                walletDataLoading: false,
+                walletData: data,
+              ));
+            });
             return null;
           },
-          updateWallet: (e) {
-            return null;
-          },
-          deleteWallet: (e) {
+          deleteWallet: (e) async {
+            emit(state.copyWith(
+              walletError: null,
+              walletHasError: false,
+              walletDataLoading: true,
+              walletData: null,
+            ));
+
+            final response = await _storeRepository.deleteUserWallet(e.resourceId);
+
+            response.fold((error) {
+              emit(state.copyWith(
+                walletError: GenericApiError(
+                  error: error.toString(),
+                  status: "error",
+                ),
+                walletHasError: true,
+                walletDataLoading: false,
+              ));
+            }, (data) {
+              emit(state.copyWith(
+                walletError: null,
+                walletHasError: false,
+                walletDataLoading: false,
+                walletData: null,
+              ));
+            });
             return null;
           },
         ));
@@ -138,7 +559,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
             final response = await _storeRepository.getUserProfile(e.id);
 
-            response.fold((e) {
+            response.fold((error) {
                   emit(state.copyWith());
             }, (data) {
                   emit(state.copyWith());

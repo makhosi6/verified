@@ -15,31 +15,31 @@ class StoreState with _$StoreState {
     required GenericApiError? ticketsError,
     required bool ticketsHasError,
     required bool ticketsDataLoading,
-    required List<HelpTicket>? ticketsData,
+    required List<HelpTicket> ticketsData,
 
     ///
     required GenericApiError? userProfileError,
     required bool userProfileHasError,
     required bool userProfileDataLoading,
-    required List<UserProfile>? userProfileData,
+    required UserProfile? userProfileData,
 
     ///
     required GenericApiError? historyError,
     required bool historyHasError,
     required bool historyDataLoading,
-    required List<TransactionHistory>? historyData,
+    required List<TransactionHistory> historyData,
 
     ///
     required GenericApiError? promotionError,
     required bool promotionHasError,
     required bool promotionDataLoading,
-    required List<Promotion>? promotionData,
+    required List<Promotion> promotionData,
 
     ///
     required GenericApiError? walletError,
     required bool walletHasError,
     required bool walletDataLoading,
-    required List<Wallet>? walletData,
+    required Wallet? walletData,
   }) = _StoreState;
 
   factory StoreState.initial() => const StoreState(
@@ -55,7 +55,7 @@ class StoreState with _$StoreState {
         ticketsError: null,
         ticketsHasError: false,
         ticketsDataLoading: false,
-        ticketsData: null,
+        ticketsData: [],
 
         /// on app start
         userProfileError: null,
@@ -67,13 +67,13 @@ class StoreState with _$StoreState {
         historyError: null,
         historyHasError: false,
         historyDataLoading: false,
-        historyData: null,
+        historyData: [],
 
         ///
         promotionError: null,
         promotionHasError: false,
         promotionDataLoading: false,
-        promotionData: null,
+        promotionData: [],
 
         ///
         walletError: null,
