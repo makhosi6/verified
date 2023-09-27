@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:verify_sa/helpers/security/nonce.private.dart';
+import 'package:verify_sa/application/store/store_bloc.dart';
+import 'package:verify_sa/helpers/security/nonce.dart';
+import 'package:verify_sa/infrastructure/store/repository.dart';
 import 'package:verify_sa/infrastructure/verifysa/repository.dart';
 import 'package:verify_sa/presentation/pages/home_page.dart';
 import 'package:verify_sa/presentation/theme.dart';
@@ -37,15 +39,15 @@ void main() {
               ),
             ),
           ),
-          BlocProvider<VerifySaBloc>(
-            create: (BuildContext context) => VerifySaBloc(
-              VerifySaRepository(
-                VerifySaDioClientService.instance,
+          BlocProvider<StoreBloc>(
+            create: (BuildContext context) => StoreBloc(
+              StoreRepository(
+                StoreDioClientService.instance,
               ),
             ),
           ),
         ],
-        child: const MyApp(),
+        child: const AppRoot(),
       ),
     );
 
@@ -59,14 +61,14 @@ void main() {
 
 // https://api.flutter.dev/flutter/material/SliverAppBar-class.html
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class AppRoot extends StatefulWidget {
+  const AppRoot({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<AppRoot> createState() => _AppRootState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _AppRootState extends State<AppRoot> {
   String title = "_";
 
   @override

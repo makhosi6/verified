@@ -42,7 +42,7 @@ class StoreRepository implements IStoreRepository {
 
   Future<Either<GenericApiError, GenericResponse>> _genericDeleteRequest(String collection, String id) async {
     try {
-      var headers = {'x-nonce': generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
+      var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
 
       var response = await httpClient.delete(
         '$collection/resource/$id',
@@ -74,53 +74,55 @@ class StoreRepository implements IStoreRepository {
 
   ///
   @override
-  Future<Either<Exception, HelpTicket>> getTicket(String id) async =>
-      await _genericGetRequest<HelpTicket>("ticket", id);
+  Future<Either<Exception, HelpTicket>> getTicket(String resourceId) async =>
+      await _genericGetRequest<HelpTicket>("ticket", resourceId);
   @override
-  Future<Either<Exception, UserProfile>> getUserProfile(String id) async =>
-      await _genericGetRequest<UserProfile>("profile", id);
+  Future<Either<Exception, UserProfile>> getUserProfile(String userId) async =>
+      await _genericGetRequest<UserProfile>("profile", userId);
 
   @override
-  Future<Either<Exception, Promotion>> getUserPromotion(String id) async =>
-      await _genericGetRequest<Promotion>("promotion", id);
+  Future<Either<Exception, Promotion>> getPromotion(String resourceId) async =>
+      await _genericGetRequest<Promotion>("promotion", resourceId);
 
   @override
-  Future<Either<Exception, TransactionHistory>> getUserTransaction(String id) async =>
+  Future<Either<Exception, TransactionHistory>> getUserTransaction(String resourceId) async =>
       await _genericGetRequest<TransactionHistory>(
         "history",
-        id,
+        resourceId,
       );
 
   @override
-  Future<Either<Exception, Wallet>> getUserWallet(String id) async => await _genericGetRequest<Wallet>(
-        "wallet",
-        id,
-      );
+  Future<Either<Exception, Wallet>> getUserWallet(String resourceId) async =>
+      await _genericGetRequest<Wallet>("wallet", resourceId);
 
   ///
+  // @override
+  // Future<Either<Exception, dynamic>> getAllUserPromotions(String userId) async =>
+  //     await _genericGetAllRequest<Promotion>(
+  //       collection: "promotion",
+  //       resourceId: null,
+  //       userId: userId,
+  //     );
   @override
-  Future<Either<Exception, dynamic>> getAllUserPromotions(String userId) async => await _genericGetRequest<Promotion>(
-        "promotion",
-        userId,
-      );
-  @override
-  Future<Either<Exception, dynamic>> getAllTickets(String userId) async => await _genericGetRequest<HelpRequest>(
-        "ticket",
-        userId,
-      );
-
-  @override
-  Future<Either<Exception, dynamic>> getAllUserTransaction(String userId) async =>
-      await _genericGetRequest<TransactionHistory>(
-        "history",
-        userId,
+  Future<Either<Exception, dynamic>> getAllTickets(String userId) async => await _genericGetAllRequest<HelpRequest>(
+        collection: "ticket",
+        resourceId: null,
+        userId: userId,
       );
 
-  Future<Either<Exception, T>> _genericGetRequest<T extends Object>(String collection, String? id) async {
+  @override
+  Future<Either<Exception, List<TransactionHistory>>> getAllUserTransaction(String userId) async =>
+      await _genericGetAllRequest<TransactionHistory>(
+        collection: "history",
+        resourceId: null,
+        userId: userId,
+      );
+
+  Future<Either<Exception, T>> _genericGetRequest<T extends Object>(String collection, String resourceId) async {
     try {
-      var headers = {'x-nonce': generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
+      var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
       var response = await httpClient.get(
-        '$collection/resource/${id ?? ""}',
+        '$collection/resource/$resourceId',
         options: Options(
           method: 'GET',
           headers: headers,
@@ -128,17 +130,41 @@ class StoreRepository implements IStoreRepository {
       );
 
       if (httpRequestIsSuccess(response.statusCode)) {
-        if (response.data is Map) {
-          return right(
-            T.fromJson(response.data),
-          );
-        } else {
-          return right(
-            response.data.map(
-              (item) async => await T.fromJson(item),
-            ) as T,
-          );
-        }
+        return right(
+          T.fromJson(response.data),
+        );
+      }
+
+      return left(
+        Exception(response.statusMessage),
+      );
+    } catch (e) {
+      return left(
+        Exception(
+          e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<Either<Exception, List<T>>> _genericGetAllRequest<T extends Object>(
+      {required String collection, required String? resourceId, required String? userId}) async {
+    try {
+      var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
+      var response = await httpClient.get(
+        '$collection/resource/${resourceId ?? ""}',
+        options: Options(
+          method: 'GET',
+          headers: headers,
+        ),
+      );
+
+      if (httpRequestIsSuccess(response.statusCode)) {
+        return right(
+          response.data.map(
+            (item) async => await T.fromJson(item),
+          ),
+        );
       }
       return left(
         Exception(response.statusMessage),
@@ -186,7 +212,7 @@ class StoreRepository implements IStoreRepository {
   Future<Either<GenericApiError, T>> _genericPostRequest<T>(String collection, dynamic data) async {
     try {
       var headers = {
-        'x-nonce': generateNonce(),
+        'x-nonce': await generateNonce(),
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $storeApiKey'
       };
@@ -245,7 +271,7 @@ class StoreRepository implements IStoreRepository {
   Future<Either<GenericApiError, T>> _genericPutRequest<T>(String collection, dynamic data) async {
     try {
       var headers = {
-        'x-nonce': generateNonce(),
+        'x-nonce': await generateNonce(),
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $storeApiKey'
       };
@@ -277,7 +303,7 @@ class StoreRepository implements IStoreRepository {
   Future<Either<Exception, GenericResponse>> requestHelp(HelpRequest help) async {
     try {
       var headers = {
-        'x-nonce': generateNonce(),
+        'x-nonce': await generateNonce(),
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $storeApiKey'
       };
@@ -306,7 +332,7 @@ class StoreRepository implements IStoreRepository {
   @override
   Future<ResourceHealthStatus> getHealthStatus() async {
     try {
-      var headers = {'x-nonce': generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
+      var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
       var response = await httpClient.get(
         'health-check',
         options: Options(

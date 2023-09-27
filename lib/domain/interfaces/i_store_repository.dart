@@ -16,28 +16,28 @@ abstract class IStoreRepository {
   /// GET
   Future<Either<Exception, GenericResponse>> requestHelp(HelpRequest help);
   Future<Either<Exception, UserProfile>> getUserProfile(
-    String id,
+    String userId,
   );
   Future<Either<Exception, TransactionHistory>> getUserTransaction(
-    String id,
+    String resourceId,
   );
-  Future<Either<Exception, Promotion>> getUserPromotion(
-    String id,
+  Future<Either<Exception, Promotion>> getPromotion(
+    String resourceId,
   );
   Future<Either<Exception, Wallet>> getUserWallet(
-    String id,
+    String resourceId,
   );
   Future<Either<Exception, HelpTicket>> getTicket(
-    String id,
+    String resourceId,
   );
 
   /// GET ALL
   Future<Either<Exception, dynamic>> getAllUserTransaction(
     String userId,
   );
-  Future<Either<Exception, dynamic>> getAllUserPromotions(
-    String userId,
-  );
+  // Future<Either<Exception, dynamic>> getAllUserPromotions(
+  //   String userId,
+  // );
 
   Future<Either<Exception, dynamic>> getAllTickets(
     String userId,

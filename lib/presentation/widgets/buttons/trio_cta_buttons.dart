@@ -22,7 +22,7 @@ class TrioHomeButtons extends StatelessWidget {
               context: context,
               builder: (context) => const SuccessfulPaymentModal(),
             ),
-            text: "Transfer",
+            text: "Search",
             iconWidget: const Image(
               height: 23.0,
               image: AssetImage("assets/icons/find-icon.png"),

@@ -100,7 +100,7 @@ class VerifySaRepository implements IVerifySaRepository {
   @override
   Future<ResourceHealthStatus> getHealthStatus() async {
     try {
-      var headers = {'x-nonce': generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
+      var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
       var response = await httpClient.get(
         'health-check',
         options: Options(

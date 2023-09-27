@@ -45,7 +45,7 @@ class StoreState with _$StoreState {
   factory StoreState.initial() => const StoreState(
         resourceHealthStatus: ResourceHealthStatus.unknown,
 
-        ///
+        /// on screen using
         getHelpError: null,
         getHelpHasError: false,
         getHelpDataLoading: false,
@@ -57,13 +57,13 @@ class StoreState with _$StoreState {
         ticketsDataLoading: false,
         ticketsData: null,
 
-        ///
+        /// on app start
         userProfileError: null,
         userProfileHasError: false,
         userProfileDataLoading: false,
         userProfileData: null,
 
-        ///
+        /// every screen using
         historyError: null,
         historyHasError: false,
         historyDataLoading: false,

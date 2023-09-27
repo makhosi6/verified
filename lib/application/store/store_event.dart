@@ -8,18 +8,10 @@ class StoreEvent with _$StoreEvent {
   const factory StoreEvent.requestHelp(HelpRequest helpRequest) = RequestHelp;
 
   ///
-  const factory StoreEvent.getUserProfile(
-    String id,
-  ) = GetUserProfile;
-  const factory StoreEvent.createUserProfile(
-    UserProfile user,
-  ) = CreateUserProfile;
-  const factory StoreEvent.updateUserProfile(
-    UserProfile user,
-  ) = UpdateUserProfile;
-  const factory StoreEvent.deleteUserProfile(
-    String id,
-  ) = DeleteUserProfile;
+  const factory StoreEvent.getUserProfile(String id) = GetUserProfile;
+  const factory StoreEvent.createUserProfile(UserProfile user) = CreateUserProfile;
+  const factory StoreEvent.updateUserProfile(UserProfile user) = UpdateUserProfile;
+  const factory StoreEvent.deleteUserProfile(String id) = DeleteUserProfile;
 
   ///
   const factory StoreEvent.getTicket(String id) = GetTicket;
@@ -31,13 +23,13 @@ class StoreEvent with _$StoreEvent {
   ///
   const factory StoreEvent.getHistory(String id) = GetHistory;
   const factory StoreEvent.getAllHistory(String userId) = GetAllHistory;
-  const factory StoreEvent.createHistory(TransactionHistory ttransaction) = CreateHistory;
-  const factory StoreEvent.updateHistory(TransactionHistory ttransaction) = UpdateHistory;
+  const factory StoreEvent.createHistory(TransactionHistory transaction) = CreateHistory;
+  const factory StoreEvent.updateHistory(TransactionHistory transaction) = UpdateHistory;
   const factory StoreEvent.deleteHistory(String id) = DeleteHistory;
 
   ///
   const factory StoreEvent.getPromotion(String id) = GetPromotion;
-  const factory StoreEvent.getAllPromotions(String userId) = GetAllPromotions;
+  // const factory StoreEvent.getAllPromotions(String userId) = GetAllPromotions;
   const factory StoreEvent.createPromotion(Promotion promotion) = CreatePromotion;
   const factory StoreEvent.updatePromotion(Promotion promotion) = UpdatePromotion;
   const factory StoreEvent.deletePromotion(String id) = DeletePromotion;
