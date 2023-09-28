@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:verify_sa/presentation/theme.dart';
-import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 
 class VerifiedErrorPage extends StatelessWidget {
   const VerifiedErrorPage({

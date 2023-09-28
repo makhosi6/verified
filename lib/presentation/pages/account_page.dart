@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:verify_sa/presentation/pages/search_results_page.dart';
-import 'package:verify_sa/presentation/pages/webviews/terms_of_use.dart';
-import 'package:verify_sa/presentation/theme.dart';
-import 'package:verify_sa/presentation/widgets/bank_card/base_card.dart';
-import 'package:verify_sa/presentation/widgets/buttons/app_bar_action_btn.dart';
-import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
-import 'package:verify_sa/presentation/widgets/history/history_list_item.dart';
-import 'package:verify_sa/presentation/widgets/text/list_title.dart';
+import 'package:verified/presentation/pages/search_results_page.dart';
+import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
+import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/widgets/bank_card/base_card.dart';
+import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
+import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verified/presentation/widgets/text/list_title.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -126,8 +125,7 @@ class AccountPageContent extends StatelessWidget {
                                 onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute<void>(
-                                      builder: (BuildContext context) =>
-                                          const SearchResultsPage(),
+                                      builder: (BuildContext context) => const SearchResultsPage(),
                                     ),
                                   );
                                 },
@@ -175,8 +173,7 @@ class AccountPageContent extends StatelessWidget {
                           : (accountSettings[index]["text"] == "title")
                               ? Container(
                                   alignment: Alignment.centerLeft,
-                                  padding:
-                                      primaryPadding.copyWith(bottom: 22.0),
+                                  padding: primaryPadding.copyWith(bottom: 22.0),
                                   child: const ListTitle(
                                     text: 'Account Settings',
                                   ),
@@ -184,25 +181,20 @@ class AccountPageContent extends StatelessWidget {
                               : accountSettings[index]['type'] == 'button'
                                   ? ListTile(
                                       onTap: () {
-                                        if (accountSettings[index]['text'] ==
-                                            "Terms of Use") {
+                                        if (accountSettings[index]['text'] == "Terms of Use") {
                                           Navigator.of(context).push(
                                             MaterialPageRoute<void>(
-                                                builder: (BuildContext
-                                                        context) =>
-                                                    const TermOfUseWebView()),
+                                                builder: (BuildContext context) => const TermOfUseWebView()),
                                           );
                                         }
                                       },
                                       leading: Icon(
-                                        accountSettings[index]['icon']
-                                            as IconData?,
+                                        accountSettings[index]['icon'] as IconData?,
                                         color: primaryColor,
                                         size: 32.0,
                                       ),
                                       title: Text(
-                                        accountSettings[index]['text']
-                                            as String,
+                                        accountSettings[index]['text'] as String,
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w600,
@@ -220,20 +212,17 @@ class AccountPageContent extends StatelessWidget {
                                   : ExpansionTile(
                                       tilePadding: const EdgeInsets.all(0.0),
                                       leading: Icon(
-                                        accountSettings[index]['icon']
-                                            as IconData?,
+                                        accountSettings[index]['icon'] as IconData?,
                                         color: primaryColor,
                                         size: 32.0,
                                       ),
                                       backgroundColor: Colors.grey[100],
                                       collapsedBackgroundColor: Colors.white,
-                                      childrenPadding:
-                                          const EdgeInsets.symmetric(
+                                      childrenPadding: const EdgeInsets.symmetric(
                                         horizontal: 20.0,
                                       ),
                                       title: Text(
-                                        accountSettings[index]['text']
-                                            as String,
+                                        accountSettings[index]['text'] as String,
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w600,
@@ -241,13 +230,10 @@ class AccountPageContent extends StatelessWidget {
                                           fontStyle: FontStyle.normal,
                                         ),
                                       ),
-                                      children: (accountSettings[index]
-                                                  ['text'] ==
-                                              "Personal")
+                                      children: (accountSettings[index]['text'] == "Personal")
                                           ? List.generate(
                                               5,
-                                              (index) =>
-                                                  personalDetailsListItem(
+                                              (index) => personalDetailsListItem(
                                                 key: "Key_$index",
                                                 value: "Value_$index",
                                                 isLast: index == 4,
@@ -255,12 +241,6 @@ class AccountPageContent extends StatelessWidget {
                                             )
                                           : [
                                               const Text('Big Bang'),
-                                              const TransactionListItem(
-                                                n: 2,
-                                              ),
-                                              const TransactionListItem(
-                                                n: 3,
-                                              ),
                                               const Text('Earth is Born'),
                                             ],
                                     ),
@@ -298,31 +278,19 @@ var accountSettings = [
     'text': "Help",
     'icon': Icons.info_outline,
   },
-  {
-    'type': 'expandable',
-    'text': "App Information",
-    'icon': Icons.app_settings_alt_outlined
-  },
+  {'type': 'expandable', 'text': "App Information", 'icon': Icons.app_settings_alt_outlined},
   {
     'type': 'button',
     'text': "Logout",
     'icon': Icons.logout_outlined,
   },
-  {
-    'type': 'expandable',
-    'text': "Privacy &  Security",
-    'icon': Icons.security_outlined
-  },
+  {'type': 'expandable', 'text': "Privacy &  Security", 'icon': Icons.security_outlined},
   {
     'type': 'button',
     'text': "Terms of Use",
     'icon': Icons.article_outlined,
   },
-  {
-    'type': 'button',
-    'text': "Delete Account",
-    'icon': Icons.delete_outline_outlined
-  },
+  {'type': 'button', 'text': "Delete Account", 'icon': Icons.delete_outline_outlined},
   {
     'type': 'space',
     'text': '',
@@ -410,9 +378,7 @@ class _ProfileName extends StatelessWidget {
   }
 }
 
-Widget personalDetailsListItem(
-        {required String key, required String value, bool isLast = false}) =>
-    Container(
+Widget personalDetailsListItem({required String key, required String value, bool isLast = false}) => Container(
       alignment: Alignment.centerLeft,
       padding: const EdgeInsets.only(
         left: 16.0,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:verify_sa/presentation/theme.dart';
-import 'package:verify_sa/presentation/widgets/popups/successful_payment.dart';
+import 'package:verified/presentation/pages/search_options_page.dart';
+import 'package:verified/presentation/pages/transactions_page.dart';
+import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/widgets/popups/successful_payment.dart';
 
 class TrioHomeButtons extends StatelessWidget {
   const TrioHomeButtons({super.key});
@@ -18,9 +20,10 @@ class TrioHomeButtons extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _ClickableItem(
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) => const SuccessfulPaymentModal(),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => const SearchOptionsPage(),
+              ),
             ),
             text: "Search",
             iconWidget: const Image(
@@ -30,7 +33,10 @@ class TrioHomeButtons extends StatelessWidget {
           ),
           _separator,
           _ClickableItem(
-            onTap: () {},
+            onTap: () => showDialog(
+              context: context,
+              builder: (context) => const SuccessfulPaymentModal(),
+            ),
             text: "Top Up",
             iconWidget: const Icon(
               Icons.credit_score_outlined,
@@ -39,7 +45,11 @@ class TrioHomeButtons extends StatelessWidget {
           ),
           _separator,
           _ClickableItem(
-            onTap: () {},
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => const TransactionPage(),
+              ),
+            ),
             text: "History",
             iconWidget: const Icon(
               Icons.history_outlined,

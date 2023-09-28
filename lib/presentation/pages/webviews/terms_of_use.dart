@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:verify_sa/helpers/app_info.dart';
-import 'package:verify_sa/presentation/pages/error_page.dart';
-import 'package:verify_sa/presentation/theme.dart';
-import 'package:verify_sa/presentation/widgets/buttons/app_bar_action_btn.dart';
+import 'package:verified/helpers/app_info.dart';
+import 'package:verified/presentation/pages/error_page.dart';
+import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class TermOfUseWebView extends StatefulWidget {

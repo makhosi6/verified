@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:verify_sa/presentation/pages/input_form_page.dart';
-import 'package:verify_sa/presentation/theme.dart';
-import 'package:verify_sa/presentation/utils/trigger_auth_bottom_sheet.dart';
-import 'package:verify_sa/presentation/widgets/buttons/app_bar_action_btn.dart';
-import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verified/presentation/pages/input_form_page.dart';
+import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/trigger_auth_bottom_sheet.dart';
+import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
+import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 
 class SearchOptionsPage extends StatelessWidget {
   const SearchOptionsPage({super.key});
@@ -54,48 +54,44 @@ class _SearchOptionsPageContent extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          //image
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 20.0),
-                            child: const Image(
-                              image: AssetImage(
-                                  "assets/images/12704419_4968099.jpg"),
-                              height: 230.0,
-                            ),
-                          ),
+                    Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                      //image
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 20.0),
+                        child: const Image(
+                          image: AssetImage("assets/images/12704419_4968099.jpg"),
+                          height: 230.0,
+                        ),
+                      ),
 
-                          ///header for the explainer
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 10.0),
-                            child: Text(
-                              "Payment with QR Code",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 18.0,
-                                fontStyle: FontStyle.normal,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                      ///header for the explainer
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                        child: Text(
+                          "Payment with QR Code",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 18.0,
+                            fontStyle: FontStyle.normal,
                           ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
 
-                          ///and description for the explainer
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 30.0),
-                            child: Text(
-                              "Please put your phone in front of your face Please put your phone in front put your phone in front of your face",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                color: neutralDarkGrey,
-                                fontSize: 14.0,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                      ///and description for the explainer
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        child: Text(
+                          "Please put your phone in front of your face Please put your phone in front put your phone in front of your face",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: neutralDarkGrey,
+                            fontSize: 14.0,
                           ),
-                        ]),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ]),
                     SizedBox(
                       child: Column(
                         children: [
@@ -118,8 +114,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute<void>(
-                                  builder: (BuildContext context) =>
-                                      InputFormPage(
+                                  builder: (BuildContext context) => InputFormPage(
                                     formType: FormType.phoneNumberForm,
                                   ),
                                 ),

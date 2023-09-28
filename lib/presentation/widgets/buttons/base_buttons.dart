@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
-import 'package:verify_sa/presentation/theme.dart';
+import 'package:verified/presentation/theme.dart';
 
 class BaseButton extends StatelessWidget {
   /// width of the button
@@ -59,9 +59,7 @@ class BaseButton extends StatelessWidget {
         margin: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: bgColor,
-          border: hasBorderLining
-              ? Border.all(color: neutralGrey, width: 2.0)
-              : null,
+          border: hasBorderLining ? Border.all(color: neutralGrey, width: 2.0) : null,
           borderRadius: BorderRadius.circular(16.0),
         ),
         child: InkWell(

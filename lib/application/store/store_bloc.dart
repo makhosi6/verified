@@ -1,15 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:verify_sa/domain/models/generic_api_error.dart';
-import 'package:verify_sa/domain/models/generic_response.dart';
-import 'package:verify_sa/domain/models/help_request.dart';
-import 'package:verify_sa/domain/models/help_ticket.dart';
-import 'package:verify_sa/domain/models/promotion.dart';
-import 'package:verify_sa/domain/models/resource_health_status_enum.dart';
-import 'package:verify_sa/domain/models/transaction_history.dart';
-import 'package:verify_sa/domain/models/user_profile.dart';
-import 'package:verify_sa/domain/models/wallet.dart';
-import 'package:verify_sa/infrastructure/store/repository.dart';
+import 'package:verified/domain/models/generic_api_error.dart';
+import 'package:verified/domain/models/generic_response.dart';
+import 'package:verified/domain/models/help_request.dart';
+import 'package:verified/domain/models/help_ticket.dart';
+import 'package:verified/domain/models/promotion.dart';
+import 'package:verified/domain/models/resource_health_status_enum.dart';
+import 'package:verified/domain/models/transaction_history.dart';
+import 'package:verified/domain/models/user_profile.dart';
+import 'package:verified/domain/models/wallet.dart';
+import 'package:verified/infrastructure/store/repository.dart';
 
 part 'store_state.dart';
 part 'store_event.dart';
@@ -19,11 +19,9 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
   StoreBloc(this._storeRepository) : super(StoreState.initial()) {
     on<StoreEvent>((event, emit) async => event.map(
           apiHealthCheck: (e) async {
-            final resourceHealthStatus = await _storeRepository.getHealthStatus();
-
             emit(
               state.copyWith(
-                resourceHealthStatus: resourceHealthStatus,
+                resourceHealthStatus: await _storeRepository.getHealthStatus(),
               ),
             );
 
@@ -35,8 +33,8 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             emit(
               state.copyWith(
                 getHelpHasError: false,
+                getHelpError: null,
                 getHelpDataLoading: true,
-                getHelpData: null,
               ),
             );
 
@@ -51,7 +49,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                     status: "error",
                   ),
                   getHelpDataLoading: false,
-                  getHelpData: null,
                 ),
               );
             }, (data) {
@@ -70,27 +67,30 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             emit(state.copyWith(
               userProfileError: null,
               userProfileHasError: false,
+              userProfileData: null,
               userProfileDataLoading: true,
             ));
 
             final response = await _storeRepository.getUserProfile(e.userId);
-
             response.fold((error) {
-              emit(state.copyWith(
+              emit(
+                state.copyWith(
                   userProfileError: GenericApiError(
                     error: error.toString(),
                     status: "error",
                   ),
                   userProfileHasError: false,
                   userProfileDataLoading: false,
-                  userProfileData: null));
+                ),
+              );
             }, (data) {
               emit(
                 state.copyWith(
-                    userProfileError: null,
-                    userProfileHasError: false,
-                    userProfileDataLoading: false,
-                    userProfileData: data),
+                  userProfileError: null,
+                  userProfileHasError: false,
+                  userProfileDataLoading: false,
+                  userProfileData: data,
+                ),
               );
             });
             return null;
@@ -147,7 +147,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                   ),
                   userProfileHasError: true,
                   userProfileDataLoading: false,
-                  userProfileData: null,
                 ),
               );
             }, (data) {
@@ -207,7 +206,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               ticketsError: null,
               ticketsHasError: false,
               ticketsDataLoading: true,
-              ticketsData: [],
             ));
 
             final response = await _storeRepository.getAllTickets(e.userId);
@@ -220,7 +218,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 ),
                 ticketsHasError: true,
                 ticketsDataLoading: false,
-                ticketsData: [],
               ));
             }, (data) {
               emit(state.copyWith(
@@ -234,12 +231,13 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             return null;
           },
           createTicket: (e) async {
-            emit(state.copyWith(
-              ticketsError: null,
-              ticketsHasError: false,
-              ticketsDataLoading: true,
-              ticketsData: [],
-            ));
+            emit(
+              state.copyWith(
+                ticketsError: null,
+                ticketsHasError: false,
+                ticketsDataLoading: true,
+              ),
+            );
 
             final response = await _storeRepository.postHelpTicket(e.helpTicket);
 
@@ -252,7 +250,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                   ),
                   ticketsHasError: true,
                   ticketsDataLoading: false,
-                  ticketsData: [],
                 ),
               );
             }, (data) {
@@ -275,7 +272,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               ticketsError: null,
               ticketsHasError: false,
               ticketsDataLoading: true,
-              ticketsData: [],
             ));
 
             final response = await _storeRepository.deleteHelpTicket(e.resourceId);
@@ -289,7 +285,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                   ),
                   ticketsHasError: true,
                   ticketsDataLoading: false,
-                  ticketsData: [],
                 ),
               );
             }, (data) {
@@ -317,7 +312,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               historyError: null,
               historyHasError: false,
               historyDataLoading: true,
-              historyData: [],
             ));
 
             final response = await _storeRepository.getAllUserTransaction(e.userId);
@@ -330,7 +324,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 ),
                 historyHasError: true,
                 historyDataLoading: false,
-                historyData: [],
               ));
             }, (data) {
               emit(state.copyWith(
@@ -347,7 +340,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               historyError: null,
               historyHasError: false,
               historyDataLoading: true,
-              historyData: [],
             ));
 
             final response = await _storeRepository.postUserTransaction(e.transaction);
@@ -360,7 +352,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 ),
                 historyHasError: true,
                 historyDataLoading: false,
-                historyData: [],
               ));
             }, (data) {
               emit(state.copyWith(
@@ -380,7 +371,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               historyError: null,
               historyHasError: false,
               historyDataLoading: true,
-              historyData: [],
             ));
 
             final response = await _storeRepository.deleteUserTransaction(e.id);
@@ -393,7 +383,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 ),
                 historyHasError: true,
                 historyDataLoading: false,
-                historyData: [],
               ));
             }, (data) {
               emit(
@@ -417,7 +406,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               promotionError: null,
               promotionHasError: false,
               promotionDataLoading: true,
-              promotionData: [],
             ));
 
             final response = await _storeRepository.getPromotion(e.resourceId);
@@ -458,12 +446,13 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
           ///
           getWallet: (e) async {
-            emit(state.copyWith(
-              walletError: null,
-              walletHasError: false,
-              walletDataLoading: true,
-              walletData: null,
-            ));
+            emit(
+              state.copyWith(
+                walletError: null,
+                walletHasError: false,
+                walletDataLoading: true,
+              ),
+            );
 
             final response = await _storeRepository.getUserWallet(e.resourceId);
 
@@ -494,7 +483,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               walletError: null,
               walletHasError: false,
               walletDataLoading: true,
-              walletData: null,
             ));
 
             final response = await _storeRepository.putUserWallet(e.wallet);
@@ -523,27 +511,30 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               walletError: null,
               walletHasError: false,
               walletDataLoading: true,
-              walletData: null,
             ));
 
             final response = await _storeRepository.deleteUserWallet(e.resourceId);
 
             response.fold((error) {
-              emit(state.copyWith(
-                walletError: GenericApiError(
-                  error: error.toString(),
-                  status: "error",
+              emit(
+                state.copyWith(
+                  walletError: GenericApiError(
+                    error: error.toString(),
+                    status: "error",
+                  ),
+                  walletHasError: true,
+                  walletDataLoading: false,
                 ),
-                walletHasError: true,
-                walletDataLoading: false,
-              ));
+              );
             }, (data) {
-              emit(state.copyWith(
-                walletError: null,
-                walletHasError: false,
-                walletDataLoading: false,
-                walletData: null,
-              ));
+              emit(
+                state.copyWith(
+                  walletError: null,
+                  walletHasError: false,
+                  walletDataLoading: false,
+                  walletData: null,
+                ),
+              );
             });
             return null;
           },
@@ -551,18 +542,3 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
   }
   final StoreRepository _storeRepository;
 }
-
-
-/**
- * 
-           emit(state.copyWith());
-
-            final response = await _storeRepository.getUserProfile(e.id);
-
-            response.fold((error) {
-                  emit(state.copyWith());
-            }, (data) {
-                  emit(state.copyWith());
-            });
- * 
- */

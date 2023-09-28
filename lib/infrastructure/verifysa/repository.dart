@@ -1,14 +1,14 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:verify_sa/app_config.dart';
-import 'package:verify_sa/domain/interfaces/i_verify_sa_repository.dart';
-import 'package:verify_sa/domain/models/contact_tracing_response.dart';
-import 'package:verify_sa/domain/models/dha_image_response.dart';
-import 'package:verify_sa/domain/models/enquiry_reason.dart';
-import 'package:verify_sa/domain/models/resource_health_status_enum.dart';
-import 'package:verify_sa/domain/models/verify_id_response.dart';
-import 'package:verify_sa/helpers/security/nonce.dart';
-import 'package:verify_sa/services/dio.dart';
+import 'package:verified/app_config.dart';
+import 'package:verified/domain/interfaces/i_verify_sa_repository.dart';
+import 'package:verified/domain/models/contact_tracing_response.dart';
+import 'package:verified/domain/models/dha_image_response.dart';
+import 'package:verified/domain/models/enquiry_reason.dart';
+import 'package:verified/domain/models/resource_health_status_enum.dart';
+import 'package:verified/domain/models/verify_id_response.dart';
+import 'package:verified/helpers/security/nonce.dart';
+import 'package:verified/services/dio.dart';
 
 class VerifySaRepository implements IVerifySaRepository {
   final Dio httpClient;

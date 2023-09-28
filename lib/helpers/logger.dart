@@ -1,5 +1,6 @@
-T verifiedErrorLogger<T>(dynamic e) {
-  print(e);
+import 'package:flutter/material.dart';
 
-  return Object() as T;
+void verifiedErrorLogger(dynamic e) {
+  debugPrint("CENTRAL LOG FUNCTION");
+  debugPrint(e.toString());
 }

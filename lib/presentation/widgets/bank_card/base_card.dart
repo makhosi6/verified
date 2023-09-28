@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:verify_sa/presentation/theme.dart';
+import 'package:verified/presentation/theme.dart';
 
 class BaseBankCard extends StatelessWidget {
   final BankCardSize? size;
@@ -60,8 +60,7 @@ class BaseBankCard extends StatelessWidget {
 
             /// middle part - card number
             Padding(
-              padding: EdgeInsets.only(
-                  top: 16.0, bottom: size == BankCardSize.short ? 16.0 : .0),
+              padding: EdgeInsets.only(top: 16.0, bottom: size == BankCardSize.short ? 16.0 : .0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [

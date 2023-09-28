@@ -2,10 +2,10 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polygon/flutter_polygon.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:verify_sa/presentation/theme.dart';
-import 'package:verify_sa/presentation/utils/dotted_line.dart';
-import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
-import 'package:verify_sa/presentation/widgets/history/history_list_item.dart';
+import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/dotted_line.dart';
+import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verified/presentation/widgets/history/history_list_item.dart';
 
 class SuccessfulPaymentModal extends StatefulWidget {
   const SuccessfulPaymentModal({super.key});
@@ -123,6 +123,9 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                     bgColor: neutralGrey,
                     leadingIcon: Icons.rocket_launch_outlined,
                     leadingBgColor: primaryColor,
+                    title: 'TItLe',
+                    subtitle: "Subtttitle",
+                    onTap: () {},
                   ),
 
                   Padding(
@@ -153,16 +156,9 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
           alignment: Alignment.topCenter,
           child: ConfettiWidget(
             confettiController: _controllerCenter,
-            blastDirectionality: BlastDirectionality
-                .explosive, // don't specify a direction, blast randomly
+            blastDirectionality: BlastDirectionality.explosive, // don't specify a direction, blast randomly
             shouldLoop: false,
-            colors: const [
-              Colors.green,
-              Colors.blue,
-              Colors.pink,
-              Colors.orange,
-              Colors.purple
-            ],
+            colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange, Colors.purple],
           ),
         ),
       ],

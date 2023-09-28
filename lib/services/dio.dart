@@ -1,16 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:verify_sa/app_config.dart';
+import 'package:verified/app_config.dart';
 
 class VerifySaDioClientService {
   /// instance of dio (singleton)
   static Dio instance = Dio(
-    BaseOptions(baseUrl: 'https://api.example.co.za/webservice/api/v1', headers: {
-      'Authorization': 'Bearer $verifySaApiKey',
-      'Accept': 'application/json',
-    }, queryParameters: {
-      'api_key': verifySaApiKey
-    }),
+    BaseOptions(
+      baseUrl: 'https://api.example.co.za/webservice/api/v1',
+      headers: {
+        'Authorization': 'Bearer $verifySaApiKey',
+        'Accept': 'application/json',
+      },
+    ),
   )..interceptors.addAll(interceptors);
 
   static List<Interceptor> interceptors = [
@@ -52,12 +53,13 @@ class VerifySaDioClientService {
 class StoreDioClientService {
   /// instance of dio (singleton)
   static Dio instance = Dio(
-    BaseOptions(baseUrl: 'http://localhost:4343/api/v1/', headers: {
-      'Authorization': 'Bearer $storeApiKey',
-      'Accept': 'application/json',
-    }, queryParameters: {
-      'api_key': storeApiKey
-    }),
+    BaseOptions(
+      baseUrl: 'http://localhost:4343/api/v1/',
+      headers: {
+        'Authorization': 'Bearer $storeApiKey',
+        'Accept': 'application/json',
+      },
+    ),
   )..interceptors.addAll(interceptors);
 
   static List<Interceptor> interceptors = [
@@ -97,10 +99,14 @@ class StoreDioClientService {
 }
 
 /// HTTP request is a success
-bool httpRequestIsSuccess(int? status) => switch (status) {
-      200 => true,
-      201 => true,
-      204 => true,
-      304 => true,
-      _ => false,
-    };
+bool httpRequestIsSuccess(int? status) {
+  print("STATUS: $status");
+
+  return switch (status) {
+    200 => true,
+    201 => true,
+    204 => true,
+    304 => true,
+    _ => false,
+  };
+}

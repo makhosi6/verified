@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:verify_sa/presentation/theme.dart';
+import 'package:verified/presentation/theme.dart';
 
 class ActionButton extends StatelessWidget {
   final Color iconColor;
@@ -34,11 +34,7 @@ class ActionButton extends StatelessWidget {
             color: bgColor,
             borderRadius: BorderRadius.circular(12.0),
             border: Border.all(
-                color: borderColor ??
-                    ((bgColor == Colors.white)
-                        ? neutralGrey
-                        : const Color(0xFFC5FFEE)),
-                width: 2.0),
+                color: borderColor ?? ((bgColor == Colors.white) ? neutralGrey : const Color(0xFFC5FFEE)), width: 2.0),
             boxShadow: [
               BoxShadow(
                 color: neutralGrey,

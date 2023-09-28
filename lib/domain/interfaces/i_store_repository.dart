@@ -1,13 +1,13 @@
 import 'package:dartz/dartz.dart';
-import 'package:verify_sa/domain/models/generic_api_error.dart';
-import 'package:verify_sa/domain/models/generic_response.dart';
-import 'package:verify_sa/domain/models/help_request.dart';
-import 'package:verify_sa/domain/models/help_ticket.dart';
-import 'package:verify_sa/domain/models/promotion.dart';
-import 'package:verify_sa/domain/models/resource_health_status_enum.dart';
-import 'package:verify_sa/domain/models/transaction_history.dart';
-import 'package:verify_sa/domain/models/user_profile.dart';
-import 'package:verify_sa/domain/models/wallet.dart';
+import 'package:verified/domain/models/generic_api_error.dart';
+import 'package:verified/domain/models/generic_response.dart';
+import 'package:verified/domain/models/help_request.dart';
+import 'package:verified/domain/models/help_ticket.dart';
+import 'package:verified/domain/models/promotion.dart';
+import 'package:verified/domain/models/resource_health_status_enum.dart';
+import 'package:verified/domain/models/transaction_history.dart';
+import 'package:verified/domain/models/user_profile.dart';
+import 'package:verified/domain/models/wallet.dart';
 
 abstract class IStoreRepository {
   /// Get HEaLTH StaTUS

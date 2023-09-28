@@ -1,13 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:flutter/material.dart';
-import 'package:verify_sa/helpers/logger.dart';
+import 'package:verified/helpers/logger.dart';
 
-import 'package:verify_sa/presentation/pages/search_options_page.dart';
-import 'package:verify_sa/presentation/theme.dart';
-import 'package:verify_sa/presentation/widgets/buttons/app_bar_action_btn.dart';
-import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
-import 'package:verify_sa/presentation/widgets/inputs/generic_input.dart';
+import 'package:verified/presentation/pages/search_options_page.dart';
+import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
+import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verified/presentation/widgets/inputs/generic_input.dart';
 
 // ignore: must_be_immutable
 class InputFormPage extends StatelessWidget {
@@ -51,8 +51,7 @@ class InputFormPage extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
-                              const SearchOptionsPage(),
+                          builder: (BuildContext context) => const SearchOptionsPage(),
                         ),
                       );
                     },
@@ -129,7 +128,7 @@ List<Widget> getWidgets(FormType formType) {
       ),
     ];
   } catch (err) {
-    verifiedErrorLogger<void>(err);
+    verifiedErrorLogger(err);
     return [];
   }
 }

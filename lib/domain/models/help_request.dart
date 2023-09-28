@@ -11,17 +11,16 @@ class HelpRequest {
     profileId = json['profileId'];
     timestamp = json['timestamp'];
     type = json['type'];
-    comment =
-        json['comment'] != null ? Comment.fromJson(json['comment']) : null;
+    comment = json['comment'] != null ? Comment.fromJson(json['comment']) : null;
     preferredCommunicationChannel = json['preferredCommunicationChannel'];
   }
-  num? profileId;
+  String? profileId;
   num? timestamp;
   String? type;
   Comment? comment;
   String? preferredCommunicationChannel;
   HelpRequest copyWith({
-    num? profileId,
+    String? profileId,
     num? timestamp,
     String? type,
     Comment? comment,
@@ -32,8 +31,7 @@ class HelpRequest {
         timestamp: timestamp ?? this.timestamp,
         type: type ?? this.type,
         comment: comment ?? this.comment,
-        preferredCommunicationChannel:
-            preferredCommunicationChannel ?? this.preferredCommunicationChannel,
+        preferredCommunicationChannel: preferredCommunicationChannel ?? this.preferredCommunicationChannel,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

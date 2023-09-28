@@ -16,8 +16,7 @@ class HelpTicket {
     timestamp = json['timestamp'];
     isResolved = json['isResolved'];
     type = json['type'];
-    comment =
-    json['comment'] != null ? Comment.fromJson(json['comment']) : null;
+    comment = json['comment'] != null ? Comment.fromJson(json['comment']) : null;
     preferredCommunicationChannel = json['preferredCommunicationChannel'];
     if (json['response'] != null) {
       response = [];
@@ -27,8 +26,8 @@ class HelpTicket {
     }
   }
 
-  num? id;
-  num? profileId;
+  String? id;
+  String? profileId;
   num? timestamp;
   bool? isResolved;
   String? type;
@@ -36,8 +35,9 @@ class HelpTicket {
   String? preferredCommunicationChannel;
   List<Comment>? response;
 
-  HelpTicket copyWith({ num? id,
-    num? profileId,
+  HelpTicket copyWith({
+    String? id,
+    String? profileId,
     num? timestamp,
     bool? isResolved,
     String? type,
@@ -52,8 +52,7 @@ class HelpTicket {
         isResolved: isResolved ?? this.isResolved,
         type: type ?? this.type,
         comment: comment ?? this.comment,
-        preferredCommunicationChannel: preferredCommunicationChannel ??
-            this.preferredCommunicationChannel,
+        preferredCommunicationChannel: preferredCommunicationChannel ?? this.preferredCommunicationChannel,
         response: response ?? this.response,
       );
 
@@ -73,13 +72,13 @@ class HelpTicket {
     }
     return map;
   }
-
 }
 
 class Comment {
   Comment({
-      this.title, 
-      this.body,});
+    this.title,
+    this.body,
+  });
 
   Comment.fromJson(dynamic json) {
     title = json['title'];
@@ -87,16 +86,18 @@ class Comment {
   }
   String? title;
   String? body;
-Comment copyWith({  String? title,
-  String? body,
-}) => Comment(  title: title ?? this.title,
-  body: body ?? this.body,
-);
+  Comment copyWith({
+    String? title,
+    String? body,
+  }) =>
+      Comment(
+        title: title ?? this.title,
+        body: body ?? this.body,
+      );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['title'] = title;
     map['body'] = body;
     return map;
   }
-
 }

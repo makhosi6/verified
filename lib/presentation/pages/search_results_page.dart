@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:verify_sa/presentation/pages/transactions_page.dart';
-import 'package:verify_sa/presentation/theme.dart';
-import 'package:verify_sa/presentation/widgets/buttons/app_bar_action_btn.dart';
-import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
-import 'package:verify_sa/presentation/widgets/history/history_list_item.dart';
-import 'package:verify_sa/presentation/widgets/text/list_title.dart';
+import 'package:verified/presentation/pages/transactions_page.dart';
+import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
+import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verified/presentation/widgets/history/history_list_item.dart';
+import 'package:verified/presentation/widgets/text/list_title.dart';
 
 class SearchResultsPage extends StatelessWidget {
   const SearchResultsPage({super.key});
@@ -118,8 +118,7 @@ class SearchResultsPageContent extends StatelessWidget {
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 childCount: 1001,
-                (_, int index) =>
-                    _renderSliverListItems(_, index, (index == 0)),
+                (_, int index) => _renderSliverListItems(_, index, (index == 0)),
               ),
             ),
           ],

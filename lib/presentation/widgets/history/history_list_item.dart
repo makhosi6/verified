@@ -1,88 +1,140 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:verified/domain/models/transaction_history.dart';
 
-import 'package:verify_sa/presentation/theme.dart';
+import 'package:verified/presentation/theme.dart';
 
 class TransactionListItem extends StatelessWidget {
-  final num n;
+  final TransactionHistory data;
   final bool isThreeLine;
-  const TransactionListItem(
-      {super.key, required this.n, this.isThreeLine = false});
+  const TransactionListItem({super.key, required this.data, this.isThreeLine = false});
 
   @override
   Widget build(BuildContext context) {
-    Widget x;
+    Widget leading;
 
-    if ((n as int).isEven) {
-      x = _LeadingIcon(
-        key: UniqueKey(),
-        icon: Icons.credit_card_outlined,
-        decoratorIcon: Icons.check,
-        decoratorIconBgColor: primaryColor,
-        bgColor: darkerPrimaryColor,
-      );
-    } else if ((n as int).isOdd) {
-      x = _LeadingIcon(
-        key: UniqueKey(),
-        icon: Icons.south_america_outlined,
-        withDecorator: false,
-        decoratorIcon: Icons.check,
-        bgColor: neutralYellow,
-        decoratorIconBgColor: null,
-      );
+    if (data.type == 'credit') {
+      leading = topUpLeadingIcon;
+    } else if (data.type == 'promo') {
+      leading = freeCreditIcon;
+    } else if (data.type == 'debit') {
+      leading = spendLeadingIcon;
     } else {
-      x = _LeadingIcon(
-        key: UniqueKey(),
-        icon: Icons.today_outlined,
-        decoratorIcon: Icons.check,
-        withDecorator: false,
-        decoratorIconBgColor: primaryColor,
-        bgColor: primaryColor,
-      );
+      leading = leadingIcon;
     }
-
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ListTile(
-        contentPadding: EdgeInsets.zero,
-        isThreeLine: isThreeLine,
-        leading: x,
-        title: Text(
-          "R${Random().nextInt(300) + 100} top up successfully added",
-          style: GoogleFonts.dmSans(
-            fontSize: 16.0,
-            fontStyle: FontStyle.normal,
-            fontWeight: FontWeight.w500,
-            color: Colors.black,
-          ),
-        ),
-        subtitle: Text(
-          "$n:00 AM",
-          style: GoogleFonts.dmSans(
-              fontSize: 12.0,
+    return SizedBox(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListTile(
+          contentPadding: EdgeInsets.zero,
+          isThreeLine: isThreeLine,
+          leading: leading,
+          title: Text(
+            "${data.description}",
+            style: GoogleFonts.dmSans(
+              fontSize: 16.0,
               fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w400,
-              color: neutralDarkGrey),
-        ),
-        trailing: Container(
-          padding: const EdgeInsets.all(4.0),
-          decoration: BoxDecoration(
-            border: Border.all(color: primaryColor, width: 0.5),
-            color: primaryColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8.0),
+              fontWeight: FontWeight.w500,
+              color: Colors.black,
+            ),
           ),
-          child: Text(
-            n.toInt().isEven ? "Promo" : "Info",
-            style: GoogleFonts.dmSans(color: primaryColor),
+          subtitle: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                "ZAR ${data.amount?.floor().toString()}",
+                style: GoogleFonts.dmSans(
+                    fontSize: 12.0, fontStyle: FontStyle.normal, fontWeight: FontWeight.w400, color: neutralDarkGrey),
+              ),
+              (data.details?.query != null)
+                  ? Padding(
+                      padding: const EdgeInsets.only(
+                        left: 12.0,
+                      ),
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: 100.0),
+                        child: Text(
+                          data.details?.query ?? '',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12.0,
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            color: neutralDarkGrey,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 12.0,
+                ),
+                child: Text(
+                  DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(data.timestamp!.toInt() * 1000)),
+                  style: GoogleFonts.dmSans(
+                      fontSize: 12.0, fontStyle: FontStyle.normal, fontWeight: FontWeight.w400, color: neutralDarkGrey),
+                ),
+              ),
+            ],
           ),
+          trailing: (data.type == 'promo')
+              ? Container(
+                  padding: const EdgeInsets.all(4.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: primaryColor, width: 0.5),
+                    color: primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Text(
+                    data.type == 'promo' ? "Promo" : "Info",
+                    style: GoogleFonts.dmSans(color: primaryColor),
+                  ),
+                )
+              : const SizedBox.shrink(),
         ),
       ),
     );
   }
 }
+
+var freeCreditIcon = _LeadingIcon(
+  key: UniqueKey(),
+  discountIndictor: true,
+  icon: Icons.card_giftcard,
+  decoratorIcon: Icons.add,
+  withDecorator: false,
+  decoratorIconBgColor: primaryColor,
+  bgColor: darkerPrimaryColor,
+);
+var topUpLeadingIcon = _LeadingIcon(
+  key: UniqueKey(),
+  icon: Icons.credit_card_outlined,
+  decoratorIcon: Icons.check,
+  decoratorIconBgColor: primaryColor,
+  bgColor: darkerPrimaryColor,
+);
+
+var spendLeadingIcon = _LeadingIcon(
+  key: UniqueKey(),
+  icon: Icons.credit_card,
+  decoratorIcon: Icons.minimize,
+  withDecorator: false,
+  decoratorIconBgColor: neutralYellow,
+  bgColor: neutralYellow,
+);
+
+var leadingIcon = _LeadingIcon(
+  key: UniqueKey(),
+  icon: Icons.south_america_outlined,
+  decoratorIcon: Icons.minimize,
+  withDecorator: false,
+  decoratorIconBgColor: neutralYellow,
+  bgColor: neutralYellow,
+);
 
 enum BannerType { promotion, warning, notification, defualt }
 
@@ -163,21 +215,28 @@ class ListItemBanner extends StatelessWidget {
   final Color? bgColor;
   final IconData? leadingIcon;
   final Color? leadingBgColor;
+  final VoidCallback onTap;
+  final String title;
+  final String subtitle;
+  final String buttonText;
 
   const ListItemBanner({
     super.key,
     this.type = BannerType.defualt,
+    required this.title,
+    required this.subtitle,
+    this.buttonText = "Top up now",
     this.bgColor,
     this.leadingIcon,
     this.leadingBgColor,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          color: bgColor ?? primaryColor.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(16.0)),
+      decoration:
+          BoxDecoration(color: bgColor ?? primaryColor.withOpacity(0.2), borderRadius: BorderRadius.circular(16.0)),
       child: ListTile(
         contentPadding: const EdgeInsets.only(
           top: 8.0,
@@ -191,7 +250,7 @@ class ListItemBanner extends StatelessWidget {
           discountIndictor: true,
         ),
         title: Text(
-          r"$250 top up successfuly added",
+          title,
           style: GoogleFonts.dmSans(
             fontSize: 16.0,
             fontStyle: FontStyle.normal,
@@ -205,7 +264,7 @@ class ListItemBanner extends StatelessWidget {
           children: [
             if (type == BannerType.defualt)
               Text(
-                "8:00 AM",
+                subtitle,
                 style: GoogleFonts.dmSans(
                   fontSize: 12.0,
                   fontStyle: FontStyle.normal,
@@ -214,13 +273,12 @@ class ListItemBanner extends StatelessWidget {
                 ),
               ),
             GestureDetector(
-              onTap: () {},
+              onTap: onTap,
               child: Row(
                 children: [
                   Text(
-                    "Top up now",
-                    style: GoogleFonts.dmSans(
-                        color: leadingBgColor ?? primaryColor),
+                    buttonText,
+                    style: GoogleFonts.dmSans(color: leadingBgColor ?? primaryColor),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -308,8 +366,7 @@ class _LeadingIcon extends StatelessWidget {
               height: 16.0,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50.0),
-                border: Border.all(
-                    color: const Color.fromRGBO(232, 245, 233, 1), width: 3.0),
+                border: Border.all(color: const Color.fromRGBO(232, 245, 233, 1), width: 3.0),
                 color: neutralYellow,
               ),
             ),

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:verify_sa/presentation/theme.dart';
-import 'package:verify_sa/presentation/widgets/buttons/app_bar_action_btn.dart';
-import 'package:verify_sa/presentation/widgets/buttons/base_buttons.dart';
-import 'package:verify_sa/presentation/widgets/history/history_list_item.dart';
-import 'package:verify_sa/presentation/widgets/text/list_title.dart';
+import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
+import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 
 class TransactionPage extends StatelessWidget {
   const TransactionPage({super.key});
@@ -89,7 +88,7 @@ class TransactionPageContent extends StatelessWidget {
                         Padding(
                           padding: primaryPadding.copyWith(left: 0, right: 0),
                           child: const Text(
-                            "Enter your email and we will send you a link to reset your password.",
+                            "A chronological record of all account transactions, including credits, debits, and rewards.",
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: Colors.white,
@@ -111,9 +110,11 @@ class TransactionPageContent extends StatelessWidget {
             ),
             SliverList(
               delegate: SliverChildBuilderDelegate(
-                childCount: 18,
-                (_, int index) =>
-                    _renderSliverListItems(_, index, (index == 0)),
+                childCount: 1,
+                (_, int index) => const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: CombinedHistoryList(),
+                ),
               ),
             ),
           ],
@@ -122,23 +123,3 @@ class TransactionPageContent extends StatelessWidget {
     );
   }
 }
-
-Widget _renderSliverListItems(_, int index, isTitle) => Container(
-      alignment: Alignment.centerLeft,
-      padding: isTitle || index == 5 || index == 12
-          ? const EdgeInsets.only(
-              left: 16.0, right: 16.0, bottom: 12.0, top: 30.0)
-          : const EdgeInsets.symmetric(horizontal: 16.0),
-      child: isTitle || index == 5 || index == 12
-          ? ListTitle(
-              text: index == 12
-                  ? 'Last week'
-                  : index == 5
-                      ? 'Yesterday'
-                      : 'Today',
-            )
-          : TransactionListItem(
-              key: Key("history-list-item-$index"),
-              n: index,
-            ),
-    );
