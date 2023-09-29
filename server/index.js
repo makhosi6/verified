@@ -24,13 +24,11 @@ const profile = jsonServer.router(path.join(__dirname, "db/profile.json"));
 const promotion = jsonServer.router(path.join(__dirname, "db/promotion.json"));
 const wallet = jsonServer.router(path.join(__dirname, "db/wallet.json"));
 
-///setup the logger
-server.use(morgan('combined', {
-  stream: fs.createWriteStream('access.log', {
-    interval: '1d',
-    path: path.join(__dirname, 'log')
-  })
-}))
+
+// setup the logger
+const accessLogStream = fs.createWriteStream(path.join(__dirname + '/log/', 'access.log'), { flags: 'a+' ,   interval: '1d', });
+server.use(morgan('combined', { stream: accessLogStream }))
+
 // Set default middlewares (logger, static, cors and no-cache)
 server.use(defaultMiddleware);
 server.use(jsonServer.bodyParser);

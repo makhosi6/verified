@@ -22,25 +22,25 @@ class CombinedHistoryList extends StatelessWidget {
             child: Column(
               children: [
                 ListItemBanner(
-                  type: BannerType.defualt,
+                  type: BannerType.promotion,
                   bgColor: neutralGrey,
-                  leadingIcon: Icons.rocket_launch_outlined,
+                  leadingIcon: Icons.local_library_outlined,
                   leadingBgColor: primaryColor,
-                  title: "Top-Up and get rewarded with a Free Search.",
-                  subtitle: "Reload with ZAR 50 or more and unlock rewards",
+                  title: "How it Works",
+                  subtitle: "",
+                  buttonText: "Learn More",
                   onTap: () {},
                 ),
                 const SizedBox(
                   height: 20.0,
                 ),
                 ListItemBanner(
-                  type: BannerType.promotion,
+                  type: BannerType.defualt,
                   bgColor: neutralGrey,
                   leadingIcon: Icons.rocket_launch_outlined,
                   leadingBgColor: primaryColor,
-                  title: "How it Works",
+                  title: "Top-Up and get rewarded with a Free Search.",
                   subtitle: "Reload with ZAR 50 or more and unlock rewards",
-                  buttonText: "Learn More",
                   onTap: () {},
                 ),
               ],

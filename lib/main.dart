@@ -1,9 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:verified/app_config.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
+import 'package:verified/domain/models/auth_providers.dart';
 import 'package:verified/domain/models/user_profile.dart';
+import 'package:verified/firebase_options.dart';
 import 'package:verified/helpers/security/nonce.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/store/repository.dart';
@@ -14,7 +19,12 @@ import 'package:verified/services/dio.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
+  // Ideal time to initialize
+  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
   // runZonedGuarded(() async {
   //   /// Fallback page onError
   //   ErrorWidget.builder = (details) => MaterialApp(
@@ -27,29 +37,31 @@ void main() async {
   //           ),
   //         ),
   //       );
-
   ///
   runApp(
-    LocalUser(
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider<VerifySaBloc>(
-            create: (BuildContext context) => VerifySaBloc(
-              VerifySaRepository(
-                VerifySaDioClientService.instance,
-              ),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<VerifySaBloc>(
+          create: (BuildContext context) => VerifySaBloc(
+            VerifySaRepository(
+              VerifySaDioClientService.instance,
             ),
           ),
-          BlocProvider<StoreBloc>(
-            create: (BuildContext context) => StoreBloc(
-              StoreRepository(
-                StoreDioClientService.instance,
-              ),
+        ),
+        BlocProvider<StoreBloc>(
+          create: (BuildContext context) => StoreBloc(
+            StoreRepository(
+              StoreDioClientService.instance,
             ),
           ),
-        ],
-        child: const AppRoot(),
-      ),
+        ),
+        // BlocProvider<AuthBloc>(
+        //   create: (BuildContext context) => AuthBloc(
+        //     AuthRepository(auth),
+        //   ),
+        // ),
+      ],
+      child: const AppRoot(),
     ),
   );
 
@@ -71,25 +83,30 @@ class AppRoot extends StatefulWidget {
 }
 
 class _AppRootState extends State<AppRoot> {
-  String titleLarge = "_";
-
   @override
   void initState() {
     super.initState();
 
     Future.microtask(() async {
-      titleLarge = await generateNonce();
+      debugPrint("NONCE: ${await generateNonce()}");
+      FirebaseAuth.instance.authStateChanges().listen((User? user) {
+        if (user == null) {
+          print('UWser is currently signed out!');
+        } else {
+          print('UWser is signed in!');
+        }
+      });
+
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithProvider(VerifiedAuthProvider.google);
+
+      print(userCredential.user.toString());
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    ///
-    print("NONCE: $titleLarge");
-
-    ///
     return FutureBuilder<UserProfile?>(
-        future: LocalUser.of(context)?.getUser(),
+        future: LocalUser.getUser(),
         builder: (context, snapshot) {
           var user = snapshot.data?.id ?? 'user';
 
@@ -101,7 +118,7 @@ class _AppRootState extends State<AppRoot> {
           return MaterialApp(
             debugShowCheckedModeBanner: kDebugMode || kProfileMode,
             theme: theme,
-            title: titleLarge,
+            title: displayAppName,
             home: BlocBuilder<StoreBloc, StoreState>(
               bloc: context.read<StoreBloc>()
                 ..add(StoreEvent.getUserProfile(user))
