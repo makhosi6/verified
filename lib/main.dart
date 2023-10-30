@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
-import 'package:verified/domain/models/auth_providers.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/firebase_options.dart';
 import 'package:verified/helpers/security/nonce.dart';
@@ -97,9 +96,9 @@ class _AppRootState extends State<AppRoot> {
         }
       });
 
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithProvider(VerifiedAuthProvider.google);
+      // UserCredential userCredential = await FirebaseAuth.instance.signInWithProvider(VerifiedAuthProvider.google);
 
-      print(userCredential.user.toString());
+      // print(userCredential.user.toString());
     });
   }
 
@@ -108,7 +107,7 @@ class _AppRootState extends State<AppRoot> {
     return FutureBuilder<UserProfile?>(
         future: LocalUser.getUser(),
         builder: (context, snapshot) {
-          var user = snapshot.data?.id ?? 'user';
+          var user = snapshot.data?.id ?? '';
 
           if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
             return plApp;

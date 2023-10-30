@@ -86,6 +86,7 @@ class HomePageContents extends StatelessWidget {
                         bgColor: Colors.white,
                         onTap: () async {
                           try {
+                            print("object@@");
                             final userCredential =
                                 await FirebaseAuth.instance.signInWithProvider(VerifiedAuthProvider.google);
                             final user = userCredential.user;

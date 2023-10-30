@@ -64,6 +64,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
           ///
           getUserProfile: (e) async {
+            if (e.userId.isEmpty) return;
             emit(state.copyWith(
               userProfileError: null,
               userProfileHasError: false,
@@ -163,6 +164,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             return null;
           },
           deleteUserProfile: (e) async {
+            if (e.userId.isEmpty) return;
             emit(state.copyWith(
               userProfileError: null,
               userProfileHasError: false,
@@ -202,6 +204,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             throw UnimplementedError();
           },
           getAllTickets: (e) async {
+            if (e.userId.isEmpty) return;
             emit(state.copyWith(
               ticketsError: null,
               ticketsHasError: false,
@@ -268,6 +271,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             throw UnimplementedError();
           },
           deleteTicket: (e) async {
+            if (e.resourceId.isEmpty) return;
             emit(state.copyWith(
               ticketsError: null,
               ticketsHasError: false,
@@ -308,6 +312,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             throw UnimplementedError();
           },
           getAllHistory: (e) async {
+            if (e.userId.isEmpty) return;
             emit(state.copyWith(
               historyError: null,
               historyHasError: false,
@@ -507,6 +512,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             return null;
           },
           deleteWallet: (e) async {
+            if (e.resourceId.isEmpty) return;
             emit(state.copyWith(
               walletError: null,
               walletHasError: false,
