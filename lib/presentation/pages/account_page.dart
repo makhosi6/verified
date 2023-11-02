@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
 import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/bank_card/base_card.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
@@ -123,11 +124,7 @@ class AccountPageContent extends StatelessWidget {
                                 iconColor: Colors.white,
                                 bgColor: neutralYellow,
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute<void>(
-                                      builder: (BuildContext context) => const SearchResultsPage(),
-                                    ),
-                                  );
+                                  navigate(context, page: const SearchResultsPage());
                                 },
                                 icon: Icons.delete_forever_outlined,
                                 borderColor: neutralYellow,

@@ -3,13 +3,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:verified/app_config.dart';
+import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/firebase_options.dart';
 import 'package:verified/helpers/security/nonce.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
+import 'package:verified/infrastructure/auth/repository.dart';
 import 'package:verified/infrastructure/store/repository.dart';
 import 'package:verified/infrastructure/verifysa/repository.dart';
 import 'package:verified/presentation/pages/home_page.dart';
@@ -54,11 +57,11 @@ void main() async {
             ),
           ),
         ),
-        // BlocProvider<AuthBloc>(
-        //   create: (BuildContext context) => AuthBloc(
-        //     AuthRepository(auth),
-        //   ),
-        // ),
+        BlocProvider<AuthBloc>(
+          create: (BuildContext context) => AuthBloc(
+            AuthRepository(FirebaseAuth.instance),
+          ),
+        ),
       ],
       child: const AppRoot(),
     ),
@@ -81,20 +84,23 @@ class AppRoot extends StatefulWidget {
   State<AppRoot> createState() => _AppRootState();
 }
 
-class _AppRootState extends State<AppRoot> {
+class _AppRootState extends State<AppRoot> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
 
     Future.microtask(() async {
       debugPrint("NONCE: ${await generateNonce()}");
-      FirebaseAuth.instance.authStateChanges().listen((User? user) {
-        if (user == null) {
-          print('UWser is currently signed out!');
-        } else {
-          print('UWser is signed in!');
-        }
-      });
+      // FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      //   if (user == null) {
+      //     print(
+      //       'UWser is currently signed out!',
+      //     );
+      //   } else {
+      //     // print(user.toString());
+      //     print('UWser is signed in!');
+      //   }
+      // });
 
       // UserCredential userCredential = await FirebaseAuth.instance.signInWithProvider(VerifiedAuthProvider.google);
 
@@ -124,7 +130,30 @@ class _AppRootState extends State<AppRoot> {
                 ..add(StoreEvent.getAllHistory(user))
                 ..add(StoreEvent.getWallet(user)),
               builder: (context, state) {
-                return const HomePage();
+                return BlocListener<StoreBloc, StoreState>(
+                  listener: (context, state) {
+                    if (state.userProfileDataLoading ||
+                        state.getHelpDataLoading ||
+                        state.historyDataLoading ||
+                        state.promotionDataLoading ||
+                        state.ticketsDataLoading) {
+                      showAppLoader(context);
+                    } else {
+                      hideAppLoader();
+                    }
+                  },
+                  child: BlocListener<AuthBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state.processing) {
+                        showAppLoader(context);
+                      } else {
+                        hideAppLoader();
+                      }
+                    },
+                    bloc: context.read<AuthBloc>()..add(AuthEvent.addUserFromStore(snapshot.data)),
+                    child: const HomePage(),
+                  ),
+                );
               },
             ),
           );
@@ -176,6 +205,17 @@ class _AppRootState extends State<AppRoot> {
     //   n: 2,
     // ),
   ];
+
+  void hideAppLoader() => Loader.hide();
+
+  void showAppLoader(BuildContext context) => Loader.show(
+        context,
+        overlayFromBottom: 80,
+        overlayColor: Colors.black26,
+        progressIndicator: CircularProgressIndicator(
+          backgroundColor: primaryColor,
+        ),
+      );
 }
 
 final plApp = MaterialApp(

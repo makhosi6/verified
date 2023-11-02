@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/presentation/pages/input_form_page.dart';
+import 'package:verified/presentation/pages/search_results_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/trigger_auth_bottom_sheet.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
@@ -39,11 +43,26 @@ class _SearchOptionsPageContent extends StatelessWidget {
                 title: const Text('Verification'),
               ),
               actions: [
-                ActionButton(
-                  iconColor: Colors.black,
-                  bgColor: Colors.white,
-                  onTap: () => triggerAuthBottomSheet(context: context),
-                  icon: Icons.person_2_outlined,
+                BlocListener<AuthBloc, AuthState>(
+                  listener: (context, state) {
+                    if (state.isLoggedIn) {
+                      Navigator.of(context).pop();
+                      navigate(context, page: const SearchResultsPage());
+                    }
+                  },
+                  child: ActionButton(
+                    iconColor: Colors.black,
+                    bgColor: Colors.white,
+                    onTap: () async {
+                      if (!context.read<AuthBloc>().state.isLoggedIn) {
+                        triggerAuthBottomSheet(context: context, redirect: const SearchResultsPage());
+                        return;
+                      }
+                      Navigator.of(context).pop();
+                      navigate(context, page: const SearchResultsPage());
+                    },
+                    icon: Icons.person_2_outlined,
+                  ),
                 ),
               ],
             ),

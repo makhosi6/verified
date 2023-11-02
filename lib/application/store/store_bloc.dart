@@ -451,6 +451,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
           ///
           getWallet: (e) async {
+            if (e.resourceId.isEmpty) return;
             emit(
               state.copyWith(
                 walletError: null,

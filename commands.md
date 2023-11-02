@@ -39,3 +39,6 @@ flutter build web --web-renderer canvaskit
       # DONE
       cd ../;flutter run
   ```
+
+  ## firebase local server
+  - `firebase emulators:start`

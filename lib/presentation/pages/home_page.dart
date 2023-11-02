@@ -1,11 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
-import 'package:verified/domain/models/auth_providers.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/trigger_auth_bottom_sheet.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
@@ -81,48 +81,43 @@ class HomePageContents extends StatelessWidget {
                       title: const Text('Verified'),
                     ),
                     actions: [
+                      // ActionButton(
+                      //   iconColor: Colors.black,
+                      //   bgColor: Colors.white,
+                      //   onTap: () async {
+                      //     try {
+                      // print("object@@");
+                      // final userCredential =
+                      //     await FirebaseAuth.instance.signInWithProvider(VerifiedAuthProvider.google);
+                      // final user = userCredential.user;
+                      // print(user?.uid);
+                      // context.read<AuthBloc>().add(event)
+                      // showDefaultPopUp(
+                      //   context,
+                      //   title: "Close the App?",
+                      //   subtitle: "Are you sure you want to close the App.",
+                      //   confirmBtnText: 'Okay',
+                      //   declineBtnText: 'Nope',
+                      //   onConfirm: () {},
+                      //   onDecline: () {},
+                      // );
+                      //     } catch (e) {
+                      //       print(e);
+                      //     }
+                      //   },
+                      //   icon: Icons.info_outline_rounded,
+                      // ),
                       ActionButton(
                         iconColor: Colors.black,
                         bgColor: Colors.white,
                         onTap: () async {
-                          try {
-                            print("object@@");
-                            final userCredential =
-                                await FirebaseAuth.instance.signInWithProvider(VerifiedAuthProvider.google);
-                            final user = userCredential.user;
-                            print(user?.uid);
-                            // context.read<AuthBloc>().add(event)
-                            // showDefaultPopUp(
-                            //   context,
-                            //   title: "Close the App?",
-                            //   subtitle: "Are you sure you want to close the App.",
-                            //   confirmBtnText: 'Okay',
-                            //   declineBtnText: 'Nope',
-                            //   onConfirm: () {},
-                            //   onDecline: () {},
-                            // );
-                          } catch (e) {
-                            print(e);
-                          }
-                        },
-                        icon: Icons.info_outline_rounded,
-                      ),
-                      ActionButton(
-                        iconColor: Colors.black,
-                        bgColor: Colors.white,
-                        onTap: () {
-                          var user = context.read<StoreBloc>().state.userProfileData;
-
+                          var user = context.read<AuthBloc>().state.userProfile;
+                          var page = const AccountPage();
                           if (user == null) {
-                            triggerAuthBottomSheet(context: context);
-
-                            return;
+                            await triggerAuthBottomSheet(context: context, redirect: page);
+                          } else {
+                            navigate(context, page: page);
                           }
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) => const AccountPage(),
-                            ),
-                          );
                         },
                         icon: Icons.person_2_outlined,
                       ),
