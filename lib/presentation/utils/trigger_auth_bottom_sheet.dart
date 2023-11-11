@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
+import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/auth_providers.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
@@ -16,9 +17,9 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget redirect}) async =>
     showModalBottomSheet(
       context: context,
-      builder: (context) => BlocListener<AuthBloc, AuthState>(
+      builder: (context) => BlocListener<StoreBloc, StoreState>(
         listener: (context, state) {
-          if (!state.processing && state.user != null && state.userProfile != null) {
+          if (!state.userProfileDataLoading && state.userProfileData != null && state.userProfileData != null) {
             Navigator.of(context).pop();
             navigate(context, page: redirect);
           }

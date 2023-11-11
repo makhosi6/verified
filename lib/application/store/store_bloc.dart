@@ -130,6 +130,9 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                   userProfileData: data,
                 ),
               );
+
+              add(const StoreEvent.getAllHistory('logged-in-user'));
+              add(const StoreEvent.getWallet('logged-in-user-wallet'));
             });
 
             return null;
@@ -547,6 +550,13 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           clearUser: (e) {
             emit(StoreState.initial());
 
+            return null;
+          },
+          addUser: (e) {
+            if (e.user == null) return;
+            emit(state.copyWith(
+              userProfileData: e.user,
+            ));
             return null;
           },
         ));

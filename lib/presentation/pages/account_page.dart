@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
+import 'package:verified/infrastructure/native_scripts/main.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
@@ -59,8 +60,8 @@ class AccountPageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.read<AuthBloc>().state.userProfile ?? UserProfile.empty;
-    final wallet = context.read<StoreBloc>().state.walletData;
+    final user = context.watch<StoreBloc>().state.userProfileData ?? UserProfile.empty;
+    final wallet = context.watch<StoreBloc>().state.walletData;
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 500.0),
@@ -218,6 +219,9 @@ class AccountPageContent extends StatelessWidget {
                                           Navigator.of(context)
                                             ..pop()
                                             ..initState();
+
+                                          Future.delayed(const Duration(milliseconds: 500),
+                                              () => VerifiedAppNativeCalls.restartApp());
                                         }
 
                                         // Delete account
@@ -230,6 +234,9 @@ class AccountPageContent extends StatelessWidget {
                                           Navigator.of(context)
                                             ..pop()
                                             ..initState();
+
+                                          Future.delayed(const Duration(milliseconds: 500),
+                                              () => VerifiedAppNativeCalls.restartApp());
                                         }
 
                                         /// Show Terms of Use
@@ -380,7 +387,7 @@ var accountSettings = [
     'text': 'Logout',
     'icon': Icons.logout_outlined,
   },
-  // {'type': 'expandable', 'text': 'Privacy &  Security', 'icon': Icons.security_outlined},
+  {'type': 'expandable', 'text': 'Privacy &  Security', 'icon': Icons.security_outlined},
   {
     'type': 'button',
     'text': 'Terms of Use',

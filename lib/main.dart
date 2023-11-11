@@ -39,9 +39,6 @@ void main() async {
         );
 
     ///
-    final storeInstance = StoreRepository(
-      StoreDioClientService.instance,
-    );
 
     runApp(
       MultiBlocProvider(
@@ -54,14 +51,16 @@ void main() async {
             ),
           ),
           BlocProvider<StoreBloc>(
-            create: (BuildContext context) => StoreBloc(storeInstance),
+            create: (BuildContext context) => StoreBloc(StoreRepository(
+              StoreDioClientService.instance,
+            )),
           ),
           BlocProvider<AuthBloc>(
             create: (BuildContext context) => AuthBloc(
                 AuthRepository(
                   FirebaseAuth.instance,
                 ),
-                storeInstance),
+                context.read<StoreBloc>()),
           ),
         ],
         child: const AppRoot(),
@@ -107,6 +106,7 @@ class _AppRootState extends State<AppRoot> with SingleTickerProviderStateMixin {
               bloc: context.read<StoreBloc>()
                 ..add(StoreEvent.getUserProfile(userId))
                 ..add(StoreEvent.getAllHistory(userId))
+                ..add(StoreEvent.addUser(snapshot.data))
                 ..add(StoreEvent.getWallet(userWalletId)),
               builder: (context, state) {
                 return BlocListener<StoreBloc, StoreState>(
@@ -130,7 +130,6 @@ class _AppRootState extends State<AppRoot> with SingleTickerProviderStateMixin {
                         hideAppLoader();
                       }
                     },
-                    bloc: context.read<AuthBloc>()..add(AuthEvent.addUserFromStore(snapshot.data)),
                     child: RefreshIndicator(
                       key: _refreshIndicatorKey,
                       onRefresh: () => Future<void>.delayed(const Duration(seconds: 4)),

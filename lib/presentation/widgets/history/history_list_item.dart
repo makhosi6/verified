@@ -51,7 +51,7 @@ class TransactionListItem extends StatelessWidget {
                 child: Text(
                   (data.amount != null)
                       ? NumberFormat.currency(locale: 'en_US', symbol: 'ZAR ').format(data.amount).replaceAll('.', ',')
-                      : r'R0,00',
+                      : r'ZAR 0,00',
                   style: GoogleFonts.dmSans(
                     fontSize: 12.0,
                     fontStyle: FontStyle.normal,

@@ -1,5 +1,5 @@
-class VerifiedAppNativeCalls {
-  static Future<bool> restartApp() async => false;
+import 'package:restart_app/restart_app.dart';
 
-  /// PhoenixNative.restartApp();
+class VerifiedAppNativeCalls {
+  static Future<bool> restartApp() async => Restart.restartApp();
 }

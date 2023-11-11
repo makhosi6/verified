@@ -14,8 +14,19 @@ class CombinedHistoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var learnMoreBanner = ListItemBanner(
+      type: BannerType.promotion,
+      bgColor: neutralGrey,
+      leadingIcon: Icons.local_library_outlined,
+      leadingBgColor: primaryColor,
+      title: 'How it Works',
+      subtitle: '',
+      buttonText: 'Learn More',
+      onTap: () {},
+    );
+
     return BlocBuilder<StoreBloc, StoreState>(
-      bloc: context.read<StoreBloc>(),
+      bloc: context.watch<StoreBloc>(),
       builder: (context, state) {
         /// IF TRANSACTION == 0, SHOW A PROMOTION
         if (state.historyData.isEmpty && limit == null) {
@@ -23,16 +34,7 @@ class CombinedHistoryList extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Column(
               children: [
-                ListItemBanner(
-                  type: BannerType.promotion,
-                  bgColor: neutralGrey,
-                  leadingIcon: Icons.local_library_outlined,
-                  leadingBgColor: primaryColor,
-                  title: 'How it Works',
-                  subtitle: '',
-                  buttonText: 'Learn More',
-                  onTap: () {},
-                ),
+                learnMoreBanner,
                 const SizedBox(
                   height: 20.0,
                 ),
@@ -71,6 +73,22 @@ class CombinedHistoryList extends StatelessWidget {
 
         return Column(
           children: [
+            learnMoreBanner,
+            const SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: EdgeInsets.only(top: 28.0),
+                child: Text(
+                  'TRANSACTIONS HISTORY',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontStyle: FontStyle.normal,
+                    fontSize: 18.0,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ),
             if (today.isNotEmpty) HistoryList(key: const Key('history-list-today'), historyList: today, title: 'Today'),
             if (yesterday.isNotEmpty)
               HistoryList(key: const Key('history-list-yesterday'), historyList: yesterday, title: 'yesterday'),
