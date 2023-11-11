@@ -24,7 +24,7 @@ class HistoryList extends StatelessWidget {
         /// list items
         ...historyList.map(
           (item) => TransactionListItem(
-            key: Key("history-list-item-${item.hashCode}"),
+            key: Key('history-list-item-${item.hashCode}'),
             data: item,
           ),
         ),

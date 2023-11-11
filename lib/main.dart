@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -10,11 +12,13 @@ import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/firebase_options.dart';
-import 'package:verified/helpers/security/nonce.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/auth/repository.dart';
 import 'package:verified/infrastructure/store/repository.dart';
 import 'package:verified/infrastructure/verifysa/repository.dart';
+import 'package:verified/presentation/pages/custom_splash_screen.dart';
+import 'package:verified/presentation/pages/error_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/services/dio.dart';
@@ -25,54 +29,51 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Ideal time to initialize
-  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-  // runZonedGuarded(() async {
-  //   /// Fallback page onError
-  //   ErrorWidget.builder = (details) => MaterialApp(
-  //         home: Scaffold(
-  //           appBar: AppBar(
-  //             title: const Text('Error'),
-  //           ),
-  //           body: Center(
-  //             child: Text(details.toString()),
-  //           ),
-  //         ),
-  //       );
   ///
-  runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider<VerifySaBloc>(
-          create: (BuildContext context) => VerifySaBloc(
-            VerifySaRepository(
-              VerifySaDioClientService.instance,
+  if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+
+  runZonedGuarded(() async {
+    /// Fallback page onError
+    ErrorWidget.builder = (details) => MaterialApp(
+          home: VerifiedErrorPage(key: const Key('fallback-error-page'), message: details.summary.toDescription()),
+        );
+
+    ///
+    final storeInstance = StoreRepository(
+      StoreDioClientService.instance,
+    );
+
+    runApp(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<VerifySaBloc>(
+            create: (BuildContext context) => VerifySaBloc(
+              VerifySaRepository(
+                VerifySaDioClientService.instance,
+              ),
             ),
           ),
-        ),
-        BlocProvider<StoreBloc>(
-          create: (BuildContext context) => StoreBloc(
-            StoreRepository(
-              StoreDioClientService.instance,
-            ),
+          BlocProvider<StoreBloc>(
+            create: (BuildContext context) => StoreBloc(storeInstance),
           ),
-        ),
-        BlocProvider<AuthBloc>(
-          create: (BuildContext context) => AuthBloc(
-            AuthRepository(FirebaseAuth.instance),
+          BlocProvider<AuthBloc>(
+            create: (BuildContext context) => AuthBloc(
+                AuthRepository(
+                  FirebaseAuth.instance,
+                ),
+                storeInstance),
           ),
-        ),
-      ],
-      child: const AppRoot(),
-    ),
-  );
+        ],
+        child: const AppRoot(),
+      ),
+    );
 
-  ///
-//   }, (error, stack) {
-//     verifiedErrorLogger(error);
+    ///
+  }, (error, stack) {
+    verifiedErrorLogger(error);
 
-//     /// fb crush
-//   });
+    /// fb crush
+  });
 }
 
 // https://api.flutter.dev/flutter/material/SliverAppBar-class.html
@@ -86,37 +87,15 @@ class AppRoot extends StatefulWidget {
 
 class _AppRootState extends State<AppRoot> with SingleTickerProviderStateMixin {
   @override
-  void initState() {
-    super.initState();
-
-    Future.microtask(() async {
-      debugPrint("NONCE: ${await generateNonce()}");
-      // FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      //   if (user == null) {
-      //     print(
-      //       'UWser is currently signed out!',
-      //     );
-      //   } else {
-      //     // print(user.toString());
-      //     print('UWser is signed in!');
-      //   }
-      // });
-
-      // UserCredential userCredential = await FirebaseAuth.instance.signInWithProvider(VerifiedAuthProvider.google);
-
-      // print(userCredential.user.toString());
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return FutureBuilder<UserProfile?>(
         future: LocalUser.getUser(),
         builder: (context, snapshot) {
-          var user = snapshot.data?.id ?? '';
+          final userId = snapshot.data?.id ?? '';
+          final userWalletId = snapshot.data?.walletId ?? '';
 
           if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
-            return plApp;
+            return const CustomSplashScreen();
           }
 
           /// remove the splash screen
@@ -126,14 +105,15 @@ class _AppRootState extends State<AppRoot> with SingleTickerProviderStateMixin {
             title: displayAppName,
             home: BlocBuilder<StoreBloc, StoreState>(
               bloc: context.read<StoreBloc>()
-                ..add(StoreEvent.getUserProfile(user))
-                ..add(StoreEvent.getAllHistory(user))
-                ..add(StoreEvent.getWallet(user)),
+                ..add(StoreEvent.getUserProfile(userId))
+                ..add(StoreEvent.getAllHistory(userId))
+                ..add(StoreEvent.getWallet(userWalletId)),
               builder: (context, state) {
                 return BlocListener<StoreBloc, StoreState>(
                   listener: (context, state) {
                     if (state.userProfileDataLoading ||
                         state.getHelpDataLoading ||
+                        state.walletDataLoading ||
                         state.historyDataLoading ||
                         state.promotionDataLoading ||
                         state.ticketsDataLoading) {
@@ -151,7 +131,11 @@ class _AppRootState extends State<AppRoot> with SingleTickerProviderStateMixin {
                       }
                     },
                     bloc: context.read<AuthBloc>()..add(AuthEvent.addUserFromStore(snapshot.data)),
-                    child: const HomePage(),
+                    child: RefreshIndicator(
+                      key: _refreshIndicatorKey,
+                      onRefresh: () => Future<void>.delayed(const Duration(seconds: 4)),
+                      child: const HomePage(),
+                    ),
                   ),
                 );
               },
@@ -160,69 +144,25 @@ class _AppRootState extends State<AppRoot> with SingleTickerProviderStateMixin {
         });
   }
 
-  final _widgets = [
-    // Container(
-    //   alignment: Alignment.centerLeft,
-    //   padding: const EdgeInsets.only(top: 20.0, bottom: 8.0),
-    //   child: const ListTitle(
-    //     text: 'YESTERDAy',
-    //   ),
-    // ),
-    // const ListItemBanner(),
-    // const TransactionListItem(
-    //   key: Key("history-list-item-3"),
-    //   n: 3,
-    // ),
-    // const TransactionListItem(
-    //   key: Key("history-list-item-1"),
-    //   n: 1,
-    // ),
-    // const TransactionListItem(
-    //   key: Key("history-list-item-2"),
-    //   n: 2,
-    // ),
-    // const TransactionListItem(
-    //   key: Key("history-list-item-4"),
-    //   n: 4,
-    // ),
-    // Container(
-    //   alignment: Alignment.centerLeft,
-    //   padding: const EdgeInsets.only(top: 20.0, bottom: 8.0),
-    //   child: const ListTitle(
-    //     text: 'LAST month',
-    //   ),
-    // ),
-    // const TransactionListItem(
-    //   key: Key("history-list-item-5"),
-    //   n: 3,
-    // ),
-    // const TransactionListItem(
-    //   key: Key("history-list-item-6"),
-    //   n: 1,
-    // ),
-    // const TransactionListItem(
-    //   key: Key("history-list-item-7"),
-    //   n: 2,
-    // ),
-  ];
+  void hideAppLoader() {
+    /// hide loader option 1
+    Loader.hide();
 
-  void hideAppLoader() => Loader.hide();
+    /// hide loader option 2
+  }
 
-  void showAppLoader(BuildContext context) => Loader.show(
-        context,
-        overlayFromBottom: 80,
-        overlayColor: Colors.black26,
-        progressIndicator: CircularProgressIndicator(
-          backgroundColor: primaryColor,
-        ),
-      );
+  void showAppLoader(BuildContext context) {
+    /// show loader option 1
+    Loader.show(
+      context,
+      overlayFromBottom: 80,
+      overlayColor: const Color.fromARGB(44, 0, 0, 0),
+      progressIndicator: const SizedBox(height: 50, width: 50, child: CircularProgressIndicator()),
+    );
+
+    /// show loader option 2
+    _refreshIndicatorKey.currentState?.show();
+  }
+
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 }
-
-final plApp = MaterialApp(
-  theme: theme,
-  home: const Scaffold(
-    body: Center(
-      child: Text("Loading..."),
-    ),
-  ),
-);

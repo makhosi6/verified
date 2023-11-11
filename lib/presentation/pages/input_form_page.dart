@@ -36,12 +36,12 @@ class InputFormPage extends StatelessWidget {
                 flexibleSpace: AppBar(
                   automaticallyImplyLeading: true,
                   title: Text(
-                    pageCopy[formType.name.toString()]?["pageName"] ?? "Search",
+                    pageCopy[formType.name.toString()]?['pageName'] ?? 'Search',
                   ),
                 ),
                 leadingWidth: 80.0,
                 leading: VerifiedBackButton(
-                    key: Key("${formType.name}-input-form-page-back-btn"),
+                    key: Key('${formType.name}-input-form-page-back-btn'),
                     onTap: Navigator.of(context).pop,
                     isLight: true),
                 actions: [
@@ -72,8 +72,7 @@ class InputFormPage extends StatelessWidget {
     );
   }
 
-  // ignore: prefer_final_fields
-  late List<Widget> _widgets = getWidgets(formType);
+  late final List<Widget> _widgets = getWidgets(formType);
 }
 
 List<Widget> getWidgets(FormType formType) {
@@ -136,26 +135,26 @@ List<Widget> getWidgets(FormType formType) {
 enum FormType { idForm, phoneNumberForm, sarsForm }
 
 final pageCopy = {
-  "idForm": {
-    "formLabel": "ID Form",
-    "formPlaceholderText": "ID Form Placeholder Text",
-    "pageName": "Search by ID No",
-    "pageDescription":
-        "Please put your phone in front of your face Please put your phone in front put your phone in front of your face",
-    "pageButtonName": "Search"
+  'idForm': {
+    'formLabel': 'ID Form',
+    'formPlaceholderText': 'ID Form Placeholder Text',
+    'pageName': 'Search by ID No',
+    'pageDescription':
+        'Please put your phone in front of your face Please put your phone in front put your phone in front of your face',
+    'pageButtonName': 'Search'
   },
-  "phoneNumberForm": {
-    "formLabel": "Phone Number Form",
-    "formPlaceholderText": "Phone Number Form Placeholder Text",
-    "pageName": "Search by Phone No",
-    "pageDescription": "Phone Number Page Description",
-    "pageButtonName": "Search"
+  'phoneNumberForm': {
+    'formLabel': 'Phone Number Form',
+    'formPlaceholderText': 'Phone Number Form Placeholder Text',
+    'pageName': 'Search by Phone No',
+    'pageDescription': 'Phone Number Page Description',
+    'pageButtonName': 'Search'
   },
-  "sarsForm": {
-    "formLabel": "SARS Form",
-    "formPlaceholderText": "SARS Form Placeholder Text",
-    "pageName": "Search by SARS No",
-    "pageDescription": "SARS Page Description",
-    "pageButtonName": "Search"
+  'sarsForm': {
+    'formLabel': 'SARS Form',
+    'formPlaceholderText': 'SARS Form Placeholder Text',
+    'pageName': 'Search by SARS No',
+    'pageDescription': 'SARS Page Description',
+    'pageButtonName': 'Search'
   },
 };

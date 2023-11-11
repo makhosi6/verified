@@ -1,19 +1,38 @@
 class UserProfile {
   UserProfile({
-      this.actualName, 
-      this.active, 
-      this.avatar, 
-      this.softDeleted, 
-      this.displayName, 
-      this.email, 
-      this.id, 
-      this.name, 
-      this.phone, 
-      this.profileId, 
-      this.walletId, 
-      this.historyId, 
-      this.lastLoginAt, 
-      this.accountCreatedAt,});
+    this.actualName,
+    this.active,
+    this.avatar,
+    this.softDeleted,
+    this.displayName,
+    this.email,
+    this.id,
+    this.name,
+    this.phone,
+    this.profileId,
+    this.walletId,
+    this.historyId,
+    this.lastLoginAt,
+    this.accountCreatedAt,
+  });
+
+  static var empty = UserProfile.fromJson({
+    "actualName": "Hello",
+    "active": true,
+    "avatar": null,
+    "softDeleted": null,
+    "displayName": null,
+    "email": "nomail@example.com",
+    "id": "ec87944f-4000-426b-b6f8-6649d6a8a387",
+    "name": "Hello",
+    "phone": null,
+    "profileId": "rEFR3yIt8j3d2FQQX7TrjH7WjFRY",
+    "walletId": null,
+    "historyId": null,
+    "last_login_at": null,
+    "account_created_at": null,
+    "createdAt": 1698947881950
+  });
 
   UserProfile.fromJson(dynamic json) {
     actualName = json['actualName'];
@@ -45,35 +64,38 @@ class UserProfile {
   String? historyId;
   num? lastLoginAt;
   num? accountCreatedAt;
-UserProfile copyWith({  String? actualName,
-  bool? active,
-  String? avatar,
-  bool? softDeleted,
-  String? displayName,
-  String? email,
-  String? id,
-  String? name,
-  String? phone,
-  String? profileId,
-  String? walletId,
-  String? historyId,
-  num? lastLoginAt,
-  num? accountCreatedAt,
-}) => UserProfile(  actualName: actualName ?? this.actualName,
-  active: active ?? this.active,
-  avatar: avatar ?? this.avatar,
-  softDeleted: softDeleted ?? this.softDeleted,
-  displayName: displayName ?? this.displayName,
-  email: email ?? this.email,
-  id: id ?? this.id,
-  name: name ?? this.name,
-  phone: phone ?? this.phone,
-  profileId: profileId ?? this.profileId,
-  walletId: walletId ?? this.walletId,
-  historyId: historyId ?? this.historyId,
-  lastLoginAt: lastLoginAt ?? this.lastLoginAt,
-  accountCreatedAt: accountCreatedAt ?? this.accountCreatedAt,
-);
+  UserProfile copyWith({
+    String? actualName,
+    bool? active,
+    String? avatar,
+    bool? softDeleted,
+    String? displayName,
+    String? email,
+    String? id,
+    String? name,
+    String? phone,
+    String? profileId,
+    String? walletId,
+    String? historyId,
+    num? lastLoginAt,
+    num? accountCreatedAt,
+  }) =>
+      UserProfile(
+        actualName: actualName ?? this.actualName,
+        active: active ?? this.active,
+        avatar: avatar ?? this.avatar,
+        softDeleted: softDeleted ?? this.softDeleted,
+        displayName: displayName ?? this.displayName,
+        email: email ?? this.email,
+        id: id ?? this.id,
+        name: name ?? this.name,
+        phone: phone ?? this.phone,
+        profileId: profileId ?? this.profileId,
+        walletId: walletId ?? this.walletId,
+        historyId: historyId ?? this.historyId,
+        lastLoginAt: lastLoginAt ?? this.lastLoginAt,
+        accountCreatedAt: accountCreatedAt ?? this.accountCreatedAt,
+      );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['actualName'] = actualName;
@@ -92,5 +114,4 @@ UserProfile copyWith({  String? actualName,
     map['account_created_at'] = accountCreatedAt;
     return map;
   }
-
 }

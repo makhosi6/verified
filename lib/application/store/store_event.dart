@@ -39,4 +39,6 @@ class StoreEvent with _$StoreEvent {
   const factory StoreEvent.createWallet(Wallet wallet) = CreateWallet;
   const factory StoreEvent.updateWallet(Wallet wallet) = UpdateWallet;
   const factory StoreEvent.deleteWallet(String resourceId) = DeleteWallet;
+  //
+  const factory StoreEvent.clearUser() = ClearUser;
 }

@@ -1,55 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/presentation/theme.dart';
 
 class Balance extends StatelessWidget {
-  final String? title;
-  const Balance({super.key, this.title});
+  const Balance({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return BlocBuilder<StoreBloc, StoreState>(
+      builder: (context, state) {
+        Wallet? wallet = state.walletData;
+        print('WALLET DATA $state');
+        return Container(
+          padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              //name
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //name
+                  Text(
+                    wallet?.accountHolderName ?? 'Hello',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontStyle: FontStyle.normal,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  // subtitle
+                  Text(
+                    'Your available balance',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      color: neutralDarkGrey,
+                      fontSize: 14.0,
+                    ),
+                  )
+                ],
+              ),
+              //balance
               Text(
-                title ?? "Hello",
-                style: const TextStyle(
+                (wallet?.isoCurrencyCode != null || wallet?.balance != null)
+                    ? NumberFormat.currency(locale: 'en_US', symbol: '${wallet?.isoCurrencyCode} ')
+                        .format(wallet?.balance)
+                        .replaceAll('.', ',')
+                    : r'R0,00',
+                style: GoogleFonts.dmSans(
+                  fontSize: 24.0,
                   fontWeight: FontWeight.w700,
                   fontStyle: FontStyle.normal,
-                  fontSize: 18.0,
                 ),
-              ),
-              // subtitle
-              Text(
-                "Your available balance",
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  color: neutralDarkGrey,
-                  fontSize: 14.0,
-                ),
+                textAlign: TextAlign.right,
               )
             ],
           ),
-          //balance
-          Text(
-            r"$15,901",
-            style: GoogleFonts.dmSans(
-              fontSize: 24.0,
-              fontWeight: FontWeight.w700,
-              fontStyle: FontStyle.normal,
-            ),
-            textAlign: TextAlign.right,
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 }

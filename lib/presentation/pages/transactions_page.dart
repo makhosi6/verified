@@ -14,6 +14,7 @@ class TransactionPage extends StatelessWidget {
       floatingActionButton: Container(
         width: 150.0,
         height: 74.0,
+        margin: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           boxShadow: [
             const BoxShadow(color: Colors.transparent),
@@ -27,12 +28,12 @@ class TransactionPage extends StatelessWidget {
         child: BaseButton(
           key: UniqueKey(),
           onTap: () {},
-          label: "Search & Trace",
+          label: 'Search',
           color: Colors.white,
           iconBgColor: neutralYellow,
           bgColor: neutralYellow,
           buttonIcon: const Image(
-            image: AssetImage("assets/icons/find-icon.png"),
+            image: AssetImage('assets/icons/find-icon.png'),
           ),
           buttonSize: ButtonSize.large,
           hasBorderLining: false,
@@ -88,7 +89,7 @@ class TransactionPageContent extends StatelessWidget {
                         Padding(
                           padding: primaryPadding.copyWith(left: 0, right: 0),
                           child: const Text(
-                            "A chronological record of all account transactions, including credits, debits, and rewards.",
+                            'A chronological record of all account transactions, including credits, debits, and rewards.',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: Colors.white,
@@ -104,7 +105,7 @@ class TransactionPageContent extends StatelessWidget {
               ),
               leadingWidth: 80.0,
               leading: VerifiedBackButton(
-                key: const Key("transactions-page-back-btn"),
+                key: const Key('transactions-page-back-btn'),
                 onTap: () => Navigator.pop(context),
               ),
             ),

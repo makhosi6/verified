@@ -35,12 +35,12 @@ class SearchResultsPage extends StatelessWidget {
                 ),
               );
             },
-            label: "Search & Trace",
+            label: 'Search',
             color: Colors.white,
             iconBgColor: neutralYellow,
             bgColor: neutralYellow,
             buttonIcon: const Image(
-              image: AssetImage("assets/icons/find-icon.png"),
+              image: AssetImage('assets/icons/find-icon.png'),
             ),
             buttonSize: ButtonSize.large,
             hasBorderLining: false,
@@ -95,7 +95,7 @@ class SearchResultsPageContent extends StatelessWidget {
                         Padding(
                           padding: primaryPadding.copyWith(left: 0, right: 0),
                           child: const Text(
-                            "Please put your phone in front",
+                            'Please put your phone in front',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: Colors.white,
@@ -111,7 +111,7 @@ class SearchResultsPageContent extends StatelessWidget {
               ),
               leadingWidth: 80.0,
               leading: VerifiedBackButton(
-                key: const Key("search-results-page-back-btn"),
+                key: const Key('search-results-page-back-btn'),
                 onTap: () => Navigator.pop(context),
               ),
             ),
@@ -142,7 +142,7 @@ Widget _renderSliverListItems(_, int index, isTitle) => Container(
             )
           : Column(
               children: [
-                DataItem(keyName: "keyName_$index", value: "Value_$index"),
+                DataItem(keyName: 'keyName_$index', value: 'Value_$index'),
                 Divider(
                   color: Colors.grey[400],
                   indent: 0,
@@ -154,7 +154,9 @@ Widget _renderSliverListItems(_, int index, isTitle) => Container(
 
 class DataItem extends StatelessWidget {
   final String keyName;
-  final String value;
+
+  /// can be a Widget or String
+  final dynamic value;
   const DataItem({
     super.key,
     required this.keyName,
@@ -172,9 +174,11 @@ class DataItem extends StatelessWidget {
             keyName,
             style: TextStyle(color: neutralDarkGrey, fontSize: 16.0),
           ),
-          Text(
-            value,
-          )
+          value is Widget
+              ? value
+              : Text(
+                  value,
+                )
         ],
       ),
     );

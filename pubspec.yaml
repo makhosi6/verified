@@ -33,6 +33,7 @@ dependencies:
   firebase_core: ^2.16.0
   firebase_auth_platform_interface: 
   flutter_overlay_loader: ^2.0.0
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:

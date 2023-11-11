@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/transaction_history.dart';
 import 'package:verified/presentation/theme.dart';
@@ -8,7 +9,8 @@ import 'package:verified/helpers/extensions/date.dart';
 import 'package:verified/presentation/widgets/history/history_list_item.dart';
 
 class CombinedHistoryList extends StatelessWidget {
-  const CombinedHistoryList({super.key});
+  final int? limit;
+  const CombinedHistoryList({super.key, this.limit});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,7 @@ class CombinedHistoryList extends StatelessWidget {
       bloc: context.read<StoreBloc>(),
       builder: (context, state) {
         /// IF TRANSACTION == 0, SHOW A PROMOTION
-        if (state.historyData.isEmpty) {
+        if (state.historyData.isEmpty && limit == null) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Column(
@@ -26,9 +28,9 @@ class CombinedHistoryList extends StatelessWidget {
                   bgColor: neutralGrey,
                   leadingIcon: Icons.local_library_outlined,
                   leadingBgColor: primaryColor,
-                  title: "How it Works",
-                  subtitle: "",
-                  buttonText: "Learn More",
+                  title: 'How it Works',
+                  subtitle: '',
+                  buttonText: 'Learn More',
                   onTap: () {},
                 ),
                 const SizedBox(
@@ -39,11 +41,22 @@ class CombinedHistoryList extends StatelessWidget {
                   bgColor: neutralGrey,
                   leadingIcon: Icons.rocket_launch_outlined,
                   leadingBgColor: primaryColor,
-                  title: "Top-Up and get rewarded with a Free Search.",
-                  subtitle: "Reload with ZAR 50 or more and unlock rewards",
+                  title: 'Top-Up and get rewarded with a Free Search.',
+                  subtitle: 'Reload with ZAR 50 or more and unlock rewards',
                   onTap: () {},
                 ),
               ],
+            ),
+          );
+        }
+
+        if (state.historyData.isEmpty && limit != null) {
+          return Text(
+            'NO TRANSACTIONS HISTORY',
+            style: GoogleFonts.dmSans(
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w400,
+              color: neutralDarkGrey,
             ),
           );
         }
@@ -63,7 +76,8 @@ class CombinedHistoryList extends StatelessWidget {
               HistoryList(key: const Key('history-list-yesterday'), historyList: yesterday, title: 'yesterday'),
             if (thisMonth.isNotEmpty)
               HistoryList(key: const Key('history-list-this-month'), historyList: thisMonth, title: 'This Month'),
-            if (older.isNotEmpty) HistoryList(key: const Key('history-list-older'), historyList: older, title: 'Older'),
+            if (older.isNotEmpty)
+              HistoryList(key: const Key('history-list-older'), historyList: older, title: 'Older Than A Month'),
           ],
         );
       },
@@ -73,10 +87,10 @@ class CombinedHistoryList extends StatelessWidget {
 
 class HistoryListData {
   HistoryListData();
-  var today = <TransactionHistory>[];
-  var yesterday = <TransactionHistory>[];
-  var thisMonth = <TransactionHistory>[];
-  var older = <TransactionHistory>[];
+  List<TransactionHistory> today = [];
+  List<TransactionHistory> yesterday = [];
+  List<TransactionHistory> thisMonth = [];
+  List<TransactionHistory> older = [];
 
   Map<String, List> toJson() {
     Map<String, List> map = {};

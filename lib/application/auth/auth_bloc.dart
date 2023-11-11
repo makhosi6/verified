@@ -6,87 +6,44 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/auth/repository.dart';
+import 'package:verified/infrastructure/store/repository.dart';
 
 part 'auth_state.dart';
 part 'auth_event.dart';
 part 'auth_bloc.freezed.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc(this._authProviderRepository) : super(AuthState.initial()) {
+  AuthBloc(this._authProviderRepository, this._storeRepository) : super(AuthState.initial()) {
     on<AuthEvent>((event, emit) async {
       if (state.authStateChanges == null) {
         emit(
           state.copyWith(
             authStateChanges: _authProviderRepository.authStateChanges().asBroadcastStream()
               ..listen((user) {
-                Future.microtask(() async {
-                  try {
-                    if (user == null) {
-                      debugPrint('USER is currently signed out!');
-                    } else {
-                      debugPrint('USER is signed in!');
+                try {
+                  if (user != null && state.userProfile == null) {
+                    ///
 
-                      ///set local user
-                      var localUser = await LocalUser.getUser();
-                      LocalUser.setUser(
-                        UserProfile.fromJson(
-                          {
-                            "profileId": user.uid,
-                            "actualName": user.displayName,
-                            "email": user.email,
-                            "name": user.displayName,
-                            ...localUser!.toJson()
-                          },
-                        ),
-                      );
-
-                      /// set bloc user
-                      emit(
-                        state.copyWith(
-                          isLoggedIn: true,
-                          user: user,
-                          userProfile: UserProfile.fromJson({
-                            "profileId": user.uid,
-                            "actualName": user.displayName,
-                            "email": user.email,
-                            "name": user.displayName,
-                          }),
-                        ),
-                      );
-                    }
-                  } catch (e) {
-                    debugPrint(e.toString());
+                    add(AuthEvent.interceptStreamedAuthUser(user));
                   }
-                });
+                } catch (e) {
+                  debugPrint(e.toString());
+                }
               }),
           ),
         );
       }
       await event.map(
         signOut: (e) async {
-          emit(
-            state.copyWith(processing: true, error: null, hasError: false),
-          );
-          await _authProviderRepository.signOut().then((_) {
-            emit(
-              state.copyWith(
-                isLoggedIn: false,
-                processing: false,
-                user: null,
-                userProfile: null,
-              ),
-            );
-          }).onError(
-            (error, stackTrace) {
-              emit(
-                state.copyWith(
-                  error: error,
-                  hasError: true,
-                ),
-              );
-            },
-          );
+          emit(state.copyWith(processing: true, error: null, hasError: false));
+          // sign out
+          await _authProviderRepository.signOut();
 
+          // clear local data
+          await LocalUser.clearUser();
+
+          // update the state
+          emit(AuthState.initial());
           return null;
         },
         signInAnonymously: (e) async {
@@ -100,10 +57,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               isLoggedIn: true,
               user: userCredential.user,
               userProfile: UserProfile.fromJson({
-                "profileId": user?.uid ?? 'user',
-                "actualName": user?.displayName,
-                "email": user?.email,
-                "name": user?.displayName,
+                'id': user?.uid,
+                'profileId': user?.uid,
+                'email': user?.email,
+                'actualName': user?.displayName,
+                'displayName': user?.displayName,
+                'name': user?.displayName,
+                'avatar': user?.photoURL,
+                'phone': user?.phoneNumber,
+                'dataProvider': user?.providerData,
+                'active': true,
+                'softDeleted': false,
               }),
             ),
           );
@@ -121,10 +85,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               isLoggedIn: true,
               user: userCredential.user,
               userProfile: UserProfile.fromJson({
-                "profileId": user?.uid ?? 'user',
-                "actualName": user?.displayName,
-                "email": user?.email,
-                "name": user?.displayName,
+                'id': user?.uid,
+                'profileId': user?.uid,
+                'email': user?.email,
+                'actualName': user?.displayName,
+                'displayName': user?.displayName,
+                'name': user?.displayName,
+                'avatar': user?.photoURL,
+                'phone': user?.phoneNumber,
+                'dataProvider': user?.providerData,
+                'active': true,
+                'softDeleted': false,
+                // if (state.userProfile is UserProfile) ...state.userProfile!.toJson()
               }),
             ),
           );
@@ -136,19 +108,61 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           final userCredential = await _authProviderRepository.signInWithProvider(e.provider);
 
           final user = userCredential.user;
-          emit(
-            state.copyWith(
-              processing: false,
-              isLoggedIn: true,
-              user: userCredential.user,
-              userProfile: UserProfile.fromJson({
-                "profileId": user?.uid ?? 'user',
-                "actualName": user?.displayName,
-                "email": user?.email,
-                "name": user?.displayName,
-              }),
-            ),
-          );
+
+          await _storeRepository
+              .postUserProfile(
+                UserProfile.fromJson({
+                  'id': user?.uid,
+                  'profileId': user?.uid,
+                  'email': user?.email,
+                  'actualName': user?.displayName,
+                  'displayName': user?.displayName,
+                  'name': user?.displayName,
+                  'avatar': user?.photoURL,
+                  'phone': user?.phoneNumber,
+                  'dataProvider': user?.providerData,
+                  'active': true,
+                  'softDeleted': false,
+                  // if (state.userProfile is UserProfile) ...state.userProfile!.toJson()
+                }),
+              )
+              .then((userProfile) => {
+                    userProfile.fold(
+                        (err) => emit(
+                              state.copyWith(
+                                processing: false,
+                                isLoggedIn: true,
+                                user: userCredential.user,
+                                userProfile: UserProfile.fromJson({
+                                  'id': user?.uid,
+                                  'profileId': user?.uid,
+                                  'email': user?.email,
+                                  'actualName': user?.displayName,
+                                  'displayName': user?.displayName,
+                                  'name': user?.displayName,
+                                  'avatar': user?.photoURL,
+                                  'phone': user?.phoneNumber,
+                                  'dataProvider': user?.providerData,
+                                  'active': true,
+                                  'softDeleted': false,
+                                  // if (state.userProfile is UserProfile) ...state.userProfile!.toJson()
+                                }),
+                              ),
+                            ), (data) {
+                      ///
+                      emit(
+                        state.copyWith(
+                          processing: false,
+                          isLoggedIn: true,
+                          user: userCredential.user,
+                          userProfile: data,
+                        ),
+                      );
+
+                      ///
+                      LocalUser.setUser(data);
+                    })
+                  });
         },
         addUserFromStore: (e) {
           var userProfile = e.user;
@@ -162,9 +176,68 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             );
           }
         },
+        interceptStreamedAuthUser: (e) {
+          var user = e.user;
+
+          /// set bloc user
+          emit(
+            state.copyWith(
+              isLoggedIn: true,
+              user: user,
+              userProfile: UserProfile.fromJson({
+                'id': user?.uid,
+                'profileId': user?.uid,
+                'email': user?.email,
+                'actualName': user?.displayName,
+                'displayName': user?.displayName,
+                'name': user?.displayName,
+                'avatar': user?.photoURL,
+                'phone': user?.phoneNumber,
+                'dataProvider': user?.providerData,
+                'active': true,
+                'softDeleted': false,
+                // if (state.userProfile is UserProfile) ...state.userProfile!.toJson()
+              }),
+            ),
+          );
+
+          ///set local user
+          LocalUser.setUser(
+            UserProfile.fromJson(
+              {
+                'id': user?.uid,
+                'profileId': user?.uid,
+                'email': user?.email,
+                'actualName': user?.displayName,
+                'displayName': user?.displayName,
+                'name': user?.displayName,
+                'avatar': user?.photoURL,
+                'phone': user?.phoneNumber,
+                'dataProvider': user?.providerData,
+                'active': true,
+                'softDeleted': false,
+              },
+            ),
+          );
+        },
+        deleteAccount: (e) async {
+          emit(state.copyWith(processing: true, error: null, hasError: false));
+          // sign out
+          await _authProviderRepository.signOut();
+          // clear local data
+          await LocalUser.clearUser();
+
+          // update the state
+          emit(AuthState.initial());
+          return null;
+        },
       );
     });
   }
 
+  ///
   final AuthRepository _authProviderRepository;
+
+  ///
+  final StoreRepository _storeRepository;
 }

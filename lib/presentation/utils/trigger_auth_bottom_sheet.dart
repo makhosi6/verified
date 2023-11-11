@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/domain/models/auth_providers.dart';
+import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
@@ -36,7 +37,7 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
                   child: Column(
                     children: [
                       const Text(
-                        "Sign in to continue",
+                        'Sign in to continue',
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 18.0,
@@ -55,10 +56,10 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
                               ),
                               children: [
                                 const TextSpan(
-                                  text: "New to Verified? ",
+                                  text: 'New to Verified? ',
                                 ),
                                 TextSpan(
-                                  text: "Sign Up",
+                                  text: 'Sign Up',
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () async {
                                       Navigator.of(context).pop();
@@ -70,12 +71,12 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
                                     color: darkerPrimaryColor,
                                   ),
                                 ),
-                                const TextSpan(text: "! \n"),
+                                const TextSpan(text: '! \n'),
                                 const TextSpan(
-                                  text: "Read our ",
+                                  text: 'Read our ',
                                 ),
                                 TextSpan(
-                                  text: "Terms Of Use",
+                                  text: 'Terms Of Use',
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
                                       Navigator.of(context).push(
@@ -110,57 +111,72 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
 /// type = "signin" | "signup"
 List<Widget> buttons(BuildContext context, {required String type}) {
   void handler(AuthProvider provider) => context.read<AuthBloc>().add(AuthEvent.signInWithProvider(provider));
-  final label = type == "signin" ? "Log In" : "Sign Up";
+  final label = type == 'signin' ? 'Log In' : 'Sign Up';
   return [
-    BaseButton(
-      key: UniqueKey(),
-      onTap: () => handler(VerifiedAuthProvider.google),
-      label: "$label with Google",
-      buttonIcon: const Image(
-        image: AssetImage("assets/icons/google.png"),
+    Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: BaseButton(
+        key: UniqueKey(),
+        onTap: () => handler(VerifiedAuthProvider.google),
+        label: '$label with Google',
+        buttonIcon: const Image(
+          image: AssetImage('assets/icons/google.png'),
+        ),
+        buttonSize: ButtonSize.large,
+        hasBorderLining: true,
       ),
-      buttonSize: ButtonSize.large,
-      hasBorderLining: true,
     ),
-    BaseButton(
-      key: UniqueKey(),
-      onTap: () => handler(VerifiedAuthProvider.facebook),
-      label: "$label with Facebook",
-      buttonIcon: const Image(
-        image: AssetImage("assets/icons/facebook.png"),
+    Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: BaseButton(
+        key: UniqueKey(),
+        onTap: () => handler(VerifiedAuthProvider.facebook),
+        label: '$label with Facebook',
+        buttonIcon: const Image(
+          image: AssetImage('assets/icons/facebook.png'),
+        ),
+        buttonSize: ButtonSize.large,
+        hasBorderLining: true,
       ),
-      buttonSize: ButtonSize.large,
-      hasBorderLining: true,
     ),
-    BaseButton(
-      key: UniqueKey(),
-      onTap: () => handler(VerifiedAuthProvider.apple),
-      label: "$label with Apple",
-      buttonIcon: const Image(
-        image: AssetImage("assets/icons/apple.png"),
+    Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: BaseButton(
+        key: UniqueKey(),
+        onTap: () => handler(VerifiedAuthProvider.apple),
+        label: '$label with Apple',
+        buttonIcon: const Image(
+          image: AssetImage('assets/icons/apple.png'),
+        ),
+        buttonSize: ButtonSize.large,
+        hasBorderLining: true,
       ),
-      buttonSize: ButtonSize.large,
-      hasBorderLining: true,
     ),
-    BaseButton(
-      key: UniqueKey(),
-      onTap: () => handler(VerifiedAuthProvider.twitter),
-      label: "$label with Twitter",
-      buttonIcon: const Image(
-        image: AssetImage("assets/icons/twitter.png"),
+    Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: BaseButton(
+        key: UniqueKey(),
+        onTap: () => handler(VerifiedAuthProvider.twitter),
+        label: '$label with Twitter',
+        buttonIcon: const Image(
+          image: AssetImage('assets/icons/twitter.png'),
+        ),
+        buttonSize: ButtonSize.large,
+        hasBorderLining: true,
       ),
-      buttonSize: ButtonSize.large,
-      hasBorderLining: true,
     ),
-    BaseButton(
-      key: UniqueKey(),
-      onTap: () => handler(VerifiedAuthProvider.microsoft),
-      label: "$label with Microsoft",
-      buttonIcon: const Image(
-        image: AssetImage("assets/icons/microsoft.png"),
+    Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: BaseButton(
+        key: UniqueKey(),
+        onTap: () => handler(VerifiedAuthProvider.microsoft),
+        label: '$label with Microsoft',
+        buttonIcon: const Image(
+          image: AssetImage('assets/icons/microsoft.png'),
+        ),
+        buttonSize: ButtonSize.large,
+        hasBorderLining: true,
       ),
-      buttonSize: ButtonSize.large,
-      hasBorderLining: true,
     ),
   ];
 }
@@ -184,7 +200,7 @@ Future triggerSignUpBottomSheet<bool>({
                 child: Column(
                   children: [
                     const Text(
-                      "Sign Up to continue",
+                      'Sign Up to continue',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 18.0,
@@ -203,16 +219,15 @@ Future triggerSignUpBottomSheet<bool>({
                             ),
                             children: [
                               const TextSpan(
-                                text: "Already have an account? ",
+                                text: 'Already have an account? ',
                               ),
                               TextSpan(
-                                text: "Sign In",
+                                text: 'Sign In',
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () async {
                                     try {
                                       Navigator.of(context).pop();
-                                      // bool result = await triggerAuthBottomSheet(context: context);
-                                      // Navigator.of(context).pop(result);
+                                      await triggerAuthBottomSheet(context: context, redirect: const AccountPage());
                                     } catch (e) {
                                       print(e.toString());
                                     }
@@ -223,7 +238,7 @@ Future triggerSignUpBottomSheet<bool>({
                                   color: darkerPrimaryColor,
                                 ),
                               ),
-                              const TextSpan(text: "! \n\n"),
+                              const TextSpan(text: '! \n\n'),
                             ]),
                         textAlign: TextAlign.center,
                       ),

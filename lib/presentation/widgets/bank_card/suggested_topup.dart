@@ -12,7 +12,10 @@ class SuggestedTopUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 20.0),
+      padding: primaryPadding,
+      constraints: const BoxConstraints(
+        minWidth: 500.0,
+      ),
       child: Column(
         children: [
           Row(
@@ -23,7 +26,7 @@ class SuggestedTopUp extends StatelessWidget {
                 children: [
                   ///
                   const Text(
-                    "Set Amount",
+                    'Set Amount',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 18.0,
@@ -31,7 +34,7 @@ class SuggestedTopUp extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "How much would you like to top up?",
+                    'How much would you like to top up?',
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
                       color: neutralDarkGrey,
@@ -54,12 +57,12 @@ class SuggestedTopUp extends StatelessWidget {
                   minWidth: 300.0,
                 ),
                 child: TextFormField(
-                  key: const Key("currency-input"),
-                  initialValue: r"R 120",
+                  key: const Key('currency-input'),
+                  initialValue: r'R 120',
                   keyboardType: TextInputType.number,
                   inputFormatters: <TextInputFormatter>[
                     CurrencyTextInputFormatter(
-                      symbol: "R ",
+                      symbol: 'R ',
                     )
                   ],
                   decoration: const InputDecoration(
@@ -78,15 +81,15 @@ class SuggestedTopUp extends StatelessWidget {
           ),
           Wrap(children: [
             ThemedChip(
-              label: "R50",
+              label: 'R50',
               onTap: () {},
             ),
             ThemedChip(
-              label: "R100",
+              label: 'R100',
               onTap: () {},
             ),
             ThemedChip(
-              label: "Own Amount",
+              label: 'Own Amount',
               onTap: () {},
             ),
           ]),
@@ -95,7 +98,7 @@ class SuggestedTopUp extends StatelessWidget {
             child: BaseButton(
               key: UniqueKey(),
               onTap: () {},
-              label: "Top Up Now",
+              label: 'Top Up Now',
               color: Colors.white,
               hasIcon: false,
               bgColor: primaryColor,

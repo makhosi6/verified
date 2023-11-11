@@ -54,9 +54,10 @@ class StoreDioClientService {
   /// instance of dio (singleton)
   static Dio instance = Dio(
     BaseOptions(
-      baseUrl: 'http://localhost:4343/api/v1/',
+      baseUrl: 'https://d0d8-41-116-250-105.ngrok-free.app/api/v1/',
       headers: {
         'Authorization': 'Bearer $storeApiKey',
+        'x-nonce': 'MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2',
         'Accept': 'application/json',
       },
     ),
@@ -99,14 +100,10 @@ class StoreDioClientService {
 }
 
 /// HTTP request is a success
-bool httpRequestIsSuccess(int? status) {
-  print("STATUS: $status");
-
-  return switch (status) {
-    200 => true,
-    201 => true,
-    204 => true,
-    304 => true,
-    _ => false,
-  };
-}
+bool httpRequestIsSuccess(int? status) => switch (status) {
+      200 => true,
+      201 => true,
+      204 => true,
+      304 => true,
+      _ => false,
+    };

@@ -6,6 +6,25 @@ const { generateNonce } = require("./nonce");
 const server = jsonServer.create();
 const defaultMiddleware = jsonServer.defaults();
 ///
+const Queue = require('./queue')
+
+const queue = new Queue({ results: [], autostart: true, timeout: 30000 });
+queue.addEventListener('success', e => {
+  console.log('job finished processing:', JSON.stringify(e, null, 2))
+  console.log('The result is:', e.toString())
+})
+queue.addEventListener('error', e => {
+  console.log('job finished processing with an error:',JSON.stringify(e, null, 2))
+  console.log('The result is:', e.toString())
+})
+queue.start(err => {
+  if (err) console.error("Queue Error", err)
+
+  console.log('all done:', queue.results)
+})
+
+global.queue = queue;
+///
 const {
   analytics,
   addTimestamps,
@@ -13,6 +32,7 @@ const {
   authorization,
   addIdentifiers,
   security,
+  lastLoginHook
 } = require("./middleware");
 
 ///
@@ -26,7 +46,7 @@ const wallet = jsonServer.router(path.join(__dirname, "db/wallet.json"));
 
 
 // setup the logger
-const accessLogStream = fs.createWriteStream(path.join(__dirname + '/log/', 'access.log'), { flags: 'a+' ,   interval: '1d', });
+const accessLogStream = fs.createWriteStream(path.join(__dirname + '/log/', 'access.log'), { flags: 'a+', interval: '1d', });
 server.use(morgan('combined', { stream: accessLogStream }))
 
 // Set default middlewares (logger, static, cors and no-cache)
@@ -47,7 +67,7 @@ server.use("/api/v1/health-check", (req, res) => res.send({
 },),);
 server.use("/api/v1/ticket", tickets);
 server.use("/api/v1/history", history);
-server.use("/api/v1/profile", profile);
+server.use("/api/v1/profile", lastLoginHook, profile);
 server.use("/api/v1/promotion", promotion);
 server.use("/api/v1/wallet", wallet);
 server.get("/log", (req, res) => res.send({

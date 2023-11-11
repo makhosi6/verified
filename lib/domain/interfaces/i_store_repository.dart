@@ -14,32 +14,32 @@ abstract class IStoreRepository {
   Future<ResourceHealthStatus> getHealthStatus();
 
   /// GET
-  Future<Either<Exception, GenericResponse>> requestHelp(HelpRequest help);
-  Future<Either<Exception, UserProfile>> getUserProfile(
+  Future<Either<GenericApiError, GenericResponse>> requestHelp(HelpRequest help);
+  Future<Either<GenericApiError, UserProfile>> getUserProfile(
     String userId,
   );
-  Future<Either<Exception, TransactionHistory>> getUserTransaction(
+  Future<Either<GenericApiError, TransactionHistory>> getUserTransaction(
     String resourceId,
   );
-  Future<Either<Exception, Promotion>> getPromotion(
+  Future<Either<GenericApiError, Promotion>> getPromotion(
     String resourceId,
   );
-  Future<Either<Exception, Wallet>> getUserWallet(
+  Future<Either<GenericApiError, Wallet>> getUserWallet(
     String resourceId,
   );
-  Future<Either<Exception, HelpTicket>> getTicket(
+  Future<Either<GenericApiError, HelpTicket>> getTicket(
     String resourceId,
   );
 
   /// GET ALL
-  Future<Either<Exception, dynamic>> getAllUserTransaction(
+  Future<Either<GenericApiError, dynamic>> getAllUserTransaction(
     String userId,
   );
-  // Future<Either<Exception, dynamic>> getAllUserPromotions(
+  // Future<Either<GenericApiError, dynamic>> getAllUserPromotions(
   //   String userId,
   // );
 
-  Future<Either<Exception, dynamic>> getAllTickets(
+  Future<Either<GenericApiError, dynamic>> getAllTickets(
     String userId,
   );
 

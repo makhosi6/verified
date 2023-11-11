@@ -78,7 +78,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                       Container(
                         margin: const EdgeInsets.only(bottom: 20.0),
                         child: const Image(
-                          image: AssetImage("assets/images/12704419_4968099.jpg"),
+                          image: AssetImage('assets/images/12704419_4968099.jpg'),
                           height: 230.0,
                         ),
                       ),
@@ -87,7 +87,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 10.0),
                         child: Text(
-                          "Payment with QR Code",
+                          'Payment with QR Code',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 18.0,
@@ -101,7 +101,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30.0),
                         child: Text(
-                          "Please put your phone in front of your face Please put your phone in front put your phone in front of your face",
+                          'Please put your phone in front of your face Please put your phone in front put your phone in front of your face',
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                             color: neutralDarkGrey,
@@ -117,7 +117,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                           BaseButton(
                             key: UniqueKey(),
                             onTap: () {},
-                            label: "Seek & Guide",
+                            label: 'Seek & Guide',
                             color: neutralGrey,
                             hasIcon: false,
                             bgColor: neutralYellow,
@@ -139,7 +139,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                                 ),
                               );
                             },
-                            label: "Learn Quick",
+                            label: 'Learn Quick',
                             color: neutralGrey,
                             hasIcon: false,
                             bgColor: primaryColor,

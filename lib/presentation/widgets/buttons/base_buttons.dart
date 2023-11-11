@@ -56,7 +56,7 @@ class BaseButton extends StatelessWidget {
           maxWidth: width ?? (buttonSize == ButtonSize.small ? 164.0 : 350.0),
         ),
         padding: const EdgeInsets.all(8.0),
-        margin: const EdgeInsets.all(8.0),
+        // margin: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: bgColor,
           border: hasBorderLining ? Border.all(color: neutralGrey, width: 2.0) : null,

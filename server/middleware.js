@@ -1,5 +1,9 @@
-const { v4: uuidv4 } = require('uuid');
-
+const {
+    v4: uuidv4
+} = require('uuid');
+const fetch = (...args) => import('node-fetch').then(({
+    default: fetch
+}) => fetch(...args));
 
 const analytics = (req, res, next) => {
     console.log("analytics hook");
@@ -10,16 +14,71 @@ const analytics = (req, res, next) => {
 
     next();
 }
+async function updateLastSeen(id) {
+    try {
+        const headers = {
+            "x-nonce": "MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2",
+            "Authorization": "Bearer TOKEN",
+            "Content-Type": "application/json"
+        }
+
+        const response = await fetch(`http://localhost:4343/api/v1/profile/resource/${id}?role=system`, {
+            method: 'GET',
+            headers
+        })
+        const data = await response.json();
+
+        fetch(`http://localhost:4343/api/v1/profile/resource/${id}?role=system`, {
+                method: 'PUT',
+                headers,
+                body: JSON.stringify({
+                    ...data,
+                    "last_login_at": Date.now(),
+                }),
+            })
+            .then(response => response.text())
+            .then(result => console.log("Successful Last seen update!!"))
+            .catch(error => console.log('error', error));
+    } catch (error) {
+        console.log({
+            error
+        });
+    }
+}
+/**
+ * 
+ * @param {Request} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+const lastLoginHook = (req, res, next) => {
+
+    const id = req.url.split("/").pop().replace("?role=system", '');
+    const method = req.method.toUpperCase();
+    if (id && method == "GET" && !(req.url.includes("?role=system"))) {
+
+        global.queue.push(() => updateLastSeen(id))
+    }
+
+    next()
+}
+
 
 const addTimestamps = (req, res, next) => {
     console.log("add_timestamp hook");
     const METHOD = req.method.toUpperCase();
     if (METHOD === 'POST') {
         req.body.createdAt = Date.now()
-    } if (METHOD == "PUT") {
+        req.body.account_created_at = Date.now()
+
+    }
+    if (METHOD == "PUT") {
         req.body.updatedAt = Date.now()
-    } if (METHOD == "DELETE") {
+    }
+    if (METHOD == "DELETE") {
         req.body.deletedAt = Date.now()
+    } else {
+        // res.body.last_login_at = Date.now()
     }
     next()
 }
@@ -27,9 +86,9 @@ const addTimestamps = (req, res, next) => {
 const addIdentifiers = (req, res, next) => {
     console.log("add_IDs hook");
     const METHOD = req.method.toUpperCase();
-    if (METHOD === 'POST') {
-        req.body.id = uuidv4();
-    } 
+    // if (METHOD === 'POST') {
+    //     req.body.id = uuidv4();
+    // } 
     next()
 }
 
@@ -56,7 +115,9 @@ const authorization = (req, res, next) => {
             res.sendStatus(401);
         }
     } catch (error) {
-        console.table({ error: error.message });
+        console.table({
+            error: error.message
+        });
         res.sendStatus(500);
     }
 }
@@ -70,5 +131,6 @@ module.exports = {
     addTimestamps,
     authenticate,
     authorization,
-    addIdentifiers
+    addIdentifiers,
+    lastLoginHook
 }

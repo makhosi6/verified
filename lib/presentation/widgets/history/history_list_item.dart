@@ -33,7 +33,7 @@ class TransactionListItem extends StatelessWidget {
           isThreeLine: isThreeLine,
           leading: leading,
           title: Text(
-            "${data.description}",
+            '${data.description}',
             style: GoogleFonts.dmSans(
               fontSize: 16.0,
               fontStyle: FontStyle.normal,
@@ -41,43 +41,46 @@ class TransactionListItem extends StatelessWidget {
               color: Colors.black,
             ),
           ),
-          subtitle: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+          subtitle: Wrap(
+            alignment: WrapAlignment.start,
             children: [
-              Text(
-                "ZAR ${data.amount?.floor().toString()}",
-                style: GoogleFonts.dmSans(
-                    fontSize: 12.0, fontStyle: FontStyle.normal, fontWeight: FontWeight.w400, color: neutralDarkGrey),
+              Padding(
+                padding: const EdgeInsets.only(
+                  right: 12.0,
+                ),
+                child: Text(
+                  (data.amount != null)
+                      ? NumberFormat.currency(locale: 'en_US', symbol: 'ZAR ').format(data.amount).replaceAll('.', ',')
+                      : r'R0,00',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 12.0,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w400,
+                    color: neutralDarkGrey,
+                  ),
+                ),
               ),
               (data.details?.query != null)
                   ? Padding(
                       padding: const EdgeInsets.only(
-                        left: 12.0,
+                        right: 12.0,
                       ),
-                      child: Container(
-                        constraints: const BoxConstraints(maxWidth: 100.0),
-                        child: Text(
-                          data.details?.query ?? '',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 12.0,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w400,
-                            color: neutralDarkGrey,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                      child: Text(
+                        data.details?.query ?? '',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 12.0,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w400,
+                          color: neutralDarkGrey,
                         ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     )
                   : const SizedBox.shrink(),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 12.0,
-                ),
-                child: Text(
-                  DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(data.timestamp!.toInt() * 1000)),
-                  style: GoogleFonts.dmSans(
-                      fontSize: 12.0, fontStyle: FontStyle.normal, fontWeight: FontWeight.w400, color: neutralDarkGrey),
-                ),
+              Text(
+                DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(data.timestamp!.toInt() * 1000)),
+                style: GoogleFonts.dmSans(
+                    fontSize: 12.0, fontStyle: FontStyle.normal, fontWeight: FontWeight.w400, color: neutralDarkGrey),
               ),
             ],
           ),
@@ -90,7 +93,7 @@ class TransactionListItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Text(
-                    data.type == 'promo' ? "Promo" : "Info",
+                    data.type == 'promo' ? 'Promo' : 'Info',
                     style: GoogleFonts.dmSans(color: primaryColor),
                   ),
                 )
@@ -187,7 +190,7 @@ class ConfidenceBanner extends StatelessWidget {
             ),
           ),
           title: Text(
-            r"54%",
+            r'54%',
             style: GoogleFonts.ibmPlexSans(
               fontSize: 28.0,
               fontStyle: FontStyle.normal,
@@ -196,7 +199,7 @@ class ConfidenceBanner extends StatelessWidget {
             ),
           ),
           subtitle: Text(
-            "High confidence level. The data is backed by the DHA.",
+            'High confidence level. The data is backed by the DHA.',
             style: GoogleFonts.dmSans(
               fontSize: 14.0,
               fontStyle: FontStyle.normal,
@@ -225,7 +228,7 @@ class ListItemBanner extends StatelessWidget {
     this.type = BannerType.defualt,
     required this.title,
     required this.subtitle,
-    this.buttonText = "Top up now",
+    this.buttonText = 'Top up now',
     this.bgColor,
     this.leadingIcon,
     this.leadingBgColor,

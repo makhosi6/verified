@@ -9,6 +9,7 @@ import 'package:verified/domain/models/resource_health_status_enum.dart';
 import 'package:verified/domain/models/transaction_history.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/wallet.dart';
+import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/store/repository.dart';
 
 part 'store_state.dart';
@@ -46,7 +47,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                   getHelpHasError: true,
                   getHelpError: GenericApiError(
                     error: error.toString(),
-                    status: "error",
+                    status: 'error',
                   ),
                   getHelpDataLoading: false,
                 ),
@@ -78,13 +79,14 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 state.copyWith(
                   userProfileError: GenericApiError(
                     error: error.toString(),
-                    status: "error",
+                    status: 'error',
                   ),
                   userProfileHasError: false,
                   userProfileDataLoading: false,
                 ),
               );
             }, (data) {
+              ///
               emit(
                 state.copyWith(
                   userProfileError: null,
@@ -93,6 +95,9 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                   userProfileData: data,
                 ),
               );
+
+              ///
+              LocalUser.setUser(data);
             });
             return null;
           },
@@ -104,13 +109,12 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             ));
 
             final response = await _storeRepository.postUserProfile(e.user);
-
             response.fold((error) {
               emit(
                 state.copyWith(
                   userProfileError: GenericApiError(
                     error: error.toString(),
-                    status: "error",
+                    status: 'error',
                   ),
                   userProfileHasError: true,
                   userProfileDataLoading: false,
@@ -131,20 +135,22 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             return null;
           },
           updateUserProfile: (e) async {
-            emit(state.copyWith(
-              userProfileError: null,
-              userProfileHasError: false,
-              userProfileDataLoading: true,
-            ));
+            emit(
+              state.copyWith(
+                userProfileError: null,
+                userProfileHasError: false,
+                userProfileDataLoading: true,
+              ),
+            );
 
-            final response = await _storeRepository.postUserProfile(e.user);
+            final response = await _storeRepository.putUserProfile(e.user);
 
             response.fold((error) {
               emit(
                 state.copyWith(
                   userProfileError: GenericApiError(
                     error: error.toString(),
-                    status: "error",
+                    status: 'error',
                   ),
                   userProfileHasError: true,
                   userProfileDataLoading: false,
@@ -178,7 +184,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 state.copyWith(
                   userProfileError: GenericApiError(
                     error: error.toString(),
-                    status: "error",
+                    status: 'error',
                   ),
                   userProfileHasError: true,
                   userProfileDataLoading: false,
@@ -186,14 +192,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 ),
               );
             }, (data) {
-              emit(
-                state.copyWith(
-                  userProfileError: null,
-                  userProfileHasError: false,
-                  userProfileDataLoading: false,
-                  userProfileData: null,
-                ),
-              );
+              emit(StoreState.initial());
             });
 
             return null;
@@ -217,7 +216,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               emit(state.copyWith(
                 ticketsError: GenericApiError(
                   error: error.toString(),
-                  status: "error",
+                  status: 'error',
                 ),
                 ticketsHasError: true,
                 ticketsDataLoading: false,
@@ -249,7 +248,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 state.copyWith(
                   ticketsError: GenericApiError(
                     error: error.toString(),
-                    status: "error",
+                    status: 'error',
                   ),
                   ticketsHasError: true,
                   ticketsDataLoading: false,
@@ -285,7 +284,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 state.copyWith(
                   ticketsError: GenericApiError(
                     error: error.toString(),
-                    status: "error",
+                    status: 'error',
                   ),
                   ticketsHasError: true,
                   ticketsDataLoading: false,
@@ -325,7 +324,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               emit(state.copyWith(
                 historyError: GenericApiError(
                   error: error.toString(),
-                  status: "error",
+                  status: 'error',
                 ),
                 historyHasError: true,
                 historyDataLoading: false,
@@ -353,7 +352,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               emit(state.copyWith(
                 historyError: GenericApiError(
                   error: error.toString(),
-                  status: "error",
+                  status: 'error',
                 ),
                 historyHasError: true,
                 historyDataLoading: false,
@@ -384,7 +383,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               emit(state.copyWith(
                 historyError: GenericApiError(
                   error: error.toString(),
-                  status: "error",
+                  status: 'error',
                 ),
                 historyHasError: true,
                 historyDataLoading: false,
@@ -419,7 +418,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               emit(state.copyWith(
                 promotionError: GenericApiError(
                   error: error.toString(),
-                  status: "error",
+                  status: 'error',
                 ),
                 promotionHasError: true,
                 promotionDataLoading: false,
@@ -466,7 +465,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               emit(state.copyWith(
                 walletError: GenericApiError(
                   error: error.toString(),
-                  status: "error",
+                  status: 'error',
                 ),
                 walletHasError: true,
                 walletDataLoading: false,
@@ -497,7 +496,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               emit(state.copyWith(
                 walletError: GenericApiError(
                   error: error.toString(),
-                  status: "error",
+                  status: 'error',
                 ),
                 walletHasError: true,
                 walletDataLoading: false,
@@ -527,7 +526,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 state.copyWith(
                   walletError: GenericApiError(
                     error: error.toString(),
-                    status: "error",
+                    status: 'error',
                   ),
                   walletHasError: true,
                   walletDataLoading: false,
@@ -543,6 +542,11 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 ),
               );
             });
+            return null;
+          },
+          clearUser: (e) {
+            emit(StoreState.initial());
+
             return null;
           },
         ));

@@ -35,6 +35,7 @@ class HomePageContents extends StatelessWidget {
           floatingActionButton: Container(
             width: 150.0,
             height: 74.0,
+            margin: const EdgeInsets.symmetric(vertical: 16),
             decoration: BoxDecoration(
               boxShadow: [
                 const BoxShadow(color: Colors.transparent),
@@ -52,12 +53,12 @@ class HomePageContents extends StatelessWidget {
                   builder: (BuildContext context) => const SearchOptionsPage(),
                 ),
               ),
-              label: "Search",
+              label: 'Search',
               color: Colors.white,
               iconBgColor: neutralYellow,
               bgColor: neutralYellow,
               buttonIcon: const Image(
-                image: AssetImage("assets/icons/find-icon.png"),
+                image: AssetImage('assets/icons/find-icon.png'),
               ),
               buttonSize: ButtonSize.large,
               hasBorderLining: false,
@@ -111,8 +112,8 @@ class HomePageContents extends StatelessWidget {
                         iconColor: Colors.black,
                         bgColor: Colors.white,
                         onTap: () async {
-                          var user = context.read<AuthBloc>().state.userProfile;
-                          var page = const AccountPage();
+                          final user = context.read<AuthBloc>().state.userProfile;
+                          const page = AccountPage();
                           if (user == null) {
                             await triggerAuthBottomSheet(context: context, redirect: page);
                           } else {
@@ -140,13 +141,13 @@ class HomePageContents extends StatelessWidget {
 
   final List<Widget> _widgets = [
     const Balance(
-      key: Key('balance-section'),
+      key: Key('homepage-balance-section'),
     ),
     const TrioHomeButtons(
-      key: Key('trio-home-search-btn'),
+      key: Key('homepage-trio-home-search-btns'),
     ),
-    CombinedHistoryList(
-      key: UniqueKey(),
+    const CombinedHistoryList(
+      key: Key('homepage-combined-history-list'),
     )
   ];
 }

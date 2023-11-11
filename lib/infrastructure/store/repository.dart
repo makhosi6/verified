@@ -30,7 +30,7 @@ class StoreRepository implements IStoreRepository {
 
   @override
   Future<Either<GenericApiError, GenericResponse>> deleteUserTransaction(String id) async =>
-      await _genericDeleteRequest("history", id);
+      await _genericDeleteRequest('history', id);
 
   @override
   Future<Either<GenericApiError, GenericResponse>> deleteUserWallet(String id) async =>
@@ -53,7 +53,7 @@ class StoreRepository implements IStoreRepository {
       );
 
       if (httpRequestIsSuccess(response.statusCode)) {
-        return right(GenericResponse(status: "OK", code: response.statusCode));
+        return right(GenericResponse(status: 'OK', code: response.statusCode));
       } else {
         return left(
           GenericApiError(
@@ -74,42 +74,43 @@ class StoreRepository implements IStoreRepository {
 
   ///
   @override
-  Future<Either<Exception, HelpTicket>> getTicket(String resourceId) async =>
-      await _genericGetRequest<HelpTicket>("ticket", resourceId, HelpTicket.fromJson);
+  Future<Either<GenericApiError, HelpTicket>> getTicket(String resourceId) async =>
+      await _genericGetRequest<HelpTicket>('ticket', resourceId, HelpTicket.fromJson);
   @override
-  Future<Either<Exception, UserProfile>> getUserProfile(String userId) async =>
-      await _genericGetRequest<UserProfile>("profile", userId, UserProfile.fromJson);
+  Future<Either<GenericApiError, UserProfile>> getUserProfile(String userId) async =>
+      await _genericGetRequest<UserProfile>('profile', userId, UserProfile.fromJson);
 
   @override
-  Future<Either<Exception, Promotion>> getPromotion(String resourceId) async =>
-      await _genericGetRequest<Promotion>("promotion", resourceId, Promotion.fromJson);
+  Future<Either<GenericApiError, Promotion>> getPromotion(String resourceId) async =>
+      await _genericGetRequest<Promotion>('promotion', resourceId, Promotion.fromJson);
 
   @override
-  Future<Either<Exception, TransactionHistory>> getUserTransaction(String resourceId) async =>
-      await _genericGetRequest<TransactionHistory>("history", resourceId, TransactionHistory.fromJson);
+  Future<Either<GenericApiError, TransactionHistory>> getUserTransaction(String resourceId) async =>
+      await _genericGetRequest<TransactionHistory>('history', resourceId, TransactionHistory.fromJson);
 
   @override
-  Future<Either<Exception, Wallet>> getUserWallet(String resourceId) async =>
-      await _genericGetRequest<Wallet>("wallet", resourceId, Wallet.fromJson);
+  Future<Either<GenericApiError, Wallet>> getUserWallet(String resourceId) async =>
+      await _genericGetRequest<Wallet>('wallet', resourceId, Wallet.fromJson);
 
   ///
   // @override
-  // Future<Either<Exception, dynamic>> getAllUserPromotions(String userId) async =>
+  // Future<Either<GenericApiError, dynamic>> getAllUserPromotions(String userId) async =>
   //     await _genericGetAllRequest<Promotion>(
   //       collection: "promotion",
   //       resourceId: null,
   //       userId: userId,
   //     );
   @override
-  Future<Either<Exception, dynamic>> getAllTickets(String userId) async => await _genericGetAllRequest<HelpRequest>(
-      collection: "ticket", resourceId: null, userId: userId, transform: HelpRequest.fromJson);
+  Future<Either<GenericApiError, dynamic>> getAllTickets(String userId) async =>
+      await _genericGetAllRequest<HelpRequest>(
+          collection: 'ticket', resourceId: null, userId: userId, transform: HelpRequest.fromJson);
 
   @override
-  Future<Either<Exception, dynamic>> getAllUserTransaction(String userId) async =>
+  Future<Either<GenericApiError, dynamic>> getAllUserTransaction(String userId) async =>
       await _genericGetAllRequest<TransactionHistory>(
-          collection: "history", resourceId: null, userId: userId, transform: TransactionHistory.fromJson);
+          collection: 'history', resourceId: null, userId: userId, transform: TransactionHistory.fromJson);
 
-  Future<Either<Exception, T>> _genericGetRequest<T>(
+  Future<Either<GenericApiError, T>> _genericGetRequest<T>(
       String collection, String resourceId, T Function(dynamic json) transform) async {
     try {
       var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
@@ -128,18 +129,22 @@ class StoreRepository implements IStoreRepository {
       }
 
       return left(
-        Exception(response.statusMessage),
+        GenericApiError(
+          status: 'unknown',
+          error: 'Error Occurred',
+        ),
       );
     } catch (e) {
       return left(
-        Exception(
-          e.toString(),
+        GenericApiError(
+          status: 'unknown',
+          error: 'Error Occurred',
         ),
       );
     }
   }
 
-  Future<Either<Exception, List<T>>> _genericGetAllRequest<T>(
+  Future<Either<GenericApiError, List<T>>> _genericGetAllRequest<T>(
       {required String collection,
       required String? resourceId,
       required String? userId,
@@ -151,7 +156,7 @@ class StoreRepository implements IStoreRepository {
             method: 'GET',
             headers: headers,
           ),
-          queryParameters: (userId == null) ? null : {"profileId": userId});
+          queryParameters: (userId == null) ? null : {'profileId': userId});
 
       if (httpRequestIsSuccess(response.statusCode)) {
         return right(
@@ -159,37 +164,39 @@ class StoreRepository implements IStoreRepository {
         );
       }
       return left(
-        Exception(response.statusMessage),
+        GenericApiError(
+          status: 'unknown',
+          error: 'Error Occurred',
+        ),
       );
     } catch (e) {
       debugPrint(e.toString());
-      return left(
-        Exception(
-          e.toString(),
-        ),
-      );
+      return left(GenericApiError(
+        status: 'unknown',
+        error: e.toString(),
+      ));
     }
   }
 
   @override
   Future<Either<GenericApiError, UserProfile>> postUserProfile(UserProfile user) async =>
-      await _genericPostRequest<UserProfile>("profile", user.toJson(), UserProfile.fromJson);
+      await _genericPostRequest<UserProfile>('profile', user.toJson(), UserProfile.fromJson);
 
   @override
   Future<Either<GenericApiError, Promotion>> postUserPromotions(Promotion promotion) async =>
-      await _genericPostRequest<Promotion>("promotion", promotion.toJson(), Promotion.fromJson);
+      await _genericPostRequest<Promotion>('promotion', promotion.toJson(), Promotion.fromJson);
 
   @override
   Future<Either<GenericApiError, TransactionHistory>> postUserTransaction(TransactionHistory transaction) async =>
-      await _genericPostRequest<TransactionHistory>("history", transaction.toJson(), TransactionHistory.fromJson);
+      await _genericPostRequest<TransactionHistory>('history', transaction.toJson(), TransactionHistory.fromJson);
 
   @override
   Future<Either<GenericApiError, HelpTicket>> postHelpTicket(HelpTicket helpTicket) async =>
-      await _genericPostRequest("ticket", helpTicket.toJson(), HelpTicket.fromJson);
+      await _genericPostRequest('ticket', helpTicket.toJson(), HelpTicket.fromJson);
 
   @override
   Future<Either<GenericApiError, Wallet>> postUserWallet(Wallet wallet) async =>
-      await _genericPostRequest<Wallet>("wallet", wallet.toJson(), Wallet.fromJson);
+      await _genericPostRequest<Wallet>('wallet', wallet.toJson(), Wallet.fromJson);
 
   Future<Either<GenericApiError, T>> _genericPostRequest<T>(
       String collection, dynamic data, T Function(dynamic json) transform) async {
@@ -211,8 +218,10 @@ class StoreRepository implements IStoreRepository {
       if (httpRequestIsSuccess(response.statusCode)) {
         return right(transform(response.data));
       } else {
-        return left(GenericApiError(error: "Error Occurred", status: "$statusCode"));
+        return left(GenericApiError(error: 'Error Occurred', status: '$statusCode'));
       }
+    } on DioException {
+      return (await _genericGetRequest<T>('profile', data['id'], transform));
     } catch (e) {
       return left(
         GenericApiError(
@@ -225,23 +234,23 @@ class StoreRepository implements IStoreRepository {
 
   @override
   Future<Either<GenericApiError, UserProfile>> putUserProfile(UserProfile user) async =>
-      await _genericPutRequest<UserProfile>("profile", user.toJson(), UserProfile.fromJson);
+      await _genericPutRequest<UserProfile>('profile', user.toJson(), UserProfile.fromJson);
 
   @override
   Future<Either<GenericApiError, Promotion>> putUserPromotions(Promotion promotion) async =>
-      await _genericPutRequest<Promotion>("promotion", promotion.toJson(), Promotion.fromJson);
+      await _genericPutRequest<Promotion>('promotion', promotion.toJson(), Promotion.fromJson);
 
   @override
   Future<Either<GenericApiError, TransactionHistory>> putUserTransaction(TransactionHistory transaction) async =>
-      await _genericPutRequest<TransactionHistory>("history", transaction.toJson(), TransactionHistory.fromJson);
+      await _genericPutRequest<TransactionHistory>('history', transaction.toJson(), TransactionHistory.fromJson);
 
   @override
   Future<Either<GenericApiError, Wallet>> putUserWallet(Wallet wallet) async =>
-      await _genericPutRequest<Wallet>("wallet", wallet.toJson(), Wallet.fromJson);
+      await _genericPutRequest<Wallet>('wallet', wallet.toJson(), Wallet.fromJson);
 
   @override
   Future<Either<GenericApiError, HelpTicket>> putHelpTicket(HelpTicket helpTicket) async =>
-      _genericPutRequest("ticket", helpTicket.toJson(), HelpTicket.fromJson);
+      _genericPutRequest('ticket', helpTicket.toJson(), HelpTicket.fromJson);
 
   Future<Either<GenericApiError, T>> _genericPutRequest<T>(
       String collection, dynamic data, T Function(dynamic json) transform) async {
@@ -265,7 +274,7 @@ class StoreRepository implements IStoreRepository {
           transform(response.data),
         );
       } else {
-        return left(GenericApiError(error: "Error Occurred", status: "$statusCode"));
+        return left(GenericApiError(error: 'Error Occurred', status: '$statusCode'));
       }
     } catch (e) {
       return left(
@@ -278,7 +287,7 @@ class StoreRepository implements IStoreRepository {
   }
 
   @override
-  Future<Either<Exception, GenericResponse>> requestHelp(HelpRequest help) async {
+  Future<Either<GenericApiError, GenericResponse>> requestHelp(HelpRequest help) async {
     try {
       var headers = {
         'x-nonce': await generateNonce(),
@@ -296,13 +305,19 @@ class StoreRepository implements IStoreRepository {
       );
       var statusCode = response.statusCode;
       if (httpRequestIsSuccess(response.statusCode)) {
-        return right(GenericResponse(status: "OK", code: statusCode));
+        return right(GenericResponse(status: 'OK', code: statusCode));
       } else {
-        return left(Exception("Error Occurred"));
+        return left(GenericApiError(
+          status: 'unknown',
+          error: 'Error Occurred',
+        ));
       }
     } catch (e) {
       return left(
-        Exception(e.toString()),
+        GenericApiError(
+          status: 'unknown',
+          error: 'Error Occurred',
+        ),
       );
     }
   }
