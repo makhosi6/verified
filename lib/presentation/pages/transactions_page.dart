@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/no_internet_indicator.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
@@ -51,10 +52,11 @@ class TransactionPageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 500.0),
+        // constraints: const BoxConstraints(maxWidth: 600.0),
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
-          slivers: <Widget>[
+          slivers: [
+            const NoInternetIndicator(),
             SliverAppBar(
               stretch: true,
               onStretchTrigger: () async {},
@@ -83,13 +85,13 @@ class TransactionPageContent extends StatelessWidget {
                   child: SingleChildScrollView(
                     reverse: true,
                     clipBehavior: Clip.none,
-                    padding: primaryPadding.copyWith(bottom: 0),
+                    // padding: primaryPadding.copyWith(bottom: 0),
                     child: Column(
                       children: [
                         Padding(
                           padding: primaryPadding.copyWith(left: 0, right: 0),
                           child: const Text(
-                            'A chronological record of all account transactions, including credits, debits, and rewards.',
+                            'A chronological record of all account transactions, including \ncredits, debits, and rewards.',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: Colors.white,
@@ -112,9 +114,9 @@ class TransactionPageContent extends StatelessWidget {
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 childCount: 1,
-                (_, int index) => const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: CombinedHistoryList(),
+                (_, int index) => Padding(
+                  padding: primaryPadding,
+                  child: const UnconstrainedBox(child: CombinedHistoryList(showBanner: false)),
                 ),
               ),
             ),

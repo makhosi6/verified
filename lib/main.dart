@@ -105,9 +105,11 @@ class _AppRootState extends State<AppRoot> with SingleTickerProviderStateMixin {
             home: BlocBuilder<StoreBloc, StoreState>(
               bloc: context.read<StoreBloc>()
                 ..add(StoreEvent.getUserProfile(userId))
-                ..add(StoreEvent.getAllHistory(userId))
+                // ..add(StoreEvent.getAllHistory(userId))
+                ..add(const StoreEvent.getAllHistory('logged-in-user'))
                 ..add(StoreEvent.addUser(snapshot.data))
-                ..add(StoreEvent.getWallet(userWalletId)),
+                ..add(const StoreEvent.getWallet('logged-in-user-wallet')),
+              // ..add(StoreEvent.getWallet(userWalletId)),
               builder: (context, state) {
                 return BlocListener<StoreBloc, StoreState>(
                   listener: (context, state) {

@@ -19,6 +19,7 @@ class BaseBankCard extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             constraints: const BoxConstraints(
               minWidth: 350.0,
+              maxWidth: 600.0,
             ),
             decoration: BoxDecoration(
               color: primaryColor,

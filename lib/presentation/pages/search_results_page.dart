@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:verified/presentation/pages/transactions_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/no_internet_indicator.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/history/history_list_item.dart';
@@ -16,6 +17,7 @@ class SearchResultsPage extends StatelessWidget {
         floatingActionButton: Container(
           width: 150.0,
           height: 74.0,
+          margin: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
             boxShadow: [
               const BoxShadow(color: Colors.transparent),
@@ -57,10 +59,11 @@ class SearchResultsPageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 500.0),
+        // constraints: const BoxConstraints(maxWidth: 600.0),
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: <Widget>[
+            const NoInternetIndicator(),
             SliverAppBar(
               stretch: true,
               onStretchTrigger: () async {},
@@ -118,7 +121,13 @@ class SearchResultsPageContent extends StatelessWidget {
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 childCount: 1001,
-                (_, int index) => _renderSliverListItems(_, index, (index == 0)),
+                (_, int index) => UnconstrainedBox(
+                  child: _renderSliverListItems(
+                    _,
+                    index,
+                    (index == 0),
+                  ),
+                ),
               ),
             ),
           ],
@@ -130,6 +139,7 @@ class SearchResultsPageContent extends StatelessWidget {
 
 Widget _renderSliverListItems(_, int index, isTitle) => Container(
       alignment: Alignment.centerLeft,
+      constraints: const BoxConstraints(maxWidth: 600.0),
       padding: EdgeInsets.only(
         left: 16.0,
         right: 16.0,

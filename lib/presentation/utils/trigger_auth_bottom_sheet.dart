@@ -27,7 +27,7 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
         child: SingleChildScrollView(
           child: Container(
             constraints: const BoxConstraints(
-              minWidth: 500.0,
+              minWidth: 600.0,
             ),
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Column(
@@ -190,7 +190,7 @@ Future triggerSignUpBottomSheet<bool>({
       builder: (context) => SingleChildScrollView(
         child: Container(
           constraints: const BoxConstraints(
-            minWidth: 500.0,
+            minWidth: 600.0,
           ),
           padding: const EdgeInsets.symmetric(vertical: 20.0),
           child: Column(

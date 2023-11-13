@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:verified/helpers/logger.dart';
 
 import 'package:verified/presentation/pages/search_options_page.dart';
+import 'package:verified/presentation/pages/transactions_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/no_internet_indicator.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/inputs/generic_input.dart';
@@ -20,13 +22,49 @@ class InputFormPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Container(
+        width: 150.0,
+        height: 74.0,
+        margin: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          boxShadow: [
+            const BoxShadow(color: Colors.transparent),
+            BoxShadow(
+              offset: const Offset(1, 30),
+              blurRadius: 30,
+              color: darkerPrimaryColor.withOpacity(0.2),
+            ),
+          ],
+        ),
+        child: BaseButton(
+          key: UniqueKey(),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => const TransactionPage(),
+              ),
+            );
+          },
+          label: 'Search',
+          color: Colors.white,
+          iconBgColor: neutralYellow,
+          bgColor: neutralYellow,
+          buttonIcon: const Image(
+            image: AssetImage('assets/icons/find-icon.png'),
+          ),
+          buttonSize: ButtonSize.large,
+          hasBorderLining: false,
+        ),
+      ),
       body: Center(
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 500.0),
-          padding: primaryPadding,
+          // constraints: const BoxConstraints(maxWidth: 600.0),
+          // padding: primaryPadding,
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(),
-            slivers: <Widget>[
+            slivers: [
+              const NoInternetIndicator(),
               SliverAppBar(
                 stretch: true,
                 onStretchTrigger: () async {},
@@ -61,7 +99,9 @@ class InputFormPage extends StatelessWidget {
               ),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) => _widgets[index],
+                  (BuildContext context, int index) => UnconstrainedBox(
+                    child: Container(constraints: const BoxConstraints(maxWidth: 600.0), child: _widgets[index]),
+                  ),
                   childCount: _widgets.length,
                 ),
               ),
@@ -141,20 +181,20 @@ final pageCopy = {
     'pageName': 'Search by ID No',
     'pageDescription':
         'Please put your phone in front of your face Please put your phone in front put your phone in front of your face',
-    'pageButtonName': 'Search'
+    'pageButtonName': 'Send'
   },
   'phoneNumberForm': {
     'formLabel': 'Phone Number Form',
     'formPlaceholderText': 'Phone Number Form Placeholder Text',
     'pageName': 'Search by Phone No',
     'pageDescription': 'Phone Number Page Description',
-    'pageButtonName': 'Search'
+    'pageButtonName': 'Send'
   },
   'sarsForm': {
     'formLabel': 'SARS Form',
     'formPlaceholderText': 'SARS Form Placeholder Text',
     'pageName': 'Search by SARS No',
     'pageDescription': 'SARS Page Description',
-    'pageButtonName': 'Search'
+    'pageButtonName': 'Send'
   },
 };

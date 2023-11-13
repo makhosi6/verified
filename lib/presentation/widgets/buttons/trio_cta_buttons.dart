@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/presentation/pages/add_payment_method_page.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
+import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/pages/transactions_page.dart';
 import 'package:verified/presentation/theme.dart';
-import 'package:verified/presentation/widgets/popups/successful_payment.dart';
+import 'package:verified/presentation/utils/navigate.dart';
 
 class TrioHomeButtons extends StatelessWidget {
   const TrioHomeButtons({super.key});
@@ -11,11 +15,13 @@ class TrioHomeButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: primaryPadding,
+      width: MediaQuery.of(context).size.width - 40,
       margin: const EdgeInsets.symmetric(vertical: 20.0),
       decoration: BoxDecoration(
         color: primaryColor,
         borderRadius: BorderRadius.circular(16.0),
       ),
+      constraints: const BoxConstraints(maxWidth: 600.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -25,19 +31,35 @@ class TrioHomeButtons extends StatelessWidget {
                 builder: (BuildContext context) => const SearchOptionsPage(),
               ),
             ),
-            text: "Search",
+            text: 'Search',
             iconWidget: const Image(
               height: 23.0,
-              image: AssetImage("assets/icons/find-icon.png"),
+              image: AssetImage(
+                'assets/icons/find-icon.png',
+              ),
             ),
           ),
           _separator,
           _ClickableItem(
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) => const SuccessfulPaymentModal(),
-            ),
-            text: "Top Up",
+            onTap: () {
+              // showDialog(
+              //   context: context,
+              //   builder: (context) => const SuccessfulPaymentModal(),
+              // );
+
+              //
+              final wallet = context.read<StoreBloc>().state.walletData;
+
+              ///
+              if (wallet == null) {
+                navigate(context, page: const AddPaymentMethodPage());
+              } else {
+                showTopUpBottomSheet(context);
+              }
+
+              ///
+            },
+            text: 'Top Up',
             iconWidget: const Icon(
               Icons.credit_score_outlined,
               color: Colors.white,
@@ -50,7 +72,7 @@ class TrioHomeButtons extends StatelessWidget {
                 builder: (BuildContext context) => const TransactionPage(),
               ),
             ),
-            text: "History",
+            text: 'History',
             iconWidget: const Icon(
               Icons.history_outlined,
               color: Colors.white,

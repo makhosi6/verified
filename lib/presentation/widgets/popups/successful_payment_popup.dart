@@ -35,7 +35,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
         Center(
           child: Container(
             constraints: const BoxConstraints(
-              maxWidth: 500.0,
+              maxWidth: 600.0,
               minWidth: 400.0,
               maxHeight: 550.0,
             ),

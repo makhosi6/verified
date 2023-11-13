@@ -14,6 +14,8 @@ class Balance extends StatelessWidget {
     var user = context.watch<StoreBloc>().state.userProfileData;
     return Container(
       padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+      width: MediaQuery.of(context).size.width - 40,
+      constraints: const BoxConstraints(maxWidth: 600.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,

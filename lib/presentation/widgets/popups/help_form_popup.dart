@@ -9,9 +9,13 @@ Future showHelpPopUpForm(BuildContext context) async => await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         contentPadding: primaryPadding,
-        title: const Text(
-          'Report an issue',
-          style: TextStyle(fontSize: 24.0),
+        title: Center(
+          child: Container(
+            child: const Text(
+              'Report an issue',
+              style: TextStyle(fontSize: 24.0),
+            ),
+          ),
         ),
         content: _HelpForm(),
       ),
@@ -53,6 +57,7 @@ class _HelpFormState extends State<_HelpForm> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10.0, top: 4),
@@ -144,50 +149,54 @@ class _HelpFormState extends State<_HelpForm> {
                 )
               ],
             ),
-            BaseButton(
-              key: UniqueKey(),
-              onTap: () {
-                ///
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
+            Center(
+              child: Container(
+                child: BaseButton(
+                  key: UniqueKey(),
+                  onTap: () {
+                    ///
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
 
-                  ///
-                  FocusScope.of(context).unfocus();
+                      ///
+                      FocusScope.of(context).unfocus();
 
-                  ///
-                  final user = context.read<StoreBloc>().state.userProfileData;
-                  final helpRequest = HelpRequest(
-                    profileId: user?.id,
-                    timestamp: DateTime.now().millisecondsSinceEpoch,
-                    type: selectedIssueType,
-                    comment: Comment(title: 'Issue report', body: _bodyTextController.text),
-                    preferredCommunicationChannel: selectedPreferredCommunicationChannel,
-                  );
+                      ///
+                      final user = context.read<StoreBloc>().state.userProfileData;
+                      final helpRequest = HelpRequest(
+                        profileId: user?.id,
+                        timestamp: DateTime.now().millisecondsSinceEpoch,
+                        type: selectedIssueType,
+                        comment: Comment(title: 'Issue report', body: _bodyTextController.text),
+                        preferredCommunicationChannel: selectedPreferredCommunicationChannel,
+                      );
 
-                  ///
-                  context.read<StoreBloc>().add(StoreEvent.requestHelp(helpRequest));
+                      ///
+                      context.read<StoreBloc>().add(StoreEvent.requestHelp(helpRequest));
 
-                  ///
-                  Navigator.of(context).pop(helpRequest);
+                      ///
+                      Navigator.of(context).pop(helpRequest);
 
-                  ///
-                  ScaffoldMessenger.of(context)
-                    ..clearSnackBars()
-                    ..showSnackBar(
-                      const SnackBar(content: Text('Processing the Request!')),
-                    );
-                }
-              },
-              label: 'Submit',
-              color: neutralGrey,
-              hasIcon: false,
-              bgColor: primaryColor,
-              buttonIcon: Icon(
-                Icons.lock_outline,
-                color: primaryColor,
+                      ///
+                      ScaffoldMessenger.of(context)
+                        ..clearSnackBars()
+                        ..showSnackBar(
+                          const SnackBar(content: Text('Processing the Request!')),
+                        );
+                    }
+                  },
+                  label: 'Submit',
+                  color: neutralGrey,
+                  hasIcon: false,
+                  bgColor: primaryColor,
+                  buttonIcon: Icon(
+                    Icons.lock_outline,
+                    color: primaryColor,
+                  ),
+                  buttonSize: ButtonSize.large,
+                  hasBorderLining: false,
+                ),
               ),
-              buttonSize: ButtonSize.large,
-              hasBorderLining: false,
             ),
             Container(
               padding: const EdgeInsets.only(bottom: 5.0, left: 8.0, top: 16),

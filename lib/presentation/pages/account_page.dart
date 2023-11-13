@@ -6,11 +6,14 @@ import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/infrastructure/native_scripts/main.dart';
+import 'package:verified/presentation/pages/add_payment_method_page.dart';
+import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
 import 'package:verified/presentation/theme.dart';
-import 'package:verified/presentation/utils/help_form.dart';
+import 'package:verified/presentation/utils/no_internet_indicator.dart';
+import 'package:verified/presentation/widgets/popups/help_form_popup.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/bank_card/base_card.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
@@ -41,7 +44,11 @@ class AccountPage extends StatelessWidget {
           ),
           child: BaseButton(
             key: UniqueKey(),
-            onTap: () {},
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => const SearchOptionsPage(),
+              ),
+            ),
             label: 'Search',
             color: Colors.white,
             iconBgColor: neutralYellow,
@@ -64,11 +71,12 @@ class AccountPageContent extends StatelessWidget {
     final wallet = context.watch<StoreBloc>().state.walletData;
     return Center(
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 500.0),
-        // padding: primaryPadding,
+        // constraints: const BoxConstraints(maxWidth:600.0),
+        // padding: EdgeInsets.only(top: primaryPadding.top),
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: <Widget>[
+            const NoInternetIndicator(),
             SliverAppBar(
               stretch: true,
               onStretchTrigger: () async {},
@@ -102,6 +110,7 @@ class AccountPageContent extends StatelessWidget {
                       children: [
                         Container(
                           padding: primaryPadding.copyWith(left: 0, right: 0),
+                          constraints: const BoxConstraints(maxWidth: 600.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -137,11 +146,11 @@ class AccountPageContent extends StatelessWidget {
                                 iconColor: Colors.white,
                                 bgColor: neutralYellow,
                                 onTap: () {
-                                  // if (wallet == null) {
-                                  //   navigate(context, page: const TopUpPage());
-                                  // } else {
-                                  showTopUpBottomSheet(context);
-                                  // }
+                                  if (wallet == null) {
+                                    navigate(context, page: const AddPaymentMethodPage());
+                                  } else {
+                                    showTopUpBottomSheet(context);
+                                  }
                                 },
                                 icon: wallet == null ? Icons.add_card_rounded : Icons.add,
                                 borderColor: neutralYellow,
@@ -166,160 +175,159 @@ class AccountPageContent extends StatelessWidget {
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 childCount: accountSettings.length,
-                (BuildContext context, int index) => Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                  ),
-                  child: (accountSettings[index]['type'] == 'space')
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                        )
-                      : accountSettings[index]['text'] == 'balance'
-                          ? Column(
-                              children: [
-                                _ProfileName(
-                                  user: user,
-                                ),
-                                Divider(
-                                  color: Colors.grey[400],
-                                  indent: 0,
-                                  endIndent: 0,
-                                ),
-                              ],
-                            )
-                          : (accountSettings[index]['text'] == 'title')
-                              ? Container(
-                                  alignment: Alignment.centerLeft,
-                                  padding: primaryPadding.copyWith(bottom: 22.0),
-                                  child: const ListTitle(
-                                    text: 'Account Settings',
+                (BuildContext context, int index) => UnconstrainedBox(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: primaryPadding.horizontal,
+                    ),
+                    constraints: const BoxConstraints(maxWidth: 600.0),
+                    child: (accountSettings[index]['type'] == 'space')
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                          )
+                        : accountSettings[index]['text'] == 'balance'
+                            ? Column(
+                                children: [
+                                  _ProfileName(
+                                    user: user,
                                   ),
-                                )
-                              : accountSettings[index]['type'] == 'button'
-                                  ? ListTile(
-                                      hoverColor: ((accountSettings[index]['color']) as Color?) != null
-                                          ? const Color.fromARGB(255, 255, 210, 210)
-                                          : null,
-                                      focusColor: ((accountSettings[index]['color']) as Color?) != null
-                                          ? const Color.fromARGB(255, 255, 210, 210)
-                                          : null,
-                                      splashColor: ((accountSettings[index]['color']) as Color?) != null
-                                          ? const Color.fromARGB(255, 255, 210, 210)
-                                          : null,
-                                      style: ListTileStyle.list,
-                                      onTap: () async {
-                                        /// Logout
-                                        if (accountSettings[index]['text'] == 'Logout') {
-                                          context.read<AuthBloc>().add(const AuthEvent.signOut());
-                                          context.read<StoreBloc>()
-                                            ..add(StoreEvent.deleteUserProfile(user.id ?? ''))
-                                            ..add(const StoreEvent.clearUser());
-
-                                          Navigator.of(context)
-                                            ..pop()
-                                            ..initState();
-
-                                          Future.delayed(const Duration(milliseconds: 500),
-                                              () => VerifiedAppNativeCalls.restartApp());
-                                        }
-
-                                        // Delete account
-                                        if (accountSettings[index]['text'] == 'Delete Account') {
-                                          context.read<AuthBloc>().add(const AuthEvent.deleteAccount());
-                                          context.read<StoreBloc>()
-                                            ..add(StoreEvent.deleteUserProfile(user.id ?? ''))
-                                            ..add(const StoreEvent.clearUser());
-
-                                          Navigator.of(context)
-                                            ..pop()
-                                            ..initState();
-
-                                          Future.delayed(const Duration(milliseconds: 500),
-                                              () => VerifiedAppNativeCalls.restartApp());
-                                        }
-
-                                        /// Show Terms of Use
-                                        if (accountSettings[index]['text'] == 'Terms of Use') {
-                                          navigate(context, page: const TermOfUseWebView());
-                                        }
-
-                                        /// show get help pop-up
-                                        if (accountSettings[index]['text'] == 'Help') {
-                                          await showHelpPopUpForm(context);
-                                        }
-                                      },
-                                      leading: Icon(
-                                        accountSettings[index]['icon'] as IconData?,
-                                        color: (accountSettings[index]['color']) as Color? ?? primaryColor,
-                                        size: 32.0,
-                                      ),
-                                      title: Text(
-                                        accountSettings[index]['text'] as String,
-                                        style: TextStyle(
-                                          color: (accountSettings[index]['color']) as Color? ?? Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0,
-                                          fontStyle: FontStyle.normal,
-                                        ),
-                                      ),
-                                      contentPadding: EdgeInsets.zero,
-                                      enableFeedback: true,
-                                      trailing: Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        color: (accountSettings[index]['color']) as Color? ?? Colors.black,
-                                        size: 16.0,
-                                      ),
-                                    )
-                                  : ExpansionTile(
-                                      tilePadding: const EdgeInsets.all(0.0),
-                                      leading: Icon(
-                                        accountSettings[index]['icon'] as IconData?,
-                                        color: (accountSettings[index]['color']) as Color? ?? primaryColor,
-                                        size: 32.0,
-                                      ),
-                                      backgroundColor: Colors.grey[100],
-                                      collapsedBackgroundColor: Colors.white,
-                                      childrenPadding: const EdgeInsets.symmetric(
-                                          // horizontal: 20.0,
-                                          ),
-                                      title: Text(
-                                        accountSettings[index]['text'] as String,
-                                        style: TextStyle(
-                                          color: (accountSettings[index]['color']) as Color? ?? Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0,
-                                          fontStyle: FontStyle.normal,
-                                        ),
-                                      ),
-                                      children: (accountSettings[index]['text'] == 'Personal')
-                                          ? List.generate(
-                                              userPersonalDetailsKey.length,
-                                              (index) => accountPageListItems(
-                                                key: "${userPersonalDetailsKey[index]['displayName']}",
-                                                value: "${user.toJson()[userPersonalDetailsKey[index]['keyName']]}",
-                                                isLast: index == userPersonalDetailsKey.length - 1,
-                                              ),
-                                            )
-                                          : (accountSettings[index]['text'] == 'Transactions')
-                                              ? [
-                                                  const CombinedHistoryList(
-                                                    limit: 4,
-                                                  )
-                                                ]
-                                              : (accountSettings[index]['text'] == 'App Information')
-                                                  ? List.generate(
-                                                      appInfo.length,
-                                                      (index) => accountPageListItems(
-                                                        key: appInfo.keys.toList()[index],
-                                                        value: appInfo[appInfo.keys.toList()[index]] ?? '',
-                                                        isLast: index == appInfo.length - 1,
-                                                      ),
-                                                    )
-                                                  : [
-                                                      const Text('No Data'),
-                                                    ],
+                                  Divider(
+                                    color: Colors.grey[400],
+                                    indent: 0,
+                                    endIndent: 0,
+                                  ),
+                                ],
+                              )
+                            : (accountSettings[index]['text'] == 'title')
+                                ? Container(
+                                    alignment: Alignment.centerLeft,
+                                    padding: primaryPadding.copyWith(bottom: 22.0),
+                                    child: const ListTitle(
+                                      text: 'Account Settings',
                                     ),
+                                  )
+                                : accountSettings[index]['type'] == 'button'
+                                    ? ListTile(
+                                        hoverColor: ((accountSettings[index]['color']) as Color?) != null
+                                            ? const Color.fromARGB(255, 255, 210, 210)
+                                            : null,
+                                        focusColor: ((accountSettings[index]['color']) as Color?) != null
+                                            ? const Color.fromARGB(255, 255, 210, 210)
+                                            : null,
+                                        splashColor: ((accountSettings[index]['color']) as Color?) != null
+                                            ? const Color.fromARGB(255, 255, 210, 210)
+                                            : null,
+                                        style: ListTileStyle.list,
+                                        onTap: () async {
+                                          /// Logout
+                                          if (accountSettings[index]['text'] == 'Logout') {
+                                            context.read<AuthBloc>().add(const AuthEvent.signOut());
+                                            context.read<StoreBloc>()
+                                              ..add(StoreEvent.deleteUserProfile(user.id ?? ''))
+                                              ..add(const StoreEvent.clearUser());
+
+                                            Navigator.of(context)
+                                              ..pop()
+                                              ..initState();
+
+                                            Future.delayed(const Duration(milliseconds: 600),
+                                                () => VerifiedAppNativeCalls.restartApp());
+                                          }
+
+                                          // Delete account
+                                          if (accountSettings[index]['text'] == 'Delete Account') {
+                                            context.read<AuthBloc>().add(const AuthEvent.deleteAccount());
+                                            context.read<StoreBloc>()
+                                              ..add(StoreEvent.deleteUserProfile(user.id ?? ''))
+                                              ..add(const StoreEvent.clearUser());
+
+                                            Navigator.of(context)
+                                              ..pop()
+                                              ..initState();
+
+                                            Future.delayed(const Duration(milliseconds: 600),
+                                                () => VerifiedAppNativeCalls.restartApp());
+                                          }
+
+                                          /// Show Terms of Use
+                                          if (accountSettings[index]['text'] == 'Terms of Use') {
+                                            navigate(context, page: const TermOfUseWebView());
+                                          }
+
+                                          /// show get help pop-up
+                                          if (accountSettings[index]['text'] == 'Help') {
+                                            await showHelpPopUpForm(context);
+                                          }
+                                        },
+                                        leading: Icon(
+                                          accountSettings[index]['icon'] as IconData?,
+                                          color: (accountSettings[index]['color']) as Color? ?? primaryColor,
+                                          size: 32.0,
+                                        ),
+                                        title: Text(
+                                          accountSettings[index]['text'] as String,
+                                          style: TextStyle(
+                                            color: (accountSettings[index]['color']) as Color? ?? Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16.0,
+                                            fontStyle: FontStyle.normal,
+                                          ),
+                                        ),
+                                        contentPadding: EdgeInsets.zero,
+                                        enableFeedback: true,
+                                        trailing: Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          color: (accountSettings[index]['color']) as Color? ?? Colors.black,
+                                          size: 16.0,
+                                        ),
+                                      )
+                                    : ExpansionTile(
+                                        tilePadding: const EdgeInsets.all(0.0),
+                                        leading: Icon(
+                                          accountSettings[index]['icon'] as IconData?,
+                                          color: (accountSettings[index]['color']) as Color? ?? primaryColor,
+                                          size: 32.0,
+                                        ),
+                                        backgroundColor: Colors.grey[100],
+                                        collapsedBackgroundColor: Colors.white,
+                                        childrenPadding: const EdgeInsets.symmetric(
+                                            // horizontal: 20.0,
+                                            ),
+                                        title: Text(
+                                          accountSettings[index]['text'] as String,
+                                          style: TextStyle(
+                                            color: (accountSettings[index]['color']) as Color? ?? Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16.0,
+                                            fontStyle: FontStyle.normal,
+                                          ),
+                                        ),
+                                        children: (accountSettings[index]['text'] == 'Personal')
+                                            ? List.generate(
+                                                userPersonalDetailsKey.length,
+                                                (index) => accountPageListItems(
+                                                  key: "${userPersonalDetailsKey[index]['displayName']}",
+                                                  value: "${user.toJson()[userPersonalDetailsKey[index]['keyName']]}",
+                                                  isLast: index == userPersonalDetailsKey.length - 1,
+                                                ),
+                                              )
+                                            : (accountSettings[index]['text'] == 'Transactions')
+                                                ? [const CombinedHistoryList(limit: 4, showBanner: false)]
+                                                : (accountSettings[index]['text'] == 'App Information')
+                                                    ? List.generate(
+                                                        appInfo.length,
+                                                        (index) => accountPageListItems(
+                                                          key: appInfo.keys.toList()[index],
+                                                          value: appInfo[appInfo.keys.toList()[index]] ?? '',
+                                                          isLast: index == appInfo.length - 1,
+                                                        ),
+                                                      )
+                                                    : [
+                                                        const Text('No Data'),
+                                                      ],
+                                      ),
+                  ),
                 ),
               ),
             ),
@@ -411,7 +419,7 @@ class _ProfileName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
           // crossAxisAlignment: CrossAxisAlignment.start,
@@ -458,7 +466,7 @@ class _ProfileName extends StatelessWidget {
               children: [
                 /// name
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.6,
+                  // width: MediaQuery.of(context).size.width * 0.6,
                   clipBehavior: Clip.none,
                   child: Text(
                     user.displayName ?? user.actualName ?? '',
@@ -482,7 +490,7 @@ class _ProfileName extends StatelessWidget {
 
                 /// email
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.5,
+                  // width: MediaQuery.of(context).size.width * 0.5,
                   clipBehavior: Clip.none,
                   child: Text(
                     user.email ?? 'nomail@mail.com',
@@ -511,10 +519,10 @@ Widget accountPageListItems({required String key, required String value, bool is
         'Active' => value == 'true' ? 'Yes' : 'No',
         'Last Login' => (value == 'null')
             ? 'Unknown'
-            : DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(int.parse(value))),
+            : DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(int.parse(value) * 1000)),
         'Account Created' => (value == 'Unknown')
             ? ''
-            : DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(int.parse(value))),
+            : DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(int.parse(value) * 1000)),
         _ => value
       };
   return Container(

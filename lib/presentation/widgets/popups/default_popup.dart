@@ -31,7 +31,7 @@ Future showDefaultPopUp(
             color: neutralDarkGrey,
           ),
         ),
-        actions: <Widget>[
+        actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(

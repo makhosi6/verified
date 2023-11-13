@@ -78,7 +78,8 @@ class TransactionListItem extends StatelessWidget {
                     )
                   : const SizedBox.shrink(),
               Text(
-                DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(data.timestamp!.toInt() * 1000)),
+                DateFormat.jm().format(
+                    DateTime.fromMillisecondsSinceEpoch(((data.timestamp ?? data.createdAt ?? 0) as int) * 1000)),
                 style: GoogleFonts.dmSans(
                     fontSize: 12.0, fontStyle: FontStyle.normal, fontWeight: FontWeight.w400, color: neutralDarkGrey),
               ),
@@ -243,6 +244,7 @@ class ListItemBanner extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.only(
           top: 8.0,
+          bottom: 8.0,
           left: 12.0,
           right: 12.0,
         ),

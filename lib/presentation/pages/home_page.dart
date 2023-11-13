@@ -5,6 +5,7 @@ import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
+import 'package:verified/presentation/utils/no_internet_indicator.dart';
 import 'package:verified/presentation/utils/trigger_auth_bottom_sheet.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
@@ -73,11 +74,12 @@ class HomePageContents extends StatelessWidget {
       ),
       body: Center(
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 500.0),
-          padding: primaryPadding.copyWith(bottom: 0, top: 0),
+          // constraints: const BoxConstraints(maxWidth: 600.0),
+          // padding: primaryPadding.copyWith(bottom: 0, top: 0),
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: <Widget>[
+              const NoInternetIndicator(),
               SliverAppBar(
                 stretch: true,
                 onStretchTrigger: () async {},
@@ -133,7 +135,7 @@ class HomePageContents extends StatelessWidget {
               ),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) => widgets[index],
+                  (BuildContext context, int index) => UnconstrainedBox(child: widgets[index]),
                   childCount: widgets.length,
                 ),
               ),

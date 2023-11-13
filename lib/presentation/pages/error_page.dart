@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:verified/infrastructure/native_scripts/main.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 
@@ -28,27 +29,31 @@ class VerifiedErrorPage extends StatelessWidget {
                 child: Column(
                   children: [
                     BaseButton(
-                        iconBgColor: errorColor,
-                        buttonIcon: const Icon(
-                          Icons.replay_circle_filled_outlined,
-                          color: Colors.white,
-                        ),
-                        hasBorderLining: true,
-                        buttonSize: ButtonSize.small,
-                        label: 'Refresh',
-                        color: errorColor,
-                        onTap: () {}),
-                    BaseButton(
-                        iconBgColor: warningColor,
-                        buttonIcon: const Icon(
-                          Icons.close_outlined,
-                          color: Colors.white,
-                        ),
-                        hasBorderLining: true,
-                        buttonSize: ButtonSize.small,
-                        label: 'Close',
-                        color: warningColor,
-                        onTap: () {}),
+                      iconBgColor: errorColor,
+                      buttonIcon: const Icon(
+                        Icons.replay_circle_filled_outlined,
+                        color: Colors.white,
+                      ),
+                      hasBorderLining: true,
+                      buttonSize: ButtonSize.small,
+                      label: 'Refresh',
+                      color: errorColor,
+                      onTap: VerifiedAppNativeCalls.restartApp,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: primaryPadding.top),
+                      child: BaseButton(
+                          iconBgColor: warningColor,
+                          buttonIcon: const Icon(
+                            Icons.close_outlined,
+                            color: Colors.white,
+                          ),
+                          hasBorderLining: true,
+                          buttonSize: ButtonSize.small,
+                          label: 'Close',
+                          color: warningColor,
+                          onTap: () {}),
+                    ),
                   ],
                 ),
               )

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
+import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/presentation/pages/input_form_page.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
+import 'package:verified/presentation/utils/no_internet_indicator.dart';
 import 'package:verified/presentation/utils/trigger_auth_bottom_sheet.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
@@ -27,11 +29,12 @@ class _SearchOptionsPageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 500.0),
-        padding: primaryPadding,
+        // constraints: const BoxConstraints(maxWidth:600.0),
+        // padding: primaryPadding,
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: <Widget>[
+            const NoInternetIndicator(),
             SliverAppBar(
               stretch: true,
               onStretchTrigger: () async {},
@@ -41,6 +44,12 @@ class _SearchOptionsPageContent extends StatelessWidget {
               flexibleSpace: AppBar(
                 automaticallyImplyLeading: false,
                 title: const Text('Verification'),
+              ),
+              leadingWidth: 80.0,
+              leading: VerifiedBackButton(
+                key: const Key('search-page-back-btn'),
+                onTap: Navigator.of(context).pop,
+                isLight: true,
               ),
               actions: [
                 BlocListener<AuthBloc, AuthState>(
@@ -54,7 +63,8 @@ class _SearchOptionsPageContent extends StatelessWidget {
                     iconColor: Colors.black,
                     bgColor: Colors.white,
                     onTap: () async {
-                      if (!context.read<AuthBloc>().state.isLoggedIn) {
+                      print('WISH  ${context.read<StoreBloc>().state}');
+                      if (context.read<StoreBloc>().state.userProfileData != null) {
                         triggerAuthBottomSheet(context: context, redirect: const SearchResultsPage());
                         return;
                       }
@@ -101,7 +111,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30.0),
                         child: Text(
-                          'Please put your phone in front of your face Please put your phone in front put your phone in front of your face',
+                          'Please put your phone in front of your face Please put your phone in front put your\n phone in front of your face',
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                             color: neutralDarkGrey,
@@ -114,41 +124,48 @@ class _SearchOptionsPageContent extends StatelessWidget {
                     SizedBox(
                       child: Column(
                         children: [
-                          BaseButton(
-                            key: UniqueKey(),
-                            onTap: () {},
-                            label: 'Seek & Guide',
-                            color: neutralGrey,
-                            hasIcon: false,
-                            bgColor: neutralYellow,
-                            buttonIcon: Icon(
-                              Icons.grain_outlined,
-                              color: neutralYellow,
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: BaseButton(
+                              key: UniqueKey(),
+                              onTap: () {
+                                navigate(context, page: const SearchResultsPage());
+                              },
+                              label: 'Seek & Guide',
+                              color: neutralGrey,
+                              hasIcon: false,
+                              bgColor: neutralYellow,
+                              buttonIcon: Icon(
+                                Icons.grain_outlined,
+                                color: neutralYellow,
+                              ),
+                              buttonSize: ButtonSize.large,
+                              hasBorderLining: false,
                             ),
-                            buttonSize: ButtonSize.large,
-                            hasBorderLining: false,
                           ),
-                          BaseButton(
-                            key: UniqueKey(),
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) => InputFormPage(
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: BaseButton(
+                              key: UniqueKey(),
+                              onTap: () {
+                                navigate(
+                                  context,
+                                  page: InputFormPage(
                                     formType: FormType.phoneNumberForm,
                                   ),
-                                ),
-                              );
-                            },
-                            label: 'Learn Quick',
-                            color: neutralGrey,
-                            hasIcon: false,
-                            bgColor: primaryColor,
-                            buttonIcon: Icon(
-                              Icons.lock_outline,
-                              color: primaryColor,
+                                );
+                              },
+                              label: 'Learn Quick',
+                              color: neutralGrey,
+                              hasIcon: false,
+                              bgColor: primaryColor,
+                              buttonIcon: Icon(
+                                Icons.lock_outline,
+                                color: primaryColor,
+                              ),
+                              buttonSize: ButtonSize.large,
+                              hasBorderLining: false,
                             ),
-                            buttonSize: ButtonSize.large,
-                            hasBorderLining: false,
                           ),
                         ],
                       ),

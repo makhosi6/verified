@@ -75,7 +75,7 @@ ThemeData theme = ThemeData.light(
 
   ///
   scrollbarTheme: ScrollbarThemeData(
-    thumbVisibility: MaterialStateProperty.all(true),
+    thumbVisibility: MaterialStateProperty.all(false),
     thickness: MaterialStateProperty.all(10),
     thumbColor: MaterialStateProperty.all(darkerPrimaryColor),
     radius: const Radius.circular(10),

@@ -8,7 +8,7 @@ const fetch = (...args) => import('node-fetch').then(({
 const analytics = (req, res, next) => {
     console.log("analytics hook");
     const IP = "";
-    const time = Date.now();
+    const time = Math.floor(Date.now() / 1000)
     const sessionId = ""
     const headers = {};
 
@@ -29,13 +29,13 @@ async function updateLastSeen(id) {
         const data = await response.json();
 
         fetch(`http://localhost:4343/api/v1/profile/resource/${id}?role=system`, {
-                method: 'PUT',
-                headers,
-                body: JSON.stringify({
-                    ...data,
-                    "last_login_at": Date.now(),
-                }),
-            })
+            method: 'PUT',
+            headers,
+            body: JSON.stringify({
+                ...data,
+                "last_login_at": Math.floor(Date.now() / 1000)
+            }),
+        })
             .then(response => response.text())
             .then(result => console.log("Successful Last seen update!!"))
             .catch(error => console.log('error', error));
@@ -68,27 +68,27 @@ const addTimestamps = (req, res, next) => {
     console.log("add_timestamp hook");
     const METHOD = req.method.toUpperCase();
     if (METHOD === 'POST') {
-        req.body.createdAt = Date.now()
-        req.body.account_created_at = Date.now()
+        req.body.createdAt = Math.floor(Date.now() / 1000)
+        req.body.account_created_at = Math.floor(Date.now() / 1000)
 
     }
     if (METHOD == "PUT") {
-        req.body.updatedAt = Date.now()
+        req.body.updatedAt = Math.floor(Date.now() / 1000)
     }
     if (METHOD == "DELETE") {
-        req.body.deletedAt = Date.now()
+        req.body.deletedAt = Math.floor(Date.now() / 1000)
     } else {
-        // res.body.last_login_at = Date.now()
+        // res.body.last_login_at = Math.floor(Date.now() /1000)
     }
     next()
 }
 
 const addIdentifiers = (req, res, next) => {
-    console.log("add_IDs hook");
+    console.log("add_IDs hook   " + req.url);
     const METHOD = req.method.toUpperCase();
-    // if (METHOD === 'POST') {
-    //     req.body.id = uuidv4();
-    // } 
+    if (METHOD === 'POST' && !req.url.includes("profile/resource")) {
+        req.body.id = uuidv4();
+    } 
     next()
 }
 

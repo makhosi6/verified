@@ -20,15 +20,14 @@ class CombinedHistoryList extends StatelessWidget {
       bgColor: neutralGrey,
       leadingIcon: Icons.local_library_outlined,
       leadingBgColor: primaryColor,
-      title: 'How it Works',
+      title: '600it Works',
       subtitle: '',
       buttonText: 'Learn More',
       onTap: () {},
     );
 
     return Container(
-      // padding: primaryPadding,
-      width: MediaQuery.of(context).size.width - 40,
+      padding: primaryPadding,
       constraints: const BoxConstraints(
         maxWidth: 600.0,
       ),
@@ -71,7 +70,6 @@ class CombinedHistoryList extends StatelessWidget {
           }
 
           /// ELSE SHOW TRANSACTIONS HISTORY
-          /// ..sort((a, b) => ((a.createdAt ?? 0) as int) - ((b.createdAt ?? 0) as int))
           final list = sortByDate(state.historyData);
 
           var today = list.today;
