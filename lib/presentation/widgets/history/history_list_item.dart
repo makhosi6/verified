@@ -81,7 +81,11 @@ class TransactionListItem extends StatelessWidget {
                 DateFormat.jm().format(
                     DateTime.fromMillisecondsSinceEpoch(((data.timestamp ?? data.createdAt ?? 0) as int) * 1000)),
                 style: GoogleFonts.dmSans(
-                    fontSize: 12.0, fontStyle: FontStyle.normal, fontWeight: FontWeight.w400, color: neutralDarkGrey),
+                  fontSize: 12.0,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w400,
+                  color: neutralDarkGrey,
+                ),
               ),
             ],
           ),
@@ -98,7 +102,7 @@ class TransactionListItem extends StatelessWidget {
                     style: GoogleFonts.dmSans(color: primaryColor),
                   ),
                 )
-              : const SizedBox.shrink(),
+              : null,
         ),
       ),
     );
@@ -239,8 +243,10 @@ class ListItemBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration:
-          BoxDecoration(color: bgColor ?? primaryColor.withOpacity(0.2), borderRadius: BorderRadius.circular(16.0)),
+      decoration: BoxDecoration(
+        color: bgColor ?? primaryColor.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(16.0),
+      ),
       child: ListTile(
         contentPadding: const EdgeInsets.only(
           top: 8.0,
@@ -248,7 +254,7 @@ class ListItemBanner extends StatelessWidget {
           left: 12.0,
           right: 12.0,
         ),
-        isThreeLine: true,
+        // isThreeLine: true,
         leading: _LeadingIcon(
           icon: leadingIcon ?? Icons.discount_outlined,
           bgColor: leadingBgColor ?? primaryColor,

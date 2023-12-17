@@ -93,7 +93,7 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                         fontSize: 28.0,
                         color: Colors.black,
                         fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ),
                       textAlign: TextAlign.center,
                       validator: (value) {

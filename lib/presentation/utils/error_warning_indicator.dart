@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-class NoInternetIndicator extends StatelessWidget {
-  const NoInternetIndicator({super.key});
+class AppErrorWarningIndicator extends StatelessWidget {
+  final IndicatorType type;
+  final String message;
+  const AppErrorWarningIndicator({super.key, this.type = IndicatorType.error, this.message = 'No Internet Connection'});
 
   @override
   Widget build(BuildContext context) {
     return SliverPinnedHeader(
       child: Container(
-        color: Colors.redAccent[700]!,
+        color: type == IndicatorType.error ? Colors.redAccent[700]! : Colors.amber[400],
         // margin: const EdgeInsets.only(bottom: 20),
         child: Column(
           children: [
             Container(
-              height: 20,
+              height: 30,
             ),
-            const Text(
-              'No Internet Connection',
-              style: TextStyle(
+            Text(
+              message,
+              style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 15.0,
                 color: Colors.white,
               ),
             ),
             const SizedBox(
-              height: 8,
+              height: 4,
             ),
           ],
         ),
@@ -32,3 +34,5 @@ class NoInternetIndicator extends StatelessWidget {
     );
   }
 }
+
+enum IndicatorType { error, warning }

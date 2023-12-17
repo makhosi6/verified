@@ -1,70 +1,44 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
 import 'package:flutter/material.dart';
-import 'package:verified/helpers/logger.dart';
+import 'package:flutter/services.dart';
 
+import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
-import 'package:verified/presentation/pages/transactions_page.dart';
 import 'package:verified/presentation/theme.dart';
-import 'package:verified/presentation/utils/no_internet_indicator.dart';
+import 'package:verified/presentation/utils/error_warning_indicator.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/inputs/generic_input.dart';
 
-// ignore: must_be_immutable
-class InputFormPage extends StatelessWidget {
+final _globalKeyInputPage = GlobalKey<_InputFormPageState>(debugLabel: 'input-form-page-key');
+
+class InputFormPage extends StatefulWidget {
   final FormType formType;
   InputFormPage({
-    Key? key,
     required this.formType,
-  }) : super(key: key);
+  }) : super(key: _globalKeyInputPage);
+
+  @override
+  State<InputFormPage> createState() => _InputFormPageState();
+}
+
+class _InputFormPageState extends State<InputFormPage> {
+  List<String> reasonsForRequest = ['E-commerce and Financial Transactions', 'b', 'c'];
+
+  late String reason = reasonsForRequest.first;
 
   @override
   Widget build(BuildContext context) {
+    final copy = widget.formType == FormType.idForm ? PageCopy.idNumberForm : PageCopy.phoneNumberForm;
+
+    List<Widget> widgets = getWidgets(widget.formType);
+
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Container(
-        width: 150.0,
-        height: 74.0,
-        margin: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          boxShadow: [
-            const BoxShadow(color: Colors.transparent),
-            BoxShadow(
-              offset: const Offset(1, 30),
-              blurRadius: 30,
-              color: darkerPrimaryColor.withOpacity(0.2),
-            ),
-          ],
-        ),
-        child: BaseButton(
-          key: UniqueKey(),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => const TransactionPage(),
-              ),
-            );
-          },
-          label: 'Search',
-          color: Colors.white,
-          iconBgColor: neutralYellow,
-          bgColor: neutralYellow,
-          buttonIcon: const Image(
-            image: AssetImage('assets/icons/find-icon.png'),
-          ),
-          buttonSize: ButtonSize.large,
-          hasBorderLining: false,
-        ),
-      ),
       body: Center(
         child: Container(
-          // constraints: const BoxConstraints(maxWidth: 600.0),
-          // padding: primaryPadding,
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
-              const NoInternetIndicator(),
+              const AppErrorWarningIndicator(),
               SliverAppBar(
                 stretch: true,
                 onStretchTrigger: () async {},
@@ -74,12 +48,12 @@ class InputFormPage extends StatelessWidget {
                 flexibleSpace: AppBar(
                   automaticallyImplyLeading: true,
                   title: Text(
-                    pageCopy[formType.name.toString()]?['pageName'] ?? 'Search',
+                    copy.pageName ?? 'Search',
                   ),
                 ),
                 leadingWidth: 80.0,
                 leading: VerifiedBackButton(
-                    key: Key('${formType.name}-input-form-page-back-btn'),
+                    key: Key('${widget.formType.name}-input-form-page-back-btn'),
                     onTap: Navigator.of(context).pop,
                     isLight: true),
                 actions: [
@@ -100,9 +74,13 @@ class InputFormPage extends StatelessWidget {
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) => UnconstrainedBox(
-                    child: Container(constraints: const BoxConstraints(maxWidth: 600.0), child: _widgets[index]),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width - primaryPadding.horizontal,
+                      constraints: appConstraints,
+                      child: widgets[index],
+                    ),
                   ),
-                  childCount: _widgets.length,
+                  childCount: widgets.length,
                 ),
               ),
             ],
@@ -112,49 +90,76 @@ class InputFormPage extends StatelessWidget {
     );
   }
 
-  late final List<Widget> _widgets = getWidgets(formType);
+  @override
+  void dispose() {
+    super.dispose();
+  }
 }
 
 List<Widget> getWidgets(FormType formType) {
-  try {
-    final copy = pageCopy[formType.name.toString()];
-    if (copy == null || copy.isEmpty) return [];
-    return [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0),
-        child: Text(
-          "${copy['pageDescription']}",
-          style: TextStyle(
-            fontWeight: FontWeight.w400,
-            color: neutralDarkGrey,
-            fontSize: 14.0,
+  final copy = formType == FormType.idForm ? PageCopy.idNumberForm : PageCopy.phoneNumberForm;
+
+  return [
+    Padding(
+      padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
+      child: Text(
+        copy.pageDescription ?? 'Please type a phone/id number and click send to verify.',
+        style: TextStyle(
+          fontWeight: FontWeight.w400,
+          color: neutralDarkGrey,
+          fontSize: 14.0,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    ),
+    Container(
+        padding: EdgeInsets.only(bottom: primaryPadding.bottom, top: primaryPadding.top * 3),
+        child: GenericInputField(
+          hintText: copy.formPlaceholderText ?? 'Please type...',
+          label: null,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          onChange: (value) {},
+        )),
+    Container(
+      padding: EdgeInsets.symmetric(vertical: primaryPadding.vertical),
+      constraints: appConstraints,
+      child: InputDecorator(
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(primaryPadding.top),
           ),
-          textAlign: TextAlign.left,
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: _globalKeyInputPage.currentState?.reason ?? 'Other',
+            hint: const Text('Select preferred communication method'),
+            isExpanded: true,
+            isDense: true,
+            items: _globalKeyInputPage.currentState?.reasonsForRequest
+                .map((opt) => DropdownMenuItem(
+                      value: opt,
+                      child: Text(opt),
+                    ))
+                .toList(),
+            onChanged: (reason) => {
+              if (_globalKeyInputPage.currentState?.mounted == true)
+                {
+                  _globalKeyInputPage.currentState?.setState(() {
+                    _globalKeyInputPage.currentState?.reason = reason ?? 'Other';
+                  })
+                }
+            },
+          ),
         ),
       ),
-      Container(
-        padding: const EdgeInsets.symmetric(vertical: 48.0),
-        height: 300.0,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GenericInputField(
-              label: "${copy['pageLabel']}",
-              hintText: "${copy['formPlaceholderText']}",
-              onChange: (String value) {},
-            ),
-            GenericInputField(
-              label: 'Date of Birth',
-              hintText: 'DD/MM/YYYY (31/12/2010)',
-              onChange: (String value) {},
-            ),
-          ],
-        ),
-      ),
-      BaseButton(
+    ),
+    Container(
+      constraints: appConstraints,
+      child: BaseButton(
         key: UniqueKey(),
         onTap: () {},
-        label: "${copy['pageButtonName']}",
+        label: copy.pageButtonName ?? 'Submit',
         color: neutralGrey,
         hasIcon: false,
         bgColor: primaryColor,
@@ -165,36 +170,74 @@ List<Widget> getWidgets(FormType formType) {
         buttonSize: ButtonSize.small,
         hasBorderLining: false,
       ),
-    ];
-  } catch (err) {
-    verifiedErrorLogger(err);
-    return [];
-  }
+    ),
+  ];
 }
 
-enum FormType { idForm, phoneNumberForm, sarsForm }
+enum FormType { idForm, phoneNumberForm }
 
-final pageCopy = {
-  'idForm': {
+class PageCopy {
+  static InputFormPageData idNumberForm = InputFormPageData.fromJson({
     'formLabel': 'ID Form',
     'formPlaceholderText': 'ID Form Placeholder Text',
-    'pageName': 'Search by ID No',
+    'pageName': 'Verify ID Number',
     'pageDescription':
         'Please put your phone in front of your face Please put your phone in front put your phone in front of your face',
     'pageButtonName': 'Send'
-  },
-  'phoneNumberForm': {
+  });
+
+  static InputFormPageData phoneNumberForm = InputFormPageData.fromJson({
     'formLabel': 'Phone Number Form',
     'formPlaceholderText': 'Phone Number Form Placeholder Text',
-    'pageName': 'Search by Phone No',
+    'pageName': 'Verify Phone Number',
     'pageDescription': 'Phone Number Page Description',
     'pageButtonName': 'Send'
-  },
-  'sarsForm': {
-    'formLabel': 'SARS Form',
-    'formPlaceholderText': 'SARS Form Placeholder Text',
-    'pageName': 'Search by SARS No',
-    'pageDescription': 'SARS Page Description',
-    'pageButtonName': 'Send'
-  },
-};
+  });
+}
+
+class InputFormPageData {
+  InputFormPageData({
+    this.formLabel,
+    this.formPlaceholderText,
+    this.pageName,
+    this.pageDescription,
+    this.pageButtonName,
+  });
+
+  InputFormPageData.fromJson(dynamic json) {
+    formLabel = json['formLabel'];
+    formPlaceholderText = json['formPlaceholderText'];
+    pageName = json['pageName'];
+    pageDescription = json['pageDescription'];
+    pageButtonName = json['pageButtonName'];
+  }
+  String? formLabel;
+  String? formPlaceholderText;
+  String? pageName;
+  String? pageDescription;
+  String? pageButtonName;
+  InputFormPageData copyWith({
+    String? formLabel,
+    String? formPlaceholderText,
+    String? pageName,
+    String? pageDescription,
+    String? pageButtonName,
+  }) =>
+      InputFormPageData(
+        formLabel: formLabel ?? this.formLabel,
+        formPlaceholderText: formPlaceholderText ?? this.formPlaceholderText,
+        pageName: pageName ?? this.pageName,
+        pageDescription: pageDescription ?? this.pageDescription,
+        pageButtonName: pageButtonName ?? this.pageButtonName,
+      );
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['formLabel'] = formLabel;
+    map['formPlaceholderText'] = formPlaceholderText;
+    map['pageName'] = pageName;
+    map['pageDescription'] = pageDescription;
+    map['pageButtonName'] = pageButtonName;
+    return map;
+  }
+}

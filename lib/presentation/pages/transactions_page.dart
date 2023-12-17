@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/theme.dart';
-import 'package:verified/presentation/utils/no_internet_indicator.dart';
+import 'package:verified/presentation/utils/error_warning_indicator.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
-import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 
 class TransactionPage extends StatelessWidget {
   const TransactionPage({super.key});
@@ -52,11 +52,11 @@ class TransactionPageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        // constraints: const BoxConstraints(maxWidth: 600.0),
+        // constraints: appConstraints,
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            const NoInternetIndicator(),
+            const AppErrorWarningIndicator(),
             SliverAppBar(
               stretch: true,
               onStretchTrigger: () async {},
@@ -114,9 +114,15 @@ class TransactionPageContent extends StatelessWidget {
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 childCount: 1,
-                (_, int index) => Padding(
-                  padding: primaryPadding,
-                  child: const UnconstrainedBox(child: CombinedHistoryList(showBanner: false)),
+                (_, int index) => UnconstrainedBox(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: primaryPadding.top,
+                    ),
+                    child: const CombinedHistoryList(
+                      showBanner: false,
+                    ),
+                  ),
                 ),
               ),
             ),

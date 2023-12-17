@@ -17,21 +17,21 @@ class UserProfile {
   });
 
   static var empty = UserProfile.fromJson({
-    "actualName": "Hello",
-    "active": true,
-    "avatar": null,
-    "softDeleted": null,
-    "displayName": null,
-    "email": "nomail@example.com",
-    "id": "ec87944f-4000-426b-b6f8-6649d6a8a387",
-    "name": "Hello",
-    "phone": null,
-    "profileId": "rEFR3yIt8j3d2FQQX7TrjH7WjFRY",
-    "walletId": null,
-    "historyId": null,
-    "last_login_at": null,
-    "account_created_at": null,
-    "createdAt": 1698947881950
+    'actualName': 'Hello',
+    'active': true,
+    'avatar': 'https://robohash.org/avatar.png',
+    'softDeleted': null,
+    'displayName': null,
+    'email': 'nomail@example.com',
+    'id': 'ec87944f-4000-426b-b6f8-6649d6a8a387',
+    'name': 'Hello',
+    'phone': null,
+    'profileId': 'rEFR3yIt8j3d2FQQX7TrjH7WjFRY',
+    'walletId': null,
+    'historyId': null,
+    'last_login_at': null,
+    'account_created_at': null,
+    'createdAt': 1698947881950
   });
 
   UserProfile.fromJson(dynamic json) {

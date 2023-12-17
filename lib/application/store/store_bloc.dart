@@ -131,8 +131,8 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 ),
               );
 
-              add(const StoreEvent.getAllHistory('logged-in-user'));
-              add(const StoreEvent.getWallet('logged-in-user-wallet'));
+              // add(const StoreEvent.getAllHistory('logged-in-user'));
+              // add(const StoreEvent.getWallet('logged-in-user-wallet'));
             });
 
             return null;

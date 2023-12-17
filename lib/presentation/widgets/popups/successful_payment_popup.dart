@@ -2,6 +2,7 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polygon/flutter_polygon.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:verified/globals.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/dotted_line.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
@@ -34,8 +35,8 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
       children: [
         Center(
           child: Container(
-            constraints: const BoxConstraints(
-              maxWidth: 600.0,
+            constraints: BoxConstraints(
+              maxWidth: appConstraints.maxWidth,
               minWidth: 400.0,
               maxHeight: 550.0,
             ),
@@ -57,7 +58,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                     child: Column(
                       children: [
                         const Text(
-                          "Payment Success",
+                          'Payment Success',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 18.0,
@@ -71,7 +72,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                             vertical: 12.0,
                           ),
                           child: Text(
-                            "Your payment for Verified has been successfully done",
+                            'Your payment for Verified has been successfully done',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: neutralDarkGrey,
@@ -90,7 +91,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                     child: Column(
                       children: [
                         Text(
-                          "Total payment",
+                          'Total payment',
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                             color: neutralDarkGrey,
@@ -99,7 +100,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                           textAlign: TextAlign.center,
                         ),
                         Text(
-                          r"$15,901",
+                          r'$15,901',
                           style: GoogleFonts.dmSans(
                             fontSize: 24.0,
                             fontWeight: FontWeight.w700,
@@ -124,7 +125,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                     leadingIcon: Icons.rocket_launch_outlined,
                     leadingBgColor: primaryColor,
                     title: 'TItLe',
-                    subtitle: "Subtttitle",
+                    subtitle: 'Subtttitle',
                     onTap: () {},
                   ),
 
@@ -133,7 +134,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                     child: BaseButton(
                       key: UniqueKey(),
                       onTap: () => Navigator.pop(context),
-                      label: "Done",
+                      label: 'Done',
                       color: neutralGrey,
                       hasIcon: false,
                       bgColor: primaryColor,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:verified/domain/models/verify_id_response.dart';
+import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/transactions_page.dart';
 import 'package:verified/presentation/theme.dart';
-import 'package:verified/presentation/utils/no_internet_indicator.dart';
+import 'package:verified/presentation/utils/error_warning_indicator.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/history/history_list_item.dart';
@@ -57,13 +59,40 @@ class SearchResultsPageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var results =
+
+        //  ContactTracingResponse(
+        //   contactEnquiry: ContactEnquiry(results: [
+        //     Results(
+        //       idnumber: '90900909091221',
+        //       forename1: 'Kennedy',
+        //       forename2: 'F',
+        //       surname: 'John',
+        //     )
+        //   ]),
+        // ).contactEnquiry?.results?[0].toJson();
+
+        // ??
+        (VerifyIdResponse(
+      status: '',
+      verification: Verification(
+        firstnames: 'Nelson',
+        lastname: 'Mandela',
+        dob: '18/07/1924',
+        age: 99,
+        gender: 'Male',
+        citizenship: 'African',
+        dateIssued: '00/00/00',
+      ),
+    ).verification)
+            ?.toJson();
+
     return Center(
       child: Container(
-        // constraints: const BoxConstraints(maxWidth: 600.0),
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
-          slivers: <Widget>[
-            const NoInternetIndicator(),
+          slivers: [
+            const AppErrorWarningIndicator(),
             SliverAppBar(
               stretch: true,
               onStretchTrigger: () async {},
@@ -120,13 +149,23 @@ class SearchResultsPageContent extends StatelessWidget {
             ),
             SliverList(
               delegate: SliverChildBuilderDelegate(
-                childCount: 1001,
+                childCount: (results?.length ?? 0) + 1,
                 (_, int index) => UnconstrainedBox(
-                  child: _renderSliverListItems(
-                    _,
-                    index,
-                    (index == 0),
-                  ),
+                  child: (index == results?.length)
+                      ? Container(
+                          height: 90,
+                          width: 100,
+                          color: Colors.transparent,
+                        )
+                      : Container(
+                          constraints: appConstraints,
+                          width: MediaQuery.of(context).size.width,
+                          child: _renderSliverListItems(
+                            key: results?.keys.toList()[index] ?? 'Key',
+                            value: '${results?.values.toList()[index] ?? 'Value'}',
+                            isTitle: (index == 0 || index == results?.length),
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -137,9 +176,9 @@ class SearchResultsPageContent extends StatelessWidget {
   }
 }
 
-Widget _renderSliverListItems(_, int index, isTitle) => Container(
+Widget _renderSliverListItems({required String key, required String value, required bool isTitle}) => Container(
       alignment: Alignment.centerLeft,
-      constraints: const BoxConstraints(maxWidth: 600.0),
+      constraints: appConstraints,
       padding: EdgeInsets.only(
         left: 16.0,
         right: 16.0,
@@ -152,7 +191,7 @@ Widget _renderSliverListItems(_, int index, isTitle) => Container(
             )
           : Column(
               children: [
-                DataItem(keyName: 'keyName_$index', value: 'Value_$index'),
+                DataItem(keyName: key, value: value),
                 Divider(
                   color: Colors.grey[400],
                   indent: 0,

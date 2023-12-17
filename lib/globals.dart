@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 /// root app navigator
-GlobalKey<NavigatorState> navigatorKey =
-    GlobalKey(debugLabel: 'global_app_navigation_key');
+GlobalKey<NavigatorState> navigatorKey = GlobalKey(debugLabel: 'global_app_navigation_key');
+
+///
+const appConstraints = BoxConstraints(maxWidth: 600);

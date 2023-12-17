@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/globals.dart';
 import 'package:verified/presentation/theme.dart';
 
 class Balance extends StatelessWidget {
@@ -14,8 +15,8 @@ class Balance extends StatelessWidget {
     var user = context.watch<StoreBloc>().state.userProfileData;
     return Container(
       padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
-      width: MediaQuery.of(context).size.width - 40,
-      constraints: const BoxConstraints(maxWidth: 600.0),
+      width: MediaQuery.of(context).size.width - 12,
+      constraints: appConstraints,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,

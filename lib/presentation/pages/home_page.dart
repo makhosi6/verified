@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/presentation/pages/account_page.dart';
+import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
-import 'package:verified/presentation/utils/no_internet_indicator.dart';
+import 'package:verified/presentation/utils/error_warning_indicator.dart';
 import 'package:verified/presentation/utils/trigger_auth_bottom_sheet.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/buttons/trio_cta_buttons.dart';
-import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/widgets/profile/balance.dart';
 
 class HomePage extends StatelessWidget {
@@ -56,11 +56,7 @@ class HomePageContents extends StatelessWidget {
         ),
         child: BaseButton(
           key: UniqueKey(),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (BuildContext context) => const SearchOptionsPage(),
-            ),
-          ),
+          onTap: () => navigate(context, page: const SearchOptionsPage()),
           label: 'Search',
           color: Colors.white,
           iconBgColor: neutralYellow,
@@ -74,12 +70,16 @@ class HomePageContents extends StatelessWidget {
       ),
       body: Center(
         child: Container(
-          // constraints: const BoxConstraints(maxWidth: 600.0),
+          // constraints: appConstraints,
           // padding: primaryPadding.copyWith(bottom: 0, top: 0),
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: <Widget>[
-              const NoInternetIndicator(),
+              const AppErrorWarningIndicator(
+                key: Key('homepage_app_error_warning_indicator'),
+                type: IndicatorType.warning,
+                message: 'Your phone date/time is inaccurate!',
+              ),
               SliverAppBar(
                 stretch: true,
                 onStretchTrigger: () async {},

@@ -54,9 +54,10 @@ class StoreDioClientService {
   /// instance of dio (singleton)
   static Dio instance = Dio(
     BaseOptions(
-      baseUrl: 'https://7221-41-116-182-34.ngrok-free.app/api/v1/',
+      baseUrl: 'https://88cf-41-116-175-191.ngrok-free.app/api/v1/',
       headers: {
         'Authorization': 'Bearer $storeApiKey',
+        'x-client': '',
         'x-nonce': 'MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2',
         'Accept': 'application/json',
       },

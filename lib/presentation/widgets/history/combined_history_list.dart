@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/transaction_history.dart';
+import 'package:verified/globals.dart';
+import 'package:verified/presentation/pages/how_it_works_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/history/history_list.dart';
 import 'package:verified/helpers/extensions/date.dart';
 import 'package:verified/presentation/widgets/history/history_list_item.dart';
@@ -11,6 +14,7 @@ import 'package:verified/presentation/widgets/history/history_list_item.dart';
 class CombinedHistoryList extends StatelessWidget {
   final int? limit;
   final bool? showBanner;
+
   const CombinedHistoryList({super.key, this.limit, this.showBanner = true});
 
   @override
@@ -23,15 +27,12 @@ class CombinedHistoryList extends StatelessWidget {
       title: 'How it Works',
       subtitle: '',
       buttonText: 'Learn More',
-      onTap: () {},
+      onTap: () => navigate(context, page: const HowItWorksPage()),
     );
 
     return Container(
-      // padding: primaryPadding,
-      width: MediaQuery.of(context).size.width - 40,
-      constraints: const BoxConstraints(
-        maxWidth: 600.0,
-      ),
+      width: MediaQuery.of(context).size.width - 12,
+      constraints: appConstraints,
       child: BlocBuilder<StoreBloc, StoreState>(
         bloc: context.watch<StoreBloc>(),
         builder: (context, state) {
@@ -59,13 +60,15 @@ class CombinedHistoryList extends StatelessWidget {
             );
           }
 
-          if (state.historyData.isEmpty && limit != null) {
-            return Text(
-              'NO TRANSACTIONS HISTORY',
-              style: GoogleFonts.dmSans(
-                fontStyle: FontStyle.normal,
-                fontWeight: FontWeight.w400,
-                color: neutralDarkGrey,
+          if (state.historyData.isEmpty) {
+            return Center(
+              child: Text(
+                'NO TRANSACTIONS HISTORY',
+                style: GoogleFonts.dmSans(
+                  fontSize: 18.0,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             );
           }
@@ -83,13 +86,13 @@ class CombinedHistoryList extends StatelessWidget {
             children: [
               if (showBanner == true) learnMoreBanner,
               if (showBanner == true)
-                const SizedBox(
+                SizedBox(
                   width: double.infinity,
                   child: Padding(
-                    padding: EdgeInsets.only(top: 28.0),
+                    padding: const EdgeInsets.only(top: 28.0, left: 8.0),
                     child: Text(
                       'TRANSACTIONS HISTORY',
-                      style: TextStyle(
+                      style: GoogleFonts.dmSans(
                         fontWeight: FontWeight.w700,
                         fontStyle: FontStyle.normal,
                         fontSize: 18.0,
@@ -106,6 +109,12 @@ class CombinedHistoryList extends StatelessWidget {
                 HistoryList(key: const Key('history-list-this-month'), historyList: thisMonth, title: 'This Month'),
               if (older.isNotEmpty)
                 HistoryList(key: const Key('history-list-older'), historyList: older, title: 'Older Than A Month'),
+              if (showBanner == true)
+                Container(
+                  height: 90,
+                  width: 100,
+                  color: Colors.transparent,
+                )
             ],
           );
         },

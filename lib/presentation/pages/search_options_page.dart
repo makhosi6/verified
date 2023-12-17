@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/globals.dart';
+import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/input_form_page.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
-import 'package:verified/presentation/utils/no_internet_indicator.dart';
+import 'package:verified/presentation/utils/error_warning_indicator.dart';
 import 'package:verified/presentation/utils/trigger_auth_bottom_sheet.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
@@ -29,12 +32,12 @@ class _SearchOptionsPageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        // constraints: const BoxConstraints(maxWidth:600.0),
+        // constraints: appConstraints,
         // padding: primaryPadding,
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: <Widget>[
-            const NoInternetIndicator(),
+            const AppErrorWarningIndicator(),
             SliverAppBar(
               stretch: true,
               onStretchTrigger: () async {},
@@ -63,13 +66,13 @@ class _SearchOptionsPageContent extends StatelessWidget {
                     iconColor: Colors.black,
                     bgColor: Colors.white,
                     onTap: () async {
-                      print('WISH  ${context.read<StoreBloc>().state}');
-                      if (context.read<StoreBloc>().state.userProfileData != null) {
-                        triggerAuthBottomSheet(context: context, redirect: const SearchResultsPage());
-                        return;
+                      final user = context.read<StoreBloc>().state.userProfileData;
+                      const page = AccountPage();
+                      if (user == null) {
+                        await triggerAuthBottomSheet(context: context, redirect: page);
+                      } else {
+                        navigate(context, page: page);
                       }
-                      Navigator.of(context).pop();
-                      navigate(context, page: const SearchResultsPage());
                     },
                     icon: Icons.person_2_outlined,
                   ),
@@ -97,7 +100,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 10.0),
                         child: Text(
-                          'Payment with QR Code',
+                          'Verify with confidence',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 18.0,
@@ -108,16 +111,45 @@ class _SearchOptionsPageContent extends StatelessWidget {
                       ),
 
                       ///and description for the explainer
-                      Padding(
+                      Container(
                         padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                        child: Text(
-                          'Please put your phone in front of your face Please put your phone in front put your\n phone in front of your face',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            color: neutralDarkGrey,
-                            fontSize: 14.0,
-                          ),
+                        constraints: appConstraints,
+                        child: RichText(
                           textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: neutralDarkGrey,
+                              fontSize: 14.0,
+                            ),
+                            children: [
+                              const TextSpan(
+                                text: 'Validate an individual\'s identity using only their ',
+                              ),
+                              TextSpan(
+                                text: 'id number',
+                                style: GoogleFonts.ibmPlexSans(
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                  color: darkerPrimaryColor,
+                                ),
+                              ),
+                              const TextSpan(
+                                text: ' or ',
+                              ),
+                              TextSpan(
+                                text: 'phone number',
+                                style: GoogleFonts.ibmPlexSans(
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                  color: darkerPrimaryColor,
+                                ),
+                              ),
+                              const TextSpan(
+                                  text:
+                                      ', ensuring you have the correct information for transactions or background checks.')
+                            ],
+                          ),
                         ),
                       ),
                     ]),
@@ -128,15 +160,18 @@ class _SearchOptionsPageContent extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 12.0),
                             child: BaseButton(
                               key: UniqueKey(),
-                              onTap: () {
-                                navigate(context, page: const SearchResultsPage());
-                              },
-                              label: 'Seek & Guide',
+                              onTap: () => navigate(
+                                context,
+                                page: InputFormPage(
+                                  formType: FormType.phoneNumberForm,
+                                ),
+                              ),
+                              label: 'Verify Phone Number',
                               color: neutralGrey,
                               hasIcon: false,
                               bgColor: neutralYellow,
                               buttonIcon: Icon(
-                                Icons.grain_outlined,
+                                Icons.transcribe,
                                 color: neutralYellow,
                               ),
                               buttonSize: ButtonSize.large,
@@ -147,15 +182,13 @@ class _SearchOptionsPageContent extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 12.0),
                             child: BaseButton(
                               key: UniqueKey(),
-                              onTap: () {
-                                navigate(
-                                  context,
-                                  page: InputFormPage(
-                                    formType: FormType.phoneNumberForm,
-                                  ),
-                                );
-                              },
-                              label: 'Learn Quick',
+                              onTap: () => navigate(
+                                context,
+                                page: InputFormPage(
+                                  formType: FormType.idForm,
+                                ),
+                              ),
+                              label: 'Verify ID Number',
                               color: neutralGrey,
                               hasIcon: false,
                               bgColor: primaryColor,

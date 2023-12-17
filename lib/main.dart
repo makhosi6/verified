@@ -35,7 +35,10 @@ void main() async {
   runZonedGuarded(() async {
     /// Fallback page onError
     ErrorWidget.builder = (details) => MaterialApp(
-          home: VerifiedErrorPage(key: const Key('fallback-error-page'), message: details.summary.toDescription()),
+          home: VerifiedErrorPage(
+            key: const Key('fallback-error-page'),
+            message: details.summary.toDescription(),
+          ),
         );
 
     ///
@@ -105,11 +108,32 @@ class _AppRootState extends State<AppRoot> with SingleTickerProviderStateMixin {
             home: BlocBuilder<StoreBloc, StoreState>(
               bloc: context.read<StoreBloc>()
                 ..add(StoreEvent.getUserProfile(userId))
-                // ..add(StoreEvent.getAllHistory(userId))
-                ..add(const StoreEvent.getAllHistory('logged-in-user'))
+                ..add(StoreEvent.getAllHistory(userId))
+                // ..add(const StoreEvent.getAllHistory('logged-in-user'))
                 ..add(StoreEvent.addUser(snapshot.data))
-                ..add(const StoreEvent.getWallet('logged-in-user-wallet')),
-              // ..add(StoreEvent.getWallet(userWalletId)),
+                // ..add(
+                //   StoreEvent.addUser(
+                //     UserProfile.fromJson({
+                //       'actualName': 'The User\'s User Name',
+                //       'active': false,
+                //       'avatar': 'https://robohash.org/robo@robohash.org?gravatar=yes',
+                //       'softDeleted': false,
+                //       'displayName': 'The User\'s User Name',
+                //       'email': 'user_082@mailbox.com',
+                //       'id': 'logged-in-user',
+                //       'name': 'User Name',
+                //       'phone': 'User Phone Number',
+                //       'profileId': 'user_profile_id_82911wdd312',
+                //       'walletId': 'logged-in-user-wallet',
+                //       'historyId': '21w13111',
+                //       'last_login_at': DateTime.now().subtract(const Duration(days: 2)).millisecondsSinceEpoch ~/ 1000,
+                //       'account_created_at':
+                //           DateTime.now().subtract(const Duration(days: 200)).millisecondsSinceEpoch ~/ 1000,
+                //     }),
+                //   ),
+                // )
+                // ..add(const StoreEvent.getWallet('logged-in-user-wallet')),
+                ..add(StoreEvent.getWallet(userWalletId)),
               builder: (context, state) {
                 return BlocListener<StoreBloc, StoreState>(
                   listener: (context, state) {

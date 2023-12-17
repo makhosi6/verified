@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:verified/globals.dart';
 import 'package:verified/presentation/widgets/bank_card/suggested_topup.dart';
 
 class TopUpPage extends StatelessWidget {
@@ -23,9 +24,7 @@ Future showTopUpBottomSheet(BuildContext context) => showModalBottomSheet(
       builder: (context) => SingleChildScrollView(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
-          constraints: const BoxConstraints(
-            minWidth: 600.0,
-          ),
+          constraints: appConstraints,
           padding: const EdgeInsets.only(top: 20.0),
           child: const SuggestedTopUp(),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/add_payment_method_page.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
@@ -15,13 +16,13 @@ class TrioHomeButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: primaryPadding,
-      width: MediaQuery.of(context).size.width - 40,
+      width: MediaQuery.of(context).size.width - 12,
       margin: const EdgeInsets.symmetric(vertical: 20.0),
       decoration: BoxDecoration(
         color: primaryColor,
         borderRadius: BorderRadius.circular(16.0),
       ),
-      constraints: const BoxConstraints(maxWidth: 600.0),
+      constraints: appConstraints,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

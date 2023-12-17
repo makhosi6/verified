@@ -42,3 +42,7 @@ flutter build web --web-renderer canvaskit
 
   ## firebase local server
   - `firebase emulators:start`
+
+
+  ## ngrok 
+  - `ngrok start --config "/Users/makhosi/~/Library/Application Support/ngrok/ngrok.yml" --all`

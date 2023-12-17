@@ -15,7 +15,7 @@ class HistoryList extends StatelessWidget {
         /// list title
         Container(
           alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8),
           child: ListTitle(
             text: title,
           ),
