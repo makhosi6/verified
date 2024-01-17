@@ -118,11 +118,13 @@ class HomePageContents extends StatelessWidget {
                   //   icon: Icons.info_outline_rounded,
                   // ),
                   ActionButton(
+                    key: const Key('go-to-user-account-btn'),
+                    tooltip: 'User Account',
                     iconColor: Colors.black,
                     bgColor: Colors.white,
                     onTap: () async {
                       final user = context.read<StoreBloc>().state.userProfileData;
-                      const page = AccountPage();
+                      final page = AccountPage();
                       if (user == null) {
                         await triggerAuthBottomSheet(context: context, redirect: page);
                       } else {
@@ -135,7 +137,7 @@ class HomePageContents extends StatelessWidget {
               ),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) => UnconstrainedBox(child: widgets[index]),
+                  (BuildContext context, int index) => UnconstrainedBox(key: ValueKey(index), child: widgets[index]),
                   childCount: widgets.length,
                 ),
               ),

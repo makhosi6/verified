@@ -1,12 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/domain/models/form_type.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/input_form_page.dart';
-import 'package:verified/presentation/pages/search_results_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
@@ -59,15 +61,19 @@ class _SearchOptionsPageContent extends StatelessWidget {
                   listener: (context, state) {
                     if (state.isLoggedIn) {
                       Navigator.of(context).pop();
-                      navigate(context, page: const SearchResultsPage());
+                      print('===========EXIT===============');
+                      exit(0);
+                      // navigate(context, page: const SearchResultsPage(type: f,));
                     }
                   },
                   child: ActionButton(
+                    key: const Key('go-to-account-btn'),
+                    tooltip: 'Account',
                     iconColor: Colors.black,
                     bgColor: Colors.white,
                     onTap: () async {
                       final user = context.read<StoreBloc>().state.userProfileData;
-                      const page = AccountPage();
+                      final page = AccountPage();
                       if (user == null) {
                         await triggerAuthBottomSheet(context: context, redirect: page);
                       } else {
@@ -147,7 +153,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                               ),
                               const TextSpan(
                                   text:
-                                      ', ensuring you have the correct information for transactions or background checks.')
+                                      ', to ensuring you have the correct information for transactions or background checks.')
                             ],
                           ),
                         ),

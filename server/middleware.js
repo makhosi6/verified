@@ -65,6 +65,7 @@ const lastLoginHook = (req, res, next) => {
 
 
 const addTimestamps = (req, res, next) => {
+    // if(req.url.includes("profile/resource") && req.method.toUpperCase() == "GET") return next()
     console.log("add_timestamp hook");
     const METHOD = req.method.toUpperCase();
     if (METHOD === 'POST') {

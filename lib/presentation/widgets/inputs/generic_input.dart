@@ -6,6 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 class GenericInputField extends StatelessWidget {
   final String hintText;
   final String? label;
+  final String? initialValue;
+  final bool autofocus;
+  final String? Function(String? value)? validator;
   final void Function(String value) onChange;
   final List<TextInputFormatter>? inputFormatters;
 
@@ -15,6 +18,9 @@ class GenericInputField extends StatelessWidget {
     Key? key,
     required this.hintText,
     this.label,
+    this.initialValue,
+    this.autofocus = false,
+    required this.validator,
     required this.onChange,
     this.inputFormatters,
     required this.keyboardType,
@@ -35,18 +41,18 @@ class GenericInputField extends StatelessWidget {
             ),
           ),
         TextFormField(
-          key: UniqueKey(),
+          key: Key('input-field-$label'),
+          initialValue: initialValue,
           inputFormatters: inputFormatters,
           keyboardType: keyboardType,
+          autofocus: autofocus,
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(color: Colors.grey[400]),
             border: const UnderlineInputBorder(),
           ),
           onChanged: onChange,
-          validator: (value) {
-            return null;
-          },
+          validator: validator,
           style: GoogleFonts.dmSans(
             fontSize: 18.0,
             fontStyle: FontStyle.normal,

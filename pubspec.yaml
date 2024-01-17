@@ -36,6 +36,8 @@ dependencies:
   http: ^1.1.0
   restart_app: ^1.2.1
   sliver_tools: ^0.2.12
+  easy_rich_text: ^2.1.0
+  rsa_id_number: ^0.1.8
 
 dev_dependencies:
   flutter_test:
@@ -45,11 +47,24 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
-
+  fonts:
+      - family: SWFont
+        fonts:
+          - asset: "assets/fonts/helveticaNeue/Helvetica-Neu-Bold.ttf"
+          - asset: "assets/fonts/helveticaNeue/HelveticaNeue-BlackCond.ttf"
+          - asset: "assets/fonts/helveticaNeue/HelveticaNeue-Light.ttf"
+          - asset: "assets/fonts/helveticaNeue/HelveticaNeue-Medium.ttf"
+          - asset: "assets/fonts/helveticaNeue/HelveticaNeue-Thin.ttf"
+          - asset: "assets/fonts/helveticaNeue/HelveticaNeue-Bold.ttf"
+          - asset: "assets/fonts/helveticaNeue/HelveticaNeue-Regular.ttf"
+          - asset: "assets/fonts/helveticaNeue/HelveticaNeueHv.ttf"
+          - asset: "assets/fonts/helveticaNeue/HelveticaNeueIt.ttf"
+          - asset: "assets/fonts/helveticaNeue/HelveticaNeueLt.ttf"
+          - asset: "assets/fonts/helveticaNeue/HelveticaNeueMed.ttf"
   uses-material-design: true
 
   assets:
     - assets/icons/
+    - assets/fonts/
     - assets/images/
     - server/
-

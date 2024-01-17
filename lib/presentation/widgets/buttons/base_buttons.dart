@@ -34,6 +34,8 @@ class BaseButton extends StatelessWidget {
 
   final void Function() onTap;
 
+  final Color? borderColor;
+
   const BaseButton({
     Key? key,
     this.width,
@@ -41,6 +43,7 @@ class BaseButton extends StatelessWidget {
     this.color = Colors.black,
     this.bgColor = Colors.white,
     this.iconBgColor,
+    this.borderColor,
     this.hasIcon = true,
     required this.buttonIcon,
     required this.hasBorderLining,
@@ -59,7 +62,7 @@ class BaseButton extends StatelessWidget {
         // margin: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: bgColor,
-          border: hasBorderLining ? Border.all(color: neutralGrey, width: 2.0) : null,
+          border: hasBorderLining ? Border.all(color: borderColor ?? neutralGrey, width: 2.0) : null,
           borderRadius: BorderRadius.circular(16.0),
         ),
         child: InkWell(

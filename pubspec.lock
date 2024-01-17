@@ -233,6 +233,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.3.2"
+  easy_rich_text:
+    dependency: "direct main"
+    description:
+      name: easy_rich_text
+      sha256: "581a04fac8a4b1331d587db792f67fbc6ae1bbb42abf1c015d5d317eb1c108dc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   fake_async:
     dependency: transitive
     description:
@@ -512,6 +520,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  luhn_algorithm:
+    dependency: transitive
+    description:
+      name: luhn_algorithm
+      sha256: "1bfafa3d142e75747e7aed73213f8d88c78576d629248c093a6d4d1efd6ed76e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0+1"
   matcher:
     dependency: transitive
     description:
@@ -704,6 +720,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
+  rsa_id_number:
+    dependency: "direct main"
+    description:
+      name: rsa_id_number
+      sha256: "37f3b340aed9385688b3d704477e4ea81eebcddf8e3984976b65c15300c17cd0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.8"
   shared_preferences:
     dependency: "direct main"
     description:

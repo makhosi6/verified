@@ -14,7 +14,10 @@ class Balance extends StatelessWidget {
     var wallet = context.watch<StoreBloc>().state.walletData;
     var user = context.watch<StoreBloc>().state.userProfileData;
     return Container(
-      padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+      padding: const EdgeInsets.only(
+        bottom: 10.0,
+        top: 20.0,
+      ),
       width: MediaQuery.of(context).size.width - 12,
       constraints: appConstraints,
       child: Row(

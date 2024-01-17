@@ -6,7 +6,7 @@ class VerifySaDioClientService {
   /// instance of dio (singleton)
   static Dio instance = Dio(
     BaseOptions(
-      baseUrl: 'https://api.example.co.za/webservice/api/v1',
+      baseUrl: baseUrl,
       headers: {
         'Authorization': 'Bearer $verifySaApiKey',
         'Accept': 'application/json',
@@ -54,7 +54,7 @@ class StoreDioClientService {
   /// instance of dio (singleton)
   static Dio instance = Dio(
     BaseOptions(
-      baseUrl: 'https://88cf-41-116-175-191.ngrok-free.app/api/v1/',
+      baseUrl: baseUrl,
       headers: {
         'Authorization': 'Bearer $storeApiKey',
         'x-client': '',

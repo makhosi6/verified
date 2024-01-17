@@ -20,7 +20,22 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
       builder: (context) => BlocListener<StoreBloc, StoreState>(
         listener: (context, state) {
           if (!state.userProfileDataLoading && state.userProfileData != null && state.userProfileData != null) {
+            ///
             Navigator.of(context).pop();
+
+            ///
+            ScaffoldMessenger.of(context)
+              ..clearSnackBars()
+              ..showSnackBar(
+                SnackBar(
+                  content: const Text(
+                    'Logged In!',
+                  ),
+                  backgroundColor: primaryColor,
+                ),
+              );
+
+            ///
             navigate(context, page: redirect);
           }
         },
@@ -228,7 +243,7 @@ Future triggerSignUpBottomSheet<bool>({
                                   ..onTap = () async {
                                     try {
                                       Navigator.of(context).pop();
-                                      await triggerAuthBottomSheet(context: context, redirect: const AccountPage());
+                                      await triggerAuthBottomSheet(context: context, redirect: AccountPage());
                                     } catch (e) {
                                       print(e.toString());
                                     }

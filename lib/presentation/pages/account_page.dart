@@ -6,6 +6,7 @@ import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/native_scripts/main.dart';
 import 'package:verified/presentation/pages/add_payment_method_page.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
@@ -23,43 +24,53 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/text/list_title.dart';
 
 class AccountPage extends StatelessWidget {
-  const AccountPage({super.key});
+  AccountPage({super.key});
+
+  GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: Container(
-          width: 150.0,
-          height: 74.0,
-          margin: const EdgeInsets.symmetric(vertical: 16),
-          decoration: BoxDecoration(
-            boxShadow: [
-              const BoxShadow(color: Colors.transparent),
-              BoxShadow(
-                offset: const Offset(1, 30),
-                blurRadius: 30,
-                color: darkerPrimaryColor.withOpacity(0.2),
-              ),
-            ],
-          ),
-          child: BaseButton(
-            key: UniqueKey(),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => const SearchOptionsPage(),
-              ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Container(
+        width: 150.0,
+        height: 74.0,
+        margin: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          boxShadow: [
+            const BoxShadow(color: Colors.transparent),
+            BoxShadow(
+              offset: const Offset(1, 30),
+              blurRadius: 30,
+              color: darkerPrimaryColor.withOpacity(0.2),
             ),
-            label: 'Search',
-            color: Colors.white,
-            iconBgColor: neutralYellow,
-            bgColor: neutralYellow,
-            buttonIcon: const Image(image: AssetImage('assets/icons/find-icon.png')),
-            buttonSize: ButtonSize.large,
-            hasBorderLining: false,
-          ),
+          ],
         ),
-        body: const AccountPageContent());
+        child: BaseButton(
+          key: UniqueKey(),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => const SearchOptionsPage(),
+            ),
+          ),
+          label: 'Search',
+          color: Colors.white,
+          iconBgColor: neutralYellow,
+          bgColor: neutralYellow,
+          buttonIcon: const Image(image: AssetImage('assets/icons/find-icon.png')),
+          buttonSize: ButtonSize.large,
+          hasBorderLining: false,
+        ),
+      ),
+      body: RefreshIndicator(
+        key: refreshIndicatorKey,
+        onRefresh: () async => await Future.delayed(
+          const Duration(seconds: 2),
+          VerifiedAppNativeCalls.restartApp,
+        ),
+        child: const AccountPageContent(),
+      ),
+    );
   }
 }
 
@@ -141,6 +152,8 @@ class AccountPageContent extends StatelessWidget {
                               ],
                             ),
                             ActionButton(
+                              key: const Key('add-payment-method-or-topup-btn'),
+                              tooltip: wallet == null ? 'Add payment method' : 'Top-up',
                               iconColor: Colors.white,
                               bgColor: neutralYellow,
                               padding: const EdgeInsets.all(0),
@@ -225,44 +238,86 @@ class AccountPageContent extends StatelessWidget {
                                           : null,
                                       style: ListTileStyle.list,
                                       onTap: () async {
-                                        /// Logout
-                                        if (accountSettings[index]['text'] == 'Logout') {
-                                          context.read<AuthBloc>().add(const AuthEvent.signOut());
-                                          context.read<StoreBloc>()
-                                            ..add(StoreEvent.deleteUserProfile(user.id ?? ''))
-                                            ..add(const StoreEvent.clearUser());
+                                        try {
+                                          /// Logout
+                                          if (accountSettings[index]['text'] == 'Logout') {
+                                            ///
+                                            ScaffoldMessenger.of(context)
+                                              ..clearSnackBars()
+                                              ..showSnackBar(
+                                                SnackBar(
+                                                  content: const Text(
+                                                    'Logged out',
+                                                  ),
+                                                  backgroundColor: warningColor,
+                                                ),
+                                              );
 
-                                          Navigator.of(context)
-                                            ..pop()
-                                            ..initState();
+                                            context.read<AuthBloc>().add(const AuthEvent.signOut());
+                                            context.read<StoreBloc>()
+                                              ..add(StoreEvent.deleteUserProfile(user.id ?? ''))
+                                              ..add(const StoreEvent.clearUser());
 
-                                          Future.delayed(const Duration(milliseconds: 600),
-                                              () => VerifiedAppNativeCalls.restartApp());
-                                        }
+                                            Navigator.of(context)
+                                              ..pop()
+                                              ..initState();
 
-                                        // Delete account
-                                        if (accountSettings[index]['text'] == 'Delete Account') {
-                                          context.read<AuthBloc>().add(const AuthEvent.deleteAccount());
-                                          context.read<StoreBloc>()
-                                            ..add(StoreEvent.deleteUserProfile(user.id ?? ''))
-                                            ..add(const StoreEvent.clearUser());
+                                            Future.delayed(const Duration(milliseconds: 600),
+                                                () => VerifiedAppNativeCalls.restartApp());
+                                          }
 
-                                          Navigator.of(context)
-                                            ..pop()
-                                            ..initState();
+                                          // Delete account
+                                          if (accountSettings[index]['text'] == 'Delete Account') {
+                                            ///
+                                            ScaffoldMessenger.of(context)
+                                              ..clearSnackBars()
+                                              ..showSnackBar(
+                                                SnackBar(
+                                                  content: const Text(
+                                                    'Account Deleted!',
+                                                  ),
+                                                  backgroundColor: errorColor,
+                                                ),
+                                              );
 
-                                          Future.delayed(const Duration(milliseconds: 600),
-                                              () => VerifiedAppNativeCalls.restartApp());
-                                        }
+                                            ///
+                                            context.read<AuthBloc>().add(const AuthEvent.deleteAccount());
+                                            context.read<StoreBloc>()
+                                              ..add(StoreEvent.deleteUserProfile(user.id ?? ''))
+                                              ..add(const StoreEvent.clearUser());
 
-                                        /// Show Terms of Use
-                                        if (accountSettings[index]['text'] == 'Terms of Use') {
-                                          navigate(context, page: const TermOfUseWebView());
-                                        }
+                                            Navigator.of(context)
+                                              ..pop()
+                                              ..initState();
 
-                                        /// show get help pop-up
-                                        if (accountSettings[index]['text'] == 'Help') {
-                                          await showHelpPopUpForm(context);
+                                            Future.delayed(const Duration(milliseconds: 600),
+                                                () => VerifiedAppNativeCalls.restartApp());
+                                          }
+
+                                          /// Show Terms of Use
+                                          if (accountSettings[index]['text'] == 'Terms of Use') {
+                                            navigate(context, page: const TermOfUseWebView());
+                                          }
+
+                                          /// show get help pop-up
+                                          if (accountSettings[index]['text'] == 'Help') {
+                                            await showHelpPopUpForm(context);
+                                          }
+                                        } catch (e) {
+                                          verifiedErrorLogger(e);
+                                          if (accountSettings[index]['text'] != 'Delete Account' &&
+                                              accountSettings[index]['text'] != 'Logout') {
+                                            ScaffoldMessenger.of(context)
+                                              ..clearSnackBars()
+                                              ..showSnackBar(
+                                                SnackBar(
+                                                  content: const Text(
+                                                    'Pull To Refresh',
+                                                  ),
+                                                  action: SnackBarAction(label: 'Refresh', onPressed: () {}),
+                                                ),
+                                              );
+                                          }
                                         }
                                       },
                                       leading: Icon(
@@ -439,7 +494,7 @@ class _ProfileName extends StatelessWidget {
                       padding: const EdgeInsets.all(1),
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Colors.green[50]!,
+                          color: Colors.green.shade50,
                         ),
                         shape: BoxShape.circle,
                         color: Colors.green[50],
@@ -504,7 +559,7 @@ class _ProfileName extends StatelessWidget {
 
                 /// email
                 Container(
-                  // width: MediaQuery.of(context).size.width * 0.5,
+                  width: MediaQuery.of(context).size.width * 0.5,
                   clipBehavior: Clip.none,
                   child: Text(
                     user.email ?? 'nomail@mail.com',

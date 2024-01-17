@@ -87,6 +87,7 @@ class _TheWebViewState extends State<TheWebView> {
                       top: 60,
                       left: 20,
                       child: VerifiedBackButton(
+                        key: UniqueKey(),
                         isLight: true,
                         onTap: () => Navigator.pop(context),
                       ),

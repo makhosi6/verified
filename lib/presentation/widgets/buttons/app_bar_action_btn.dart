@@ -7,47 +7,63 @@ class ActionButton extends StatelessWidget {
   final Color bgColor;
   final void Function() onTap;
   final IconData icon;
+  final String tooltip;
   final EdgeInsetsGeometry padding;
   final Color? borderColor;
   final bool hasBorderLining;
 
-  const ActionButton({
+  ActionButton({
     Key? key,
     required this.iconColor,
     required this.bgColor,
     required this.onTap,
     required this.icon,
+    required this.tooltip,
     this.borderColor,
     this.hasBorderLining = true,
     this.padding = const EdgeInsets.only(right: 12.0),
   }) : super(key: key);
 
+  late final _tooltipKey = GlobalKey<TooltipState>(debugLabel: 'action-button-tooltip-[$tooltip][${key.toString()}]');
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: padding,
-      child: Container(
-        height: 49.0,
-        width: 49.0,
-        padding: const EdgeInsets.all(4.0),
-        decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(12.0),
-            border: Border.all(
-                color: borderColor ?? ((bgColor == Colors.white) ? neutralGrey : const Color(0xFFC5FFEE)), width: 2.0),
-            boxShadow: [
-              BoxShadow(
-                color: neutralGrey,
-              )
-            ]),
-        child: InkWell(
-          onTap: onTap,
-          child: SizedBox(
-            width: 24.0,
-            height: 24.0,
-            child: Icon(
-              icon,
-              color: iconColor,
+    ///
+    Future.delayed(const Duration(seconds: 2), () {
+      _tooltipKey.currentState?.ensureTooltipVisible();
+    });
+
+    ///
+    return Tooltip(
+      key: _tooltipKey,
+      message: tooltip,
+      triggerMode: TooltipTriggerMode.manual,
+      showDuration: const Duration(seconds: 5),
+      child: Padding(
+        padding: padding,
+        child: Container(
+          height: 49.0,
+          width: 49.0,
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(12.0),
+              border: Border.all(
+                  color: borderColor ?? ((bgColor == Colors.white) ? neutralGrey : const Color(0xFFC5FFEE)),
+                  width: 2.0),
+              boxShadow: [
+                BoxShadow(
+                  color: neutralGrey,
+                )
+              ]),
+          child: InkWell(
+            onTap: onTap,
+            child: SizedBox(
+              width: 24.0,
+              height: 24.0,
+              child: Icon(
+                icon,
+                color: iconColor,
+              ),
             ),
           ),
         ),
@@ -73,6 +89,8 @@ class VerifiedBackButton extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: ActionButton(
+            key: ValueKey('action-btn-${key.toString()}'),
+            tooltip: 'Go Back',
             iconColor: isLight ? Colors.black : Colors.white,
             bgColor: isLight ? Colors.white : darkerPrimaryColor,
             onTap: onTap,

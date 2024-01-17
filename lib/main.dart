@@ -51,12 +51,17 @@ void main() async {
               VerifySaRepository(
                 VerifySaDioClientService.instance,
               ),
-            ),
+            )..add(
+                const VerifySaEvent.apiHealthCheck(),
+              ),
           ),
           BlocProvider<StoreBloc>(
             create: (BuildContext context) => StoreBloc(StoreRepository(
               StoreDioClientService.instance,
-            )),
+            ))
+              ..add(
+                const StoreEvent.apiHealthCheck(),
+              ),
           ),
           BlocProvider<AuthBloc>(
             create: (BuildContext context) => AuthBloc(
@@ -87,7 +92,23 @@ class AppRoot extends StatefulWidget {
   State<AppRoot> createState() => _AppRootState();
 }
 
-class _AppRootState extends State<AppRoot> with SingleTickerProviderStateMixin {
+class _AppRootState extends State<AppRoot> {
+  //with SingleTickerProviderStateMixin
+  @override
+
+//log changing deps
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    print('=========================+++++++didChangeDependencies+++++++======================');
+  }
+
+  @override
+  void didUpdateWidget(covariant AppRoot oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    print('=========================+++++++didUpdateWidget+++++++======================');
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<UserProfile?>(
@@ -168,26 +189,26 @@ class _AppRootState extends State<AppRoot> with SingleTickerProviderStateMixin {
           );
         });
   }
-
-  void hideAppLoader() {
-    /// hide loader option 1
-    Loader.hide();
-
-    /// hide loader option 2
-  }
-
-  void showAppLoader(BuildContext context) {
-    /// show loader option 1
-    Loader.show(
-      context,
-      overlayFromBottom: 80,
-      overlayColor: const Color.fromARGB(44, 0, 0, 0),
-      progressIndicator: const SizedBox(height: 50, width: 50, child: CircularProgressIndicator()),
-    );
-
-    /// show loader option 2
-    _refreshIndicatorKey.currentState?.show();
-  }
-
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 }
+
+void hideAppLoader() {
+  /// hide loader option 1
+  Loader.hide();
+
+  /// hide loader option 2
+}
+
+void showAppLoader(BuildContext context) {
+  /// show loader option 1
+  Loader.show(
+    context,
+    overlayFromBottom: 80,
+    overlayColor: const Color.fromARGB(44, 0, 0, 0),
+    progressIndicator: const SizedBox(height: 50, width: 50, child: CircularProgressIndicator()),
+  );
+
+  /// show loader option 2
+  _refreshIndicatorKey.currentState?.show();
+}
+
+final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();

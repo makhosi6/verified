@@ -14,7 +14,7 @@ queue.addEventListener('success', e => {
   console.log('The result is:', e.toString())
 })
 queue.addEventListener('error', e => {
-  console.log('job finished processing with an error:',JSON.stringify(e, null, 2))
+  console.log('job finished processing with an error:', JSON.stringify(e, null, 2))
   console.log('The result is:', e.toString())
 })
 queue.start(err => {
@@ -61,10 +61,82 @@ server.use(addIdentifiers);
 
 // Use default router
 server.post("/api/v1/help", notifyAdmin);
+server.get(["/api/v1/my_credits", "/api/v1/health-check"], (req, res) => {
+  const rnd = Math.floor(Math.random() * 10)
+  if (rnd > 6) {
+    res.status(500);
+  } else {
+
+    res.status(200).json({
+      "Status": "Success",
+      "Result": {
+        "credits": rnd
+      }
+    })
+  }
+});
+server.post("/api/v1/contact_enquiry", (req, res) => {
+  const { contact_number, reason } = req?.body;
+  console.table(req?.body)
+
+  console.table(req.body)
+  res.status(200).send({
+    "status": "Success",
+    "contactEnquiry": {
+      "results": [
+        {
+          "idnumber": "09877087090987",
+          "forename1": "JUST",
+          "forename2": contact_number,
+          "surname": "GOOFY"
+        },
+        {
+          "idnumber": "7865765786576",
+          "forename1": "SAKIO",
+          "forename2": "NIXON",
+          "surname": "MALATJI"
+        },
+        {
+          "idnumber": "74567456745645",
+          "forename1": "JUST",
+          "forename2": "FRED",
+          "surname": "LONGONE"
+        },
+        {
+          "idnumber": "345234523452345",
+          "forename1": "GUMMY",
+          "forename2": "",
+          "surname": "BEAR"
+        }
+      ]
+    }
+  });
+});
+server.post("/api/v1/said_verification", (req, res) => {
+  const { idnumber, reason } = req?.body;
+  console.table(req?.body)
+  res.status(200).send({
+
+    "status": "ID Number Valid",
+    "verification": {
+      "firstnames": "JUST",
+      "lastname": "GOOFY",
+      "dob": "1979-05-01",
+      "age": 39,
+      "idNumber": idnumber,
+      "gender": "Male",
+      "citizenship": "South African",
+      "dateIssued": "1997-07-25T00:00:00+02:00"
+    }
+
+  });
+});
 
 server.use("/api/v1/health-check", (req, res) => res.send({
   status: 200,
 },),);
+
+
 server.use("/api/v1/ticket", tickets);
 server.use("/api/v1/history", history);
 server.use("/api/v1/profile", lastLoginHook, profile);

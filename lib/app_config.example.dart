@@ -6,4 +6,6 @@ class Env {
   static const verifySaApiKey = r'$the_api_key';
 
   static const storeApiKey = 'TOKEN';
+
+  static const baseUrl = 'https://example.dev/api/v1/';
 }

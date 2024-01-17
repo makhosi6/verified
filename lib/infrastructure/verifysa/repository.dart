@@ -16,10 +16,14 @@ class VerifySaRepository implements IVerifySaRepository {
   VerifySaRepository(this.httpClient);
 
   @override
-  Future<Either<Exception, ContactTracingResponse>> contactTracing(String phoneNumber) async {
+  Future<Either<Exception, ContactTracingResponse>> contactTracing(String phoneNumber, EnquiryReason reason) async {
     try {
       var headers = {'Content-Type': 'multipart/form-data', 'Accept': 'application/json'};
-      var data = FormData.fromMap({'api_key': verifySaApiKey, 'contact_number': phoneNumber});
+      var data = FormData.fromMap({
+        'api_key': verifySaApiKey,
+        'contact_number': phoneNumber,
+        'reason': reason.value,
+      });
 
       var response = await httpClient.post(
         '/contact_enquiry',
@@ -40,12 +44,13 @@ class VerifySaRepository implements IVerifySaRepository {
   }
 
   @override
-  Future<Either<Exception, VerifyIdResponse>> verifyIdNumber(String idNumber) async {
+  Future<Either<Exception, VerifyIdResponse>> verifyIdNumber(String idNumber, EnquiryReason reason) async {
     try {
       var headers = {'Content-Type': 'multipart/form-data', 'Accept': 'application/json'};
       var data = FormData.fromMap({
         'api_key': verifySaApiKey,
         'id_number': idNumber,
+        'reason': reason.value,
       });
 
       var response = await httpClient.post(
@@ -76,7 +81,7 @@ class VerifySaRepository implements IVerifySaRepository {
         {
           'api_key': verifySaApiKey,
           'id_number': idNumber,
-          'enquiry_reason': reason.name,
+          'enquiry_reason': reason.value,
         },
       );
 

@@ -8,9 +8,7 @@ import 'package:verified/domain/models/verify_id_response.dart';
 abstract class IVerifySaRepository {
   /// Get HEaLTH StaTUS
   Future<ResourceHealthStatus> getHealthStatus();
-  Future<Either<Exception, VerifyIdResponse>> verifyIdNumber(String idNumber);
+  Future<Either<Exception, VerifyIdResponse>> verifyIdNumber(String idNumber, EnquiryReason reason);
   Future<Either<Exception, DhaImageResponse>> getDhaIdPhoto(String idNumber, EnquiryReason reason);
-  Future<Either<Exception, ContactTracingResponse>> contactTracing(
-    String phoneNumber,
-  );
+  Future<Either<Exception, ContactTracingResponse>> contactTracing(String phoneNumber, EnquiryReason reason);
 }

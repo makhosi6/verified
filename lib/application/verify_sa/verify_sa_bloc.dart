@@ -33,7 +33,7 @@ class VerifySaBloc extends Bloc<VerifySaEvent, VerifySaState> {
           ///
           response.fold((e) {
             emit(state.copyWith(
-              dhaImageError: GenericApiError(error: e.toString(), status: "error"),
+              dhaImageError: GenericApiError(error: e.toString(), status: 'error'),
               dhaImageHasError: true,
               dhaImageDataLoading: false,
             ));
@@ -58,12 +58,12 @@ class VerifySaBloc extends Bloc<VerifySaEvent, VerifySaState> {
           ));
 
           ///
-          final response = await _verifySaRepository.verifyIdNumber(e.idNumber);
+          final response = await _verifySaRepository.verifyIdNumber(e.idNumber, e.reason);
 
           ///
           response.fold((e) {
             emit(state.copyWith(
-              verifyIdError: GenericApiError(error: e.toString(), status: "error"),
+              verifyIdError: GenericApiError(error: e.toString(), status: 'error'),
               verifyIdHasError: true,
               verifyIdDataLoading: false,
             ));
@@ -85,11 +85,11 @@ class VerifySaBloc extends Bloc<VerifySaEvent, VerifySaState> {
             contactTracingData: null,
           ));
 
-          final response = await _verifySaRepository.contactTracing(e.phoneNumber);
+          final response = await _verifySaRepository.contactTracing(e.phoneNumber, e.reason);
 
           response.fold((e) {
             emit(state.copyWith(
-              contactTracingError: GenericApiError(error: e.toString(), status: "error"),
+              contactTracingError: GenericApiError(error: e.toString(), status: 'error'),
               contactTracingHasError: true,
               contactTracingDataLoading: false,
             ));
