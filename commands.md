@@ -41,8 +41,23 @@ flutter build web --web-renderer canvaskit
   ```
 
   ## firebase local server
+
   - `firebase emulators:start`
 
+  ## ngrok
 
-  ## ngrok 
   - `ngrok start --config "/Users/makhosi/~/Library/Application Support/ngrok/ngrok.yml" --all`
+
+  ### push with a tag/ref
+
+  - ```bash
+    git add .
+    git commit -m "version bump: 0.0.5"
+    git tag -a v0.0.5 -m "version bump: 0.0.5"
+    git push origin v0.0.5
+    git push --follow-tags
+    ```
+
+```
+
+```
