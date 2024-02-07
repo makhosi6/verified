@@ -46,15 +46,15 @@ flutter build web --web-renderer canvaskit
 
   ## ngrok
 
-  - `ngrok start --config "/Users/makhosi/~/Library/Application Support/ngrok/ngrok.yml" --all`
+  - `ngrok start --config "~/Library/Application Support/ngrok/ngrok.yml" --all`
 
   ### push with a tag/ref
 
   - ```bash
     git add .
-    git commit -m "version bump: 0.0.5"
-    git tag -a v0.0.5 -m "version bump: 0.0.5"
-    git push origin v0.0.5
+    git commit -m "version bump: v1.2.0.alpha"
+    git tag -a v1.2.0.alpha -m "version bump: v1.2.0.alpha"
+    git push origin v1.2.0.alpha
     git push --follow-tags
     ```
 

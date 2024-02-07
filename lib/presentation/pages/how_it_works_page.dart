@@ -7,10 +7,8 @@ class HowItWorksPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Center(
-        child: Container(
-          child: const Text('How It Works'),
-        ),
+      body: const Center(
+        child: Text('How It Works'),
       ),
     );
   }

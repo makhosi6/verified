@@ -1,0 +1,132 @@
+version: '3'
+name: verified
+services:
+  emqx1:
+    image: emqx:5.0.26
+    container_name: emqx1
+    environment:
+    - "EMQX_NODE_NAME=emqx@node1.emqx.io"
+    - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
+    - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
+    healthcheck:
+      test: ["CMD", "/opt/emqx/bin/emqx_ctl", "status"]
+      interval: 5s
+      timeout: 25s
+      retries: 5
+    networks:
+      emqx-bridge:
+        aliases:
+        - node1.emqx.io
+    ports:
+      - 1883:1883
+      - 8083:8083
+      - 8084:8084
+      - 8883:8883
+      - 18083:18083 
+    volumes:
+      - emqx1_data:/opt/emqx/data
+
+  emqx2:
+    image: emqx:5.0.26
+    container_name: emqx2
+    environment:
+    - "EMQX_NODE_NAME=emqx@node2.emqx.io"
+    - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
+    - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
+    healthcheck:
+      test: ["CMD", "/opt/emqx/bin/emqx_ctl", "status"]
+      interval: 5s
+      timeout: 25s
+      retries: 5
+    networks:
+      emqx-bridge:
+        aliases:
+        - node2.emqx.io
+    volumes:
+      - emqx2_data:/opt/emqx/data
+
+
+  nginx_proxy:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2202:2202"
+    volumes:
+      - ./apps/nginx_proxy/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - fb_notifications_service
+      - payments_service
+      - store_service
+      - verify_id_service
+  
+  fb_notifications_service:
+    build:
+      context: .
+      dockerfile: ./apps/notifications/Dockerfile
+    volumes:
+      - fb_notifications:/app
+    environment:
+      - PORT=${FB_NOTIF_PORT}
+    ports:
+      - "${FB_NOTIF_PORT}:${FB_NOTIF_PORT}"
+    restart: unless-stopped
+
+  
+  payments_service:
+    build:
+      context: .
+      dockerfile: ./apps/payments/Dockerfile
+    volumes:
+      - payments_service:/app
+    environment:
+      - PORT=${PAYMENTS_PORT}
+    ports:
+      - "${PAYMENTS_PORT}:${PAYMENTS_PORT}"
+    restart: unless-stopped
+
+  
+  store_service:
+    build:
+      context: .
+      dockerfile: ./apps/store/Dockerfile
+    volumes:
+      - store:/app
+    environment:
+      - PORT=${STORE_PORT}
+    ports:
+      - "${STORE_PORT}:${STORE_PORT}"
+    restart: unless-stopped
+
+  
+  verify_id_service:
+    build:
+      context: .
+      dockerfile: ./apps/verifyId/Dockerfile
+    volumes:
+      - verify_id:/app
+    environment:
+      - PORT=${VERIFYID_PORT}
+    ports:
+      - "${VERIFYID_PORT}:${VERIFYID_PORT}"
+    restart: unless-stopped
+
+
+volumes:
+  emqx1_data:
+    driver: local
+  emqx2_data:
+    driver: local
+  fb_notifications:
+    driver: local
+  payments_service:
+    driver: local
+  store:
+    driver: local
+  verify_id:
+    driver: local
+
+
+networks:
+  emqx-bridge:
+    driver: bridge

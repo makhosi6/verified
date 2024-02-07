@@ -126,9 +126,8 @@ class _HelpFormState extends State<_HelpForm> {
                         hintText: 'Select issue type',
                         labelText: 'Select issue type',
                         border: OutlineInputBorder(
-                            borderRadius: (formHeight == null && formWidth == null)
-                                ? BorderRadius.circular(16.0)
-                                : const BorderRadius.all(Radius.circular(4.0))),
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(

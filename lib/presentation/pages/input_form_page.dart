@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rsa_id_number/rsa_id_number.dart';
+import 'package:verified/app_config.dart';
+import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
 import 'package:verified/domain/models/enquiry_reason.dart';
 import 'package:verified/domain/models/form_type.dart';
 
 import 'package:verified/globals.dart';
+import 'package:verified/presentation/pages/add_payment_method_page.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
+import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
 import 'package:verified/presentation/utils/navigate.dart';
@@ -268,6 +272,22 @@ List<Widget> getWidgets(BuildContext context, {required FormType formType, requi
             ///
             VerifySaEvent Function(String idNumber, EnquiryReason reason) fetchDataEvent =
                 formType == FormType.idForm ? VerifySaEvent.verifyIdNumber : VerifySaEvent.contactTracing;
+
+            ///
+            final wallet = context.read<StoreBloc>().state.walletData;
+
+            if (wallet == null) {
+              navigate(context, page: const AddPaymentMethodPage());
+
+              return;
+            }
+            print(wallet);
+            print('============');
+            if ((wallet.balance ?? 0) < POINTS_PER_TRANSACTION) {
+              showTopUpBottomSheet(context);
+
+              return;
+            }
 
             ///
             context.read<VerifySaBloc>()

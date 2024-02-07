@@ -50,12 +50,13 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                     ),
                   ),
                   Text(
-                    'How much would you like to top up?',
+                    'Get started with a minimum top-up of just R30 (equivalent to one transaction) \nand enjoy uninterrupted, smooth, and hassle-free service.',
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
                       color: neutralDarkGrey,
                       fontSize: 14.0,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),

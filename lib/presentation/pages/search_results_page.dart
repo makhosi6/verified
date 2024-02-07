@@ -110,7 +110,7 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
                     (_, int index) => UnconstrainedBox(
                       child: (index == results?.length)
                           ? Container(
-                              height: 90,
+                              height: 20,
                               width: 100,
                               color: Colors.transparent,
                             )
@@ -179,6 +179,7 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<VerifySaBloc, VerifySaState>(
       builder: (context, state) {
+        
         if (state.verifyIdDataLoading || state.verifyIdData == null) {
           showAppLoader(context);
         } else {
