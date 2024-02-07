@@ -6,10 +6,10 @@ const fs = require('node:fs')
 const { generateNonce } = require("../../nonce");
 const server = jsonServer.create();
 const defaultMiddleware = jsonServer.defaults();
-const PORT = process.env.PORT || 4300;
+const PORT = process.env.STORE_PORT || 4300;
 const HOST = process.env.HOST || "192.168.0.132";
 ///
-const Queue = require('./queue')
+const Queue = require('../../packages/queue')
 
 
 const queue = new Queue({ results: [], autostart: true, timeout: 30000 });
@@ -42,7 +42,7 @@ const {
   lastLoginHook
 } = require("../../middleware/store");
 ///
-const { notifyAdmin } = require("");
+const { notifyAdmin } = require("../../usecases/admin");
 ///
 const tickets = jsonServer.router(path.join(__dirname, "db/tickets.json"));
 const history = jsonServer.router(path.join(__dirname, "db/history.json"));

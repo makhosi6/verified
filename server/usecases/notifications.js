@@ -1,5 +1,5 @@
 let FCM = require("fcm-node");
-let serverKey = "YOURSERVERKEYHERE"; //put your server key here
+let serverKey = process.env.FB_SERVER_TOKEN ||  "PROJECT_FB_SERVER_TOKEN"; 
 let fcm = new FCM(serverKey);
 
 /// https://github.com/jlcvp/fcm-node

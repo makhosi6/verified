@@ -8,17 +8,23 @@
     "watch": "rollup -c --watch",
     "dev": "nodemon --ignore '**/db/**' index.js ",
     "transform": "javascript-obfuscator nonce.source.js --output nonce.js  --config transform.config.json",
-    "api": "node index.js"
+    "payments": "node --env-file=.env apps/payments/index.js",
+    "store": "node --env-file=.env apps/store/index.js",
+    "verifyid": "node --env-file=.env apps/verifyid/index.js",
+    "notifs": "node --env-file=.env apps/notifications/index.js",
+    "api": "concurrently --kill-others --prefix-colors \"bgGreen.bold,bgBlue.bold,bgCyan.bold,bgMagenta.bold\" \"npm run payments\" \"npm run store\" \"npm run verifyid\" \"npm run notifs\""
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.4",
+    "concurrently": "^8.2.2",
     "nodemon": "^3.0.1",
     "rollup-obfuscator": "^4.0.0"
   },
   "dependencies": {
+    "fcm-node": "^1.6.1",
     "json-server": "^0.17.3",
     "morgan": "^1.10.0",
     "node-fetch": "^2.7.0",
