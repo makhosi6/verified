@@ -3,8 +3,8 @@ const fetch = (...args) => import('node-fetch').then(({
     default: fetch
 }) => fetch(...args));
 
-const PORT = process.env.PORT || 4300;
-const HOST = process.env.HOST || "192.168.0.132";
+const PORT = process.env.PORT || process.env.PORT  || 5400;
+const HOST = process.env.HOST || "0.0.0.0";
 
 const analytics = (req, res, next) => {
     console.log("analytics hook");

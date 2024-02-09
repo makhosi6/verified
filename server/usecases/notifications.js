@@ -1,18 +1,17 @@
 let FCM = require("fcm-node");
-let serverKey = process.env.FB_SERVER_TOKEN ||  "PROJECT_FB_SERVER_TOKEN"; 
+let serverKey = process.env.FB_SERVER_TOKEN || "PROJECT_FB_SERVER_TOKEN";
 let fcm = new FCM(serverKey);
 
 /// https://github.com/jlcvp/fcm-node
 
 /**
  *
- * @param {Request} req
- * @param {Response} res
+ * @param {Express.Request} req
+ * @param {Express.Response} res
  */
 function handlePushNotifications(req, res) {
-  const fbToken = req.body.fbToken;
-  const title = req.body.title;
-  const body = req.body.subtitle;
+
+  const { fbToken, title, body } = req?.body;
 
   const message = {
     to: fbToken,
@@ -37,5 +36,5 @@ function handlePushNotifications(req, res) {
 }
 
 module.exports = {
-    handlePushNotifications
+  handlePushNotifications
 };

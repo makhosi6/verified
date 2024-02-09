@@ -49,8 +49,8 @@ services:
   nginx_proxy:
     image: nginx:latest
     ports:
-      - "80:80"
-      - "443:443"
+      # - "80:80"
+      # - "443:443"
       - "2202:2202"
     volumes:
       - ./apps/nginx_proxy/nginx.conf:/etc/nginx/nginx.conf
@@ -59,6 +59,8 @@ services:
       - payments_service
       - store_service
       - verify_id_service
+    networks:
+      - verified_bridge
   
   fb_notifications_service:
     build:
@@ -68,9 +70,11 @@ services:
       - fb_notifications:/app
     environment:
       - PORT=${FB_NOTIF_PORT}
-    ports:
-      - "${FB_NOTIF_PORT}:${FB_NOTIF_PORT}"
+      - NODE_ENV=production
+      - FB_NOTIF_PORT=${FB_NOTIF_PORT}
     restart: unless-stopped
+    networks:
+      - verified_bridge
 
   
   payments_service:
@@ -81,9 +85,12 @@ services:
       - payments_service:/app
     environment:
       - PORT=${PAYMENTS_PORT}
-    ports:
-      - "${PAYMENTS_PORT}:${PAYMENTS_PORT}"
+      - NODE_ENV=production
+      - PAYMENTS_PORT=${PAYMENTS_PORT}
+      - PAYMENTS_TOKEN=${PAYMENTS_TOKEN}
     restart: unless-stopped
+    networks:
+      - verified_bridge
 
   
   store_service:
@@ -94,9 +101,11 @@ services:
       - store:/app
     environment:
       - PORT=${STORE_PORT}
-    ports:
-      - "${STORE_PORT}:${STORE_PORT}"
+      - NODE_ENV=production
+      - STORE_PORT=${STORE_PORT}
     restart: unless-stopped
+    networks:
+      - verified_bridge
 
   
   verify_id_service:
@@ -107,9 +116,11 @@ services:
       - verify_id:/app
     environment:
       - PORT=${VERIFYID_PORT}
-    ports:
-      - "${VERIFYID_PORT}:${VERIFYID_PORT}"
+      - NODE_ENV=production
+      - VERIFYID_PORT=${VERIFYID_PORT}
     restart: unless-stopped
+    networks:
+      - verified_bridge
 
 
 volumes:
@@ -130,3 +141,9 @@ volumes:
 networks:
   emqx-bridge:
     driver: bridge
+  verified_bridge:
+    driver: bridge
+
+
+
+# docker-compose up -d --env-file .env --force-recreate --remove-orphans --timestamps

@@ -4,8 +4,8 @@ const cors = require("cors");
 const path = require("node:path");
 const fs = require("node:fs");
 
-const PORT = process.env.VERIFYID_PORT || 4300;
-const HOST = process.env.HOST || "192.168.0.132";
+const PORT = process.env.VERIFYID_PORT || process.env.PORT  || 5400;
+const HOST = process.env.HOST || "0.0.0.0";
 const server = express();
 ///
 const {
@@ -32,6 +32,9 @@ const accessLogStream = fs.createWriteStream(
 server.use(morgan("combined", { stream: accessLogStream }));
 
 // Set default middlewares (logger, static, cors and no-cache)
+server.use(cors());
+server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
 server.use(analytics);
 server.use(security);
 server.use(authorization);

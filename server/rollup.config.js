@@ -1,5 +1,6 @@
 const pkg = require("./package.json");
 const { builtinModules } = require("module");
+const replace = require('@rollup/plugin-replace');
 const commonjs = require('@rollup/plugin-commonjs');
 const { obfuscator } = require('rollup-obfuscator');
 const transform = require("./transform.config.json")
@@ -14,9 +15,13 @@ module.exports = {
 
 	],
 	plugins: [
+		replace({
+			'module.exports = {generateNonce};': "const logger = (val) => console.log('INTERNAL_LOGGER', val);",
+			delimiters: ['', ''],
+			preventAssignment: true,
+		}),
 		commonjs(),
 		obfuscator(transform)
-
 	],
 	external: [
 		...builtinModules,

@@ -2,9 +2,10 @@
 
 
 function handleContactEnquiry(req, res) {
+    console.log(JSON.stringify(req?.body || req?.rawBody, null , 2));
     const { contact_number, reason } = req?.body;
 
-    console.table(req.body)
+    console.table(req?.body)
     res.status(200).send({
         "status": "Success",
         "contactEnquiry": {
@@ -59,12 +60,9 @@ function handleSaidVerification(req, res) {
     });
 }
 
-function getCreditsReq(req, res){
+function getCreditsReq(req, res) {
     res.send({"Status":"Success","Result":{"sadl_credits":0}})
 }
-
-
-
 
 module.exports = {
     handleContactEnquiry,

@@ -1,16 +1,20 @@
+const { v4: uuidv4 } = require('uuid');
+const HOST = process.env.HOST || "0.0.0.0";
+const PORT = process.env.PORT || "5400";
+
 const addTimestamps = (req, res, next) => {
     console.log("add_timestamp hook");
     const METHOD = req.method.toUpperCase();
     if (METHOD === 'POST') {
-        req.body.createdAt = Math.floor(Date.now() / 1000)
-        req.body.account_created_at = Math.floor(Date.now() / 1000)
+        req?.body.createdAt = Math.floor(Date.now() / 1000)
+        req?.body.account_created_at = Math.floor(Date.now() / 1000)
 
     }
     if (METHOD == "PUT") {
-        req.body.updatedAt = Math.floor(Date.now() / 1000)
+        req?.body.updatedAt = Math.floor(Date.now() / 1000)
     }
     if (METHOD == "DELETE") {
-        req.body.deletedAt = Math.floor(Date.now() / 1000)
+        req?.body.deletedAt = Math.floor(Date.now() / 1000)
     } else {
         // res.body.last_login_at = Math.floor(Date.now() /1000)
     }
@@ -21,7 +25,7 @@ const addIdentifiers = (req, res, next) => {
     console.log("add_IDs hook   " + req.url);
     const METHOD = req.method.toUpperCase();
     if (METHOD === 'POST' && !req.url.includes("profile/resource")) {
-        req.body.id = uuidv4();
+        req?.body.id = uuidv4();
     } 
     next()
 }
@@ -51,14 +55,14 @@ async function updateLastSeen(id) {
             "Authorization": "Bearer TOKEN",
             "Content-Type": "application/json"
         }
-
-        const response = await fetch(`http://${HOST}:${PORT}/api/v1/profile/resource/${id}?role=system`, {
+        const host = process.env.NODE_ENV === "production" ? 'store_service' : `${HOST}:${PORT}`
+        const response = await fetch(`http://${host}/api/v1/profile/resource/${id}?role=system`, {
             method: 'GET',
             headers
         })
         const data = await response.json();
 
-        fetch(`http://${HOST}:${PORT}/api/v1/profile/resource/${id}?role=system`, {
+        fetch(`http://${host}/api/v1/profile/resource/${id}?role=system`, {
             method: 'PUT',
             headers,
             body: JSON.stringify({

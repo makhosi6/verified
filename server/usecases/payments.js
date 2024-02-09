@@ -1,3 +1,9 @@
+const { v4: uuidv4 } = require('uuid');
+const {generateNonce} = require('../nonce.source')
+const PAYMENTS_TOKEN = process.env.PAYMENTS_TOKEN || "sk_test_1d9ae04aBLnrM8nfaf14ba5ac783";
+const HOST = process.env.HOST || "0.0.0.0";
+const PORT = process.env.PORT || "5400";
+
 /**
  * Represents a payment event object.
  * @typedef {Object} PaymentEvent
@@ -158,11 +164,12 @@ function _createTransactionRecord(payload) {
  */
 function _addToWallet(payload) {
     console.log("Adding to wallet", payerRefId, amount);
+    const host = process.env.NODE_ENV === "production" ? 'store_service' : `${HOST}:${PORT}`
     let options = {
         'method': 'PUT',
-        'url': `http://${HOST}:${PORT}/api/v1/wallet/resource/${payload?.metadata?.walletId ?? ''}`,
+        'url': `http://${host}/api/v1/wallet/resource/${payload?.metadata?.walletId ?? ''}`,
         'headers': {
-            'x-nonce': 'MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2',
+            'x-nonce': generateNonce(),
             'Content-Type': 'application/json',
             'Authorization': 'Bearer TOKEN'
         },
@@ -226,7 +233,7 @@ async function handleYocoRefund(req, res) {
 
         const headers = new Headers();
         headers.append("Content-Type", "application/json");
-        headers.append("Idempotency-Key", uuidv4());
+        headers.append("Idempotency-Key", `refund_${checkoutId}`);
         headers.append("Authorization", `Bearer ${PAYMENTS_TOKEN}`);
 
         ///

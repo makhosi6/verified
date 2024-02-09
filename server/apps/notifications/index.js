@@ -7,8 +7,8 @@ const { analytics, security, authorization, authenticate } = require('../../midd
 const { notificationsHook } = require('../../middleware/notification');
 const app = express()
 
-const PORT = process.env.FB_NOTIF_PORT || 4300;
-const HOST = process.env.HOST || "192.168.0.132";
+const PORT = process.env.FB_NOTIF_PORT || process.env.PORT || 5400;
+const HOST = process.env.HOST || "0.0.0.0";
 
 /// logger middleware
 const accessLogStream = fs.createWriteStream(path.join(__dirname , '..' , '..' , '/log/notifications/access.log'), { flags: 'a+', interval: '1d', });

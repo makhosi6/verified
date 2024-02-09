@@ -3,11 +3,11 @@ const morgan = require('morgan')
 const cors = require("cors");
 const path = require('node:path')
 const fs = require('node:fs')
-const { generateNonce } = require("../../nonce");
+const { generateNonce } = require("../../nonce.source");
 const server = jsonServer.create();
 const defaultMiddleware = jsonServer.defaults();
-const PORT = process.env.STORE_PORT || 4300;
-const HOST = process.env.HOST || "192.168.0.132";
+const PORT = process.env.STORE_PORT || process.env.PORT || 5400;
+const HOST = process.env.HOST || "0.0.0.0";
 ///
 const Queue = require('../../packages/queue')
 
