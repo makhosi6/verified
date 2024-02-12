@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c --watch",
+    "local:build": "rollup -c",
+    "local:watch": "rollup -c --watch",
     "dev": "nodemon --ignore '**/db/**' index.js",
     "transform": "javascript-obfuscator nonce.source.js --output nonce.js  --config transform.config.json",
     "payments": "node  apps/payments/index.js",
