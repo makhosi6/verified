@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "docker-compose build",
+    "build": "ls && docker-compose build",
     "start": "docker-compose up -d --force-recreate --build --remove-orphans --timestamps",
     "local:build": "rollup -c",
     "local:watch": "rollup -c --watch",
