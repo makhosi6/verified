@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
-const { generateNonce } = require('../placeholder');
+const { generateNonce } = require('../nonce.source');
 const { addWallet } = require('./universal');
 const request = require('request')
 const fetch = (...args) => import('node-fetch').then(({
