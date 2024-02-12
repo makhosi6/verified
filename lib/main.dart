@@ -56,19 +56,21 @@ void main() async {
               ),
           ),
           BlocProvider<StoreBloc>(
-            create: (BuildContext context) => StoreBloc(StoreRepository(
-              StoreDioClientService.instance,
-            ))
-              ..add(
+            create: (BuildContext context) => StoreBloc(
+              StoreRepository(
+                StoreDioClientService.instance,
+              ),
+            )..add(
                 const StoreEvent.apiHealthCheck(),
               ),
           ),
           BlocProvider<AuthBloc>(
             create: (BuildContext context) => AuthBloc(
-                AuthRepository(
-                  FirebaseAuth.instance,
-                ),
-                context.read<StoreBloc>()),
+              AuthRepository(
+                FirebaseAuth.instance,
+              ),
+              context.read<StoreBloc>(),
+            ),
           ),
         ],
         child: const AppRoot(),
@@ -78,6 +80,7 @@ void main() async {
     ///
   }, (error, stack) {
     verifiedErrorLogger(error);
+    if (kDebugMode) print(stack);
 
     /// fb crush
   });

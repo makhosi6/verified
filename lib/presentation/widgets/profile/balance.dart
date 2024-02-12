@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/helpers/currency.dart';
 import 'package:verified/presentation/theme.dart';
 
 class Balance extends StatelessWidget {
@@ -13,6 +13,10 @@ class Balance extends StatelessWidget {
   Widget build(BuildContext context) {
     var wallet = context.watch<StoreBloc>().state.walletData;
     var user = context.watch<StoreBloc>().state.userProfileData;
+
+    print('WALLET: $wallet\n\n');
+
+    print('\n\nUSER$user\n');
     return Container(
       padding: const EdgeInsets.only(
         bottom: 10.0,
@@ -50,11 +54,7 @@ class Balance extends StatelessWidget {
           ),
           //balance
           Text(
-            (wallet?.isoCurrencyCode != null || wallet?.balance != null)
-                ? NumberFormat.currency(locale: 'en_US', symbol: '${wallet?.isoCurrencyCode} ')
-                    .format(wallet?.balance)
-                    .replaceAll('.', ',')
-                : r' ZAR 0,00',
+            formatCurrency(wallet?.balance ?? 0, wallet?.isoCurrencyCode),
             style: GoogleFonts.dmSans(
               fontSize: 24.0,
               fontWeight: FontWeight.w700,

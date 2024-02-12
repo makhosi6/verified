@@ -7,5 +7,7 @@ class Env {
 
   static const storeApiKey = 'TOKEN';
 
+  static const POINTS_PER_TRANSACTION = 30;
+
   static const baseUrl = 'https://example.dev/api/v1/';
 }

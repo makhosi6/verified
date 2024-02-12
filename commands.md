@@ -58,6 +58,11 @@ flutter build web --web-renderer canvaskit
     git push --follow-tags
     ```
 
-```
+### run backend server
+- ```bash
+    docker-compose build
+    docker-compose up -d --force-recreate --build --remove-orphans --timestamps
+    docker-compose down
 
-```
+  ```
+

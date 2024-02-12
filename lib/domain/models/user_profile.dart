@@ -3,6 +3,8 @@ class UserProfile {
     this.actualName,
     this.active,
     this.avatar,
+    this.dataProvider,
+    this.metadata,
     this.softDeleted,
     this.displayName,
     this.email,
@@ -19,6 +21,8 @@ class UserProfile {
   static var empty = UserProfile.fromJson({
     'actualName': 'Hello',
     'active': true,
+    'dataProvider': null,
+    'metadata': null,
     'avatar': 'https://robohash.org/avatar.png',
     'softDeleted': null,
     'displayName': null,
@@ -38,6 +42,8 @@ class UserProfile {
     actualName = json['actualName'];
     active = json['active'];
     avatar = json['avatar'];
+    dataProvider = json['dataProvider'];
+    metadata = json['metadata'];
     softDeleted = json['softDeleted'];
     displayName = json['displayName'];
     email = json['email'];
@@ -53,6 +59,8 @@ class UserProfile {
   String? actualName;
   bool? active;
   String? avatar;
+  String? dataProvider;
+  dynamic metadata;
   bool? softDeleted;
   String? displayName;
   String? email;
@@ -68,6 +76,8 @@ class UserProfile {
     String? actualName,
     bool? active,
     String? avatar,
+    String? dataProvider,
+    dynamic metadata,
     bool? softDeleted,
     String? displayName,
     String? email,
@@ -84,6 +94,8 @@ class UserProfile {
         actualName: actualName ?? this.actualName,
         active: active ?? this.active,
         avatar: avatar ?? this.avatar,
+        dataProvider: dataProvider ?? this.dataProvider,
+        metadata: metadata ?? this.metadata,
         softDeleted: softDeleted ?? this.softDeleted,
         displayName: displayName ?? this.displayName,
         email: email ?? this.email,
@@ -101,6 +113,8 @@ class UserProfile {
     map['actualName'] = actualName;
     map['active'] = active;
     map['avatar'] = avatar;
+    map['dataProvider'] = dataProvider;
+    map['metadata'] = metadata;
     map['softDeleted'] = softDeleted;
     map['displayName'] = displayName;
     map['email'] = email;

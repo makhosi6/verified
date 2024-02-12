@@ -39,9 +39,10 @@ const {
 const {
   addIdentifiers,
   addTimestamps,
-  lastLoginHook
+  lastLoginHook,
+  addWalletHook
 } = require("../../middleware/store");
-///
+const { getCreditsReq } = require("../../usecases/verifyid");
 const { notifyAdmin } = require("../../usecases/admin");
 ///
 const tickets = jsonServer.router(path.join(__dirname, "db/tickets.json"));
@@ -52,7 +53,7 @@ const wallet = jsonServer.router(path.join(__dirname, "db/wallet.json"));
 
 
 // setup the logger
-const accessLogStream = fs.createWriteStream(path.join(__dirname , '..' , '..' , '/log/store/access.log'), { flags: 'a+', interval: '1d', });
+const accessLogStream = fs.createWriteStream(path.join(__dirname, '..', '..', '/log/store/access.log'), { flags: 'a+', interval: '1d', });
 server.use(morgan('combined', { stream: accessLogStream }))
 
 // Set default middlewares (logger, static, cors and no-cache)
@@ -64,9 +65,11 @@ server.use(authorization);
 server.use(authenticate);
 server.use(addTimestamps);
 server.use(addIdentifiers);
+server.use(addWalletHook);
 
 
 /// routes
+server.get("/api/v1/health-check", getCreditsReq);
 server.post("/api/v1/help", notifyAdmin);
 server.use("/api/v1/ticket", tickets);
 server.use("/api/v1/history", history);

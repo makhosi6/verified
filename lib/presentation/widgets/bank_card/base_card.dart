@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/wallet.dart';
+import 'package:verified/helpers/currency.dart';
 import 'package:verified/presentation/theme.dart';
 
 class BaseBankCard extends StatelessWidget {
@@ -57,11 +57,7 @@ class BaseBankCard extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    (wallet?.isoCurrencyCode != null || wallet?.balance != null)
-                        ? NumberFormat.currency(locale: 'en_US', symbol: '${wallet?.isoCurrencyCode} ')
-                            .format(wallet?.balance)
-                            .replaceAll('.', ',')
-                        : r'R0,00',
+                    formatCurrency(wallet?.balance ?? 0, wallet?.isoCurrencyCode),
                     textAlign: TextAlign.start,
                     style: boldCardStyles.copyWith(
                       fontSize: 30.0,
@@ -88,7 +84,7 @@ class BaseBankCard extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Text(
-                                '*** *** ***',
+                                '**** **** ****',
                                 style: boldCardStyles.copyWith(
                                   fontSize: 12.0,
                                   letterSpacing: 2.0,
@@ -97,7 +93,7 @@ class BaseBankCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              wallet?.accountName?.replaceAll('-', '') ?? '0000',
+                              wallet?.accountName?.replaceAll('-', '').replaceAll('*', '') ?? '0000',
                               style: boldCardStyles,
                             )
                           ],

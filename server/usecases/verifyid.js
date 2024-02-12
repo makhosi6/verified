@@ -2,7 +2,6 @@
 
 
 function handleContactEnquiry(req, res) {
-    console.log(JSON.stringify(req?.body || req?.rawBody, null , 2));
     const { contact_number, reason } = req?.body;
 
     console.table(req?.body)

@@ -562,7 +562,7 @@ class _ProfileName extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.5,
                   clipBehavior: Clip.none,
                   child: Text(
-                    user.email ?? 'nomail@mail.com',
+                    user.email ?? 'nomail@mailbox.com',
                     textAlign: TextAlign.left,
                     style: const TextStyle(overflow: TextOverflow.ellipsis),
                     overflow: TextOverflow.ellipsis,
@@ -586,12 +586,8 @@ Widget accountPageListItems({required String key, required String value, bool is
             ),
           ),
         'Active' => value == 'true' ? 'Yes' : 'No',
-        'Last Login' => (value == 'null')
-            ? 'Unknown'
-            : DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(int.parse(value) * 1000)),
-        'Account Created' => (value == 'Unknown')
-            ? ''
-            : DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(int.parse(value) * 1000)),
+        'Last Login' => (value == 'null') ? 'Unknown' : humanReadable(value),
+        'Account Created' => (value == 'Unknown') ? '' : humanReadable(value),
         _ => value
       };
   return Container(
@@ -628,3 +624,11 @@ var appInfo = {
           ? 'https://play.google.com/store/apps/details?id=com.byteestudio.verified'
           : 'https://app-link.com'
 };
+
+String humanReadable(String time) {
+  try {
+    return DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(int.parse(time) * 1000));
+  } catch (err) {
+    return 'T_$time';
+  }
+}

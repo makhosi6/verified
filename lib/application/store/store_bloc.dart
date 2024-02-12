@@ -97,16 +97,20 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               );
 
               ///
+              add(StoreEvent.getAllHistory(data.profileId ?? ''));
+              add(StoreEvent.getWallet(data.walletId ?? ''));
               LocalUser.setUser(data);
             });
             return null;
           },
           createUserProfile: (e) async {
-            emit(state.copyWith(
-              userProfileError: null,
-              userProfileHasError: false,
-              userProfileDataLoading: true,
-            ));
+            emit(
+              state.copyWith(
+                userProfileError: null,
+                userProfileHasError: false,
+                userProfileDataLoading: true,
+              ),
+            );
 
             final response = await _storeRepository.postUserProfile(e.user);
             response.fold((error) {
@@ -131,8 +135,12 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 ),
               );
 
-              // add(const StoreEvent.getAllHistory('logged-in-user'));
-              // add(const StoreEvent.getWallet('logged-in-user-wallet'));
+              add(StoreEvent.getAllHistory(data.profileId ?? data.id ?? ''));
+              add(StoreEvent.getWallet(data.walletId ?? ''));
+              LocalUser.setUser(data);
+
+              ///
+              print("DO WE HAVE A WALLET ID:  ${data.walletId ?? 'NO_NO'}, USER_ID: ${data.profileId}");
             });
 
             return null;

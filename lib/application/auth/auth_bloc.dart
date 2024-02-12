@@ -71,7 +71,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             // 'walletId': 'logged-in-user-wallet',
             'walletId': null,
             'phone': user?.phoneNumber,
-            'dataProvider': user?.providerData,
+            'dataProvider': user?.providerData.map((e) => e.providerId).toString(),
+            'metadata': {
+              'creationTime': (user?.metadata.creationTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
+              'lastSignInTime': (user?.metadata.lastSignInTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
+            },
             'active': true,
             'softDeleted': false,
           });
@@ -106,8 +110,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 'avatar': user?.photoURL ??
                     'https://robohash.org/${(user?.displayName?.replaceAll(" ", "_") ?? user?.uid)?.toLowerCase()}.png',
                 'phone': user?.phoneNumber,
-                'dataProvider': user?.providerData,
-                // 'walletId': 'logged-in-user-wallet',
+                'dataProvider': user?.providerData.map((e) => e.providerId).toString(),
+                'metadata': {
+                  'creationTime': (user?.metadata.creationTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
+                  'lastSignInTime': (user?.metadata.lastSignInTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
+                },
                 'walletId': null,
                 'active': true,
                 'softDeleted': false,
@@ -137,7 +144,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 'phone': user?.phoneNumber,
                 // 'walletId': 'logged-in-user-wallet',
                 'walletId': null,
-                'dataProvider': user?.providerData,
+                'dataProvider': user?.providerData.map((e) => e.providerId).toString(),
+                'metadata': {
+                  'creationTime': (user?.metadata.creationTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
+                  'lastSignInTime': (user?.metadata.lastSignInTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
+                },
                 'active': true,
                 'softDeleted': false,
               },
