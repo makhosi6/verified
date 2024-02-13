@@ -147,7 +147,3 @@ networks:
     driver: bridge
   verified_bridge:
     driver: bridge
-
-
-
-# docker-compose up -d --env-file .env --force-recreate --remove-orphans --timestamps
