@@ -1,5 +1,4 @@
 version: '3'
-name: verified
 services:
   emqx1:
     image: emqx:5.0.26
@@ -109,6 +108,19 @@ services:
     networks:
       - verified_bridge
 
+    
+  verified_cdn:
+    build:
+      context: .
+      dockerfile: ./apps/cdn/Dockerfile
+    volumes:
+      - verified_cdn:/app
+    environment:
+      - PORT=${CDN_PORT}
+    restart: unless-stopped
+    networks:
+      - verified_bridge
+
   
   verify_id_service:
     build:
@@ -137,6 +149,8 @@ volumes:
   store:
     driver: local
   verify_id:
+    driver: local
+  verified_cdn:
     driver: local
   nginx_logs:
     driver: local
