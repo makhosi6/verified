@@ -62,6 +62,7 @@ flutter build web --web-renderer canvaskit
 - ```bash
     docker-compose build
     docker-compose up -d --force-recreate --build --remove-orphans --timestamps
+    docker-compose up -d -p verified --timestamps
     docker-compose down
 
   ```
