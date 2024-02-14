@@ -13,6 +13,7 @@ firebase-debug.log
 # Build generated
 build/
 DerivedData/
+*.zip
 
 # Various Xcode settings
 *.pbxuser

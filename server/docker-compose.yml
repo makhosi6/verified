@@ -135,6 +135,19 @@ services:
     restart: unless-stopped
     networks:
       - verified_bridge
+  
+  ftp_server:
+      container_name: ftp-server
+      image: stilliard/pure-ftpd:hardened
+      ports:
+        - "21:21"
+        - "30000-30009:30000-30009"
+      environment:
+        PUBLICHOST: ${PUBLICHOST}
+        FTP_USER_NAME: "test"
+        FTP_USER_PASS: "test"
+        FTP_USER_HOME: ${FTP_USER_HOME}
+      restart: on-failure
 
 
 volumes:
