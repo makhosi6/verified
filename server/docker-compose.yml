@@ -117,7 +117,8 @@ services:
       context: .
       dockerfile: ./apps/cdn/Dockerfile
     volumes:
-      - verified_cdn_data:/app
+      - /apps/cdn/root:/app/apps/cdn/root
+      - /apps/cdn/static:/app/apps/cdn/static
     environment:
       - PORT=${CDN_PORT}
     restart: unless-stopped
@@ -167,8 +168,6 @@ volumes:
   store:
     driver: local
   verify_id:
-    driver: local
-  verified_cdn_data:
     driver: local
   nginx_logs:
     driver: local
