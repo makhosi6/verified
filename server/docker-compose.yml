@@ -56,7 +56,6 @@ services:
     volumes:
       - ./apps/nginx_proxy/nginx.conf:/etc/nginx/nginx.conf
       - nginx_logs:/var/log/nginx
-  
     depends_on:
       - fb_notifications_service
       - payments_service
