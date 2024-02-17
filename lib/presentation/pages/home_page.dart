@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
@@ -123,12 +125,18 @@ class HomePageContents extends StatelessWidget {
                     iconColor: Colors.black,
                     bgColor: Colors.white,
                     onTap: () async {
-                      final user = context.read<StoreBloc>().state.userProfileData;
-                      final page = AccountPage();
-                      if (user == null) {
-                        await triggerAuthBottomSheet(context: context, redirect: page);
-                      } else {
-                        navigate(context, page: page);
+                      try {
+                        final user = context.read<StoreBloc>().state.userProfileData ?? (await LocalUser.getUser());
+                        final page = AccountPage();
+                        if (user == null) {
+                          // ignore: use_build_context_synchronously
+                          await triggerAuthBottomSheet(context: context, redirect: page);
+                        } else {
+                          // ignore: use_build_context_synchronously
+                          navigate(context, page: page);
+                        }
+                      } catch (e) {
+                        if (kDebugMode) print('\n\n=============================\n $e');
                       }
                     },
                     icon: Icons.person_2_outlined,

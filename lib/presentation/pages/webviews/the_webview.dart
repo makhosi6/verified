@@ -9,10 +9,20 @@ import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 
 class TheWebView extends StatefulWidget {
+  bool hasBackBtn;
+
   String webURL;
+
+  Function? onPageSuccess;
+  Function? onPageFailed;
+  Function? onPageCancelled;
 
   TheWebView({
     Key? key,
+    this.hasBackBtn = true,
+    this.onPageSuccess,
+    this.onPageFailed,
+    this.onPageCancelled,
     required this.webURL,
   }) : super(key: key);
 
@@ -64,6 +74,16 @@ class _TheWebViewState extends State<TheWebView> {
             }
           },
           onNavigationRequest: (NavigationRequest request) {
+            String url = request.url;
+            if (url.contains('verified.byteestudio.com')) {
+              ///
+              if (url == 'https://verified.byteestudio.com/success') widget.onPageSuccess?.call();
+              if (url == 'https://verified.byteestudio.com/cancelled') widget.onPageCancelled?.call();
+              if (url == 'https://verified.byteestudio.com/failed') widget.onPageFailed?.call();
+
+              //
+              return NavigationDecision.prevent;
+            }
             return NavigationDecision.navigate;
           },
         ),
@@ -83,15 +103,16 @@ class _TheWebViewState extends State<TheWebView> {
               ? Stack(
                   children: [
                     WebViewWidget(controller: controller),
-                    Positioned(
-                      top: 60,
-                      left: 20,
-                      child: VerifiedBackButton(
-                        key: UniqueKey(),
-                        isLight: true,
-                        onTap: () => Navigator.pop(context),
+                    if (widget.hasBackBtn)
+                      Positioned(
+                        top: 60,
+                        left: 20,
+                        child: VerifiedBackButton(
+                          key: UniqueKey(),
+                          isLight: true,
+                          onTap: () => Navigator.pop(context),
+                        ),
                       ),
-                    ),
                   ],
                 )
               : CircularPercentIndicator(

@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
+import 'package:verified/application/payments/payments_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
@@ -15,6 +16,7 @@ import 'package:verified/firebase_options.dart';
 import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/auth/repository.dart';
+import 'package:verified/infrastructure/payments/repository.dart';
 import 'package:verified/infrastructure/store/repository.dart';
 import 'package:verified/infrastructure/verifysa/repository.dart';
 import 'package:verified/presentation/pages/custom_splash_screen.dart';
@@ -72,6 +74,13 @@ void main() async {
               context.read<StoreBloc>(),
             ),
           ),
+          BlocProvider(
+            create: (context) => PaymentsBloc(
+              PaymentsRepository(
+                PaymentsDioClientService.instance,
+              ),
+            ),
+          )
         ],
         child: const AppRoot(),
       ),
@@ -133,30 +142,7 @@ class _AppRootState extends State<AppRoot> {
               bloc: context.read<StoreBloc>()
                 ..add(StoreEvent.getUserProfile(userId))
                 ..add(StoreEvent.getAllHistory(userId))
-                // ..add(const StoreEvent.getAllHistory('logged-in-user'))
                 ..add(StoreEvent.addUser(snapshot.data))
-                // ..add(
-                //   StoreEvent.addUser(
-                //     UserProfile.fromJson({
-                //       'actualName': 'The User\'s User Name',
-                //       'active': false,
-                //       'avatar': 'https://robohash.org/robo@robohash.org?gravatar=yes',
-                //       'softDeleted': false,
-                //       'displayName': 'The User\'s User Name',
-                //       'email': 'user_082@mailbox.com',
-                //       'id': 'logged-in-user',
-                //       'name': 'User Name',
-                //       'phone': 'User Phone Number',
-                //       'profileId': 'user_profile_id_82911wdd312',
-                //       'walletId': 'logged-in-user-wallet',
-                //       'historyId': '21w13111',
-                //       'last_login_at': DateTime.now().subtract(const Duration(days: 2)).millisecondsSinceEpoch ~/ 1000,
-                //       'account_created_at':
-                //           DateTime.now().subtract(const Duration(days: 200)).millisecondsSinceEpoch ~/ 1000,
-                //     }),
-                //   ),
-                // )
-                // ..add(const StoreEvent.getWallet('logged-in-user-wallet')),
                 ..add(StoreEvent.getWallet(userWalletId)),
               builder: (context, state) {
                 return BlocListener<StoreBloc, StoreState>(

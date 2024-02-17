@@ -1,33 +1,20 @@
-import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polygon/flutter_polygon.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/dotted_line.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
-import 'package:verified/presentation/widgets/history/history_list_item.dart';
 
-class SuccessfulPaymentModal extends StatefulWidget {
-  const SuccessfulPaymentModal({super.key});
+class FailedPaymentModal extends StatefulWidget {
+  const FailedPaymentModal({super.key});
 
   /// convert to stateless and use a confetti with Bloc
   @override
-  State<SuccessfulPaymentModal> createState() => _SuccessfulPaymentModalState();
+  State<FailedPaymentModal> createState() => _FailedPaymentModalState();
 }
 
-class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
+class _FailedPaymentModalState extends State<FailedPaymentModal> {
   ///
-  late ConfettiController _controllerCenter;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controllerCenter = ConfettiController(
-      duration: const Duration(seconds: 10),
-    )..play();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +25,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
             constraints: BoxConstraints(
               maxWidth: appConstraints.maxWidth,
               minWidth: 400.0,
-              maxHeight: 550.0,
+              maxHeight: 380.0,
             ),
             padding: primaryPadding,
             margin: primaryPadding,
@@ -58,7 +45,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                     child: Column(
                       children: [
                         const Text(
-                          'Payment Success',
+                          'Payment Failed',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 18.0,
@@ -72,7 +59,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                             vertical: 12.0,
                           ),
                           child: Text(
-                            'Your payment for Verified has been successfully done',
+                            'We\'re sorry, but something went wrong.\nPlease check all your payment info \nand let\'s try again.',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: neutralDarkGrey,
@@ -86,31 +73,31 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                   ),
 
                   ///
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Total payment',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            color: neutralDarkGrey,
-                            fontSize: 14.0,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        Text(
-                          r'$15,901',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.w700,
-                            fontStyle: FontStyle.normal,
-                          ),
-                          textAlign: TextAlign.right,
-                        )
-                      ],
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  //   child: Column(
+                  //     children: [
+                  //       Text(
+                  //         'Total payment',
+                  //         style: TextStyle(
+                  //           fontWeight: FontWeight.w400,
+                  //           color: neutralDarkGrey,
+                  //           fontSize: 14.0,
+                  //         ),
+                  //         textAlign: TextAlign.center,
+                  //       ),
+                  //       Text(
+                  //         r'$15,901',
+                  //         style: GoogleFonts.dmSans(
+                  //           fontSize: 24.0,
+                  //           fontWeight: FontWeight.w700,
+                  //           fontStyle: FontStyle.normal,
+                  //         ),
+                  //         textAlign: TextAlign.right,
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
 
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -119,25 +106,25 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                     ),
                   ),
 
-                  ListItemBanner(
-                    type: BannerType.promotion,
-                    bgColor: neutralGrey,
-                    leadingIcon: Icons.rocket_launch_outlined,
-                    leadingBgColor: primaryColor,
-                    title: 'TItLe',
-                    subtitle: 'Subtttitle',
-                    onTap: () {},
-                  ),
+                  // ListItemBanner(
+                  //   type: BannerType..er,
+                  //   bgColor: neutralGrey,
+                  //   leadingIcon: Icons.rocket_launch_outlined,
+                  //   leadingBgColor: Colors.red.shade600,
+                  //   title: 'TItLe',
+                  //   subtitle: 'Subtttitle',
+                  //   onTap: () {},
+                  // ),
 
                   Padding(
                     padding: const EdgeInsets.only(top: 12.0),
                     child: BaseButton(
                       key: UniqueKey(),
                       onTap: () => Navigator.pop(context),
-                      label: 'Done',
+                      label: 'Try Again',
                       color: neutralGrey,
                       hasIcon: false,
-                      bgColor: primaryColor,
+                      bgColor: errorColor,
                       buttonIcon: Icon(
                         Icons.lock_outline,
                         color: primaryColor,
@@ -151,24 +138,12 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
             ),
           ),
         ),
-
-        /// confetti
-        Align(
-          alignment: Alignment.topCenter,
-          child: ConfettiWidget(
-            confettiController: _controllerCenter,
-            blastDirectionality: BlastDirectionality.explosive, // don't specify a direction, blast randomly
-            shouldLoop: false,
-            colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange, Colors.purple],
-          ),
-        ),
       ],
     );
   }
 
   @override
   void dispose() {
-    _controllerCenter.dispose();
     super.dispose();
   }
 }
@@ -189,11 +164,11 @@ class _Polygon8 extends StatelessWidget {
             borderRadius: 8.0,
             rotate: 90.0,
             boxShadows: [
-              PolygonBoxShadow(color: darkerPrimaryColor, elevation: 1.0),
+              PolygonBoxShadow(color: errorColor, elevation: 1.0),
               PolygonBoxShadow(color: Colors.grey, elevation: 1.0)
             ],
             child: Container(
-              color: darkerPrimaryColor,
+              color: errorColor,
               width: 30.0,
               height: 30.0,
             ),
@@ -209,10 +184,10 @@ class _Polygon8 extends StatelessWidget {
             rotate: 90.0,
             boxShadows: const [],
             child: Container(
-              color: neutralYellow,
-              child: const Icon(
-                Icons.check,
-                color: Colors.white,
+              color: const Color.fromARGB(255, 255, 217, 217),
+              child: Icon(
+                Icons.close_outlined,
+                color: errorColor,
                 size: 54.0,
               ),
             ),

@@ -18,6 +18,11 @@ part 'store_bloc.freezed.dart';
 
 class StoreBloc extends Bloc<StoreEvent, StoreState> {
   StoreBloc(this._storeRepository) : super(StoreState.initial()) {
+    /// add stored use on boot
+    Future.microtask(() async {
+      add(StoreEvent.addUser(await LocalUser.getUser()));
+    });
+
     on<StoreEvent>((event, emit) async => event.map(
           apiHealthCheck: (e) async {
             emit(
@@ -69,7 +74,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             emit(state.copyWith(
               userProfileError: null,
               userProfileHasError: false,
-              userProfileData: null,
+              // userProfileData: null,
               userProfileDataLoading: true,
             ));
 
@@ -122,7 +127,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                   ),
                   userProfileHasError: true,
                   userProfileDataLoading: false,
-                  userProfileData: null,
+                  // userProfileData: null,
                 ),
               );
             }, (data) {
@@ -199,7 +204,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                   ),
                   userProfileHasError: true,
                   userProfileDataLoading: false,
-                  userProfileData: null,
+                  // userProfileData: null,
                 ),
               );
             }, (data) {
@@ -549,7 +554,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                   walletError: null,
                   walletHasError: false,
                   walletDataLoading: false,
-                  walletData: null,
+                  // walletData: null,
                 ),
               );
             });
@@ -561,7 +566,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             return null;
           },
           addUser: (e) {
-            if (e.user == null) return;
+            if (e.user is UserProfile) return;
             emit(state.copyWith(
               userProfileData: e.user,
             ));

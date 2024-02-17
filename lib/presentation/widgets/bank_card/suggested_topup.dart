@@ -1,7 +1,15 @@
+import 'dart:developer';
+
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:verified/application/payments/payments_bloc.dart';
+import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/domain/models/payment_checkout_request.dart';
+import 'package:verified/domain/models/payment_metadata.dart';
+import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/presentation/pages/webviews/payments.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
@@ -20,6 +28,8 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
   final _formKey = GlobalKey<FormState>();
   //
   String selectedAmount = 'R 150.00';
+
+  num parsedAmount = 150;
 
   num minimumPayment = 30;
 
@@ -50,7 +60,7 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                     ),
                   ),
                   Text(
-                    'Get started with a minimum top-up of just R30 (equivalent to one transaction) \nand enjoy uninterrupted, smooth, and hassle-free service.',
+                    'Get started with a minimum top-up of just R30 (one transaction)',
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
                       color: neutralDarkGrey,
@@ -102,8 +112,16 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                           return 'Please select/type a valid top-up amount.';
                         }
                         final intValue = int.parse(value.split('.')[0].replaceAll('R', ''));
+                        parsedAmount = intValue;
                         if (intValue < minimumPayment) {
                           return 'R $minimumPayment.00 is the minimum deposit amount required.';
+                        }
+
+                        ///
+                        if (mounted) {
+                          setState(() {
+                            parsedAmount = intValue;
+                          });
                         }
                         return null;
                       },
@@ -122,6 +140,7 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                         if (mounted) {
                           setState(() {
                             selectedAmount = 'R $amount.00';
+                            parsedAmount = int.parse(amount);
                           });
                         }
                       },
@@ -136,19 +155,35 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                 onTap: () {
                   ///
                   if (_formKey.currentState!.validate()) {
+                    log('HERE HERE $parsedAmount');
                     _formKey.currentState!.save();
 
                     ///
                     FocusScope.of(context).unfocus();
 
                     ///
-                    Navigator.of(context).pop(selectedAmount);
-
-                    ///
-                    const stripeLink = 'https://buy.stripe.com/test_fZe17u02K7xx1TG6oo';
-
-                    navigate(context, page: const PaymentPage(paymentUrl: stripeLink));
+                    final user = context.read<StoreBloc>().state.userProfileData ?? UserProfile.empty;
+                    final wallet = context.read<StoreBloc>().state.walletData;
+                    context.read<PaymentsBloc>().add(
+                          PaymentsEvent.yocoPayment(
+                            PaymentCheckoutRequest(
+                              currency: 'ZAR',
+                              amount: parsedAmount * 100,
+                              successUrl: 'https://verified.byteestudio.com/success',
+                              cancelUrl: 'https://verified.byteestudio.com/cancelled',
+                              failureUrl: 'https://verified.byteestudio.com/failed',
+                              metadata: PaymentMetadata(
+                                walletId: wallet?.id ?? user.walletId,
+                                payerId: user.id,
+                              ),
+                            ),
+                          ),
+                        );
+                    Navigator.of(context).pop();
+                    navigate(context, page: const PaymentPage(paymentUrl: null));
                   }
+
+                  log('THERE THERE HERE $parsedAmount');
                 },
                 label: 'Continue',
                 color: Colors.white,
