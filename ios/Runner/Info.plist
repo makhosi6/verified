@@ -79,6 +79,7 @@
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>verify_sa</string>
+					<string>app-1-683016435808-ios-e783acd946bbc12e9e6b05</string>
 					<string>customscheme</string>
 					<string>http</string>
 					<string>https</string>
