@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-String formatCurrency(balance, String? isoCurrencyCode) {
+String formatCurrency(num balance, String? isoCurrencyCode) {
   const CENTS = 100;
   const ONE_THOUSAND_RANDS = 100000;
 

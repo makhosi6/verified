@@ -15,6 +15,16 @@ class BaseBankCard extends StatelessWidget {
   Widget build(BuildContext context) => BlocBuilder<StoreBloc, StoreState>(
         builder: (context, state) {
           Wallet? wallet = state.walletData;
+
+// get card provider name
+          final scheme = (() {
+            if (wallet?.cardProvider == 'mastercard' || wallet?.cardProvider == 'visa') {
+              return wallet?.cardProvider;
+            }
+            return 'mastercard';
+          })();
+
+          ///
           return Container(
             padding: const EdgeInsets.all(16.0),
             constraints: const BoxConstraints(
@@ -45,8 +55,8 @@ class BaseBankCard extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    const Image(
-                      image: AssetImage('assets/icons/master-card.png'),
+                    Image(
+                      image: AssetImage('assets/icons/$scheme.png'),
                       width: 45.0,
                       height: 28.0,
                     )

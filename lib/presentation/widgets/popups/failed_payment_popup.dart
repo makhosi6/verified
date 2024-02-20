@@ -18,127 +18,125 @@ class _FailedPaymentModalState extends State<FailedPaymentModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Center(
-          child: Container(
-            constraints: BoxConstraints(
-              maxWidth: appConstraints.maxWidth,
-              minWidth: 400.0,
-              maxHeight: 380.0,
-            ),
-            padding: primaryPadding,
-            margin: primaryPadding,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.0),
-              color: Colors.white,
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: Column(
-                children: [
-                  const _Polygon8(),
+    return Center(
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: appConstraints.maxWidth,
+          minWidth: 400.0,
+        ),
+        padding: primaryPadding,
+        margin: primaryPadding,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.0),
+          color: Colors.white,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const _Polygon8(),
 
-                  ///header for the explainer
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Column(
-                      children: [
-                        const Text(
-                          'Payment Failed',
+                ///header for the explainer
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Payment Failed',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 18.0,
+                          fontStyle: FontStyle.normal,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32.0,
+                          vertical: 12.0,
+                        ),
+                        child: Text(
+                          'We\'re sorry, but something went wrong.\nPlease check all your payment info \nand let\'s try again.',
                           style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 18.0,
-                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            color: neutralDarkGrey,
+                            fontSize: 14.0,
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 32.0,
-                            vertical: 12.0,
-                          ),
-                          child: Text(
-                            'We\'re sorry, but something went wrong.\nPlease check all your payment info \nand let\'s try again.',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: neutralDarkGrey,
-                              fontSize: 14.0,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  ///
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  //   child: Column(
-                  //     children: [
-                  //       Text(
-                  //         'Total payment',
-                  //         style: TextStyle(
-                  //           fontWeight: FontWeight.w400,
-                  //           color: neutralDarkGrey,
-                  //           fontSize: 14.0,
-                  //         ),
-                  //         textAlign: TextAlign.center,
-                  //       ),
-                  //       Text(
-                  //         r'$15,901',
-                  //         style: GoogleFonts.dmSans(
-                  //           fontSize: 24.0,
-                  //           fontWeight: FontWeight.w700,
-                  //           fontStyle: FontStyle.normal,
-                  //         ),
-                  //         textAlign: TextAlign.right,
-                  //       )
-                  //     ],
-                  //   ),
-                  // ),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: DottedLine(
-                      color: neutralDarkGrey,
-                    ),
-                  ),
-
-                  // ListItemBanner(
-                  //   type: BannerType..er,
-                  //   bgColor: neutralGrey,
-                  //   leadingIcon: Icons.rocket_launch_outlined,
-                  //   leadingBgColor: Colors.red.shade600,
-                  //   title: 'TItLe',
-                  //   subtitle: 'Subtttitle',
-                  //   onTap: () {},
-                  // ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12.0),
-                    child: BaseButton(
-                      key: UniqueKey(),
-                      onTap: () => Navigator.pop(context),
-                      label: 'Try Again',
-                      color: neutralGrey,
-                      hasIcon: false,
-                      bgColor: errorColor,
-                      buttonIcon: Icon(
-                        Icons.lock_outline,
-                        color: primaryColor,
                       ),
-                      buttonSize: ButtonSize.large,
-                      hasBorderLining: false,
-                    ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+
+                ///
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(vertical: 4.0),
+                //   child: Column(
+                //     children: [
+                //       Text(
+                //         'Total payment',
+                //         style: TextStyle(
+                //           fontWeight: FontWeight.w400,
+                //           color: neutralDarkGrey,
+                //           fontSize: 14.0,
+                //         ),
+                //         textAlign: TextAlign.center,
+                //       ),
+                //       Text(
+                //         r'$15,901',
+                //         style: GoogleFonts.dmSans(
+                //           fontSize: 24.0,
+                //           fontWeight: FontWeight.w700,
+                //           fontStyle: FontStyle.normal,
+                //         ),
+                //         textAlign: TextAlign.right,
+                //       )
+                //     ],
+                //   ),
+                // ),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: DottedLine(
+                    color: neutralDarkGrey,
+                  ),
+                ),
+
+                // ListItemBanner(
+                //   type: BannerType..er,
+                //   bgColor: neutralGrey,
+                //   leadingIcon: Icons.rocket_launch_outlined,
+                //   leadingBgColor: Colors.red.shade600,
+                //   title: 'TItLe',
+                //   subtitle: 'Subtttitle',
+                //   onTap: () {},
+                // ),
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: BaseButton(
+                    key: UniqueKey(),
+                    onTap: () => Navigator.pop(context),
+                    label: 'Try Again',
+                    color: neutralGrey,
+                    hasIcon: false,
+                    bgColor: errorColor,
+                    buttonIcon: Icon(
+                      Icons.lock_outline,
+                      color: primaryColor,
+                    ),
+                    buttonSize: ButtonSize.large,
+                    hasBorderLining: false,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 

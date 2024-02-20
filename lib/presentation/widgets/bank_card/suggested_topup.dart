@@ -33,6 +33,8 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
 
   num minimumPayment = 30;
 
+  late var inputController = TextEditingController(text: selectedAmount);
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -86,12 +88,16 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                     key: _formKey,
                     autovalidateMode: AutovalidateMode.always,
                     onChanged: () {
-                      Form.of(primaryFocus!.context!).save();
+                      try {
+                        Form.of(primaryFocus!.context ?? context).save();
+                      } catch (e) {
+                        print(e);
+                      }
                     },
                     child: TextFormField(
                       key: const Key('currency-input'),
                       keyboardType: TextInputType.number,
-                      controller: TextEditingController(text: selectedAmount),
+                      controller: inputController,
                       inputFormatters: <TextInputFormatter>[
                         CurrencyTextInputFormatter(
                           symbol: 'R ',
@@ -107,23 +113,50 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                         fontWeight: FontWeight.w600,
                       ),
                       textAlign: TextAlign.center,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please select/type a valid top-up amount.';
-                        }
-                        final intValue = int.parse(value.split('.')[0].replaceAll('R', ''));
-                        parsedAmount = intValue;
-                        if (intValue < minimumPayment) {
-                          return 'R $minimumPayment.00 is the minimum deposit amount required.';
-                        }
+                      onTapOutside: (_) {
+                        final amount = inputController.value.text;
+
+                        ///
+                        final intValue = int.parse(amount.split('.').join('').replaceAll(',', '').replaceAll('R', ''));
 
                         ///
                         if (mounted) {
-                          setState(() {
-                            parsedAmount = intValue;
+                          /// delay til build/frame is done
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            /// then set state
+                            setState(() {
+                              parsedAmount = intValue;
+                            });
                           });
                         }
-                        return null;
+                      },
+                      validator: (amount) {
+                        try {
+                          if (amount == null || amount.isEmpty) {
+                            return 'Please select/type a valid top-up amount.';
+                          }
+                          final intValue =
+                              int.parse(amount.split('.').join('').replaceAll(',', '').replaceAll('R', ''));
+
+                          if (intValue < minimumPayment) {
+                            return 'R $minimumPayment.00 is the minimum deposit amount required.';
+                          }
+
+                          if (mounted) {
+                            /// delay til build/frame is done
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              /// then set state
+                              setState(() {
+                                parsedAmount = intValue;
+                              });
+                            });
+                          }
+
+                          return null;
+                        } catch (e) {
+                          print(e);
+                          return null;
+                        }
                       },
                     ),
                   ),
@@ -138,9 +171,15 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                       label: amount,
                       onTap: () {
                         if (mounted) {
-                          setState(() {
-                            selectedAmount = 'R $amount.00';
-                            parsedAmount = int.parse(amount);
+                          inputController.value = inputController.value.copyWith(text: 'R $amount.00');
+
+                          /// delay til build/frame is done
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            /// then set state
+                            setState(() {
+                              selectedAmount = 'R $amount.00';
+                              parsedAmount = int.parse(amount);
+                            });
                           });
                         }
                       },
@@ -155,7 +194,6 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                 onTap: () {
                   ///
                   if (_formKey.currentState!.validate()) {
-                    log('HERE HERE $parsedAmount');
                     _formKey.currentState!.save();
 
                     ///
@@ -164,11 +202,13 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                     ///
                     final user = context.read<StoreBloc>().state.userProfileData ?? UserProfile.empty;
                     final wallet = context.read<StoreBloc>().state.walletData;
+
+                    ///
                     context.read<PaymentsBloc>().add(
                           PaymentsEvent.yocoPayment(
                             PaymentCheckoutRequest(
                               currency: 'ZAR',
-                              amount: parsedAmount * 100,
+                              amount: parsedAmount,
                               successUrl: 'https://verified.byteestudio.com/success',
                               cancelUrl: 'https://verified.byteestudio.com/cancelled',
                               failureUrl: 'https://verified.byteestudio.com/failed',
@@ -179,7 +219,11 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                             ),
                           ),
                         );
+
+                    /// hide top-up bottom-sheet
                     Navigator.of(context).pop();
+
+                    /// navigate to payment webview
                     navigate(context, page: const PaymentPage(paymentUrl: null));
                   }
 

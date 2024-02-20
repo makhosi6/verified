@@ -5,6 +5,7 @@ import 'package:verified/presentation/pages/loading_page.dart';
 import 'package:verified/presentation/pages/webviews/the_webview.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/widgets/popups/failed_payment_popup.dart';
+import 'package:verified/presentation/widgets/popups/successful_payment_popup.dart';
 
 class PaymentPage extends StatelessWidget {
   final String? paymentUrl;
@@ -29,12 +30,14 @@ class PaymentPage extends StatelessWidget {
           ..showSnackBar(
             SnackBar(
               showCloseIcon: true,
-              closeIconColor: errorColor,
+              closeIconColor: const Color.fromARGB(255, 254, 226, 226),
               content: const Text(
                 'Payment cancelled! 🙁',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(
+                  color: Color.fromARGB(255, 254, 226, 226),
+                ),
               ),
-              backgroundColor: const Color.fromARGB(255, 254, 226, 226),
+              backgroundColor: errorColor,
             ),
           );
 
@@ -48,7 +51,7 @@ class PaymentPage extends StatelessWidget {
 //and show a success popup
         showDialog(
           context: context,
-          builder: (context) => const FailedPaymentModal(),
+          builder: (context) => const SuccessfulPaymentModal(),
         );
       },
       onPageFailed: () {

@@ -7,7 +7,7 @@ class Wallet {
     this.accountHolderName,
     this.accountName,
     this.expDate,
-    this.card,
+    this.cardProvider,
     this.lastDepositAt,
     this.historyId,
     this.promotions,
@@ -23,7 +23,7 @@ class Wallet {
     accountHolderName = json['accountHolderName'];
     accountName = json['accountName'];
     expDate = json['expDate'];
-    card = json['card'];
+    cardProvider = json['cardProvider'];
     lastDepositAt = json['lastDepositAt'];
     historyId = json['historyId'];
     if (json['promotions'] != null) {
@@ -42,7 +42,7 @@ class Wallet {
   String? accountHolderName;
   String? accountName;
   String? expDate;
-  String? card;
+  String? cardProvider;
   num? lastDepositAt;
   String? historyId;
   List<dynamic>? promotions;
@@ -56,7 +56,7 @@ class Wallet {
     String? accountHolderName,
     String? accountName,
     String? expDate,
-    String? card,
+    String? cardProvider,
     num? lastDepositAt,
     String? historyId,
     List<String>? promotions,
@@ -71,7 +71,7 @@ class Wallet {
         accountHolderName: accountHolderName ?? this.accountHolderName,
         accountName: accountName ?? this.accountName,
         expDate: expDate ?? this.expDate,
-        card: card ?? this.card,
+        cardProvider: cardProvider ?? this.cardProvider,
         lastDepositAt: lastDepositAt ?? this.lastDepositAt,
         historyId: historyId ?? this.historyId,
         promotions: promotions ?? this.promotions,
@@ -87,7 +87,7 @@ class Wallet {
     map['accountHolderName'] = accountHolderName;
     map['accountName'] = accountName;
     map['expDate'] = expDate;
-    map['card'] = card;
+    map['cardProvider'] = cardProvider;
     map['lastDepositAt'] = lastDepositAt;
     map['historyId'] = historyId;
     if (promotions != null) {
