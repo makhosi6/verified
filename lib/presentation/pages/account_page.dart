@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gallery_asset_picker/gallery_asset_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:verified/globals.dart';
 import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/native_scripts/main.dart';
 import 'package:verified/presentation/pages/add_payment_method_page.dart';
+import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
@@ -79,6 +81,11 @@ class AccountPageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /// config before image/media picker
+    selectMediaConfig();
+
+    ///
+
     final user = context.watch<StoreBloc>().state.userProfileData ?? UserProfile.empty;
     final wallet = context.watch<StoreBloc>().state.walletData;
     return Center(
@@ -512,7 +519,19 @@ class _ProfileName extends StatelessWidget {
                     bottom: 0,
                     right: 0,
                     child: InkWell(
-                      onTap: () {},
+                      onTap: () async {
+                        try {
+                          var images = await GalleryAssetPicker.pick(
+                            context,
+                            maxCount: 1,
+                            requestType: RequestType.image,
+                          );
+
+                          print('IMAGES: ${images.length}');
+                        } catch (e) {
+                          print('image picjker error');
+                        }
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(4.0),
                         decoration: BoxDecoration(

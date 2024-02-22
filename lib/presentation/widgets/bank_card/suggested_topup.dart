@@ -178,7 +178,7 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                             /// then set state
                             setState(() {
                               selectedAmount = 'R $amount.00';
-                              parsedAmount = int.parse(amount);
+                              parsedAmount = int.parse('${amount}00');
                             });
                           });
                         }

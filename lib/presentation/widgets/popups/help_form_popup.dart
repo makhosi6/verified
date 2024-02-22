@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gallery_asset_picker/gallery_asset_picker.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/help_request.dart';
 import 'package:verified/presentation/theme.dart';
@@ -215,7 +216,19 @@ class _HelpFormState extends State<_HelpForm> {
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: BaseButton(
                   key: UniqueKey(),
-                  onTap: () => {},
+                  onTap: () async {
+                    try {
+                      var media = await GalleryAssetPicker.pick(
+                        context,
+                        maxCount: 3,
+                        requestType: RequestType.all,
+                      );
+
+                      print('MEDIA: ${media.length}');
+                    } catch (e) {
+                      print('media picker error');
+                    }
+                  },
                   label: 'Uploads (Optional)',
                   color: Colors.black87,
                   // bgColor: const Color.fromARGB(0, 225, 225, 225),

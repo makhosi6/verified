@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/payments/payments_bloc.dart';
@@ -135,6 +136,7 @@ class _AppRootState extends State<AppRoot> {
 
           /// remove the splash screen
           return MaterialApp(
+            builder: FToastBuilder(),
             debugShowCheckedModeBanner: kDebugMode || kProfileMode,
             theme: theme,
             title: displayAppName,

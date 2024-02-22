@@ -34,7 +34,7 @@ class Balance extends StatelessWidget {
             children: [
               //name
               Text(
-                wallet?.accountHolderName ?? user?.displayName ?? user?.actualName ?? 'Hello',
+                wallet?.accountHolderName ?? user?.displayName ?? user?.actualName ?? user?.name ?? 'Hello',
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontStyle: FontStyle.normal,
