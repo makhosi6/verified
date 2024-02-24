@@ -36,7 +36,7 @@ app.use((req, res, next) => {
 
 //register routes
 app.get('/', (req, res) => res.redirect('https://byteestudio.com'))
-app.post("/api/v1/payment-events", handlePaymentEvents);
+app.post("/api/v1/payment-events", validateWebhookSender, handlePaymentEvents);
 app.post("/api/v1/payment/yoco", handleYocoPayment);
 app.post("/api/v1/refund/yoco/:checkoutId", handleYocoRefund);
 
