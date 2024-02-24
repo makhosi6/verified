@@ -9,7 +9,8 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/history/history_list_item.dart';
 
 class SuccessfulPaymentModal extends StatefulWidget {
-  const SuccessfulPaymentModal({super.key});
+  final String topUpAmount;
+  const SuccessfulPaymentModal({super.key, required this.topUpAmount});
 
   /// convert to stateless and use a confetti with Bloc
   @override
@@ -72,7 +73,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                             vertical: 12.0,
                           ),
                           child: Text(
-                            'Your payment for Verified has been successfully done',
+                            'Your payment of ${widget.topUpAmount} has been successfully processed. Thank you for your top-up! 🎉',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: neutralDarkGrey,
@@ -100,7 +101,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                           textAlign: TextAlign.center,
                         ),
                         Text(
-                          r'$15,901',
+                          widget.topUpAmount,
                           style: GoogleFonts.dmSans(
                             fontSize: 24.0,
                             fontWeight: FontWeight.w700,
@@ -120,12 +121,13 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
                   ),
 
                   ListItemBanner(
-                    type: BannerType.promotion,
+                    type: BannerType.learn_more,
                     bgColor: neutralGrey,
                     leadingIcon: Icons.rocket_launch_outlined,
                     leadingBgColor: primaryColor,
-                    title: 'TItLe',
-                    subtitle: 'Subtttitle',
+                    title: 'Get the most out of Verified',
+                    subtitle: '',
+                    buttonText: 'Learn More',
                     onTap: () {},
                   ),
 

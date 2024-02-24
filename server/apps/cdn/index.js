@@ -19,9 +19,6 @@ app.use(compression());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb" }));
 
-////
-
-
 // Set up storage engine with multer
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {

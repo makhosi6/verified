@@ -195,9 +195,15 @@ class AccountPageContent extends StatelessWidget {
             leadingWidth: 80.0,
             leading: VerifiedBackButton(
               key: const Key('acc-page-back-btn'),
-              onTap: () => Navigator.of(context)
-                ..pop()
-                ..initState(),
+              onTap: () {
+                try {
+                  Navigator.of(context)
+                    ..pop()
+                    ..initState();
+                } catch (e) {
+                  print(e);
+                }
+              },
             ),
           ),
           SliverList(

@@ -24,14 +24,47 @@ async function getWallet(id) {
 
 
         const data = await response.json();
+
+        return data
     } catch (error) {
         console.log(error);
 
-        return {};
+        return { id };
+    }
+
+}
+
+/**
+ * 
+ * @param {string} id user uuid
+ */
+async function getUserProfile(id) {
+    try {
+        const header = new Headers();
+        header.append("x-nonce", "MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2");
+        header.append("Authorization", "Bearer TOKEN");
+        const host = (process.env.NODE_ENV === "production" ? `store_service` : `${HOST}`) + `:5400`
+        var requestOptions = {
+            method: 'GET',
+            headers: header
+        };
+
+        const response = await fetch(`http://${host}/api/v1/profile/resource/${id}`, requestOptions);
+
+
+        const data = await response.json();
+
+        return data;
+    } catch (error) {
+        console.log(error);
+
+        return {
+            id
+        };
     }
 
 }
 
 module.exports = {
-    getWallet
+    getWallet, getUserProfile
 }

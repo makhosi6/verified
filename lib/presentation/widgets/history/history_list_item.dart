@@ -144,7 +144,7 @@ var leadingIcon = _LeadingIcon(
   bgColor: neutralYellow,
 );
 
-enum BannerType { promotion, warning, notification, defualt }
+enum BannerType { promotion, warning, notification, defualt, learn_more }
 
 class ConfidenceBanner extends StatelessWidget {
   final Color? bgColor;

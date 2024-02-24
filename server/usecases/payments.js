@@ -1,10 +1,11 @@
 const { v4: uuidv4 } = require("uuid");
 const { generateNonce } = require("../nonce.source");
 const request = require('request')
+const express = require('express')
 const fetch = (...args) => import('node-fetch').then(({
     default: fetch
 }) => fetch(...args));
-const { getWallet } = require("./store");
+const { getWallet, getUserProfile } = require("./store");
 const PAYMENTS_TOKEN =
     process.env.PAYMENTS_TOKEN || "sk_test_1d9ae04aBLnrM8nfaf14ba5ac783";
 const HOST = process.env.HOST || "0.0.0.0";
@@ -90,25 +91,20 @@ const eventTypes = {
 };
 
 /**
- *
- * @param {Request} req
- * @param {Response} res
+ * handle yoco webhook
+ * @param {express.Request} req
+ * @param {express.Response} res
  */
 function handlePaymentEvents(req, res) {
     /**
+     * parse to JSON
      * @type {PaymentEvent} PaymentEvent
      */
     const paymentInformation = JSON.parse(req.rawBody || req.body);
 
-    setTimeout(() => {
-        console.log({ T3: (typeof paymentInformation), TYPE: paymentInformation.type, });
-    }, 1000);
-    const { type } = paymentInformation;
 
-    console.log({ T2: type, TYPE: paymentInformation.type, paymentInformation });
-    console.log("Received a Payment Event: ", paymentInformation.type); 
-
-    console.log("REQUEST BODY", JSON.stringify(paymentInformation, null, 2));
+    console.log({ paymentInformation });
+    console.log("Received a Payment Event: ", paymentInformation?.type);
 
     // Early exit if [paymentInformation] or [paymentInformation.type] is not defined
     if (!paymentInformation || !paymentInformation.type) {
@@ -117,57 +113,122 @@ function handlePaymentEvents(req, res) {
         return;
     }
 
-    console.log("Received a Payment Event: ", paymentInformation.type);
 
-    // Handle different event types using if-else statements
+    // Handle different event types 
     if (paymentInformation.type === eventTypes["payment.succeeded"]) {
         // Payment succeeded event
-        _addToWallet(paymentInformation.payload);
-        _sendFirebaseNotification(paymentInformation.payload.metadata.payerId, eventTypes["payment.succeeded"]);
+        _addToOrSubtractWallet(paymentInformation.payload, eventTypes["payment.succeeded"]);
+        _sendFirebaseNotification(paymentInformation.payload, eventTypes["payment.succeeded"]);
     } else if (paymentInformation.type === eventTypes["refund.failed"]) {
         // Refund failed event
-        _sendFirebaseNotification(paymentInformation.payload.metadata.payerId, eventTypes["refund.failed"]);
+        _sendFirebaseNotification(paymentInformation.payload, eventTypes["refund.failed"]);
     } else if (paymentInformation.type === eventTypes["refund.succeeded"]) {
         // Refund succeeded event
-        _subtractFromWallet(paymentInformation.payload.metadata.payerId, paymentInformation.payload.amount);
-        _sendFirebaseNotification(paymentInformation.payload.metadata.payerId, eventTypes["refund.succeeded"]);
+        _addToOrSubtractWallet(paymentInformation.payload, eventTypes["refund.succeeded"]);
+        _sendFirebaseNotification(paymentInformation.payload, eventTypes["refund.succeeded"]);
     } else {
         // Unknown payment event
-        console.log("Unknown payment event: ", paymentInformation.type);
+        console.log("COLOR", "Unknown payment event: " + paymentInformation?.type);
     }
-    console.log({ PAYMENTS_EVENT: paymentInformation });
+
     // Record transaction and send response
     _createTransactionRecord(paymentInformation?.payload);
     res.send({ status: "Success" });
 }
-
-function _sendFirebaseNotification(payerRefId, notificationType) {
-    console.log("Sending a FB notification", payerRefId, notificationType);
-}
-
-function _subtractFromWallet(payerRefId, amount) {
-    console.log("Subtracting from wallet", payerRefId, amount);
-}
 /**
- *
+ * 
+ * @param {Payload} payload 
+ * @param {string} notificationType 
+ */
+function _sendFirebaseNotification(payload, notificationType) {
+    try {
+        console.log("Sending a FB notification", payerRefId, notificationType);
+
+
+        const notification = _generateNotification(notificationType, payload.amount);
+
+        const headers = new Headers();
+        headers.append("Authorization", "Bearer TOKEN");
+
+        const host =
+            (process.env.NODE_ENV === "production" ? `fb_notifications_service` : `${HOST}`) +
+            ':5400';
+
+        var user = getUserProfile(payload.metadata.payerId);
+
+        if (!user?.notificationToken) {
+            console.log("USER NOTIFICATION TOKEN NOT FOUND => ", payerRefId)
+            return;
+        }
+
+        fetch(`http://${host}/api/v1/notification`, {
+            method: "POST",
+            headers: headers,
+            body: {
+                fbToken: user?.notificationToken, ...notification
+            },
+        })
+            .then((response) => response.text())
+            .then((result) => console.log("SEND NOTIFICATION TO " + payerRefId))
+            .catch((error) => console.error("NOTIFiCATION ERROR @ ", error.toString(), payerRefId));
+    } catch (error) {
+        console.log("NOTIFiCATION ERROR => ", payerRefId)
+    }
+}
+
+/**
+ * POST a new transaction history item
  * @param {Payload} payload
  */
 function _createTransactionRecord(payload) {
-    console.log("Hit the store API and save the transaction... ", payload);
-    // {
-    //     lastDepositAt: Math.floor(Date.now() / 1000)
-    // }
+    try {
+        console.log("Hit the store API and save the transaction... ", payload);
+        const headers = new Headers();
+        headers.append("x-nonce", generateNonce());
+        headers.append("Content-Type", "application/json");
+        headers.append("Authorization", `Bearer ${PAYMENTS_TOKEN}`);
+
+        const data = JSON.stringify({
+            "profileId": payload.metadata.payerId,
+            "amount": payload.amount,
+            "isoCurrencyCode": payload.currency,
+            "categoryId": "",
+            "timestamp": Math.floor(Date.now() / 1000),
+            "details": null,
+            "description": _transactionDescription(payload.amount),
+            "subtype": "topup",
+            "type": "bank card",
+            "transactionReferenceNumber": payload.id,
+            "transactionId": payload.metadata.checkoutId,
+        });
+
+        const options = {
+            method: "POST",
+            headers: headers,
+            body: data
+        };
+        const host =
+            (process.env.NODE_ENV === "production" ? `store_service` : `${HOST}`) +
+            ':5400';
+        fetch(`http://${host}/api/v1/history/resource/`, options)
+            .then((response) => response.json())
+            .then((result) => console.log("Logged transaction successfully", result))
+            .catch((error) => console.error(error));
+
+    } catch (error) {
+        console.log("Error @ record payment transaction", error);
+    }
 }
 /**
- *
+ * Update wallet after payment event
  * @param {Payload} payload
  */
-async function _addToWallet(payload) {
-
+async function _addToOrSubtractWallet(payload, eventType) {
 
     const savedWallet = await getWallet(payload?.metadata?.walletId);
 
-    console.log("Adding to wallet", payload);
+    console.log("Adding/subtract to wallet", payload, eventType);
+    console.log({ SAVED_WALLET: savedWallet });
     /**
      * Processes user's wallet information.
      *
@@ -184,20 +245,23 @@ async function _addToWallet(payload) {
      * @param {Array.<string>} wallet.promotions - List of promotion codes applied to the account.
      *
      */
-    console.log({ SAVED_WALLET: savedWallet });
     const wallet = {
         ...savedWallet,
         id: payload?.metadata?.walletId,
         profileId: payload.metadata.payerId,
-        balance: payload?.amount,
-        isoCurrencyCode: "ZAR",
+        balance: ((eventType == eventTypes["payment.succeeded"]) ?
+            (savedWallet.balance + payload?.amount) :
+            ((eventType == eventTypes['refund.succeeded']) ?
+                (savedWallet.balance - payload?.amount) :
+                savedWallet.balance)),
+        isoCurrencyCode: payload.currency,
         accountName: payload?.paymentMethodDetails?.card?.maskedCard,
         expDate:
             payload?.paymentMethodDetails?.card?.expiryMonth +
             "/" +
             payload?.paymentMethodDetails?.card?.expiryYear,
         cardProvider: payload?.paymentMethodDetails?.card?.scheme,
-        lastDepositAt: Math.floor(Date.now() / 1000),
+        lastDepositAt: (eventType == eventTypes["payment.succeeded"]) ? Math.floor(Date.now() / 1000) : savedWallet.lastDepositAt,
 
     };
     const host =
@@ -220,9 +284,9 @@ async function _addToWallet(payload) {
 }
 
 /**
- *
- * @param {Request} req
- * @param {Response} res
+ * Handle a incoming payment request
+ * @param {express.Request} req
+ * @param {express.Response} res
  */
 async function handleYocoPayment(req, res) {
     try {
@@ -250,6 +314,11 @@ async function handleYocoPayment(req, res) {
     }
 }
 
+/**
+ *  Handle an incoming refund request
+ * @param {express.Request} req 
+ * @param {express.Response} res 
+ */
 async function handleYocoRefund(req, res) {
     try {
         // incoming request body
@@ -279,9 +348,109 @@ async function handleYocoRefund(req, res) {
         res.send({ code: 500, message: "Internal Error Occurred" });
     }
 }
+/**
+ * Generate a transaction history description
+ * @param {number} amount 
+ * @returns {string}
+ */
+const _transactionDescription = (amount) => {
+    try {
+        const statements = [
+            "Account credited with #AMOUNT on #DATE, for your next adventure with us.",
+            "Your balance was successfully topped up by #AMOUNT on #DATE. for your next adventure with us",
+            "Congratulations! You've added #AMOUNT to your account on #DATE. Ready for more fun?",
+            "You've successfully recharged your account with #AMOUNT on #DATE. More power to your purchases!",
+            "A successful top-up! Your account now has an extra #AMOUNT as of #DATE. Shine on!",
+            "Your wallet just got heavier! Added #AMOUNT to your balance on #DATE. Spend wisely, or don't!",
+            "You're all set with an additional #AMOUNT added on #DATE. What's the next move?",
+            "Your account was topped up with #AMOUNT on #DATE. Enjoy more of our services!",
+            "Your account was boosted with #AMOUNT worth of credits on #DATE. Enjoy the spree!",
+            "#DATE: Account topped-up by #AMOUNT. The world of entertainment awaits!",
+            "Your purchase of #AMOUNT in credits on #DATE, was successful. Dive into more experiences!",
+            "Added #AMOUNT to your balance on #DATE. Keep enjoying our services!",
+            "Your account was topped up with #AMOUNT on #DATE. Sparkle more!",
+            "Boosted your balance by #AMOUNT on #DATE. More adventures await!",
+            "You've successfully recharged #AMOUNT on #DATE. The excitement never stops!",
+            "On #DATE, your account gained an extra #AMOUNT. Enjoy more of our features!",
+            "#DATE: Account recharged with #AMOUNT. Your journey, your rules!",
+            // "Welcome boost! #AMOUNTadded to your account on #DATE. Dive back into action!",
+            "Your wallet's happier with an extra #AMOUNT on #DATE. Enjoy more of our features!",
+            "Recharged #AMOUNT on #DATE. Thanks for your support!",
+        ];
+        const rnd = Math.floor(Math.random() * statements.length);
+        ///
+        const date = (new Date()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        ///
+        const statement = statements[rnd];
+        const amountStr = "ZAR" + " " + (amount / CENTS);
+        const description = statement.replace("#AMOUNT", amountStr).replace("#DATE", date);
+        return description;
+    } catch (error) {
+        const date = (new Date()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        console.log(error);
+        return date + ": A successful top-up! Sparkle more!";
+    }
+}
 
-module.exports = {
-    handleYocoPayment,
-    handleYocoRefund,
-    handlePaymentEvents,
-};
+function _generateNotification(event, amount) {
+    const amount = "ZAR" + (amount / 100).toFixed(2)
+    let output;
+    switch (event) {
+        case eventTypes["payment.succeeded"]:
+
+            output = {
+                "title": "Cheers to Your Purchase!",
+                "body": "We've received your payment of #AMOUNT. Thanks for choosing us!"
+            }
+            break;
+
+        case eventTypes["payment.failed"]:
+            output = {
+                "title": "Oops! Payment Not Processed",
+                "body": "We encountered an issue with your payment. Assistance is on the way."
+            };
+            break;
+        case eventTypes["payment.refunded"]:
+            output = {
+                "title": "Refund Processed",
+                "body": "A refund of #AMOUNT has been credited to your account."
+            };
+            break;
+        case eventTypes["payment.cancelled"]:
+            output = {
+                "title": "Payment Cancelled",
+                "body": "Your payment of #AMOUNT has been cancelled."
+            };
+            break;
+
+        case eventTypes["payment.disputed"]:
+            output = {
+                "title": "Payment Disputed",
+                "body": "Your payment of #AMOUNT has been disputed."
+            };
+        case eventTypes["payment.charged_back"]:
+            output = {
+                "title": "Payment Charged Back",
+                "body": "Your payment of #AMOUNT has been charged back."
+            };
+            break;
+        case eventTypes["payment.updated"]:
+            output = {
+                "title": "Payment Updated",
+                "body": "Your payment of #AMOUNT has been updated."
+            };
+            break;
+        default:
+            output = {
+                "title": "Unknown Event",
+                "body": "Open your Verified app."
+            };
+
+            return {
+                title: output.title,
+                body: output.body.replace("#AMOUNT", amount),
+            }
+    }
+}
+
+module.exports = { handlePaymentEvents, handleYocoRefund, handleYocoPayment };

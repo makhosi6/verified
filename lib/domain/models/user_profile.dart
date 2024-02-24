@@ -12,6 +12,7 @@ class UserProfile {
     this.name,
     this.phone,
     this.profileId,
+    this.notificationToken,
     this.walletId,
     this.historyId,
     this.lastLoginAt,
@@ -30,6 +31,7 @@ class UserProfile {
     'id': 'ec87944f-4000-426b-b6f8-6649d6a8a387',
     'name': 'Hello',
     'phone': null,
+    'notificationToken': null,
     'profileId': 'rEFR3yIt8j3d2FQQX7TrjH7WjFRY',
     'walletId': null,
     'historyId': null,
@@ -50,6 +52,7 @@ class UserProfile {
     id = json['id'];
     name = json['name'];
     phone = json['phone'];
+    notificationToken = json['notificationToken'];
     profileId = json['profileId'];
     walletId = json['walletId'];
     historyId = json['historyId'];
@@ -67,6 +70,7 @@ class UserProfile {
   String? id;
   String? name;
   String? phone;
+  String? notificationToken;
   String? profileId;
   String? walletId;
   String? historyId;
@@ -84,6 +88,7 @@ class UserProfile {
     String? id,
     String? name,
     String? phone,
+    String? notificationToken,
     String? profileId,
     String? walletId,
     String? historyId,
@@ -102,6 +107,7 @@ class UserProfile {
         id: id ?? this.id,
         name: name ?? this.name,
         phone: phone ?? this.phone,
+        notificationToken: notificationToken ?? this.notificationToken,
         profileId: profileId ?? this.profileId,
         walletId: walletId ?? this.walletId,
         historyId: historyId ?? this.historyId,
@@ -121,6 +127,7 @@ class UserProfile {
     map['id'] = id;
     map['name'] = name;
     map['phone'] = phone;
+    map['notificationToken'] = notificationToken;
     map['profileId'] = profileId;
     map['walletId'] = walletId;
     map['historyId'] = historyId;

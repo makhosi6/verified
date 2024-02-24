@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/payments/payments_bloc.dart';
+import 'package:verified/helpers/currency.dart';
 import 'package:verified/presentation/pages/loading_page.dart';
 import 'package:verified/presentation/pages/webviews/the_webview.dart';
 import 'package:verified/presentation/theme.dart';
@@ -14,6 +15,8 @@ class PaymentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final url = context.watch<PaymentsBloc>().state.paymentData?.redirectUrl ?? paymentUrl;
+    final amount = context.watch<PaymentsBloc>().state.paymentData?.amount ?? 0;
+    final currency = context.watch<PaymentsBloc>().state.paymentData?.currency ?? 'R';
 
     if (url == null) {
       return const LoadingPage(
@@ -51,7 +54,9 @@ class PaymentPage extends StatelessWidget {
 //and show a success popup
         showDialog(
           context: context,
-          builder: (context) => const SuccessfulPaymentModal(),
+          builder: (context) => SuccessfulPaymentModal(
+            topUpAmount: formatCurrency(amount, currency),
+          ),
         );
       },
       onPageFailed: () {

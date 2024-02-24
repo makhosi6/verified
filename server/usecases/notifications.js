@@ -6,8 +6,8 @@ let fcm = new FCM(serverKey);
 
 /**
  *
- * @param {Express.Request} req
- * @param {Express.Response} res
+ * @param {express.Request} req
+ * @param {express.Response} res
  */
 function handlePushNotifications(req, res) {
 
