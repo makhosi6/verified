@@ -142,7 +142,7 @@ function handlePaymentEvents(req, res) {
  */
 function _sendFirebaseNotification(payload, notificationType) {
     try {
-        console.log("Sending a FB notification", payerRefId, notificationType);
+        console.log("Sending a FB notification", payload.metadata.payerId, notificationType);
 
 
         const notification = _generateNotification(notificationType, payload.amount);
