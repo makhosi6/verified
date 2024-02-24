@@ -355,7 +355,7 @@ class StoreRepository implements IStoreRepository {
       });
 
       final dio = Dio();
-      const url = !kDebugMode ? '${baseUrl}cdn/api/v1/media/upload' : 'http://0.0.0.0:4334/api/v1/media/upload';
+      const url = '$CDN/api/v1/media/upload';
       final response = await dio.request(
         url,
         options: Options(

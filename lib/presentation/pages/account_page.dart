@@ -553,7 +553,7 @@ class _ProfileName extends StatelessWidget {
                           context.read<StoreBloc>().add(StoreEvent.uploadFiles(nonNullFiles));
 
                           // Artificial delay
-                          await Future.delayed(const Duration(milliseconds: 1300));
+                          await Future.delayed(const Duration(seconds: 5));
 
                           //
                           if (context.read<StoreBloc>().state.uploadsData?.files?.isNotEmpty ?? false) {
