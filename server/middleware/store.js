@@ -71,7 +71,8 @@ const lastLoginHook = (req, res, next) => {
     const method = req.method.toUpperCase();
     if (id && method == "GET" && !(req.url.includes("?role=system"))) {
 
-        global.queue.push(() => updateLastSeen(id))
+        if (id != 'resource') global.queue.push(() => updateLastSeen(id))
+        else console.log("No ID found", { id });
     }
 
     next()

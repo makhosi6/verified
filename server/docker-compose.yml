@@ -61,9 +61,9 @@ services:
       - payments_service
       - store_service
       - verify_id_service
-      - verified_cdn
+      - cdn_service
     networks:
-      - verified_bridge
+      - local_bridge
   
   fb_notifications_service:
     build:
@@ -77,7 +77,7 @@ services:
       - FB_NOTIF_PORT=${FB_NOTIF_PORT}
     restart: unless-stopped
     networks:
-      - verified_bridge
+      - local_bridge
 
   
   payments_service:
@@ -94,7 +94,7 @@ services:
       - PAYMENT_EVENTS_SECRET=${PAYMENT_EVENTS_SECRET}
     restart: unless-stopped
     networks:
-      - verified_bridge
+      - local_bridge
 
   
   store_service:
@@ -110,10 +110,10 @@ services:
       - STORE_PORT=${STORE_PORT}
     restart: unless-stopped
     networks:
-      - verified_bridge
+      - local_bridge
 
     
-  verified_cdn:
+  cdn_service:
     build:
       context: .
       dockerfile: ./apps/cdn/Dockerfile
@@ -125,7 +125,7 @@ services:
       - PORT=${CDN_PORT}
     restart: unless-stopped
     networks:
-      - verified_bridge
+      - local_bridge
 
   
   verify_id_service:
@@ -140,7 +140,7 @@ services:
       - VERIFYID_PORT=${VERIFYID_PORT}
     restart: unless-stopped
     networks:
-      - verified_bridge
+      - local_bridge
 
 
 volumes:
@@ -153,5 +153,5 @@ volumes:
 networks:
   emqx-bridge:
     driver: bridge
-  verified_bridge:
+  local_bridge:
     driver: bridge
