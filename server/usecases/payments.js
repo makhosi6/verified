@@ -393,7 +393,7 @@ const _transactionDescription = (amount) => {
 }
 
 function _generateNotification(event, amount) {
-    const amount = "ZAR" + (amount / 100).toFixed(2)
+    const amountStr = "ZAR" + (amount / 100).toFixed(2)
     let output;
     switch (event) {
         case eventTypes["payment.succeeded"]:
@@ -448,7 +448,7 @@ function _generateNotification(event, amount) {
 
             return {
                 title: output.title,
-                body: output.body.replace("#AMOUNT", amount),
+                body: output.body.replace("#AMOUNT", amountStr),
             }
     }
 }
