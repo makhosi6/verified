@@ -12,9 +12,9 @@ class AppbaseState with _$AppbaseState {
 
   factory AppbaseState.initial() => const AppbaseState(
         appName: 'Unknown',
-        packageName: 'Unknown',
-        version: 'Unknown',
-        buildNumber: 'Unknown',
-        buildSignature: 'Unknown',
+        packageName: 'co.za.byteestudio.Verified',
+        version: '0.0.0',
+        buildNumber: '0',
+        buildSignature: '#',
       );
 }
