@@ -157,7 +157,7 @@ function _sendFirebaseNotification(payload, notificationType) {
         var user = getUserProfile(payload.metadata.payerId);
 
         if (!user?.notificationToken) {
-            console.log("USER NOTIFICATION TOKEN NOT FOUND => ", payerRefId)
+            console.log("USER NOTIFICATION TOKEN NOT FOUND => ", user.accountName)
             return;
         }
 
@@ -169,10 +169,10 @@ function _sendFirebaseNotification(payload, notificationType) {
             },
         })
             .then((response) => response.text())
-            .then((result) => console.log("SEND NOTIFICATION TO " + payerRefId))
-            .catch((error) => console.error("NOTIFiCATION ERROR @ ", error.toString(), payerRefId));
+            .then((result) => console.log("SEND NOTIFICATION TO " + user.accountName))
+            .catch((error) => console.error("NOTIFiCATION ERROR @ ", error.toString(), user.accountName));
     } catch (error) {
-        console.log("NOTIFiCATION ERROR => ", payerRefId)
+        console.log("NOTIFiCATION ERROR => ", user.accountName)
     }
 }
 
