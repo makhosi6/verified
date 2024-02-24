@@ -1,11 +1,15 @@
 import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gallery_asset_picker/gallery_asset_picker.dart';
+import 'package:uuid/uuid.dart';
+import 'package:verified/app_config.dart';
 import 'package:verified/application/store/store_bloc.dart';
-import 'package:verified/domain/models/help_request.dart';
+import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 
@@ -83,10 +87,14 @@ class _HelpFormState extends State<_HelpForm> {
   final preferredCommunicationChannel = ['In-App Notification', 'SMS', 'Email', 'Whatsapp'];
   late String? selectedPreferredCommunicationChannel = preferredCommunicationChannel.first;
 
+  ///
   final _bodyTextController = TextEditingController();
 
   num? formHeight;
   num? formWidth;
+
+  ///
+  List<MultipartFile> selectedMedia = [];
 
   /// - function handler to minimize and maximize the help form
   void miniMaximizeHelpFrom(BuildContext context) {
@@ -218,20 +226,33 @@ class _HelpFormState extends State<_HelpForm> {
                   key: UniqueKey(),
                   onTap: () async {
                     try {
-                      var media = await GalleryAssetPicker.pick(
+                      ///
+                      final files = await GalleryAssetPicker.pick(
                         context,
-                        maxCount: 3,
+                        maxCount: MAX_FILES_UPLOAD,
                         requestType: RequestType.all,
                       );
 
-                      print('MEDIA: ${media.length}');
+                      print('MEDIA: ${files.length}');
+
+                      ///
+                      var media = await Future.wait(files.map((f) async => await convertToFormData(await f.file)));
+
+                      ///
+                      if (mounted) {
+                        setState(() {
+                          selectedMedia = media.where((i) => i != null).cast<MultipartFile>().toList();
+                        });
+                      }
+
+                      ///
                     } catch (e) {
+                      print(e);
                       print('media picker error');
                     }
                   },
-                  label: 'Uploads (Optional)',
+                  label: 'Uploads (Optional) ${selectedMedia.isEmpty ? '' : "(${selectedMedia.length})"}',
                   color: Colors.black87,
-                  // bgColor: const Color.fromARGB(0, 225, 225, 225),
                   buttonIcon: const Image(
                     image: AssetImage('assets/icons/add-file.png'),
                   ),
@@ -240,10 +261,10 @@ class _HelpFormState extends State<_HelpForm> {
                 ),
               ),
               Center(
-                child: Container(
+                child: SizedBox(
                   child: BaseButton(
                     key: UniqueKey(),
-                    onTap: () {
+                    onTap: () async {
                       ///
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
@@ -253,26 +274,36 @@ class _HelpFormState extends State<_HelpForm> {
 
                         ///
                         final user = context.read<StoreBloc>().state.userProfileData;
-                        final helpRequest = HelpRequest(
-                          profileId: user?.id,
-                          timestamp: DateTime.now().millisecondsSinceEpoch,
-                          type: selectedIssueType,
-                          comment: Comment(title: 'Issue report', body: _bodyTextController.text),
-                          preferredCommunicationChannel: selectedPreferredCommunicationChannel,
-                        );
 
                         ///
-                        context.read<StoreBloc>().add(StoreEvent.requestHelp(helpRequest));
+                        context.read<StoreBloc>().add(StoreEvent.uploadFiles(selectedMedia));
 
-                        ///
-                        Navigator.of(context).pop(helpRequest);
-
-                        ///
-                        ScaffoldMessenger.of(context)
-                          ..clearSnackBars()
-                          ..showSnackBar(
-                            const SnackBar(content: Text('Processing the Request!')),
+                        Future.delayed(const Duration(milliseconds: 1300)).then((_) {
+                          final helpRequest = HelpTicket(
+                            id: const Uuid().v4(),
+                            profileId: user?.id,
+                            timestamp: DateTime.now().millisecondsSinceEpoch,
+                            type: selectedIssueType,
+                            isResolved: false,
+                            comment: Comment(title: 'Issue report', body: _bodyTextController.text),
+                            preferredCommunicationChannel: selectedPreferredCommunicationChannel,
+                            uploads: context.read<StoreBloc>().state.uploadsData?.files,
+                            responses: [],
                           );
+
+                          ///
+                          context.read<StoreBloc>().add(StoreEvent.requestHelp(helpRequest));
+
+                          ///
+                          Navigator.of(context).pop(helpRequest);
+
+                          ///
+                          ScaffoldMessenger.of(context)
+                            ..clearSnackBars()
+                            ..showSnackBar(
+                              const SnackBar(content: Text('Processing the Request!')),
+                            );
+                        });
                       }
                     },
                     label: 'Submit',

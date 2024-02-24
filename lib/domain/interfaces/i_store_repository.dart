@@ -1,11 +1,12 @@
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:verified/domain/models/generic_api_error.dart';
 import 'package:verified/domain/models/generic_response.dart';
-import 'package:verified/domain/models/help_request.dart';
 import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/promotion.dart';
 import 'package:verified/domain/models/resource_health_status_enum.dart';
 import 'package:verified/domain/models/transaction_history.dart';
+import 'package:verified/domain/models/upload_response.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/wallet.dart';
 
@@ -13,8 +14,11 @@ abstract class IStoreRepository {
   /// Get HEaLTH StaTUS
   Future<ResourceHealthStatus> getHealthStatus();
 
+  ///
+  Future<UploadResponse> uploadFiles(List<MultipartFile> uploads);
+
   /// GET
-  Future<Either<GenericApiError, GenericResponse>> requestHelp(HelpRequest help);
+  Future<Either<GenericApiError, GenericResponse>> requestHelp(HelpTicket help);
   Future<Either<GenericApiError, UserProfile>> getUserProfile(
     String userId,
   );

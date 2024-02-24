@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:verified/app_config.dart';
+import 'package:verified/application/appbase/appbase_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/payments/payments_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
@@ -49,6 +50,12 @@ void main() async {
     runApp(
       MultiBlocProvider(
         providers: [
+          BlocProvider<AppbaseBloc>(
+            create: (context) => AppbaseBloc({})
+              ..add(
+                const AppbaseEvent.getAppInfo(),
+              ),
+          ),
           BlocProvider<VerifySaBloc>(
             create: (BuildContext context) => VerifySaBloc(
               VerifySaRepository(
@@ -137,7 +144,7 @@ class _AppRootState extends State<AppRoot> {
           /// remove the splash screen
           return MaterialApp(
             builder: FToastBuilder(),
-            debugShowCheckedModeBanner: kDebugMode || kProfileMode,
+            debugShowCheckedModeBanner: false,
             theme: theme,
             title: displayAppName,
             home: BlocBuilder<StoreBloc, StoreState>(
@@ -154,6 +161,7 @@ class _AppRootState extends State<AppRoot> {
                         state.walletDataLoading ||
                         state.historyDataLoading ||
                         state.promotionDataLoading ||
+                        state.uploadsDataLoading ||
                         state.ticketsDataLoading) {
                       showAppLoader(context);
                     } else {
@@ -195,7 +203,12 @@ void showAppLoader(BuildContext context) {
     context,
     overlayFromBottom: 80,
     overlayColor: const Color.fromARGB(44, 0, 0, 0),
-    progressIndicator: const SizedBox(height: 50, width: 50, child: CircularProgressIndicator()),
+    progressIndicator: SizedBox(
+        height: 50,
+        width: 50,
+        child: CircularProgressIndicator(
+          color: darkerPrimaryColor,
+        )),
   );
 
   /// show loader option 2

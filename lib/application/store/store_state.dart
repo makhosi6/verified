@@ -40,6 +40,12 @@ class StoreState with _$StoreState {
     required bool walletHasError,
     required bool walletDataLoading,
     required Wallet? walletData,
+
+    ///
+    required GenericApiError? uploadsError,
+    required bool uploadsHasError,
+    required bool uploadsDataLoading,
+    required UploadResponse? uploadsData,
   }) = _StoreState;
 
   factory StoreState.initial() => const StoreState(
@@ -80,5 +86,11 @@ class StoreState with _$StoreState {
         walletHasError: false,
         walletDataLoading: false,
         walletData: null,
+
+        ///
+        uploadsError: null,
+        uploadsHasError: false,
+        uploadsDataLoading: false,
+        uploadsData: null,
       );
 }

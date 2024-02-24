@@ -1,8 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gallery_asset_picker/gallery_asset_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:verified/app_config.dart';
+import 'package:verified/application/appbase/appbase_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
@@ -68,7 +71,7 @@ class AccountPage extends StatelessWidget {
         key: refreshIndicatorKey,
         onRefresh: () async => await Future.delayed(
           const Duration(seconds: 2),
-          VerifiedAppNativeCalls.restartApp,
+          // VerifiedAppNativeCalls.restartApp,
         ),
         child: const AccountPageContent(),
       ),
@@ -85,8 +88,11 @@ class AccountPageContent extends StatelessWidget {
     selectMediaConfig();
 
     ///
+    final appInfo = getAppInfo(context);
 
-    final user = context.watch<StoreBloc>().state.userProfileData ?? UserProfile.empty;
+    ///
+
+    final user = context.watch<StoreBloc>().state.userProfileData;
     final wallet = context.watch<StoreBloc>().state.walletData;
     return Center(
       child: CustomScrollView(
@@ -262,7 +268,7 @@ class AccountPageContent extends StatelessWidget {
 
                                             context.read<AuthBloc>().add(const AuthEvent.signOut());
                                             context.read<StoreBloc>()
-                                              ..add(StoreEvent.deleteUserProfile(user.id ?? ''))
+                                              ..add(StoreEvent.deleteUserProfile(user?.id ?? ''))
                                               ..add(const StoreEvent.clearUser());
 
                                             Navigator.of(context)
@@ -290,7 +296,7 @@ class AccountPageContent extends StatelessWidget {
                                             ///
                                             context.read<AuthBloc>().add(const AuthEvent.deleteAccount());
                                             context.read<StoreBloc>()
-                                              ..add(StoreEvent.deleteUserProfile(user.id ?? ''))
+                                              ..add(StoreEvent.deleteUserProfile(user?.id ?? ''))
                                               ..add(const StoreEvent.clearUser());
 
                                             Navigator.of(context)
@@ -375,7 +381,7 @@ class AccountPageContent extends StatelessWidget {
                                               userPersonalDetailsKey.length,
                                               (index) => accountPageListItems(
                                                 key: "${userPersonalDetailsKey[index]['displayName']}",
-                                                value: "${user.toJson()[userPersonalDetailsKey[index]['keyName']]}",
+                                                value: "${user?.toJson()[userPersonalDetailsKey[index]['keyName']]}",
                                                 isLast: index == userPersonalDetailsKey.length - 1,
                                               ),
                                             )
@@ -480,7 +486,7 @@ var accountSettings = [
 ];
 
 class _ProfileName extends StatelessWidget {
-  final UserProfile user;
+  final UserProfile? user;
   const _ProfileName({required this.user});
 
   @override
@@ -507,8 +513,8 @@ class _ProfileName extends StatelessWidget {
                         color: Colors.green[50],
                       ),
                       child: Image.network(
-                        user.avatar?.replaceAll(' ', '') ??
-                            "https://ui-avatars.com/api/?background=105D38&color=fff&name=${(user.displayName ?? user.actualName ?? user.name)?.split(" ").join('+')}",
+                        user?.avatar?.replaceAll(' ', '') ??
+                            "https://ui-avatars.com/api/?background=105D38&color=fff&name=${(user?.displayName ?? user?.actualName ?? user?.name)?.split(" ").join('+')}",
                         height: 100.0,
                         width: 100.0,
                         fit: BoxFit.cover,
@@ -521,15 +527,49 @@ class _ProfileName extends StatelessWidget {
                     child: InkWell(
                       onTap: () async {
                         try {
+                          // Pick a single image from the gallery.
                           var images = await GalleryAssetPicker.pick(
                             context,
                             maxCount: 1,
                             requestType: RequestType.image,
                           );
 
+                          // Early exit if no images are picked or if the user object is null.
+                          if (images.isEmpty || user == null) {
+                            print('No images selected or user is null');
+                            return;
+                          }
+
                           print('IMAGES: ${images.length}');
+
+                          // Convert the picked images to a list of FormData objects.
+                          final files =
+                              await Future.wait(images.map((f) async => await convertToFormData(await f.file)));
+
+                          // Filter out any null items from the list and cast to a non-nullable type.
+                          final nonNullFiles = files.whereType<MultipartFile>().toList();
+
+                          // Trigger an event to upload the files.
+                          context.read<StoreBloc>().add(StoreEvent.uploadFiles(nonNullFiles));
+
+                          // Artificial delay
+                          await Future.delayed(const Duration(milliseconds: 1300));
+
+                          //
+                          if (context.read<StoreBloc>().state.uploadsData?.files?.isNotEmpty ?? false) {
+                            context.read<StoreBloc>().add(
+                                  StoreEvent.updateUserProfile(
+                                    user!.copyWith(
+                                        avatar:
+                                            '$CDN/media/${context.read<StoreBloc>().state.uploadsData!.files![0].filename}'),
+                                  ),
+                                );
+                          } else {
+                            print('No files uploaded');
+                          }
                         } catch (e) {
-                          print('image picjker error');
+                          // Log any errors encountered during the process.
+                          print('Image picker or upload error: $e');
                         }
                       },
                       child: Container(
@@ -557,7 +597,7 @@ class _ProfileName extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.5,
                   clipBehavior: Clip.none,
                   child: Text(
-                    user.displayName ?? user.actualName ?? '',
+                    user?.displayName ?? user?.actualName ?? '',
                     style: const TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.w600,
@@ -572,7 +612,7 @@ class _ProfileName extends StatelessWidget {
 
                 /// phone
                 Text(
-                  user.phone ?? '000 000 0000',
+                  user?.phone ?? '000 000 0000',
                   textAlign: TextAlign.left,
                 ),
 
@@ -581,7 +621,7 @@ class _ProfileName extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.5,
                   clipBehavior: Clip.none,
                   child: Text(
-                    user.email ?? 'nomail@mailbox.com',
+                    user?.email ?? 'nomail@mailbox.com',
                     textAlign: TextAlign.left,
                     style: const TextStyle(overflow: TextOverflow.ellipsis),
                     overflow: TextOverflow.ellipsis,
@@ -632,17 +672,24 @@ Widget accountPageListItems({required String key, required String value, bool is
   );
 }
 
-var appInfo = {
-  'App Id': 'com.byteestudio.verified',
-  'Name': 'Verified',
-  'Vendor': 'Verified (byteestudio.com)',
-  'Version': '1.37.291',
-  'Official Website': TargetPlatform.iOS == defaultTargetPlatform
-      ? 'https://www.apple.com/app-store/12454534636'
-      : (TargetPlatform.android == defaultTargetPlatform)
-          ? 'https://play.google.com/store/apps/details?id=com.byteestudio.verified'
-          : 'https://app-link.com'
-};
+Map<String, String> getAppInfo(BuildContext context) {
+  final appBase = context.read<AppbaseBloc>().state;
+
+  return {
+    'App Id': 'com.byteestudio.verified',
+    'Name': 'Verified',
+    'App Official Name': appBase.appName ?? '',
+    'Vendor': 'Verified (byteestudio.com)',
+    'Version': appBase.version ?? '0.0.0',
+    'Build Number': appBase.buildNumber ?? '',
+    'Build Signature': appBase.buildSignature ?? '#',
+    'Official Website': TargetPlatform.iOS == defaultTargetPlatform
+        ? 'https://www.apple.com/app-store/12454534636'
+        : (TargetPlatform.android == defaultTargetPlatform)
+            ? 'https://play.google.com/store/apps/details?id=com.byteestudio.verified'
+            : 'https://verified.byteestudio.com'
+  };
+}
 
 String humanReadable(String time) {
   try {

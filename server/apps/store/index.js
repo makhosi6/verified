@@ -40,7 +40,8 @@ const {
   addIdentifiers,
   addTimestamps,
   lastLoginHook,
-  addWalletHook
+  addWalletHook,
+  updateOrPutHook
 } = require("../../middleware/store");
 const { getCreditsReq } = require("../../usecases/verifyid");
 const { notifyAdmin } = require("../../usecases/admin");
@@ -66,6 +67,7 @@ server.use(authenticate);
 server.use(addTimestamps);
 server.use(addIdentifiers);
 server.use(addWalletHook);
+server.use(updateOrPutHook);
 
 
 /// routes

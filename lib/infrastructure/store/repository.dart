@@ -5,11 +5,11 @@ import 'package:verified/app_config.dart';
 import 'package:verified/domain/interfaces/i_store_repository.dart';
 import 'package:verified/domain/models/generic_api_error.dart';
 import 'package:verified/domain/models/generic_response.dart';
-import 'package:verified/domain/models/help_request.dart';
 import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/promotion.dart';
 import 'package:verified/domain/models/resource_health_status_enum.dart';
 import 'package:verified/domain/models/transaction_history.dart';
+import 'package:verified/domain/models/upload_response.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/helpers/security/nonce.dart';
@@ -102,8 +102,8 @@ class StoreRepository implements IStoreRepository {
   //     );
   @override
   Future<Either<GenericApiError, dynamic>> getAllTickets(String userId) async =>
-      await _genericGetAllRequest<HelpRequest>(
-          collection: 'ticket', resourceId: null, userId: userId, transform: HelpRequest.fromJson);
+      await _genericGetAllRequest<HelpTicket>(
+          collection: 'ticket', resourceId: null, userId: userId, transform: HelpTicket.fromJson);
 
   @override
   Future<Either<GenericApiError, dynamic>> getAllUserTransaction(String userId) async =>
@@ -253,7 +253,7 @@ class StoreRepository implements IStoreRepository {
       _genericPutRequest('ticket', helpTicket.toJson(), HelpTicket.fromJson);
 
   Future<Either<GenericApiError, T>> _genericPutRequest<T>(
-      String collection, dynamic data, T Function(dynamic json) transform) async {
+      String collection, Map data, T Function(dynamic json) transform) async {
     try {
       var headers = {
         'x-nonce': await generateNonce(),
@@ -261,7 +261,7 @@ class StoreRepository implements IStoreRepository {
         'Authorization': 'Bearer $storeApiKey'
       };
       var response = await httpClient.put(
-        '$collection/resource',
+        '$collection/resource/${data['id']}',
         options: Options(
           method: 'PUT',
           headers: headers,
@@ -287,7 +287,7 @@ class StoreRepository implements IStoreRepository {
   }
 
   @override
-  Future<Either<GenericApiError, GenericResponse>> requestHelp(HelpRequest help) async {
+  Future<Either<GenericApiError, GenericResponse>> requestHelp(HelpTicket help) async {
     try {
       var headers = {
         'x-nonce': await generateNonce(),
@@ -340,6 +340,47 @@ class StoreRepository implements IStoreRepository {
       return ResourceHealthStatus.bad;
     } catch (e) {
       return ResourceHealthStatus.bad;
+    }
+  }
+
+  @override
+  Future<UploadResponse> uploadFiles(uploads) async {
+    try {
+      final headers = {
+        'Authorization': 'Bearer $storeApiKey',
+        'Content-Type': 'multipart/form-data',
+      };
+      final data = FormData.fromMap({
+        'files': uploads,
+      });
+
+      final dio = Dio();
+      const url = !kDebugMode ? '${baseUrl}cdn/api/v1/media/upload' : 'http://0.0.0.0:4334/api/v1/media/upload';
+      final response = await dio.request(
+        url,
+        options: Options(
+          method: 'POST',
+          headers: headers,
+        ),
+        data: data,
+      );
+
+      if (httpRequestIsSuccess(response.statusCode)) {
+        return UploadResponse.fromJson(response.data);
+      } else {
+        print(response.statusMessage);
+        return UploadResponse(
+          files: [],
+          message: 'No file uploaded',
+        );
+      }
+    } catch (e) {
+      print(e);
+
+      return UploadResponse(
+        files: [],
+        message: 'No file uploaded',
+      );
     }
   }
 }

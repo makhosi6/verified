@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_asset_picker/gallery_asset_picker.dart';
@@ -13,3 +16,10 @@ selectMediaConfig() => GalleryAssetPicker.initialize(GalleryConfig(
         );
       },
     ));
+
+Future<MultipartFile?> convertToFormData(File? file) async {
+  if (file == null) return null;
+  String fileName = file.path.split('/').last;
+  MultipartFile multipartFile = await MultipartFile.fromFile(file.path, filename: fileName);
+  return multipartFile;
+}

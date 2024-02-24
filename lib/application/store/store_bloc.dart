@@ -1,12 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:verified/domain/models/generic_api_error.dart';
 import 'package:verified/domain/models/generic_response.dart';
-import 'package:verified/domain/models/help_request.dart';
 import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/promotion.dart';
 import 'package:verified/domain/models/resource_health_status_enum.dart';
 import 'package:verified/domain/models/transaction_history.dart';
+import 'package:verified/domain/models/upload_response.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
@@ -570,6 +571,28 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             emit(state.copyWith(
               userProfileData: e.user,
             ));
+            return null;
+          },
+          uploadFiles: (e) async {
+            if (e.uploads.isEmpty) null;
+
+            emit(state.copyWith(
+              uploadsError: null,
+              uploadsHasError: false,
+              uploadsDataLoading: true,
+            ));
+
+            final data = await _storeRepository.uploadFiles(e.uploads);
+
+            emit(
+              state.copyWith(
+                uploadsError: null,
+                uploadsHasError: false,
+                uploadsDataLoading: false,
+                uploadsData: data,
+              ),
+            );
+
             return null;
           },
         ));

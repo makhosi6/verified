@@ -150,11 +150,53 @@ async function updateLastSeen(id) {
     }
 }
 /**
- * 
+ * Middleware to augment PUT requests with additional data
  * @param {Request} req 
  * @param {Response} res 
  * @param {NextFunction} next 
  */
+async function updateOrPutHook(req, res, next) {
+
+    const METHOD = req.method.toUpperCase();
+
+    // if it's a PUT request
+    if (METHOD == "PUT") {
+
+        const headers = {
+
+            /// add a nonce and TOKEN for security/auth
+            "x-nonce": generateNonce(),
+            "Authorization": "Bearer TOKEN",
+            "Content-Type": "application/json"
+        };
+
+        // make a url
+        const host = (process.env.NODE_ENV === "production" ? `store_service` : `${process.env.HOST}`) + `:${process.env.PORT}`;
+        const url = (req.originalUrl || req.pathname || req.url || req.href).replace("?role=system", '');
+
+        // fetch request to get existing data from the database
+        const response = await fetch(`http://${host}${url}?role=system`, {
+            method: 'GET',
+            headers
+        });
+
+
+        const data = await response.json();
+
+        // Merge the fetched data with the original request body
+        // This allows the PUT request to include additional data from the service
+        req.body = {
+            ...data,
+            ...req.body,
+        };
+    }
+
+    // ..then
+    next();
+}
+
+
+/** */
 async function updateWalletLastTopUp({ id, amount }) {
     try {
         const headers = {
@@ -191,4 +233,4 @@ async function updateWalletLastTopUp({ id, amount }) {
 }
 
 // export all functions
-module.exports = { addTimestamps, addIdentifiers, lastLoginHook, updateLastSeen, addWalletHook }
+module.exports = { addTimestamps, addIdentifiers, lastLoginHook, updateLastSeen, addWalletHook, updateOrPutHook, }

@@ -5,7 +5,10 @@ class StoreEvent with _$StoreEvent {
   const factory StoreEvent.apiHealthCheck() = StoreApiHealthCheck;
 
   ///
-  const factory StoreEvent.requestHelp(HelpRequest helpRequest) = RequestHelp;
+  const factory StoreEvent.requestHelp(HelpTicket helpRequest) = RequestHelp;
+
+  ///
+  const factory StoreEvent.uploadFiles(List<MultipartFile> uploads) = UploadFiles;
 
   ///
   const factory StoreEvent.getUserProfile(String userId) = GetUserProfile;

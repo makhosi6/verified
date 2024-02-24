@@ -114,4 +114,36 @@ class Comment {
   }
 }
 
-class Upload {}
+class Upload {
+  Upload({
+    this.filename,
+    this.size,
+    this.mimetype,
+  });
+
+  Upload.fromJson(dynamic json) {
+    filename = json['filename'];
+    size = json['size'];
+    mimetype = json['mimetype'];
+  }
+  String? filename;
+  num? size;
+  String? mimetype;
+  Upload copyWith({
+    String? filename,
+    num? size,
+    String? mimetype,
+  }) =>
+      Upload(
+        filename: filename ?? this.filename,
+        size: size ?? this.size,
+        mimetype: mimetype ?? this.mimetype,
+      );
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['filename'] = filename;
+    map['size'] = size;
+    map['mimetype'] = mimetype;
+    return map;
+  }
+}

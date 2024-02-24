@@ -29,7 +29,7 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
   //
   String selectedAmount = 'R 150.00';
 
-  num parsedAmount = 150;
+  num parsedAmount = 15000;
 
   num minimumPayment = 30;
 
