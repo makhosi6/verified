@@ -186,7 +186,7 @@ function _createTransactionRecord(payload) {
         const headers = new Headers();
         headers.append("x-nonce", generateNonce());
         headers.append("Content-Type", "application/json");
-        headers.append("Authorization", `Bearer ${PAYMENTS_TOKEN}`);
+        headers.append("Authorization", `Bearer TOKEN`);
 
         const data = JSON.stringify({
             "profileId": payload.metadata.payerId,

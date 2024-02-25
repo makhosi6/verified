@@ -28,7 +28,7 @@ function validateWebhookSender(req, res, next) {
         
         const signature = headers['webhook-signature'].split(' ')[0].split(',')[1]
         
-        console.log({ id, timestamp, secret, signedContent , secretBytes, signature});
+        // console.log({ id, timestamp, secret, signedContent , secretBytes, signature});
 
         if (crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(signature))) {
             console.log("\nYOCO incoming request with a 200 status.....\n");
