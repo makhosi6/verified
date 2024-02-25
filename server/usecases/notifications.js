@@ -30,7 +30,8 @@ function handlePushNotifications(req, res) {
   });
 
   res.send({
-  error: err, message
+    success: true,
+    message: message?.notification
   });
 }
 
