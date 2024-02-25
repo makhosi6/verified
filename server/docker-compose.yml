@@ -75,6 +75,7 @@ services:
       - PORT=${FB_NOTIF_PORT}
       - NODE_ENV=production
       - FB_NOTIF_PORT=${FB_NOTIF_PORT}
+      - FB_SERVER_TOKEN=${FB_SERVER_TOKEN}
     restart: unless-stopped
     networks:
       - local_bridge

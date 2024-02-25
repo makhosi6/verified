@@ -1,5 +1,5 @@
 let FCM = require("fcm-node");
-let serverKey = process.env.FB_SERVER_TOKEN || "PROJECT_FB_SERVER_TOKEN";
+let serverKey = process.env.FB_SERVER_TOKEN || "FB_SERVER_TOKEN";
 let fcm = new FCM(serverKey);
 
 /// https://github.com/jlcvp/fcm-node
@@ -31,7 +31,7 @@ function handlePushNotifications(req, res) {
 
   res.send({
     success: true,
-    message: message?.notification
+    message:message?.notification
   });
 }
 
