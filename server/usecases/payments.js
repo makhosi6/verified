@@ -152,7 +152,7 @@ async function _sendFirebaseNotification(payload, notificationType) {
 
         const host =
             (process.env.NODE_ENV === "production" ? `fb_notifications_service` : `${HOST}`) +
-            ':5400';
+            ':4309';
 
         let user = await getUserProfile(payload.metadata.payerId);
 
