@@ -354,6 +354,7 @@ async function handleYocoRefund(req, res) {
  * @returns {string}
  */
 const _transactionDescription = (amount) => {
+    const CENTS = 100;
     try {
         const statements = [
             "Account credited with #AMOUNT on #DATE, for your next adventure with us.",
