@@ -9,5 +9,7 @@ class Env {
 
   static const POINTS_PER_TRANSACTION = 30;
 
+  static const VAPI_KEY = '';
+
   static const baseUrl = 'https://example.dev/api/v1/';
 }

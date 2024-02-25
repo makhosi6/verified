@@ -166,7 +166,8 @@ class AccountPageContent extends StatelessWidget {
                             ),
                             ActionButton(
                               key: const Key('add-payment-method-or-topup-btn'),
-                              tooltip: wallet == null ? 'Add payment method' : 'Top-up',
+                              tooltip: wallet == null ? 'Add payment method' : 'Top up',
+                              
                               iconColor: Colors.white,
                               bgColor: neutralYellow,
                               padding: const EdgeInsets.all(0),

@@ -140,7 +140,7 @@ function handlePaymentEvents(req, res) {
  * @param {Payload} payload 
  * @param {string} notificationType 
  */
-function _sendFirebaseNotification(payload, notificationType) {
+async function _sendFirebaseNotification(payload, notificationType) {
     try {
         console.log("Sending a FB notification", payload.metadata.payerId, notificationType);
 
@@ -154,7 +154,7 @@ function _sendFirebaseNotification(payload, notificationType) {
             (process.env.NODE_ENV === "production" ? `fb_notifications_service` : `${HOST}`) +
             ':5400';
 
-        var user = getUserProfile(payload.metadata.payerId);
+        let user = await getUserProfile(payload.metadata.payerId);
 
         if (!user?.notificationToken) {
             console.log("USER NOTIFICATION TOKEN NOT FOUND => ", user.accountName)

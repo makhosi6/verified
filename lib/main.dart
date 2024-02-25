@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,14 +24,23 @@ import 'package:verified/infrastructure/verifysa/repository.dart';
 import 'package:verified/presentation/pages/custom_splash_screen.dart';
 import 'package:verified/presentation/pages/error_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
+import 'package:verified/presentation/pages/transactions_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/services/dio.dart';
+import 'package:verified/services/notifications.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // Set the background messaging handler early on, as a named top-level function
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  if (!kIsWeb) {
+    await setupFlutterNotifications();
+  }
 
   ///
   if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('127.0.0.1', 9099);
@@ -114,10 +123,13 @@ class AppRoot extends StatefulWidget {
 
 class _AppRootState extends State<AppRoot> {
   //with SingleTickerProviderStateMixin
-  @override
+  String? token;
+  String? initialMessage;
+  bool _resolved = false;
 
-//log changing deps
+  @override
   void didChangeDependencies() {
+//log changing deps
     super.didChangeDependencies();
     print('=========================+++++++didChangeDependencies+++++++======================');
   }
@@ -127,6 +139,39 @@ class _AppRootState extends State<AppRoot> {
     super.didUpdateWidget(oldWidget);
 
     print('=========================+++++++didUpdateWidget+++++++======================');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    ///
+//  FirebaseMessaging.instance.getToken(vapidKey: VAPIKEY).then((token) => {});
+    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+      print('\n\nFMC TOKEN: $fcmToken\n\n');
+
+      token = fcmToken;
+    }).onError((err) {
+      print('Error while trying to get a TOKEN ${err.toString()}');
+    });
+
+    ///
+    FirebaseMessaging.instance.getInitialMessage().then(
+          (value) => setState(
+            () {
+              _resolved = true;
+              initialMessage = value?.data.toString();
+            },
+          ),
+        );
+
+    FirebaseMessaging.onMessage.listen(showFlutterNotification);
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+
+      navigate(context, page: const TransactionPage());
+    });
   }
 
   @override
@@ -166,6 +211,22 @@ class _AppRootState extends State<AppRoot> {
                       showAppLoader(context);
                     } else {
                       hideAppLoader();
+                    }
+                    if (state.userProfileData != null && ( state.userProfileData?.notificationToken == null)) {
+                      try { 
+                        ///
+                        print("UPDATE TOKEN $token");
+                        context.read<StoreBloc>().add(
+                              StoreEvent.updateUserProfile(
+                                state.userProfileData!.copyWith(
+                                    notificationToken: kDebugMode
+                                        ? 'cxRNUlDuT8mEYgZAHia3Qq:APA91bGYlNs8OHYACv3twCGmxYVgOeAKpZiJck07-3N_Y-tU8GyIIH8xXFZlzW6sPITJ2J6q6khTFUGWmhxSFHTdyZeqHY_zln-9g47YSC2DV7tOiJjJdfEV64agh7-V1BCzDcE3YE7s'
+                                        : token),
+                              ),
+                            );
+                      } catch (e) {
+                        print('Error while trying to add a token,  $e');
+                      }
                     }
                   },
                   child: BlocListener<AuthBloc, AuthState>(

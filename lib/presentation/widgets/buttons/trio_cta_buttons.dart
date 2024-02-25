@@ -68,11 +68,7 @@ class TrioHomeButtons extends StatelessWidget {
           ),
           _separator,
           _ClickableItem(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => const TransactionPage(),
-              ),
-            ),
+            onTap: () => navigate(context, page: const TransactionPage()),
             text: 'History',
             iconWidget: const Icon(
               Icons.history_outlined,
