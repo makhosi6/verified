@@ -89,6 +89,87 @@ const eventTypes = {
     "refund.succeeded": "refund.succeeded",
     "refund.failed": "refund.failed",
 };
+/**
+ * Generate a transaction history description
+ * @param {number} amount 
+ * @returns {string}
+ */
+const _transactionDescription = (amount) => {
+    const CENTS = 100;
+    try {
+        const statements = [
+            "Account credited with #AMOUNT on #DATE, for your next adventure with us.",
+            "Your balance was successfully topped up by #AMOUNT on #DATE. for your next adventure with us",
+            "Congratulations! You've added #AMOUNT to your account on #DATE. Ready for more fun?",
+            "You've successfully recharged your account with #AMOUNT on #DATE. More power to your purchases!",
+            "A successful top-up! Your account now has an extra #AMOUNT as of #DATE. Shine on!",
+            "Your wallet just got heavier! Added #AMOUNT to your balance on #DATE. Spend wisely, or don't!",
+            "You're all set with an additional #AMOUNT added on #DATE. What's the next move?",
+            "Your account was topped up with #AMOUNT on #DATE. Enjoy more of our services!",
+            "Your account was boosted with #AMOUNT worth of credits on #DATE. Enjoy the spree!",
+            "#DATE: Account topped-up by #AMOUNT. The world of entertainment awaits!",
+            "Your purchase of #AMOUNT in credits on #DATE, was successful. Dive into more experiences!",
+            "Added #AMOUNT to your balance on #DATE. Keep enjoying our services!",
+            "Your account was topped up with #AMOUNT on #DATE. Sparkle more!",
+            "Boosted your balance by #AMOUNT on #DATE. More adventures await!",
+            "You've successfully recharged #AMOUNT on #DATE. The excitement never stops!",
+            "On #DATE, your account gained an extra #AMOUNT. Enjoy more of our features!",
+            "#DATE: Account recharged with #AMOUNT. Your journey, your rules!",
+            // "Welcome boost! #AMOUNTadded to your account on #DATE. Dive back into action!",
+            "Your wallet's happier with an extra #AMOUNT on #DATE. Enjoy more of our features!",
+            "Recharged #AMOUNT on #DATE. Thanks for your support!",
+        ];
+        const rnd = Math.floor(Math.random() * statements.length);
+        ///
+        const date = (new Date()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        ///
+        const statement = statements[rnd];
+        const amountStr = "ZAR" + " " + (amount / CENTS);
+        const description = statement.replace("#AMOUNT", amountStr).replace("#DATE", date);
+        return description;
+    } catch (error) {
+        const date = (new Date()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        console.log(error);
+        return date + ": A successful top-up! Sparkle more!";
+    }
+}
+
+function generateNotification(event, amount) {
+    const amountStr = "ZAR" + (amount / 100).toFixed(2);
+
+    function createNotification(title, body) {
+        return {
+            title,
+            body: body.replace("#AMOUNT", amountStr)
+        };
+    }
+
+    switch (event) {
+        case eventTypes["payment.succeeded"]:
+            return createNotification("Cheers to Your Purchase!", "We've received your payment of #AMOUNT. Thanks for choosing us!");
+
+        case eventTypes["payment.failed"]:
+            return createNotification("Oops! Payment Not Processed", "We encountered an issue with your payment. Assistance is on the way.");
+
+        case eventTypes["payment.refunded"]:
+            return createNotification("Refund Processed", "A refund of #AMOUNT has been credited to your account.");
+
+        case eventTypes["payment.cancelled"]:
+            return createNotification("Payment Cancelled", "Your payment of #AMOUNT has been cancelled.");
+
+        case eventTypes["payment.disputed"]:
+            return createNotification("Payment Disputed", "Your payment of #AMOUNT has been disputed.");
+
+        case eventTypes["payment.charged_back"]:
+            return createNotification("Payment Charged Back", "Your payment of #AMOUNT has been charged back.");
+
+        case eventTypes["payment.updated"]:
+            return createNotification("Payment Updated", "Your payment of #AMOUNT has been updated.");
+
+        default:
+            return createNotification("Unknown Event", "Open your Verified app.");
+    }
+}
 
 /**
  * handle yoco webhook
@@ -132,7 +213,7 @@ function handlePaymentEvents(req, res) {
     }
 
     // Record transaction and send response
-    _createTransactionRecord(paymentInformation?.payload);
+    createTransactionRecord(paymentInformation?.payload);
     res.send({ status: "Success" });
 }
 /**
@@ -145,7 +226,7 @@ async function _sendFirebaseNotification(payload, notificationType) {
         console.log("Sending a FB notification", payload.metadata.payerId, notificationType);
 
 
-        const notification = _generateNotification(notificationType, payload.amount);
+        const notification = generateNotification(notificationType, payload.amount);
 
         const headers = new Headers();
         headers.append("Authorization", "Bearer TOKEN");
@@ -155,18 +236,22 @@ async function _sendFirebaseNotification(payload, notificationType) {
             ':4309';
 
         let user = await getUserProfile(payload.metadata.payerId);
-
+        console.log({ notification, notificationType, user });
         if (!user?.notificationToken) {
-            console.log("USER NOTIFICATION TOKEN NOT FOUND => ", user.accountName)
+            console.log("USER NOTIFICATION TOKEN NOT FOUND => ", user.id)
             return;
         }
+
+
+        const data = {
+            fbToken: user?.notificationToken, ...notification
+        }
+        console.log({ data });
 
         fetch(`http://${host}/api/v1/notification`, {
             method: "POST",
             headers: headers,
-            body: {
-                fbToken: user?.notificationToken, ...notification
-            },
+            body: JSON.stringify(data),
         })
             .then((response) => response.text())
             .then((result) => console.log("\n\nNOTIFICATION SENT? " + result))
@@ -180,7 +265,7 @@ async function _sendFirebaseNotification(payload, notificationType) {
  * POST a new transaction history item
  * @param {Payload} payload
  */
-function _createTransactionRecord(payload) {
+function createTransactionRecord(payload) {
     try {
         console.log("Hit the store API and save the transaction... ", payload);
         const headers = new Headers();
@@ -348,110 +433,6 @@ async function handleYocoRefund(req, res) {
         res.send({ code: 500, message: "Internal Error Occurred" });
     }
 }
-/**
- * Generate a transaction history description
- * @param {number} amount 
- * @returns {string}
- */
-const _transactionDescription = (amount) => {
-    const CENTS = 100;
-    try {
-        const statements = [
-            "Account credited with #AMOUNT on #DATE, for your next adventure with us.",
-            "Your balance was successfully topped up by #AMOUNT on #DATE. for your next adventure with us",
-            "Congratulations! You've added #AMOUNT to your account on #DATE. Ready for more fun?",
-            "You've successfully recharged your account with #AMOUNT on #DATE. More power to your purchases!",
-            "A successful top-up! Your account now has an extra #AMOUNT as of #DATE. Shine on!",
-            "Your wallet just got heavier! Added #AMOUNT to your balance on #DATE. Spend wisely, or don't!",
-            "You're all set with an additional #AMOUNT added on #DATE. What's the next move?",
-            "Your account was topped up with #AMOUNT on #DATE. Enjoy more of our services!",
-            "Your account was boosted with #AMOUNT worth of credits on #DATE. Enjoy the spree!",
-            "#DATE: Account topped-up by #AMOUNT. The world of entertainment awaits!",
-            "Your purchase of #AMOUNT in credits on #DATE, was successful. Dive into more experiences!",
-            "Added #AMOUNT to your balance on #DATE. Keep enjoying our services!",
-            "Your account was topped up with #AMOUNT on #DATE. Sparkle more!",
-            "Boosted your balance by #AMOUNT on #DATE. More adventures await!",
-            "You've successfully recharged #AMOUNT on #DATE. The excitement never stops!",
-            "On #DATE, your account gained an extra #AMOUNT. Enjoy more of our features!",
-            "#DATE: Account recharged with #AMOUNT. Your journey, your rules!",
-            // "Welcome boost! #AMOUNTadded to your account on #DATE. Dive back into action!",
-            "Your wallet's happier with an extra #AMOUNT on #DATE. Enjoy more of our features!",
-            "Recharged #AMOUNT on #DATE. Thanks for your support!",
-        ];
-        const rnd = Math.floor(Math.random() * statements.length);
-        ///
-        const date = (new Date()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        ///
-        const statement = statements[rnd];
-        const amountStr = "ZAR" + " " + (amount / CENTS);
-        const description = statement.replace("#AMOUNT", amountStr).replace("#DATE", date);
-        return description;
-    } catch (error) {
-        const date = (new Date()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        console.log(error);
-        return date + ": A successful top-up! Sparkle more!";
-    }
-}
 
-function _generateNotification(event, amount) {
-    const amountStr = "ZAR" + (amount / 100).toFixed(2)
-    let output;
-    switch (event) {
-        case eventTypes["payment.succeeded"]:
-
-            output = {
-                "title": "Cheers to Your Purchase!",
-                "body": "We've received your payment of #AMOUNT. Thanks for choosing us!"
-            }
-            break;
-
-        case eventTypes["payment.failed"]:
-            output = {
-                "title": "Oops! Payment Not Processed",
-                "body": "We encountered an issue with your payment. Assistance is on the way."
-            };
-            break;
-        case eventTypes["payment.refunded"]:
-            output = {
-                "title": "Refund Processed",
-                "body": "A refund of #AMOUNT has been credited to your account."
-            };
-            break;
-        case eventTypes["payment.cancelled"]:
-            output = {
-                "title": "Payment Cancelled",
-                "body": "Your payment of #AMOUNT has been cancelled."
-            };
-            break;
-
-        case eventTypes["payment.disputed"]:
-            output = {
-                "title": "Payment Disputed",
-                "body": "Your payment of #AMOUNT has been disputed."
-            };
-        case eventTypes["payment.charged_back"]:
-            output = {
-                "title": "Payment Charged Back",
-                "body": "Your payment of #AMOUNT has been charged back."
-            };
-            break;
-        case eventTypes["payment.updated"]:
-            output = {
-                "title": "Payment Updated",
-                "body": "Your payment of #AMOUNT has been updated."
-            };
-            break;
-        default:
-            output = {
-                "title": "Unknown Event",
-                "body": "Open your Verified app."
-            };
-
-            return {
-                title: output.title,
-                body: output.body.replace("#AMOUNT", amountStr),
-            }
-    }
-}
 
 module.exports = { handlePaymentEvents, handleYocoRefund, handleYocoPayment };
