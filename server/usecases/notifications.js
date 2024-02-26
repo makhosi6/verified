@@ -15,11 +15,10 @@ console.log(serverKey)
  * 
  * @param {Notification} notification 
  */
-function handlePushNotifications({ fbToken, title, body }) {
+function handlePushNotifications({ token, title, body }) {
 
-  console.log({ body: req?.body })
   const message = {
-    to: fbToken,
+    to: token,
     notification: {
       title,
       body,
