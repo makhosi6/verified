@@ -257,7 +257,7 @@ async function _sendFirebaseNotification(payload, notificationType) {
             body: JSON.stringify(data),
         })
             .then((response) => response.json())
-            .then((result) => console.log("\n\nNOTIFICATION SENT? " + result))
+            .then((result) => console.log("\n\nNOTIFICATION SENT? " , result))
             .catch((error) => console.error("NOTIFiCATION ERROR @ ", error.toString()));
     } catch (error) {
         console.log("NOTIFiCATION ERROR => ", error)

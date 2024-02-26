@@ -76,7 +76,7 @@ services:
       - NODE_ENV=production
       - FB_NOTIF_PORT=${FB_NOTIF_PORT}
       - FB_SERVER_TOKEN=${FB_SERVER_TOKEN}
-      - NODE_DEBUG=http
+      # - NODE_DEBUG=http
     restart: unless-stopped
     networks:
       - local_bridge
@@ -94,7 +94,7 @@ services:
       - PAYMENTS_PORT=${PAYMENTS_PORT}
       - PAYMENTS_TOKEN=${PAYMENTS_TOKEN}
       - PAYMENT_EVENTS_SECRET=${PAYMENT_EVENTS_SECRET}
-      - NODE_DEBUG=http
+      # - NODE_DEBUG=http
     restart: unless-stopped
     networks:
       - local_bridge
