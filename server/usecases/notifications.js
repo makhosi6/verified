@@ -5,13 +5,18 @@ let fcm = new FCM(serverKey);
 /// https://github.com/jlcvp/fcm-node
 console.log(serverKey)
 /**
- *
- * @param {express.Request} req
- * @param {express.Response} res
+ * Represents a payment event object.
+ * @typedef {Object} Notification
+ * @property {string} token - fmc token.
+ * @property {string} title - The title of the FB notification.
+ * @property {string} body - The body of the FB notification.
  */
-function handlePushNotifications(req, res) {
+/**
+ * 
+ * @param {Notification} notification 
+ */
+function handlePushNotifications({ fbToken, title, body }) {
 
-  const { fbToken, title, body } = req?.body;
   console.log({ body: req?.body })
   const message = {
     to: fbToken,
@@ -27,11 +32,6 @@ console.log({message});
     } else {
       console.log("Successfully sent with response: ", response);
     }
-  });
-
-  res.send({
-    success: true,
-    message: message?.notification
   });
 }
 

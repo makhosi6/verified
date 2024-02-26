@@ -65,21 +65,21 @@ services:
     networks:
       - local_bridge
   
-  fb_notifications_service:
-    build:
-      context: .
-      dockerfile: ./apps/notifications/Dockerfile
-    volumes:
-      - ./log/notifications:/app/log/notifications
-    environment:
-      - PORT=${FB_NOTIF_PORT}
-      - NODE_ENV=production
-      - FB_NOTIF_PORT=${FB_NOTIF_PORT}
-      - FB_SERVER_TOKEN=${FB_SERVER_TOKEN}
-      # - NODE_DEBUG=http
-    restart: unless-stopped
-    networks:
-      - local_bridge
+  # fb_notifications_service:
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/notifications/Dockerfile
+  #   volumes:
+  #     - ./log/notifications:/app/log/notifications
+  #   environment:
+  #     - PORT=${FB_NOTIF_PORT}
+  #     - NODE_ENV=production
+  #     - FB_NOTIF_PORT=${FB_NOTIF_PORT}
+  #     - FB_SERVER_TOKEN=${FB_SERVER_TOKEN}
+  #     # - NODE_DEBUG=http
+  #   restart: unless-stopped
+  #   networks:
+  #     - local_bridge
 
   
   payments_service:
@@ -95,6 +95,7 @@ services:
       - PAYMENTS_TOKEN=${PAYMENTS_TOKEN}
       - PAYMENT_EVENTS_SECRET=${PAYMENT_EVENTS_SECRET}
       # - NODE_DEBUG=http
+      - FB_SERVER_TOKEN=${FB_SERVER_TOKEN}
     restart: unless-stopped
     networks:
       - local_bridge

@@ -6,6 +6,7 @@ const fetch = (...args) => import('node-fetch').then(({
     default: fetch
 }) => fetch(...args));
 const { getWallet, getUserProfile } = require("./store");
+const { handlePushNotifications } = require("./notifications");
 const PAYMENTS_TOKEN =
     process.env.PAYMENTS_TOKEN || "sk_test_1d9ae04aBLnrM8nfaf14ba5ac783";
 const HOST = process.env.HOST || "0.0.0.0";
@@ -231,9 +232,9 @@ async function _sendFirebaseNotification(payload, notificationType) {
         const headers = new Headers();
         headers.append("Authorization", "Bearer TOKEN");
 
-        const host =
-            (process.env.NODE_ENV === "production" ? `fb_notifications_service` : `${HOST}`) +
-            ':4309';
+        // const host =
+        //     (process.env.NODE_ENV === "production" ? `fb_notifications_service` : `${HOST}`) +
+        //     ':4309';
 
         let user = await getUserProfile(payload.metadata.payerId);
         console.log({ notification, notificationType, user });
@@ -247,18 +248,12 @@ async function _sendFirebaseNotification(payload, notificationType) {
             // placeholder
             ...{title: "Unknown event occurred!", body: "Open your Verified app."},
         ///
-            fbToken: user?.notificationToken, ...notification
+            token: user?.notificationToken, ...notification
         }
         console.log({ data });
 
-        fetch(`http://fb_notifications_service:4309/api/v1/notification`, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify(data),
-        })
-            .then((response) => response.json())
-            .then((result) => console.log("\n\nNOTIFICATION SENT? " , result))
-            .catch((error) => console.error("NOTIFiCATION ERROR @ ", error.toString()));
+        handlePushNotifications(data)
+
     } catch (error) {
         console.log("NOTIFiCATION ERROR => ", error)
     }
