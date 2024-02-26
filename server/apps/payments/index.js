@@ -41,4 +41,4 @@ app.post("/api/v1/payment/yoco", handleYocoPayment);
 app.post("/api/v1/refund/yoco/:checkoutId", handleYocoRefund);
 
 /// listen to incoming requests
-app.listen(PORT, () => console.log(`Payments app running @ http://${HOST}:${PORT}`))
+app.listen(PORT, () => console.log(`Notifications app running @ http://${HOST}:${PORT}`))

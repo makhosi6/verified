@@ -46,11 +46,29 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            		<!-- Enable deep linking on Android -->
+			<meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
+			<intent-filter android:autoVerify="true">
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="http" android:host="com.example.verify_sa" />
+				<data android:scheme="https" />
+			</intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+             <!-- <meta-data
+             android:name="com.google.android.gms.ads.APPLICATION_ID"
+             android:value="@string/google_app_id"/> -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+            <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/ic_launcher" />
+            <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="@string/default_notification_channel_id" />
+            <!-- Fix error number 7 -->
+            <uses-library android:name="org.apache.http.legacy" android:required="false" />
+            <service android:name="com.dexterous.flutterlocalnotifications.ForegroundService" android:exported="false" android:stopWithTask="false" />
+            <meta-data android:name="push_kit_auto_init_enabled" android:value="true" />
     </application>
 </manifest>

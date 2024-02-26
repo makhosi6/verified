@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:verified/app_config.dart';
@@ -29,23 +33,103 @@ import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/services/dio.dart';
 import 'package:verified/services/notifications.dart';
+import 'package:rxdart/subjects.dart';
+
+///
+BehaviorSubject<Map<String, dynamic>?> selectNotificationSubject = BehaviorSubject<Map<String, dynamic>?>();
+
+
+///
+bool didNotificationLaunchApp = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
+    // name: (kIsWeb || defaultTargetPlatform == TargetPlatform.iOS) ? null : 'firebasePrimaryInstance',
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // Set the background messaging handler early on, as a named top-level function
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-  if (!kIsWeb) {
-    await setupFlutterNotifications();
+  ///
+  NotificationAppLaunchDetails? notificationAppLaunchDetails =
+      !kIsWeb && Platform.isLinux ? null : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+  ///
+  didNotificationLaunchApp = notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
+
+  ///
+  if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
+    /// Payload as a String
   }
+  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+
+  /// Note: permissions aren't requested here just to demonstrate that can be
+  /// done later
+  final DarwinInitializationSettings initializationSettingsIOS = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      onDidReceiveLocalNotification: (
+        int id,
+        String? title,
+        String? body,
+        String? payload,
+      ) async {
+        didReceiveLocalNotificationSubject.add(
+          ReceivedNotification(
+            id: id,
+            title: title,
+            body: body,
+            payload: payload,
+          ),
+        );
+      });
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS,
+  );
+
+  /// init on boot
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveBackgroundNotificationResponse: onDidReceive,
+    onDidReceiveNotificationResponse: onDidReceive,
+  );
 
   ///
   if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('127.0.0.1', 9099);
 
   runZonedGuarded(() async {
+    ///
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    /// Firebase messaging
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    ///
+    await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    /// listen to push notification when app is on the foreground
+    FirebaseMessaging.onMessage.listen(onMsg);
+
+    /// listen to push notification event, like, 'notification_opened'
+    // FirebaseMessaging.onMessageOpenedApp.listen(onMsgOpen);
+
+    /// listen to push notification when app is on the background
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
     /// Fallback page onError
     ErrorWidget.builder = (details) => MaterialApp(
           home: VerifiedErrorPage(
@@ -124,8 +208,6 @@ class AppRoot extends StatefulWidget {
 class _AppRootState extends State<AppRoot> {
   //with SingleTickerProviderStateMixin
   String? token;
-  String? initialMessage;
-  bool _resolved = false;
 
   @override
   void didChangeDependencies() {
@@ -146,7 +228,11 @@ class _AppRootState extends State<AppRoot> {
     super.initState();
 
     ///
-//  FirebaseMessaging.instance.getToken(vapidKey: VAPIKEY).then((token) => {});
+    FirebaseMessaging.instance.getToken(vapidKey: VAPIKEY).then((fcmToken) {
+      print('\n\nFMC TOKEN 2: $fcmToken\n\n');
+
+      token = fcmToken;
+    });
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       print('\n\nFMC TOKEN: $fcmToken\n\n');
 
@@ -154,22 +240,34 @@ class _AppRootState extends State<AppRoot> {
     }).onError((err) {
       print('Error while trying to get a TOKEN ${err.toString()}');
     });
+    _configureDidReceiveLocalNotificationSubject();
+    _configureSelectNotificationSubject();
+  }
 
-    ///
-    FirebaseMessaging.instance.getInitialMessage().then(
-          (value) => setState(
-            () {
-              _resolved = true;
-              initialMessage = value?.data.toString();
-            },
-          ),
-        );
+  void _configureDidReceiveLocalNotificationSubject() {
+    didReceiveLocalNotificationSubject.stream.listen((ReceivedNotification receivedNotification) async {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: receivedNotification.title != null ? Text(receivedNotification.title!) : null,
+          content: receivedNotification.body != null ? Text(receivedNotification.body!) : null,
+          actions: [
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              onPressed: () async {
+                Navigator.of(context, rootNavigator: true).pop();
+                navigate(context, page: const TransactionPage());
+              },
+              child: const Text('Ok'),
+            )
+          ],
+        ),
+      );
+    });
+  }
 
-    FirebaseMessaging.onMessage.listen(showFlutterNotification);
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
-
+  void _configureSelectNotificationSubject() {
+    selectNotificationSubject.stream.listen((payload) async {
       navigate(context, page: const TransactionPage());
     });
   }
@@ -212,16 +310,15 @@ class _AppRootState extends State<AppRoot> {
                     } else {
                       hideAppLoader();
                     }
-                    if (state.userProfileData != null && ( state.userProfileData?.notificationToken == null)) {
-                      try { 
+                    if (state.userProfileData != null && (state.userProfileData?.notificationToken == null)) {
+                      try {
                         ///
-                        print("UPDATE TOKEN $token");
+                        print('UPDATE TOKEN $token');
                         context.read<StoreBloc>().add(
                               StoreEvent.updateUserProfile(
                                 state.userProfileData!.copyWith(
                                     notificationToken: kDebugMode
-                                        ? 'cxRNUlDuT8mEYgZAHia3Qq:APA91bGYlNs8OHYACv3twCGmxYVgOeAKpZiJck07-3N_Y-tU8GyIIH8xXFZlzW6sPITJ2J6q6khTFUGWmhxSFHTdyZeqHY_zln-9g47YSC2DV7tOiJjJdfEV64agh7-V1BCzDcE3YE7s'
-                                        : token),
+                                        ? 'dF8WLt5dQM-QvCNcIOaW6U:APA91bGgHS2vNcps5Y7-ZuGU8zjdw30Vc-oDchJks6kXeCQpGPMgql5j9YS7bVGBxAFFOIAJZh9FQjQTHD2jST9TKsj1sNBl4WLG7IwkWBcRf2Bhzo_LXi1DhcEzYm-LPFMcMjshQN8a' : token),
                               ),
                             );
                       } catch (e) {

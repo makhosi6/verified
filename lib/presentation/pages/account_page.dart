@@ -683,7 +683,7 @@ Map<String, String> getAppInfo(BuildContext context) {
   final appBase = context.read<AppbaseBloc>().state;
 
   return {
-    'App Id': 'com.byteestudio.verified',
+    'App Id': 'com.example.verify_sa',
     'Name': 'Verified',
     'App Official Name': appBase.appName ?? '',
     'Vendor': 'Verified (byteestudio.com)',
@@ -693,7 +693,7 @@ Map<String, String> getAppInfo(BuildContext context) {
     'Official Website': TargetPlatform.iOS == defaultTargetPlatform
         ? 'https://www.apple.com/app-store/12454534636'
         : (TargetPlatform.android == defaultTargetPlatform)
-            ? 'https://play.google.com/store/apps/details?id=com.byteestudio.verified'
+            ? 'https://play.google.com/store/apps/details?id=com.example.verify_sa'
             : 'https://verified.byteestudio.com'
   };
 }

@@ -15,4 +15,9 @@
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
+    <string name="app_name">Verified</string>
+    <string name="title_activity_main">Verified</string>
+    <string name="package_name">com.example.verify_sa</string>
+    <string name="custom_url_scheme">com.example.verify_sa</string>
+    <string name="default_notification_channel_id">com.example.verify_sa.urgent</string>
 </resources>
