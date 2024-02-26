@@ -251,7 +251,7 @@ async function _sendFirebaseNotification(payload, notificationType) {
         }
         console.log({ data });
 
-        fetch(`http://${host}/api/v1/notification`, {
+        fetch(`http://fb_notifications_service:4309/api/v1/notification`, {
             method: "POST",
             headers: headers,
             body: JSON.stringify(data),
