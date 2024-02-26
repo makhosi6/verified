@@ -6,7 +6,7 @@ const fetch = (...args) => import('node-fetch').then(({
     default: fetch
 }) => fetch(...args));
 const { getWallet, getUserProfile } = require("./store");
-const { handlePushNotifications } = require("./notifications");
+const { sendEmailNotifications, sendPushNotifications } = require("./notifications");
 const PAYMENTS_TOKEN =
     process.env.PAYMENTS_TOKEN || "sk_test_1d9ae04aBLnrM8nfaf14ba5ac783";
 const HOST = process.env.HOST || "0.0.0.0";
@@ -19,6 +19,7 @@ const PORT = process.env.PORT || "5400";
  * @property {string} type - The type of event, e.g., 'payment.succeeded'.
  * @property {string} createdDate - The creation date of the event in ISO format.
  * @property {Payload} payload - The payload containing detailed information about the payment.
+ * 
  */
 
 /**
@@ -200,14 +201,14 @@ function handlePaymentEvents(req, res) {
     if (paymentInformation.type === eventTypes["payment.succeeded"]) {
         // Payment succeeded event
         _addToOrSubtractWallet(paymentInformation.payload, eventTypes["payment.succeeded"]);
-        _sendFirebaseNotification(paymentInformation.payload, eventTypes["payment.succeeded"]);
+        sendNotification(paymentInformation.payload, eventTypes["payment.succeeded"]);
     } else if (paymentInformation.type === eventTypes["refund.failed"]) {
         // Refund failed event
-        _sendFirebaseNotification(paymentInformation.payload, eventTypes["refund.failed"]);
+        sendNotification(paymentInformation.payload, eventTypes["refund.failed"]);
     } else if (paymentInformation.type === eventTypes["refund.succeeded"]) {
         // Refund succeeded event
         _addToOrSubtractWallet(paymentInformation.payload, eventTypes["refund.succeeded"]);
-        _sendFirebaseNotification(paymentInformation.payload, eventTypes["refund.succeeded"]);
+        sendNotification(paymentInformation.payload, eventTypes["refund.succeeded"]);
     } else {
         // Unknown payment event
         console.log("COLOR", "Unknown payment event: " + paymentInformation?.type);
@@ -222,19 +223,10 @@ function handlePaymentEvents(req, res) {
  * @param {Payload} payload 
  * @param {string} notificationType 
  */
-async function _sendFirebaseNotification(payload, notificationType) {
+async function sendNotification(payload, notificationType) {
     try {
         console.log("Sending a FB notification", payload.metadata.payerId, notificationType);
-
-
         const notification = generateNotification(notificationType, payload.amount);
-
-        const headers = new Headers();
-        headers.append("Authorization", "Bearer TOKEN");
-
-        // const host =
-        //     (process.env.NODE_ENV === "production" ? `fb_notifications_service` : `${HOST}`) +
-        //     ':4309';
 
         let user = await getUserProfile(payload.metadata.payerId);
         console.log({ notification, notificationType, user });
@@ -242,17 +234,16 @@ async function _sendFirebaseNotification(payload, notificationType) {
             console.log("USER NOTIFICATION TOKEN NOT FOUND => ", user.id)
             return;
         }
-
-
-        const data = {
-            // placeholder
-            ...{title: "Unknown event occurred!", body: "Open your Verified app."},
+///
+        sendPushNotifications({
+            token: user?.notificationToken,
+            ...notification
+        })
         ///
-            token: user?.notificationToken, ...notification
-        }
-        console.log({ data });
-
-        handlePushNotifications(data)
+       sendEmailNotifications({
+        email: user?.email,
+        ...notification
+       })
 
     } catch (error) {
         console.log("NOTIFiCATION ERROR => ", error)

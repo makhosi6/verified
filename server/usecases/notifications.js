@@ -7,7 +7,8 @@ console.log(serverKey)
 /**
  * Represents a payment event object.
  * @typedef {Object} Notification
- * @property {string} token - fmc token.
+ * @property {string | null} token - fmc token.
+ * @property {string | null} email - user email.
  * @property {string} title - The title of the FB notification.
  * @property {string} body - The body of the FB notification.
  */
@@ -15,7 +16,7 @@ console.log(serverKey)
  * 
  * @param {Notification} notification 
  */
-function handlePushNotifications({ token, title, body }) {
+function sendPushNotifications({ token, title, body }) {
 
   const message = {
     to: token,
@@ -33,7 +34,13 @@ console.log({message});
     }
   });
 }
+/**
+ * @param {Notification} notification 
+ */
+function sendEmailNotifications({ email, title, body }){
+
+}
 
 module.exports = {
-  handlePushNotifications
+  sendPushNotifications, sendEmailNotifications
 };
