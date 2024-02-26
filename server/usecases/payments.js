@@ -244,6 +244,9 @@ async function _sendFirebaseNotification(payload, notificationType) {
 
 
         const data = {
+            // placeholder
+            ...{title: "Unknown event occurred!", body: "Open your Verified app."},
+        ///
             fbToken: user?.notificationToken, ...notification
         }
         console.log({ data });
@@ -253,11 +256,11 @@ async function _sendFirebaseNotification(payload, notificationType) {
             headers: headers,
             body: JSON.stringify(data),
         })
-            .then((response) => response.text())
+            .then((response) => response.json())
             .then((result) => console.log("\n\nNOTIFICATION SENT? " + result))
-            .catch((error) => console.error("NOTIFiCATION ERROR @ ", error.toString(), user));
+            .catch((error) => console.error("NOTIFiCATION ERROR @ ", error.toString()));
     } catch (error) {
-        console.log("NOTIFiCATION ERROR => ", user)
+        console.log("NOTIFiCATION ERROR => ", error)
     }
 }
 
