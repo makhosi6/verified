@@ -26,7 +26,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
     super.initState();
 
     _controllerCenter = ConfettiController(
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 4),
     )..play();
   }
 

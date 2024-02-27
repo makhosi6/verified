@@ -22,7 +22,7 @@
 		</intent>
 	</queries>
     <application
-        android:label="verify_sa"
+        android:label="Verified"
         android:name="${applicationName}"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
@@ -52,7 +52,7 @@
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
 				<category android:name="android.intent.category.BROWSABLE" />
-				<data android:scheme="http" android:host="com.example.verify_sa" />
+				<data android:scheme="http" android:host="com.byteestudio.verified" />
 				<data android:scheme="https" />
 			</intent-filter>
         </activity>

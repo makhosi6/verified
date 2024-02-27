@@ -38,7 +38,6 @@ import 'package:rxdart/subjects.dart';
 ///
 BehaviorSubject<Map<String, dynamic>?> selectNotificationSubject = BehaviorSubject<Map<String, dynamic>?>();
 
-
 ///
 bool didNotificationLaunchApp = false;
 
@@ -228,11 +227,13 @@ class _AppRootState extends State<AppRoot> {
     super.initState();
 
     ///
-    FirebaseMessaging.instance.getToken(vapidKey: VAPIKEY).then((fcmToken) {
+    FirebaseMessaging.instance.getToken().then((fcmToken) {
       print('\n\nFMC TOKEN 2: $fcmToken\n\n');
 
       token = fcmToken;
     });
+
+    ///
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       print('\n\nFMC TOKEN: $fcmToken\n\n');
 
@@ -240,6 +241,8 @@ class _AppRootState extends State<AppRoot> {
     }).onError((err) {
       print('Error while trying to get a TOKEN ${err.toString()}');
     });
+
+    ///
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
   }
@@ -292,38 +295,40 @@ class _AppRootState extends State<AppRoot> {
             title: displayAppName,
             home: BlocBuilder<StoreBloc, StoreState>(
               bloc: context.read<StoreBloc>()
-                ..add(StoreEvent.getUserProfile(userId))
-                ..add(StoreEvent.getAllHistory(userId))
                 ..add(StoreEvent.addUser(snapshot.data))
+                ..add(StoreEvent.getAllHistory(userId))
+                ..add(StoreEvent.getUserProfile(userId))
                 ..add(StoreEvent.getWallet(userWalletId)),
               builder: (context, state) {
                 return BlocListener<StoreBloc, StoreState>(
-                  listener: (context, state) {
-                    if (state.userProfileDataLoading ||
-                        state.getHelpDataLoading ||
-                        state.walletDataLoading ||
-                        state.historyDataLoading ||
-                        state.promotionDataLoading ||
-                        state.uploadsDataLoading ||
-                        state.ticketsDataLoading) {
+                  listener: (context, listenerState) {
+                    if (listenerState.userProfileDataLoading ||
+                        listenerState.getHelpDataLoading ||
+                        listenerState.walletDataLoading ||
+                        listenerState.historyDataLoading ||
+                        listenerState.promotionDataLoading ||
+                        listenerState.uploadsDataLoading ||
+                        listenerState.ticketsDataLoading) {
                       showAppLoader(context);
                     } else {
                       hideAppLoader();
                     }
-                    if (state.userProfileData != null && (state.userProfileData?.notificationToken == null)) {
-                      try {
-                        ///
-                        print('UPDATE TOKEN $token');
-                        context.read<StoreBloc>().add(
-                              StoreEvent.updateUserProfile(
-                                state.userProfileData!.copyWith(
-                                    notificationToken: kDebugMode
-                                        ? 'dF8WLt5dQM-QvCNcIOaW6U:APA91bGgHS2vNcps5Y7-ZuGU8zjdw30Vc-oDchJks6kXeCQpGPMgql5j9YS7bVGBxAFFOIAJZh9FQjQTHD2jST9TKsj1sNBl4WLG7IwkWBcRf2Bhzo_LXi1DhcEzYm-LPFMcMjshQN8a' : token),
-                              ),
-                            );
-                      } catch (e) {
-                        print('Error while trying to add a token,  $e');
-                      }
+                    if (listenerState.userProfileData != null &&
+                        (listenerState.userProfileData?.notificationToken != token) &&
+                        (token != null)) {
+                      Future.delayed(const Duration(seconds: 5), () {
+                        try {
+                          context.read<StoreBloc>().add(
+                                StoreEvent.updateUserProfile(
+                                  listenerState.userProfileData!.copyWith(
+                                    notificationToken: token,
+                                  ),
+                                ),
+                              );
+                        } catch (e) {
+                          print('Error while trying to add a token,  $e');
+                        }
+                      });
                     }
                   },
                   child: BlocListener<AuthBloc, AuthState>(
@@ -336,7 +341,7 @@ class _AppRootState extends State<AppRoot> {
                     },
                     child: RefreshIndicator(
                       key: _refreshIndicatorKey,
-                      onRefresh: () => Future<void>.delayed(const Duration(seconds: 4)),
+                      onRefresh: () => Future<void>.delayed(const Duration(seconds: 2)),
                       child: const HomePage(),
                     ),
                   ),

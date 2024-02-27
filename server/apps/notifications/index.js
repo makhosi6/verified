@@ -2,7 +2,7 @@
 // const morgan = require('morgan');
 // const fs = require('node:fs');
 // const path = require('node:path');
-// const { handlePushNotifications } = require('../../usecases/notifications');
+const { sendPushNotifications } = require('../../usecases/notifications');
 // const { analytics, security, authorization, authenticate } = require('../../middleware/universal');
 // const { notificationsHook } = require('../../middleware/notification');
 // const app = express()
@@ -31,3 +31,10 @@
 // app.listen(PORT, () => console.log(`Payments app running @ http://${HOST}:${PORT}`))
 
 
+sendPushNotifications(
+    {
+        title: 'Cheers to Your Purchase!',
+        body: "We've received your payment of ZAR50.00. Thanks for choosing us!",
+        token: 'dK_AJdomTwam7mAzk2xnmG:APA91bGmdd6LNpatVcCRsp1rW7txNQ_HPyZJta258ZbedKT58DBpmCb_gWLw-cO4WR3u83IgpILnepJmvv7B3pY1SLLTCuwFuP8qn2WQznnTUa90eQxSbGoQwq9j_k2_NgEiLiDoMaqk'
+      
+});

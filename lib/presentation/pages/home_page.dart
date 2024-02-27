@@ -93,32 +93,6 @@ class HomePageContents extends StatelessWidget {
                   title: const Text('Verified'),
                 ),
                 actions: [
-                  // ActionButton(
-                  //   iconColor: Colors.black,
-                  //   bgColor: Colors.white,
-                  //   onTap: () async {
-                  //     try {
-                  // print("object@@");
-                  // final userCredential =
-                  //     await FirebaseAuth.instance.signInWithProvider(VerifiedAuthProvider.google);
-                  // final user = userCredential.user;
-                  // print(user?.uid);
-                  // context.read<AuthBloc>().add(event)
-                  // showDefaultPopUp(
-                  //   context,
-                  //   title: "Close the App?",
-                  //   subtitle: "Are you sure you want to close the App.",
-                  //   confirmBtnText: 'Okay',
-                  //   declineBtnText: 'Nope',
-                  //   onConfirm: () {},
-                  //   onDecline: () {},
-                  // );
-                  //     } catch (e) {
-                  //       print(e);
-                  //     }
-                  //   },
-                  //   icon: Icons.info_outline_rounded,
-                  // ),
                   ActionButton(
                     key: const Key('go-to-user-account-btn'),
                     tooltip: 'User Account',

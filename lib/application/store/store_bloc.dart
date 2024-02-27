@@ -20,9 +20,9 @@ part 'store_bloc.freezed.dart';
 class StoreBloc extends Bloc<StoreEvent, StoreState> {
   StoreBloc(this._storeRepository) : super(StoreState.initial()) {
     /// add stored use on boot
-    Future.microtask(() async {
-      add(StoreEvent.addUser(await LocalUser.getUser()));
-    });
+    // Future.microtask(() async {
+    //   add(StoreEvent.addUser(await LocalUser.getUser()));
+    // });
 
     on<StoreEvent>((event, emit) async => event.map(
           apiHealthCheck: (e) async {
@@ -210,6 +210,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               );
             }, (data) {
               emit(StoreState.initial());
+              
             });
 
             return null;

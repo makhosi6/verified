@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "verify_sa" "\0"
+            VALUE "FileDescription", "verified" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "verify_sa" "\0"
+            VALUE "InternalName", "verified" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "verify_sa.exe" "\0"
-            VALUE "ProductName", "verify_sa" "\0"
+            VALUE "OriginalFilename", "verified.exe" "\0"
+            VALUE "ProductName", "verified" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

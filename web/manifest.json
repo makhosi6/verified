@@ -1,6 +1,6 @@
 {
-    "name": "verify_sa",
-    "short_name": "verify_sa",
+    "name": "verified",
+    "short_name": "verified",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

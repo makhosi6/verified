@@ -44,40 +44,38 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBRZ9SFStX3ukcivSg8gScJSTz7lewyMP4',
-    appId: '1:683016435808:web:0f6573b940e8f1699e6b05',
-    messagingSenderId: '683016435808',
-    projectId: 'verified-35ca4',
-    authDomain: 'verified-35ca4.firebaseapp.com',
-    storageBucket: 'verified-35ca4.appspot.com',
-    measurementId: 'G-4S2T2TX97S',
+    apiKey: 'AIzaSyC9eWEQqpKLzX6-swpWtICq8KB3sTGE86M',
+    appId: '1:59242207359:web:f5bdaf4afeb99d00ff874a',
+    messagingSenderId: '59242207359',
+    projectId: 'verified-b3621',
+    authDomain: 'verified-b3621.firebaseapp.com',
+    storageBucket: 'verified-b3621.appspot.com',
+    measurementId: 'G-MECPDEDKH1',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAcKxRh2Ne3FFBJAOdXa6OX74u6sgl3MwQ',
-    appId: '1:683016435808:android:df6237e38721b2c19e6b05',
-    messagingSenderId: '683016435808',
-    projectId: 'verified-35ca4',
-    storageBucket: 'verified-35ca4.appspot.com',
+    apiKey: 'AIzaSyDKJYDrUDb9EqDU0vgH7E_xAtWr8cGUKno',
+    appId: '1:59242207359:android:743ddcd6b93ceed7ff874a',
+    messagingSenderId: '59242207359',
+    projectId: 'verified-b3621',
+    storageBucket: 'verified-b3621.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDJ3eODCku5id7clwaYRGN9E8hzY1MVpd0',
-    appId: '1:683016435808:ios:e783acd946bbc12e9e6b05',
-    messagingSenderId: '683016435808',
-    projectId: 'verified-35ca4',
-    storageBucket: 'verified-35ca4.appspot.com',
-    iosClientId: '683016435808-otsnec9ih16qgkdgtdi5gma0uci7dnuo.apps.googleusercontent.com',
-    iosBundleId: 'com.example.verifySa',
+    apiKey: 'AIzaSyAws0-4rhq20sN-03Jzzqrjf0gNfIKipCY',
+    appId: '1:59242207359:ios:8e9fbd18f9f42545ff874a',
+    messagingSenderId: '59242207359',
+    projectId: 'verified-b3621',
+    storageBucket: 'verified-b3621.appspot.com',
+    iosBundleId: 'com.byteestudio.Verified',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDJ3eODCku5id7clwaYRGN9E8hzY1MVpd0',
-    appId: '1:683016435808:ios:918fd4ae11a8dc629e6b05',
-    messagingSenderId: '683016435808',
-    projectId: 'verified-35ca4',
-    storageBucket: 'verified-35ca4.appspot.com',
-    iosClientId: '683016435808-lcdq9am38muc52va7mv9c932tclv0s4b.apps.googleusercontent.com',
-    iosBundleId: 'com.example.verifySa.RunnerTests',
+    apiKey: 'AIzaSyAws0-4rhq20sN-03Jzzqrjf0gNfIKipCY',
+    appId: '1:59242207359:ios:57e977754c58595cff874a',
+    messagingSenderId: '59242207359',
+    projectId: 'verified-b3621',
+    storageBucket: 'verified-b3621.appspot.com',
+    iosBundleId: 'com.byteestudio.Verified.RunnerTests',
   );
 }

@@ -14,7 +14,7 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
     BehaviorSubject<ReceivedNotification>();
 
 const channel = AndroidNotificationChannel(
-  'com.example.verify_sa.urgent', // id
+  'com.byteestudio.verified.urgent', // id
   'Importance Verified Notifications', // title
   description:
       'This channel is used for important notifications and alerts.', // description

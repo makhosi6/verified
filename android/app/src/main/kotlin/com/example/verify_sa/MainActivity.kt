@@ -1,4 +1,4 @@
-package com.example.verify_sa
+package com.byteestudio.verified
 
 import io.flutter.embedding.android.FlutterActivity
 

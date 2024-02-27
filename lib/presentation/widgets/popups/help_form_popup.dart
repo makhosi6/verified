@@ -211,6 +211,8 @@ class _HelpFormState extends State<_HelpForm> {
                         labelText: 'Description of the issue',
                       ),
                       validator: (value) {
+                        FocusScope.of(context).unfocus();
+                              ///
                         if (value == null || value.isEmpty) {
                           return 'The description field is required.';
                         }

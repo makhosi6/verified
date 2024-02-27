@@ -9,6 +9,7 @@ import 'package:verified/application/appbase/appbase_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
+import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/native_scripts/main.dart';
@@ -92,8 +93,8 @@ class AccountPageContent extends StatelessWidget {
 
     ///
 
-    final user = context.watch<StoreBloc>().state.userProfileData;
-    final wallet = context.watch<StoreBloc>().state.walletData;
+    final user = context.watch<StoreBloc>().state.userProfileData ?? UserProfile.empty;
+    final wallet = context.watch<StoreBloc>().state.walletData ;
     return Center(
       child: CustomScrollView(
         physics: const BouncingScrollPhysics(),
@@ -275,7 +276,7 @@ class AccountPageContent extends StatelessWidget {
 
                                             context.read<AuthBloc>().add(const AuthEvent.signOut());
                                             context.read<StoreBloc>()
-                                              ..add(StoreEvent.deleteUserProfile(user?.id ?? ''))
+                                              ..add(StoreEvent.deleteUserProfile(user.id ?? ''))
                                               ..add(const StoreEvent.clearUser());
 
                                             Navigator.of(context)
@@ -560,7 +561,7 @@ class _ProfileName extends StatelessWidget {
                           context.read<StoreBloc>().add(StoreEvent.uploadFiles(nonNullFiles));
 
                           // Artificial delay
-                          await Future.delayed(const Duration(seconds: 5));
+                          await Future.delayed(const Duration(milliseconds: 2500));
 
                           //
                           if (context.read<StoreBloc>().state.uploadsData?.files?.isNotEmpty ?? false) {
@@ -604,7 +605,7 @@ class _ProfileName extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.5,
                   clipBehavior: Clip.none,
                   child: Text(
-                    user?.displayName ?? user?.actualName ?? '',
+                    user?.displayName ?? user?.actualName ?? 'Hello',
                     style: const TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.w600,
@@ -683,7 +684,7 @@ Map<String, String> getAppInfo(BuildContext context) {
   final appBase = context.read<AppbaseBloc>().state;
 
   return {
-    'App Id': 'com.example.verify_sa',
+    'App Id': 'com.byteestudio.verified',
     'Name': 'Verified',
     'App Official Name': appBase.appName ?? '',
     'Vendor': 'Verified (byteestudio.com)',
@@ -693,7 +694,7 @@ Map<String, String> getAppInfo(BuildContext context) {
     'Official Website': TargetPlatform.iOS == defaultTargetPlatform
         ? 'https://www.apple.com/app-store/12454534636'
         : (TargetPlatform.android == defaultTargetPlatform)
-            ? 'https://play.google.com/store/apps/details?id=com.example.verify_sa'
+            ? 'https://play.google.com/store/apps/details?id=com.byteestudio.verified'
             : 'https://verified.byteestudio.com'
   };
 }
