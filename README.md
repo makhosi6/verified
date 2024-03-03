@@ -2,8 +2,8 @@
 <p align="center" dir="auto">
 <a alt="thumbnail" href="https://github.com/makhosi6/verified" rel="nofollow"><img src="./assets/images/verified_bytee_studio-project_landsc.png" style="max-width: 100%;"></a>
 </p>
-**Description:**
-Ensure accurate identity verification for secure transactions and background checks with our easy-to-use app. 
+
+**Description:** Ensure accurate identity verification for secure transactions and background checks with our easy-to-use app. 
 Unlock a world of secure and convenient verification with Verified Plus, your trusted partner in identity authentication. Leveraging the power of government data, we bring you a cutting-edge solution to ensure the utmost security and reliability in identity verification.
 
 **Why us?**
