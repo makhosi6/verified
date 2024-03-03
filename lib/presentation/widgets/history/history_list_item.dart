@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:verified/domain/models/transaction_history.dart';
+import 'package:verified/helpers/currency.dart';
 
 import 'package:verified/presentation/theme.dart';
 
@@ -49,9 +50,7 @@ class TransactionListItem extends StatelessWidget {
                   right: 12.0,
                 ),
                 child: Text(
-                  (data.amount != null)
-                      ? NumberFormat.currency(locale: 'en_US', symbol: 'ZAR ').format(data.amount).replaceAll('.', ',')
-                      : r'ZAR 0,00',
+                  formatCurrency(data.amount ?? 0, 'ZAR'),
                   style: GoogleFonts.dmSans(
                     fontSize: 12.0,
                     fontStyle: FontStyle.normal,

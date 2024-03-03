@@ -148,7 +148,7 @@ function generateNotification(event, amount) {
 
     switch (event) {
         case eventTypes["payment.succeeded"]:
-            return createNotification("Cheers to Your Purchase!", "We've received your payment of #AMOUNT. Thanks for choosing us!");
+            return createNotification("A successful top-up!", "We've received your payment of #AMOUNT. Thanks for choosing us!");
 
         case eventTypes["payment.failed"]:
             return createNotification("Oops! Payment Not Processed", "We encountered an issue with your payment. Assistance is on the way.");

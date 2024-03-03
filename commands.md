@@ -65,3 +65,6 @@ flutter build web --web-renderer canvaskit
     docker-compose down
 
   ```
+
+### 
+- Trigger a Apple Push Notification; `xcrun simctl push booted com.byteestudio.Verified ios/push.json`
