@@ -1,4 +1,4 @@
-**App Name:** Verified+
+**App Name:** Verified
 <p align="center" dir="auto">
 <a alt="thumbnail" href="https://github.com/makhosi6/verified" rel="nofollow"><img src="./assets/images/verified_bytee_studio-project_landsc.png" style="max-width: 100%;"></a>
 </p>
