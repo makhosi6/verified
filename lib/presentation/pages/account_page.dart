@@ -12,8 +12,10 @@ import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/native_scripts/main.dart';
 import 'package:verified/presentation/pages/add_payment_method_page.dart';
+import 'package:verified/presentation/pages/loading_page.dart';
 import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
@@ -91,330 +93,336 @@ class AccountPageContent extends StatelessWidget {
     ///
     final appInfo = getAppInfo(context);
 
-    ///
+    var user = context.watch<StoreBloc>().state.userProfileData;
+    var wallet = context.watch<StoreBloc>().state.walletData;
 
-    final user = context.watch<StoreBloc>().state.userProfileData ?? UserProfile.empty;
-    final wallet = context.watch<StoreBloc>().state.walletData ;
-    return Center(
-      child: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: <Widget>[
-          const AppErrorWarningIndicator(),
-          SliverAppBar(
-            stretch: true,
-            onStretchTrigger: () async {},
-            surfaceTintColor: Colors.transparent,
-            stretchTriggerOffset: 360.0,
-            expandedHeight: 360.0,
-            title: const Text(
-              'Account',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
-                fontStyle: FontStyle.normal,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                width: MediaQuery.of(context).size.width - 16,
-                decoration: BoxDecoration(
-                  color: darkerPrimaryColor,
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(16.0),
-                    bottomRight: Radius.circular(16.0),
+
+    return FutureBuilder<UserProfile?>(
+        future: LocalUser.getUser(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const LoadingPage(noScaffold: false);
+          }
+
+          user = snapshot.data;
+
+          return Center(
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: <Widget>[
+                const AppErrorWarningIndicator(),
+                SliverAppBar(
+                  stretch: true,
+                  onStretchTrigger: () async {},
+                  surfaceTintColor: Colors.transparent,
+                  stretchTriggerOffset: 360.0,
+                  expandedHeight: 360.0,
+                  title: const Text(
+                    'Account',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-                child: SingleChildScrollView(
-                  reverse: true,
-                  clipBehavior: Clip.none,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: primaryPadding.copyWith(left: primaryPadding.left, right: primaryPadding.right),
-                        constraints: appConstraints,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Container(
+                      width: MediaQuery.of(context).size.width - 16,
+                      decoration: BoxDecoration(
+                        color: darkerPrimaryColor,
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(16.0),
+                          bottomRight: Radius.circular(16.0),
+                        ),
+                      ),
+                      child: SingleChildScrollView(
+                        reverse: true,
+                        clipBehavior: Clip.none,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  wallet != null ? 'Top up your account' : 'Add a payment method',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18.0,
-                                    fontStyle: FontStyle.normal,
+                            Container(
+                              padding: primaryPadding.copyWith(left: primaryPadding.left, right: primaryPadding.right),
+                              constraints: appConstraints,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        wallet != null ? 'Top up your account' : 'Add a payment method',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18.0,
+                                          fontStyle: FontStyle.normal,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Text(
+                                        wallet != null
+                                            ? 'Default payment method used to top-up'
+                                            : 'Default payment method used to top-up',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.white,
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 14.0,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                Text(
-                                  wallet != null
-                                      ? 'Default payment method used to top-up'
-                                      : 'Default payment method used to top-up',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.white,
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 14.0,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
+                                  ActionButton(
+                                    key: const Key('add-payment-method-or-topup-btn'),
+                                    tooltip: wallet == null ? 'Add payment method' : 'Top up',
+                                    iconColor: Colors.white,
+                                    bgColor: neutralYellow,
+                                    padding: const EdgeInsets.all(0),
+                                    onTap: () {
+                                      showTopUpBottomSheet(context);
+                                    },
+                                    icon: Icons.add,
+                                    borderColor: neutralYellow,
+                                  )
+                                ],
+                              ),
                             ),
-                            ActionButton(
-                              key: const Key('add-payment-method-or-topup-btn'),
-                              tooltip: wallet == null ? 'Add payment method' : 'Top up',
-                              
-                              iconColor: Colors.white,
-                              bgColor: neutralYellow,
-                              padding: const EdgeInsets.all(0),
-                              onTap: () {
-                                if (wallet == null) {
-                                  navigate(context, page: const AddPaymentMethodPage());
-                                } else {
-                                  showTopUpBottomSheet(context);
-                                }
-                              },
-                              icon: wallet == null ? Icons.add_card_rounded : Icons.add,
-                              borderColor: neutralYellow,
-                            )
+                            Padding(
+                              padding: primaryPadding.copyWith(bottom: 0, top: 0),
+                              child: const BaseBankCard(size: BankCardSize.short),
+                            ),
                           ],
                         ),
                       ),
-                      Padding(
-                        padding: primaryPadding.copyWith(bottom: 0, top: 0),
-                        child: const BaseBankCard(size: BankCardSize.short),
-                      ),
-                    ],
+                    ),
+                  ),
+                  leadingWidth: 80.0,
+                  leading: VerifiedBackButton(
+                    key: const Key('acc-page-back-btn'),
+                    onTap: () {
+                      try {
+                        Navigator.of(context)
+                          ..pop()
+                          ..initState();
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
                   ),
                 ),
-              ),
-            ),
-            leadingWidth: 80.0,
-            leading: VerifiedBackButton(
-              key: const Key('acc-page-back-btn'),
-              onTap: () {
-                try {
-                  Navigator.of(context)
-                    ..pop()
-                    ..initState();
-                } catch (e) {
-                  print(e);
-                }
-              },
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              childCount: accountSettings.length,
-              (BuildContext context, int index) => UnconstrainedBox(
-                child: Container(
-                  // color: Colors.blueAccent,
-                  width: MediaQuery.of(context).size.width - 16,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                  ),
-                  constraints: appConstraints,
-                  child: (accountSettings[index]['type'] == 'space')
-                      ? Container(
-                          height: 90,
-                          width: 100,
-                          color: Colors.transparent,
-                        )
-                      : accountSettings[index]['text'] == 'balance'
-                          ? Column(
-                              children: [
-                                _ProfileName(
-                                  user: user,
-                                ),
-                                Divider(
-                                  color: Colors.grey[400],
-                                  indent: 0,
-                                  endIndent: 0,
-                                ),
-                              ],
-                            )
-                          : (accountSettings[index]['text'] == 'title')
-                              ? Container(
-                                  alignment: Alignment.centerLeft,
-                                  padding: primaryPadding.copyWith(bottom: 22.0),
-                                  child: const ListTitle(
-                                    text: 'Account Settings',
-                                  ),
-                                )
-                              : accountSettings[index]['type'] == 'button'
-                                  ? ListTile(
-                                      hoverColor: ((accountSettings[index]['color']) as Color?) != null
-                                          ? const Color.fromARGB(255, 255, 210, 210)
-                                          : null,
-                                      focusColor: ((accountSettings[index]['color']) as Color?) != null
-                                          ? const Color.fromARGB(255, 255, 210, 210)
-                                          : null,
-                                      splashColor: ((accountSettings[index]['color']) as Color?) != null
-                                          ? const Color.fromARGB(255, 255, 210, 210)
-                                          : null,
-                                      style: ListTileStyle.list,
-                                      onTap: () async {
-                                        try {
-                                          /// Logout
-                                          if (accountSettings[index]['text'] == 'Logout') {
-                                            ///
-                                            ScaffoldMessenger.of(context)
-                                              ..clearSnackBars()
-                                              ..showSnackBar(
-                                                SnackBar(
-                                                  content: const Text(
-                                                    'Logged out',
-                                                  ),
-                                                  backgroundColor: warningColor,
-                                                ),
-                                              );
-
-                                            context.read<AuthBloc>().add(const AuthEvent.signOut());
-                                            context.read<StoreBloc>()
-                                              ..add(StoreEvent.deleteUserProfile(user.id ?? ''))
-                                              ..add(const StoreEvent.clearUser());
-
-                                            Navigator.of(context)
-                                              ..pop()
-                                              ..initState();
-
-                                            Future.delayed(const Duration(milliseconds: 600),
-                                                () => VerifiedAppNativeCalls.restartApp());
-                                          }
-
-                                          // Delete account
-                                          if (accountSettings[index]['text'] == 'Delete Account') {
-                                            ///
-                                            ScaffoldMessenger.of(context)
-                                              ..clearSnackBars()
-                                              ..showSnackBar(
-                                                SnackBar(
-                                                  content: const Text(
-                                                    'Account Deleted!',
-                                                  ),
-                                                  backgroundColor: errorColor,
-                                                ),
-                                              );
-
-                                            ///
-                                            context.read<AuthBloc>().add(const AuthEvent.deleteAccount());
-                                            context.read<StoreBloc>()
-                                              ..add(StoreEvent.deleteUserProfile(user?.id ?? ''))
-                                              ..add(const StoreEvent.clearUser());
-
-                                            Navigator.of(context)
-                                              ..pop()
-                                              ..initState();
-
-                                            Future.delayed(const Duration(milliseconds: 600),
-                                                () => VerifiedAppNativeCalls.restartApp());
-                                          }
-
-                                          /// Show Terms of Use
-                                          if (accountSettings[index]['text'] == 'Terms of Use') {
-                                            navigate(context, page: const TermOfUseWebView());
-                                          }
-
-                                          /// show get help pop-up
-                                          if (accountSettings[index]['text'] == 'Help') {
-                                            await showHelpPopUpForm(context);
-                                          }
-                                        } catch (e) {
-                                          verifiedErrorLogger(e);
-                                          if (accountSettings[index]['text'] != 'Delete Account' &&
-                                              accountSettings[index]['text'] != 'Logout') {
-                                            ScaffoldMessenger.of(context)
-                                              ..clearSnackBars()
-                                              ..showSnackBar(
-                                                SnackBar(
-                                                  content: const Text(
-                                                    'Pull To Refresh',
-                                                  ),
-                                                  action: SnackBarAction(label: 'Refresh', onPressed: () {}),
-                                                ),
-                                              );
-                                          }
-                                        }
-                                      },
-                                      leading: Icon(
-                                        accountSettings[index]['icon'] as IconData?,
-                                        color: (accountSettings[index]['color']) as Color? ?? primaryColor,
-                                        size: 32.0,
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: accountSettings.length,
+                    (BuildContext context, int index) => UnconstrainedBox(
+                      child: Container(
+                        // color: Colors.blueAccent,
+                        width: MediaQuery.of(context).size.width - 16,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                        ),
+                        constraints: appConstraints,
+                        child: (accountSettings[index]['type'] == 'space')
+                            ? Container(
+                                height: 90,
+                                width: 100,
+                                color: Colors.transparent,
+                              )
+                            : accountSettings[index]['text'] == 'balance'
+                                ? Column(
+                                    children: [
+                                      _ProfileName(
+                                        user: user,
                                       ),
-                                      title: Text(
-                                        accountSettings[index]['text'] as String,
-                                        style: TextStyle(
-                                          color: (accountSettings[index]['color']) as Color? ?? Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0,
-                                          fontStyle: FontStyle.normal,
+                                      Divider(
+                                        color: Colors.grey[400],
+                                        indent: 0,
+                                        endIndent: 0,
+                                      ),
+                                    ],
+                                  )
+                                : (accountSettings[index]['text'] == 'title')
+                                    ? Container(
+                                        alignment: Alignment.centerLeft,
+                                        padding: primaryPadding.copyWith(bottom: 22.0),
+                                        child: const ListTitle(
+                                          text: 'Account Settings',
                                         ),
-                                      ),
-                                      contentPadding: EdgeInsets.zero,
-                                      enableFeedback: true,
-                                      trailing: Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        color: (accountSettings[index]['color']) as Color? ?? Colors.black,
-                                        size: 16.0,
-                                      ),
-                                    )
-                                  : ExpansionTile(
-                                      tilePadding: const EdgeInsets.all(0.0),
-                                      leading: Icon(
-                                        accountSettings[index]['icon'] as IconData?,
-                                        color: (accountSettings[index]['color']) as Color? ?? primaryColor,
-                                        size: 32.0,
-                                      ),
-                                      backgroundColor: Colors.grey[100],
-                                      collapsedBackgroundColor: Colors.white,
-                                      childrenPadding: const EdgeInsets.symmetric(
-                                          // horizontal: 20.0,
-                                          ),
-                                      title: Text(
-                                        accountSettings[index]['text'] as String,
-                                        style: TextStyle(
-                                          color: (accountSettings[index]['color']) as Color? ?? Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0,
-                                          fontStyle: FontStyle.normal,
-                                        ),
-                                      ),
-                                      children: (accountSettings[index]['text'] == 'Personal')
-                                          ? List.generate(
-                                              userPersonalDetailsKey.length,
-                                              (index) => accountPageListItems(
-                                                key: "${userPersonalDetailsKey[index]['displayName']}",
-                                                value: "${user?.toJson()[userPersonalDetailsKey[index]['keyName']]}",
-                                                isLast: index == userPersonalDetailsKey.length - 1,
-                                              ),
-                                            )
-                                          : (accountSettings[index]['text'] == 'Transactions')
-                                              ? [const CombinedHistoryList(limit: 4, showBanner: false)]
-                                              : (accountSettings[index]['text'] == 'App Information')
-                                                  ? List.generate(
-                                                      appInfo.length,
-                                                      (index) => accountPageListItems(
-                                                        key: appInfo.keys.toList()[index],
-                                                        value: appInfo[appInfo.keys.toList()[index]] ?? '',
-                                                        isLast: index == appInfo.length - 1,
+                                      )
+                                    : accountSettings[index]['type'] == 'button'
+                                        ? ListTile(
+                                            hoverColor: ((accountSettings[index]['color']) as Color?) != null
+                                                ? const Color.fromARGB(255, 255, 210, 210)
+                                                : null,
+                                            focusColor: ((accountSettings[index]['color']) as Color?) != null
+                                                ? const Color.fromARGB(255, 255, 210, 210)
+                                                : null,
+                                            splashColor: ((accountSettings[index]['color']) as Color?) != null
+                                                ? const Color.fromARGB(255, 255, 210, 210)
+                                                : null,
+                                            style: ListTileStyle.list,
+                                            onTap: () async {
+                                              try {
+                                                /// Logout
+                                                if (accountSettings[index]['text'] == 'Logout') {
+                                                  ///
+                                                  ScaffoldMessenger.of(context)
+                                                    ..clearSnackBars()
+                                                    ..showSnackBar(
+                                                      SnackBar(
+                                                        content: const Text(
+                                                          'Logged out',
+                                                        ),
+                                                        backgroundColor: warningColor,
                                                       ),
-                                                    )
-                                                  : [
-                                                      const Text('No Data'),
-                                                    ],
-                                    ),
+                                                    );
+
+                                                  context.read<AuthBloc>().add(const AuthEvent.signOut());
+                                                  context.read<StoreBloc>()
+                                                    ..add(StoreEvent.deleteUserProfile(user?.id ?? ''))
+                                                    ..add(const StoreEvent.clearUser());
+
+                                                  Navigator.of(context)
+                                                    ..pop()
+                                                    ..initState();
+
+                                                  Future.delayed(const Duration(milliseconds: 600),
+                                                      () => VerifiedAppNativeCalls.restartApp());
+                                                }
+
+                                                // Delete account
+                                                if (accountSettings[index]['text'] == 'Delete Account') {
+                                                  ///
+                                                  ScaffoldMessenger.of(context)
+                                                    ..clearSnackBars()
+                                                    ..showSnackBar(
+                                                      SnackBar(
+                                                        content: const Text(
+                                                          'Account Deleted!',
+                                                        ),
+                                                        backgroundColor: errorColor,
+                                                      ),
+                                                    );
+
+                                                  ///
+                                                  context.read<AuthBloc>().add(const AuthEvent.deleteAccount());
+                                                  context.read<StoreBloc>()
+                                                    ..add(StoreEvent.deleteUserProfile(user?.id ?? ''))
+                                                    ..add(const StoreEvent.clearUser());
+
+                                                  Navigator.of(context)
+                                                    ..pop()
+                                                    ..initState();
+
+                                                  Future.delayed(const Duration(milliseconds: 600),
+                                                      () => VerifiedAppNativeCalls.restartApp());
+                                                }
+
+                                                /// Show Terms of Use
+                                                if (accountSettings[index]['text'] == 'Terms of Use') {
+                                                  navigate(context, page: const TermOfUseWebView());
+                                                }
+
+                                                /// show get help pop-up
+                                                if (accountSettings[index]['text'] == 'Help') {
+                                                  await showHelpPopUpForm(context);
+                                                }
+                                              } catch (e) {
+                                                verifiedErrorLogger(e);
+                                                if (accountSettings[index]['text'] != 'Delete Account' &&
+                                                    accountSettings[index]['text'] != 'Logout') {
+                                                  ScaffoldMessenger.of(context)
+                                                    ..clearSnackBars()
+                                                    ..showSnackBar(
+                                                      SnackBar(
+                                                        content: const Text(
+                                                          'Pull To Refresh',
+                                                        ),
+                                                        action: SnackBarAction(label: 'Refresh', onPressed: () {}),
+                                                      ),
+                                                    );
+                                                }
+                                              }
+                                            },
+                                            leading: Icon(
+                                              accountSettings[index]['icon'] as IconData?,
+                                              color: (accountSettings[index]['color']) as Color? ?? primaryColor,
+                                              size: 32.0,
+                                            ),
+                                            title: Text(
+                                              accountSettings[index]['text'] as String,
+                                              style: TextStyle(
+                                                color: (accountSettings[index]['color']) as Color? ?? Colors.black,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16.0,
+                                                fontStyle: FontStyle.normal,
+                                              ),
+                                            ),
+                                            contentPadding: EdgeInsets.zero,
+                                            enableFeedback: true,
+                                            trailing: Icon(
+                                              Icons.arrow_forward_ios_sharp,
+                                              color: (accountSettings[index]['color']) as Color? ?? Colors.black,
+                                              size: 16.0,
+                                            ),
+                                          )
+                                        : ExpansionTile(
+                                            tilePadding: const EdgeInsets.all(0.0),
+                                            leading: Icon(
+                                              accountSettings[index]['icon'] as IconData?,
+                                              color: (accountSettings[index]['color']) as Color? ?? primaryColor,
+                                              size: 32.0,
+                                            ),
+                                            backgroundColor: Colors.grey[100],
+                                            collapsedBackgroundColor: Colors.white,
+                                            childrenPadding: const EdgeInsets.symmetric(
+                                                // horizontal: 20.0,
+                                                ),
+                                            title: Text(
+                                              accountSettings[index]['text'] as String,
+                                              style: TextStyle(
+                                                color: (accountSettings[index]['color']) as Color? ?? Colors.black,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16.0,
+                                                fontStyle: FontStyle.normal,
+                                              ),
+                                            ),
+                                            children: (accountSettings[index]['text'] == 'Personal')
+                                                ? List.generate(
+                                                    userPersonalDetailsKey.length,
+                                                    (index) => accountPageListItems(
+                                                      key: "${userPersonalDetailsKey[index]['displayName']}",
+                                                      value:
+                                                          "${user?.toJson()[userPersonalDetailsKey[index]['keyName']]}",
+                                                      isLast: index == userPersonalDetailsKey.length - 1,
+                                                    ),
+                                                  )
+                                                : (accountSettings[index]['text'] == 'Transactions')
+                                                    ? [const CombinedHistoryList(limit: 4, showBanner: false)]
+                                                    : (accountSettings[index]['text'] == 'App Information')
+                                                        ? List.generate(
+                                                            appInfo.length,
+                                                            (index) => accountPageListItems(
+                                                              key: appInfo.keys.toList()[index],
+                                                              value: appInfo[appInfo.keys.toList()[index]] ?? '',
+                                                              isLast: index == appInfo.length - 1,
+                                                            ),
+                                                          )
+                                                        : [
+                                                            const Text('No Data'),
+                                                          ],
+                                          ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
+        });
   }
 }
 
@@ -561,7 +569,7 @@ class _ProfileName extends StatelessWidget {
                           context.read<StoreBloc>().add(StoreEvent.uploadFiles(nonNullFiles));
 
                           // Artificial delay
-                          await Future.delayed(const Duration(milliseconds: 2500));
+                          await Future.delayed(const Duration(seconds: 5000));
 
                           //
                           if (context.read<StoreBloc>().state.uploadsData?.files?.isNotEmpty ?? false) {

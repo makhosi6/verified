@@ -66,8 +66,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             'actualName': user?.displayName,
             'displayName': user?.displayName,
             'name': user?.displayName,
-            'avatar': user?.photoURL ??
-                'https://robohash.org/${(user?.displayName?.replaceAll(" ", "_") ?? user?.uid)?.toLowerCase()}.png',
+            'avatar':
+                user?.photoURL ?? 'https://robohash.org/${(user?.uid.replaceRange(0, 2, "P_"))?.toLowerCase()}.png',
             // 'walletId': 'logged-in-user-wallet',
             'walletId': null,
             'phone': user?.phoneNumber,

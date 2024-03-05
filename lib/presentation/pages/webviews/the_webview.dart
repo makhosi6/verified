@@ -95,33 +95,38 @@ class _TheWebViewState extends State<TheWebView> {
   Widget build(BuildContext context) {
     if (hasError) return VerifiedErrorPage(message: errorMsg);
 
-    return Scaffold(
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        child: Center(
-          child: progressVal == 101
-              ? Stack(
-                  children: [
-                    WebViewWidget(controller: controller),
-                    if (widget.hasBackBtn)
-                      Positioned(
-                        top: 60,
-                        left: 20,
-                        child: VerifiedBackButton(
-                          key: UniqueKey(),
-                          isLight: true,
-                          onTap: () => Navigator.pop(context),
-                        ),
-                      ),
-                  ],
-                )
-              : CircularPercentIndicator(
-                  radius: 60.0,
-                  lineWidth: 5.0,
-                  percent: progressVal / 100,
-                  center: Text('$progressVal%'),
-                  progressColor: primaryColor,
-                ),
+    return Container(
+      color:Colors.white,
+      child: SafeArea(
+        child: Scaffold(
+          body: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: Center(
+              child: progressVal == 101
+                  ? Stack(
+                      children: [
+                        WebViewWidget(controller: controller),
+                        if (widget.hasBackBtn)
+                          Positioned(
+                            top: 60,
+                            left: 20,
+                            child: VerifiedBackButton(
+                              key: UniqueKey(),
+                              isLight: true,
+                              onTap: () => Navigator.pop(context),
+                            ),
+                          ),
+                      ],
+                    )
+                  : CircularPercentIndicator(
+                      radius: 60.0,
+                      lineWidth: 5.0,
+                      percent: progressVal / 100,
+                      center: Text('$progressVal%'),
+                      progressColor: primaryColor,
+                    ),
+            ),
+          ),
         ),
       ),
     );
