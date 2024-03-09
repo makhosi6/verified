@@ -34,6 +34,8 @@ const {
   authenticate,
   authorization,
   security,
+  noDeleteOperation,
+  archiveOnDelete,
 } = require("../../middleware/universal");
 
 const {
@@ -43,12 +45,13 @@ const {
   addWalletHook,
   updateOrPutHook
 } = require("../../middleware/store");
-const { getCreditsReq } = require("../../usecases/verifyid");
 const { notifyAdmin } = require("../../usecases/admin");
 ///
 const tickets = jsonServer.router(path.join(__dirname, "db/tickets.json"));
 const history = jsonServer.router(path.join(__dirname, "db/history.json"));
 const profile = jsonServer.router(path.join(__dirname, "db/profile.json"));
+const archive = jsonServer.router(path.join(__dirname, "db/archive.json"));
+const cache = jsonServer.router(path.join(__dirname, "db/cache.json"));
 const promotion = jsonServer.router(path.join(__dirname, "db/promotion.json"));
 const wallet = jsonServer.router(path.join(__dirname, "db/wallet.json"));
 
@@ -67,17 +70,21 @@ server.use(authenticate);
 server.use(addTimestamps);
 server.use(addIdentifiers);
 server.use(addWalletHook);
+server.use(archiveOnDelete);
 server.use(updateOrPutHook);
+server.disable('x-powered-by');
 
 
 /// routes
-server.get("/api/v1/health-check", getCreditsReq);
+server.get("/api/v1/health-check", (req,res) => res.status(200));
 server.post("/api/v1/help", notifyAdmin);
 server.use("/api/v1/ticket", tickets);
 server.use("/api/v1/history", history);
 server.use("/api/v1/profile", lastLoginHook, profile);
 server.use("/api/v1/promotion", promotion);
 server.use("/api/v1/wallet", wallet);
+server.use("/api/v1/cache", noDeleteOperation, cache);
+server.use("/api/v1/archive",noDeleteOperation, archive);
 
 /// listen 
 server.listen(PORT, () => {

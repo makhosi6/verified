@@ -29,7 +29,7 @@ class VerifiedErrorPage extends StatelessWidget {
                 child: Column(
                   children: [
                     BaseButton(
-                      iconBgColor: errorColor,
+                      iconBgColor: warningColor,
                       buttonIcon: const Icon(
                         Icons.replay_circle_filled_outlined,
                         color: Colors.white,
@@ -37,22 +37,23 @@ class VerifiedErrorPage extends StatelessWidget {
                       hasBorderLining: true,
                       buttonSize: ButtonSize.small,
                       label: 'Refresh',
-                      color: errorColor,
+                      color: warningColor,
                       onTap: VerifiedAppNativeCalls.restartApp,
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: primaryPadding.top),
                       child: BaseButton(
-                          iconBgColor: warningColor,
-                          buttonIcon: const Icon(
-                            Icons.close_outlined,
-                            color: Colors.white,
-                          ),
-                          hasBorderLining: true,
-                          buttonSize: ButtonSize.small,
-                          label: 'Close',
-                          color: warningColor,
-                          onTap: () {}),
+                        iconBgColor: errorColor,
+                        buttonIcon: const Icon(
+                          Icons.close_outlined,
+                          color: Colors.white,
+                        ),
+                        hasBorderLining: true,
+                        buttonSize: ButtonSize.small,
+                        label: 'Close',
+                        color: errorColor,
+                        onTap: Navigator.of(context).pop,
+                      ),
                     ),
                   ],
                 ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gallery_asset_picker/gallery_asset_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/application/appbase/appbase_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
@@ -96,7 +97,6 @@ class AccountPageContent extends StatelessWidget {
     var user = context.watch<StoreBloc>().state.userProfileData;
     var wallet = context.watch<StoreBloc>().state.walletData;
 
-
     return FutureBuilder<UserProfile?>(
         future: LocalUser.getUser(),
         builder: (context, snapshot) {
@@ -178,7 +178,7 @@ class AccountPageContent extends StatelessWidget {
                                   ),
                                   ActionButton(
                                     key: const Key('add-payment-method-or-topup-btn'),
-                                    tooltip: wallet == null ? 'Add payment method' : 'Top up',
+                                    tooltip: wallet != null ? 'Add payment method' : 'Top up',
                                     iconColor: Colors.white,
                                     bgColor: neutralYellow,
                                     padding: const EdgeInsets.all(0),
@@ -507,6 +507,7 @@ class _ProfileName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final placeholderAvatar = 'https://robohash.org/${const Uuid().v4()}.png';
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
@@ -517,24 +518,27 @@ class _ProfileName extends StatelessWidget {
               padding: const EdgeInsets.only(right: 16.0),
               child: Stack(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(200),
-                    child: Container(
-                      padding: const EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.green.shade50,
-                        ),
-                        shape: BoxShape.circle,
-                        color: Colors.green[50],
+                  Container(
+                    padding: const EdgeInsets.all(1),
+                    height: 100.0,
+                    width: 100.0,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.green.shade50,
                       ),
-                      child: Image.network(
-                        user?.avatar?.replaceAll(' ', '') ??
-                            "https://ui-avatars.com/api/?background=105D38&color=fff&name=${(user?.displayName ?? user?.actualName ?? user?.name)?.split(" ").join('+')}",
-                        height: 100.0,
-                        width: 100.0,
-                        fit: BoxFit.cover,
-                      ),
+                      shape: BoxShape.circle,
+                      color: Colors.green[50],
+                    ),
+                    child: Image.network(
+                      // if avatar is not null and it's from byteestudio or robohash
+                      (user?.avatar != null &&
+                              ((user?.avatar ?? '').contains('byteestudio') ||
+                                  (user?.avatar ?? '').contains('robohash')))
+                          ? user?.avatar?.replaceAll(' ', '') ?? placeholderAvatar
+                          : placeholderAvatar,
+                      height: 100.0,
+                      width: 100.0,
+                      fit: BoxFit.cover,
                     ),
                   ),
                   Positioned(
@@ -653,6 +657,13 @@ class _ProfileName extends StatelessWidget {
 
 Widget accountPageListItems({required String key, required String value, bool isLast = false}) {
   dynamic transformedValue() => switch (key) {
+        'Build Signature' => InkWell(
+            onTap: () => print("object"),
+            child: Text(
+              '#',
+              style: TextStyle(color: primaryColor),
+            ),
+          ),
         'Official Website' => IconButton(
             onPressed: () {},
             icon: Icon(
@@ -692,7 +703,7 @@ Map<String, String> getAppInfo(BuildContext context) {
   final appBase = context.read<AppbaseBloc>().state;
 
   return {
-    'App Id': 'com.byteestudio.verified',
+    'App Id': TargetPlatform.iOS == defaultTargetPlatform ? 'com.byteestudio.Verified' : 'com.byteestudio.verified',
     'Name': 'Verified',
     'App Official Name': appBase.appName ?? '',
     'Vendor': 'Verified (byteestudio.com)',

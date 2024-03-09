@@ -268,7 +268,7 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
                               width: MediaQuery.of(context).size.width,
                               child: _renderSliverListItems(
                                 key: results?.keys.toList()[index] ?? 'Key',
-                                value: '${results?.values.toList()[index] ?? 'Value'}',
+                                value: '${results?.values.toList()[index] ?? 'Unknown'}',
                               ),
                             ),
                     ),

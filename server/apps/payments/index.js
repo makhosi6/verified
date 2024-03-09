@@ -17,6 +17,7 @@ app.use(morgan('combined', { stream: accessLogStream }))
 
 // middleware
 app.use(analytics);
+app.disable('x-powered-by');
 // exclude //api/v1/payment-events
 app.use('/api/v1/payment/yoco', security);
 app.use('/api/v1/payment/yoco', authorization);

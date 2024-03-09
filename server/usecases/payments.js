@@ -169,7 +169,7 @@ function generateNotification(event, amount) {
             return createNotification("Payment Updated", "Your payment of #AMOUNT has been updated.");
 
         default:
-            return createNotification("Unknown Event", "Open your Verified app.");
+            return createNotification("Unknown Payment Event 🫤", "Open your Verified app.");
     }
 }
 
