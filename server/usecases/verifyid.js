@@ -300,6 +300,7 @@ const deductCreditsAfterTransaction = async (query, clientId) => {
   try {
     const user = await getUserProfile(clientId);
     const wallet = await getWallet(user?.walletId || "");
+    const CENTS = 100;
 
     // Update wallet
     const options = {
