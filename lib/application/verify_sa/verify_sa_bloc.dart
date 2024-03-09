@@ -28,7 +28,11 @@ class VerifySaBloc extends Bloc<VerifySaEvent, VerifySaState> {
           ));
 
           ///
-          final response = await _verifySaRepository.getDhaIdPhoto(e.idNumber, e.reason);
+          final response = await _verifySaRepository.getDhaIdPhoto(
+            idNumber: e.idNumber,
+            reason: e.reason,
+            clientId: e.clientId,
+          );
 
           ///
           response.fold((e) {
@@ -58,7 +62,11 @@ class VerifySaBloc extends Bloc<VerifySaEvent, VerifySaState> {
           ));
 
           ///
-          final response = await _verifySaRepository.verifyIdNumber(e.idNumber, e.reason);
+          final response = await _verifySaRepository.verifyIdNumber(
+            idNumber: e.idNumber,
+            reason: e.reason,
+            clientId: e.clientId,
+          );
 
           ///
           response.fold((e) {
@@ -85,7 +93,11 @@ class VerifySaBloc extends Bloc<VerifySaEvent, VerifySaState> {
             contactTracingData: null,
           ));
 
-          final response = await _verifySaRepository.contactTracing(e.phoneNumber, e.reason);
+          final response = await _verifySaRepository.contactTracing(
+            phoneNumber: e.phoneNumber,
+            reason: e.reason,
+            clientId: e.clientId,
+          );
 
           response.fold((e) {
             emit(state.copyWith(

@@ -9,6 +9,7 @@ class VerifySaDioClientService {
       baseUrl: '$baseUrl/verify-id/api/v1/',
       headers: {
         'Authorization': 'Bearer $verifySaApiKey',
+        'x-client-env': 'test',
         'Accept': 'application/json',
       },
     ),
@@ -58,7 +59,7 @@ class StoreDioClientService {
       headers: {
         'Authorization': 'Bearer $storeApiKey',
         'x-client': '',
-        'x-nonce': 'MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2',
+        // 'x-nonce': 'MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2',
         'Accept': 'application/json',
       },
     ),
@@ -108,7 +109,7 @@ class PaymentsDioClientService {
       headers: {
         'Authorization': 'Bearer $storeApiKey',
         'x-client': '',
-        'x-nonce': 'MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2',
+        // 'x-nonce': 'MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2',
         'Accept': 'application/json',
       },
     ),

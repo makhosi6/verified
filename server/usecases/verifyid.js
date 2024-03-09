@@ -126,7 +126,7 @@ const _transactionDescription = (query) => {
  */
 async function recordBurnCreditsTransaction(transaction) {
   try {
-    console.log("Hit the store API and save the burn transaction... ", payload);
+    console.log("Hit the store API and save the burn transaction... ", transaction);
     const headers = new Headers();
     headers.append("x-nonce", generateNonce());
     headers.append("Content-Type", "application/json");
@@ -188,7 +188,7 @@ async function handleContactEnquiry(req, res) {
         deductCreditsAfterTransaction(contact_number, clientId)
       );
     }
-//
+    //
     if (verificationResponse) {
       global.queue.push(() =>
         cache3rdPartResponse({ id: contact_number, data: verificationResponse })
@@ -310,7 +310,7 @@ const deductCreditsAfterTransaction = async (query, clientId) => {
         Authorization: "Bearer TOKEN",
       },
       body: JSON.stringify({
-        balance: Math.max(0, Number(wallet.balance) - 30),
+        balance: Math.max(0, Number(wallet.balance - 30 * CENTS)),
       }),
     };
     const host =
@@ -329,7 +329,7 @@ const deductCreditsAfterTransaction = async (query, clientId) => {
     await recordBurnCreditsTransaction({
       profileId: user?.id || user?.profileId || "",
       // 30 rands by 100 cents
-      amount: 30 * 100,
+      amount: 30 * CENTS,
       isoCurrencyCode: "USD",
       categoryId: null,
       timestamp: Math.floor(Date.now() / 1000),

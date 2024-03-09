@@ -94,7 +94,7 @@ void main() async {
   );
 
   ///
-  if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('127.0.0.1', 9099);
+  if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('192.168.0.132', 9099);
 
   runZonedGuarded(() async {
     ///

@@ -131,6 +131,7 @@ List<Widget> getWidgets(BuildContext context, {required FormType formType, requi
   final inputMask = isIdNumber ? '000000 0000 000' : '000 000 0000';
   final keyboardType = isIdNumber ? TextInputType.number : TextInputType.phone;
   final validator = isIdNumber ? validateIdNumber : validateMobile;
+  final user = context.watch<StoreBloc>().state.userProfileData;
 
   return [
     BlocBuilder<VerifySaBloc, VerifySaState>(
@@ -270,10 +271,6 @@ List<Widget> getWidgets(BuildContext context, {required FormType formType, requi
             }
 
             ///
-            VerifySaEvent Function(String idNumber, EnquiryReason reason) fetchDataEvent =
-                formType == FormType.idForm ? VerifySaEvent.verifyIdNumber : VerifySaEvent.contactTracing;
-
-            ///
             final wallet = context.read<StoreBloc>().state.walletData;
 
             if (wallet == null) {
@@ -290,14 +287,29 @@ List<Widget> getWidgets(BuildContext context, {required FormType formType, requi
             }
 
             ///
-            context.read<VerifySaBloc>()
-              ..add(const VerifySaEvent.apiHealthCheck())
-              ..add(
-                fetchDataEvent(
-                  _globalKeyInputPage.currentState!.idOrPhoneNumber!,
-                  EnquiryReason.fromString(_globalKeyInputPage.currentState?.reason),
-                ),
-              );
+            if (formType == FormType.idForm) {
+              ///
+              context.read<VerifySaBloc>()
+                ..add(const VerifySaEvent.apiHealthCheck())
+                ..add(
+                  VerifySaEvent.verifyIdNumber(
+                    idNumber: _globalKeyInputPage.currentState!.idOrPhoneNumber!,
+                    reason: EnquiryReason.fromString(_globalKeyInputPage.currentState?.reason),
+                    clientId: user?.id ?? user?.profileId ?? 'system',
+                  ),
+                );
+            } else {
+              ///
+              context.read<VerifySaBloc>()
+                ..add(const VerifySaEvent.apiHealthCheck())
+                ..add(
+                  VerifySaEvent.contactTracing(
+                    phoneNumber: _globalKeyInputPage.currentState!.idOrPhoneNumber!,
+                    reason: EnquiryReason.fromString(_globalKeyInputPage.currentState?.reason),
+                    clientId: user?.id ?? user?.profileId ?? 'system',
+                  ),
+                );
+            }
 
             ///
             navigate(

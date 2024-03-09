@@ -16,17 +16,21 @@ class VerifySaRepository implements IVerifySaRepository {
   VerifySaRepository(this.httpClient);
 
   @override
-  Future<Either<Exception, ContactTracingResponse>> contactTracing(String phoneNumber, EnquiryReason reason) async {
+  Future<Either<Exception, ContactTracingResponse>> contactTracing({
+    required String phoneNumber,
+    required EnquiryReason reason,
+    required String clientId,
+  }) async {
     try {
-      var headers = {'Content-Type': 'multipart/form-data', 'Accept': 'application/json'};
-      var data = FormData.fromMap({
+      final headers = {'Content-Type': 'multipart/form-data', 'Accept': 'application/json'};
+      final data = FormData.fromMap({
         'api_key': verifySaApiKey,
         'contact_number': phoneNumber,
         'reason': reason.value,
       });
 
-      var response = await httpClient.post(
-        '/contact_enquiry',
+      final response = await httpClient.post(
+        '/contact_enquiry?client=$clientId',
         options: Options(
           headers: headers,
         ),
@@ -44,17 +48,21 @@ class VerifySaRepository implements IVerifySaRepository {
   }
 
   @override
-  Future<Either<Exception, VerifyIdResponse>> verifyIdNumber(String idNumber, EnquiryReason reason) async {
+  Future<Either<Exception, VerifyIdResponse>> verifyIdNumber({
+    required String idNumber,
+    required EnquiryReason reason,
+    required String clientId,
+  }) async {
     try {
-      var headers = {'Content-Type': 'multipart/form-data', 'Accept': 'application/json'};
-      var data = FormData.fromMap({
+      final headers = {'Content-Type': 'multipart/form-data', 'Accept': 'application/json'};
+      final data = FormData.fromMap({
         'api_key': verifySaApiKey,
         'id_number': idNumber,
         'reason': reason.value,
       });
 
-      var response = await httpClient.post(
-        '/said_verification',
+      final response = await httpClient.post(
+        '/said_verification?client=$clientId',
         options: Options(
           headers: headers,
         ),
@@ -71,13 +79,17 @@ class VerifySaRepository implements IVerifySaRepository {
   }
 
   @override
-  Future<Either<Exception, DhaImageResponse>> getDhaIdPhoto(String idNumber, EnquiryReason reason) async {
+  Future<Either<Exception, DhaImageResponse>> getDhaIdPhoto({
+    required String idNumber,
+    required EnquiryReason reason,
+    required String clientId,
+  }) async {
     try {
-      var headers = {
+      final headers = {
         'Content-Type': 'multipart/form-data',
         'Accept': 'application/json',
       };
-      var data = FormData.fromMap(
+      final data = FormData.fromMap(
         {
           'api_key': verifySaApiKey,
           'id_number': idNumber,
@@ -85,8 +97,8 @@ class VerifySaRepository implements IVerifySaRepository {
         },
       );
 
-      var response = await httpClient.post(
-        '/home_affairs_id_photo',
+      final response = await httpClient.post(
+        '/home_affairs_id_photo?client=$clientId',
         options: Options(
           headers: headers,
         ),
@@ -105,9 +117,9 @@ class VerifySaRepository implements IVerifySaRepository {
   @override
   Future<ResourceHealthStatus> getHealthStatus() async {
     try {
-      var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
-      var response = await httpClient.get(
-        'health-check',
+      final headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
+      final response = await httpClient.get(
+        'health-check?client=system',
         options: Options(
           method: 'GET',
           headers: headers,
