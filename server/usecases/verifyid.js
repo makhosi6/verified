@@ -154,6 +154,7 @@ async function recordBurnCreditsTransaction(transaction) {
 async function handleContactEnquiry(req, res) {
   try {
     const { contact_number, reason } = req?.body;
+    console.table(req?.body);
     const { client: clientId } = req.query;
     /** prod | test */
     const clientEnv = req?.headers["x-client-env"];
@@ -204,8 +205,9 @@ async function handleContactEnquiry(req, res) {
 
 async function handleSaidVerification(req, res) {
   try {
-    const { idnumber, reason } = req?.body;
+    const { id_number, reason } = req?.body;
     const { client: clientId } = req.query;
+    console.table(req?.body);
     /** prod | test */
     const clientEnv = req?.headers["x-client-env"];
     let verificationResponse;
@@ -218,7 +220,7 @@ async function handleSaidVerification(req, res) {
 
       const formdata = new FormData();
       formdata.append("api_key", VERIFYID_3RD_PARTY_TOKEN);
-      formdata.append("id_number", idnumber);
+      formdata.append("id_number", id_number);
 
       const options = {
         method: "POST",
@@ -237,17 +239,17 @@ async function handleSaidVerification(req, res) {
 
     if (clientEnv === "test" || verificationResponse) {
       global.queue.push(() =>
-        deductCreditsAfterTransaction(idnumber, clientId)
+        deductCreditsAfterTransaction(id_number, clientId)
       );
     }
 
     if (verificationResponse) {
       global.queue.push(() =>
-        cache3rdPartResponse({ id: idnumber, data: verificationResponse })
+        cache3rdPartResponse({ id: id_number, data: verificationResponse })
       );
     }
 
-    res.status(200).send(verificationResponse || fakeContactResData);
+    res.status(200).send(verificationResponse || fakeSaidResData);
   } catch (error) {
     console.log(error);
     res.status(500).send({ error: error.toString() });
@@ -311,7 +313,7 @@ const deductCreditsAfterTransaction = async (query, clientId) => {
         Authorization: "Bearer TOKEN",
       },
       body: JSON.stringify({
-        balance: Math.max(0, Number(wallet.balance - 30 * CENTS)),
+        balance: Math.max(0, Number(wallet.balance - (30 * CENTS))),
       }),
     };
     const host =
@@ -331,7 +333,7 @@ const deductCreditsAfterTransaction = async (query, clientId) => {
       profileId: user?.id || user?.profileId || "",
       // 30 rands by 100 cents
       amount: 30 * CENTS,
-      isoCurrencyCode: "USD",
+      isoCurrencyCode: "ZAR",
       categoryId: null,
       timestamp: Math.floor(Date.now() / 1000),
       details: {
