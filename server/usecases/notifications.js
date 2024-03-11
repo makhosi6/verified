@@ -1,4 +1,8 @@
 let FCM = require("fcm-node");
+const request = require('request')
+const fetch = (...args) => import('node-fetch').then(({
+    default: fetch
+}) => fetch(...args));
 let serverKey = process.env.FB_SERVER_TOKEN || "FB_SERVER_TOKEN";
 let fcm = new FCM(serverKey);
 
@@ -43,6 +47,24 @@ function sendEmailNotifications({ email, title, body }){
 
 }
 
+function sendWhatsappMessage(data) {
+  const host = (process.env.NODE_ENV === "production" ? `whatsapp_messaging_service:9092`: "localhost:9092")
+  let options = {
+    'method': 'POST',
+    'url': `http://${host}/send`,
+    'headers': {
+      'x-nonce': "NONCE",
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer TOKEN'
+    },
+    body: JSON.stringify(data)
+
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+  });
+}
+
 module.exports = {
-  sendPushNotifications, sendEmailNotifications
+  sendPushNotifications, sendEmailNotifications, sendWhatsappMessage
 };

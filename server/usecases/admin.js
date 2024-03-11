@@ -1,15 +1,19 @@
 const request = require('request')
 const fetch = (...args) => import('node-fetch').then(({
-    default: fetch
+  default: fetch
 }) => fetch(...args));
+const { sendWhatsappMessage } = require('./notifications.js')
 
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "5400";
 
 
 const notifyAdmin = async (req, res) => {
+  /// log a the ticket
   const send = _logTicket(req?.body)
   // call whatsapp bot
+  const whatsapp = sendWhatsappMessage(req?.body)
+
   res.sendStatus(200);
 }
 
@@ -30,6 +34,7 @@ function _logTicket(body) {
     if (error) throw new Error(error);
   });
 }
+
 
 module.exports = {
   notifyAdmin
