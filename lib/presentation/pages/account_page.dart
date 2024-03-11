@@ -25,6 +25,7 @@ import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
+import 'package:verified/presentation/widgets/popups/default_popup.dart';
 import 'package:verified/presentation/widgets/popups/help_form_popup.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/bank_card/base_card.dart';
@@ -234,9 +235,7 @@ class AccountPageContent extends StatelessWidget {
                             : accountSettings[index]['text'] == 'balance'
                                 ? Column(
                                     children: [
-                                      _ProfileName(
-                                        user: user,
-                                      ),
+                                      const _ProfileName(),
                                       Divider(
                                         color: Colors.grey[400],
                                         indent: 0,
@@ -502,12 +501,12 @@ var accountSettings = [
 ];
 
 class _ProfileName extends StatelessWidget {
-  final UserProfile? user;
-  const _ProfileName({required this.user});
+  const _ProfileName();
 
   @override
   Widget build(BuildContext context) {
     final placeholderAvatar = 'https://robohash.org/${const Uuid().v4()}.png';
+    var user = context.watch<StoreBloc>().state.userProfileData;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
@@ -522,12 +521,12 @@ class _ProfileName extends StatelessWidget {
                     padding: const EdgeInsets.all(1),
                     height: 100.0,
                     width: 100.0,
+                    clipBehavior: Clip.hardEdge,
                     decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.green.shade50,
-                      ),
-                      shape: BoxShape.circle,
-                      color: Colors.green[50],
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(color: Colors.green.shade50, width: 0),
+                      // shape: BoxShape.circle,
+                      color: Colors.green.shade50,
                     ),
                     child: Image.network(
                       // if avatar is not null and it's from byteestudio or robohash
@@ -545,19 +544,17 @@ class _ProfileName extends StatelessWidget {
                     bottom: 0,
                     right: 0,
                     child: InkWell(
-                      onTap: () async {
-                        try {
-                          // Pick a single image from the gallery.
-                          var images = await GalleryAssetPicker.pick(
-                            context,
-                            maxCount: 1,
-                            requestType: RequestType.image,
-                          );
-
+                      onTap: () {
+                        // Pick a single image from the gallery.
+                        GalleryAssetPicker.pick(
+                          context,
+                          maxCount: 1,
+                          requestType: RequestType.image,
+                        ).then((images) async {
                           // Early exit if no images are picked or if the user object is null.
                           if (images.isEmpty || user == null) {
                             print('No images selected or user is null');
-                            return;
+                            return null;
                           }
 
                           print('IMAGES: ${images.length}');
@@ -567,16 +564,23 @@ class _ProfileName extends StatelessWidget {
                               await Future.wait(images.map((f) async => await convertToFormData(await f.file)));
 
                           // Filter out any null items from the list and cast to a non-nullable type.
-                          final nonNullFiles = files.whereType<MultipartFile>().toList();
-
+                          return files.whereType<MultipartFile>().toList();
+                        }).then((uploads) {
                           // Trigger an event to upload the files.
-                          context.read<StoreBloc>().add(StoreEvent.uploadFiles(nonNullFiles));
-
-                          // Artificial delay
-                          await Future.delayed(const Duration(seconds: 5000));
-
-                          //
-                          if (context.read<StoreBloc>().state.uploadsData?.files?.isNotEmpty ?? false) {
+                          context.read<StoreBloc>().add(StoreEvent.uploadFiles(uploads ?? []));
+                        }).then((_) async {
+                          return await showDefaultPopUp(
+                            context,
+                            title: 'Update Profile Picture?',
+                            subtitle: 'Are you sure you want to update your profile picture?',
+                            confirmBtnText: "Yes",
+                            declineBtnText: 'No',
+                            onConfirm: () => Navigator.pop(context, true),
+                            onDecline: () => Navigator.pop(context, false),
+                          );
+                        }).then((shouldUpdate) {
+                          if ((context.read<StoreBloc>().state.uploadsData?.files?.isNotEmpty ?? false) &&
+                              shouldUpdate == true) {
                             context.read<StoreBloc>().add(
                                   StoreEvent.updateUserProfile(
                                     user!.copyWith(
@@ -587,10 +591,11 @@ class _ProfileName extends StatelessWidget {
                           } else {
                             print('No files uploaded');
                           }
-                        } catch (e) {
-                          // Log any errors encountered during the process.
-                          print('Image picker or upload error: $e');
-                        }
+                        }).catchError((err) {
+                          print('Error at profile picture update: $err');
+                        }, test: (_) {
+                          return true;
+                        });
                       },
                       child: Container(
                         padding: const EdgeInsets.all(4.0),
@@ -632,13 +637,15 @@ class _ProfileName extends StatelessWidget {
 
                 /// phone
                 Text(
-                  user?.phone ?? '000 000 0000',
+                  user?.phone ?? '000 000 0000 ${MediaQuery.of(context).size.width}',
                   textAlign: TextAlign.left,
                 ),
 
                 /// email
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.5,
+                  width: MediaQuery.of(context).size.width > 400
+                      ? MediaQuery.of(context).size.width * 0.6
+                      : MediaQuery.of(context).size.width * 0.5,
                   clipBehavior: Clip.none,
                   child: Text(
                     user?.email ?? 'nomail@mailbox.com',

@@ -26,12 +26,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
     on<StoreEvent>((event, emit) async => event.map(
           apiHealthCheck: (e) async {
-            emit(
-              state.copyWith(
-                resourceHealthStatus: await _storeRepository.getHealthStatus(),
-              ),
-            );
-
+            print('CHECKING API STATUS...');
             return null;
           },
 
@@ -210,7 +205,6 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               );
             }, (data) {
               emit(StoreState.initial());
-              
             });
 
             return null;
@@ -580,6 +574,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             emit(state.copyWith(
               uploadsError: null,
               uploadsHasError: false,
+              uploadsData: null,
               uploadsDataLoading: true,
             ));
 

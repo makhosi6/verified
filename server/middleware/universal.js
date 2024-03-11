@@ -105,6 +105,7 @@ function noDeleteOperation(req, res, next) {
 
 async function archiveOnDelete(req, res, next) {
   try {
+    const METHOD = req.method.toUpperCase();
     if (METHOD == "DELETE") {
       const headers = {
         /// add a nonce and TOKEN for security/auth

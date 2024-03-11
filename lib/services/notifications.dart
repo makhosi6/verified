@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -14,12 +13,12 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
     BehaviorSubject<ReceivedNotification>();
 
 const channel = AndroidNotificationChannel(
-  'com.byteestudio.verified.urgent', // id
-  'Importance Verified Notifications', // title
-  description:
-      'This channel is used for important notifications and alerts.', // description
+  'com.byteestudio.verified.urgent', 
+  'Importance Verified Notifications', 
+  description: 'This channel is used for important update, notifications and alerts.', // description
   importance: Importance.high,
   playSound: true,
+
 );
 
 // flutter local notification
@@ -30,9 +29,7 @@ final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   /// APP FIREBASE CONFIG
   await Firebase.initializeApp(
-    name: (kIsWeb || defaultTargetPlatform == TargetPlatform.iOS)
-        ? null
-        : 'firebaseSecondaryInstance',
+    name: (kIsWeb || defaultTargetPlatform == TargetPlatform.iOS) ? null : 'firebaseSecondaryInstance',
     options: DefaultFirebaseOptions.currentPlatform,
   );
   if (kDebugMode) {
@@ -49,8 +46,7 @@ Future<void> requestPermissions() async {
   ///
   if (defaultTargetPlatform == TargetPlatform.iOS) {
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
         ?.requestPermissions(
           alert: true,
           badge: true,
@@ -58,8 +54,8 @@ Future<void> requestPermissions() async {
         );
   } else if (defaultTargetPlatform == TargetPlatform.android) {
     flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
   }
 }
 
@@ -83,7 +79,9 @@ void onMsgOpen(RemoteMessage message) {
           color: primaryColor,
           importance: Importance.max,
           priority: Priority.high,
+          groupKey: 'verified_notifications',
           ticker: 'ticker',
+          styleInformation: const BigTextStyleInformation(''),
         ),
       ),
       payload: jsonEncode({
@@ -114,7 +112,9 @@ void onMsg(RemoteMessage message) {
           color: primaryColor,
           importance: Importance.max,
           priority: Priority.high,
+          groupKey: 'verified_notifications',
           ticker: 'ticker',
+          styleInformation: const BigTextStyleInformation(''),
         ),
       ),
       payload: jsonEncode({
@@ -124,7 +124,6 @@ void onMsg(RemoteMessage message) {
       }),
     );
   }
-
 }
 
 ///
@@ -143,8 +142,10 @@ void showMsgOnBackground(RemoteMessage message) {
           channel.name,
           channelDescription: channel.description,
           importance: Importance.max,
+          groupKey: 'verified_notifications',
           priority: Priority.high,
           ticker: 'ticker',
+          styleInformation: const BigTextStyleInformation(''),
         ),
       ),
       payload: jsonEncode({
@@ -154,15 +155,14 @@ void showMsgOnBackground(RemoteMessage message) {
       }),
     );
   }
-
 }
 
 ///
 @pragma('vm:entry-point')
 void setToken(String? token) async {
-    print('FCM Token: $token');
- 
+  print('FCM Token: $token');
 }
+
 @pragma('vm:entry-point')
 onDidReceive(NotificationResponse notificationResponse) async {
   print(
@@ -198,7 +198,9 @@ void localMsg(CustomMessage message) {
         color: primaryColor,
         importance: Importance.max,
         priority: Priority.high,
+        groupKey: 'verified_notifications',
         ticker: 'ticker',
+        styleInformation: const BigTextStyleInformation(''),
       ),
     ),
     payload: jsonEncode({

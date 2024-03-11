@@ -226,27 +226,32 @@ class _HelpFormState extends State<_HelpForm> {
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: BaseButton(
                   key: UniqueKey(),
-                  onTap: () async {
+                  onTap: () {
                     try {
                       ///
-                      final files = await GalleryAssetPicker.pick(
+                      GalleryAssetPicker.pick(
                         context,
                         maxCount: MAX_FILES_UPLOAD,
                         requestType: RequestType.all,
-                      );
+                      ).then((files) async {
+                        print('MEDIA: ${files.length}');
 
-                      print('MEDIA: ${files.length}');
+                        ///
+                        return await Future.wait(files.map((f) async => await convertToFormData(await f.file)));
+                      }).then((media) {
+                        ///
+                        if (mounted) {
+                          setState(() {
+                            selectedMedia = media.where((i) => i != null).cast<MultipartFile>().toList();
+                          });
+                        }
 
-                      ///
-                      var media = await Future.wait(files.map((f) async => await convertToFormData(await f.file)));
-
-                      ///
-                      if (mounted) {
-                        setState(() {
-                          selectedMedia = media.where((i) => i != null).cast<MultipartFile>().toList();
-                        });
-                      }
-
+                        context.read<StoreBloc>().add(StoreEvent.uploadFiles(selectedMedia));
+                      }).catchError((err) {
+                        print('Error at help images upload: $err');
+                      }, test: (_) {
+                        return true;
+                      });
                       ///
                     } catch (e) {
                       print(e);
@@ -278,9 +283,8 @@ class _HelpFormState extends State<_HelpForm> {
                         final user = context.read<StoreBloc>().state.userProfileData;
 
                         ///
-                        context.read<StoreBloc>().add(StoreEvent.uploadFiles(selectedMedia));
 
-                        Future.delayed(const Duration(milliseconds: 1300)).then((_) {
+                        Future.delayed(const Duration(seconds: 1)).then((_) {
                           final helpRequest = HelpTicket(
                             id: const Uuid().v4(),
                             profileId: user?.id,

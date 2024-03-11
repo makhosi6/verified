@@ -293,60 +293,61 @@ class _AppRootState extends State<AppRoot> {
             debugShowCheckedModeBanner: false,
             theme: theme,
             title: displayAppName,
-            home: BlocBuilder<StoreBloc, StoreState>(
+            home: BlocListener<StoreBloc, StoreState>(
               bloc: context.read<StoreBloc>()
                 ..add(StoreEvent.addUser(snapshot.data))
                 ..add(StoreEvent.getAllHistory(userId))
                 ..add(StoreEvent.getUserProfile(userId))
                 ..add(StoreEvent.getWallet(userWalletId)),
-              builder: (context, state) {
-                return BlocListener<StoreBloc, StoreState>(
-                  listener: (context, listenerState) {
-                    if (listenerState.userProfileDataLoading ||
-                        listenerState.getHelpDataLoading ||
-                        listenerState.walletDataLoading ||
-                        listenerState.historyDataLoading ||
-                        listenerState.promotionDataLoading ||
-                        listenerState.uploadsDataLoading ||
-                        listenerState.ticketsDataLoading) {
-                      showAppLoader(context);
-                    } else {
-                      hideAppLoader();
+              listener: (context, state) async {
+                if (state.userProfileData is! UserProfile && snapshot.data != null) {
+                  context.read<StoreBloc>().add(StoreEvent.addUser(snapshot.data));
+                  if (kDebugMode) exit(999);
+                }
+
+                if (state.userProfileDataLoading ||
+                    state.getHelpDataLoading ||
+                    state.walletDataLoading ||
+                    state.historyDataLoading ||
+                    state.promotionDataLoading ||
+                    state.uploadsDataLoading ||
+                    state.ticketsDataLoading) {
+                  showAppLoader(context);
+                } else {
+                  hideAppLoader();
+                }
+                if (state.userProfileData != null &&
+                    (state.userProfileData?.notificationToken != token) &&
+                    (token != null)) {
+                  Future.delayed(const Duration(seconds: 5), () {
+                    try {
+                      context.read<StoreBloc>().add(
+                            StoreEvent.updateUserProfile(
+                              state.userProfileData!.copyWith(
+                                notificationToken: token,
+                              ),
+                            ),
+                          );
+                    } catch (e) {
+                      print('Error while trying to add a token,  $e');
                     }
-                    if (listenerState.userProfileData != null &&
-                        (listenerState.userProfileData?.notificationToken != token) &&
-                        (token != null)) {
-                      Future.delayed(const Duration(seconds: 5), () {
-                        try {
-                          context.read<StoreBloc>().add(
-                                StoreEvent.updateUserProfile(
-                                  listenerState.userProfileData!.copyWith(
-                                    notificationToken: token,
-                                  ),
-                                ),
-                              );
-                        } catch (e) {
-                          print('Error while trying to add a token,  $e');
-                        }
-                      });
-                    }
-                  },
-                  child: BlocListener<AuthBloc, AuthState>(
-                    listener: (context, state) {
-                      if (state.processing) {
-                        showAppLoader(context);
-                      } else {
-                        hideAppLoader();
-                      }
-                    },
-                    child: RefreshIndicator(
-                      key: _refreshIndicatorKey,
-                      onRefresh: () => Future<void>.delayed(const Duration(seconds: 2)),
-                      child: const HomePage(),
-                    ),
-                  ),
-                );
+                  });
+                }
               },
+              child: BlocListener<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state.processing) {
+                    showAppLoader(context);
+                  } else {
+                    hideAppLoader();
+                  }
+                },
+                child: RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: () => Future<void>.delayed(const Duration(seconds: 2)),
+                  child: const HomePage(),
+                ),
+              ),
             ),
           );
         });
@@ -365,7 +366,7 @@ void showAppLoader(BuildContext context) {
   Loader.show(
     context,
     overlayFromBottom: 80,
-    overlayColor: const Color.fromARGB(44, 0, 0, 0),
+    overlayColor: const Color.fromARGB(130, 0, 0, 0),
     progressIndicator: SizedBox(
         height: 50,
         width: 50,

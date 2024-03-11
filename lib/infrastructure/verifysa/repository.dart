@@ -22,12 +22,11 @@ class VerifySaRepository implements IVerifySaRepository {
     required String clientId,
   }) async {
     try {
-      final headers = {'Content-Type': 'multipart/form-data', 'Accept': 'application/json'};
-      final data = FormData.fromMap({
-        'api_key': verifySaApiKey,
+      final headers = {'Content-Type': 'application/json'};
+      final data = {
         'contact_number': phoneNumber,
         'reason': reason.value,
-      });
+      };
 
       final response = await httpClient.post(
         '/contact_enquiry?client=$clientId',
@@ -54,12 +53,11 @@ class VerifySaRepository implements IVerifySaRepository {
     required String clientId,
   }) async {
     try {
-      final headers = {'Content-Type': 'multipart/form-data', 'Accept': 'application/json'};
-      final data = FormData.fromMap({
-        'api_key': verifySaApiKey,
+      final headers = {'Content-Type':'application/json'};
+      final data = {
         'id_number': idNumber,
         'reason': reason.value,
-      });
+      };
 
       final response = await httpClient.post(
         '/said_verification?client=$clientId',
@@ -89,13 +87,12 @@ class VerifySaRepository implements IVerifySaRepository {
         'Content-Type': 'multipart/form-data',
         'Accept': 'application/json',
       };
-      final data = FormData.fromMap(
+      final data = 
         {
           'api_key': verifySaApiKey,
           'id_number': idNumber,
           'enquiry_reason': reason.value,
-        },
-      );
+        };
 
       final response = await httpClient.post(
         '/home_affairs_id_photo?client=$clientId',

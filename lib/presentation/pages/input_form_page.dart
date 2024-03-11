@@ -293,7 +293,7 @@ List<Widget> getWidgets(BuildContext context, {required FormType formType, requi
                 ..add(const VerifySaEvent.apiHealthCheck())
                 ..add(
                   VerifySaEvent.verifyIdNumber(
-                    idNumber: _globalKeyInputPage.currentState!.idOrPhoneNumber!,
+                    idNumber: (_globalKeyInputPage.currentState?.idOrPhoneNumber ?? '').replaceAll(' ', ''),
                     reason: EnquiryReason.fromString(_globalKeyInputPage.currentState?.reason),
                     clientId: user?.id ?? user?.profileId ?? 'system',
                   ),
@@ -304,7 +304,7 @@ List<Widget> getWidgets(BuildContext context, {required FormType formType, requi
                 ..add(const VerifySaEvent.apiHealthCheck())
                 ..add(
                   VerifySaEvent.contactTracing(
-                    phoneNumber: _globalKeyInputPage.currentState!.idOrPhoneNumber!,
+                    phoneNumber: (_globalKeyInputPage.currentState?.idOrPhoneNumber ?? '').replaceAll(' ', ''),
                     reason: EnquiryReason.fromString(_globalKeyInputPage.currentState?.reason),
                     clientId: user?.id ?? user?.profileId ?? 'system',
                   ),

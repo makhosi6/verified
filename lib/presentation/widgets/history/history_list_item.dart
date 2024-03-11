@@ -16,12 +16,14 @@ class TransactionListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget leading;
-
-    if (data.type == 'credit') {
+    final type = data.type, subtype = data.subtype;
+    if (type == 'credit' || subtype == 'credit') {
       leading = topUpLeadingIcon;
-    } else if (data.type == 'promo') {
+    } else if (type == 'promo' || subtype == 'promo') {
       leading = freeCreditIcon;
-    } else if (data.type == 'debit') {
+    } else if (type == 'debit' || subtype == 'debit') {
+      leading = spendLeadingIcon;
+    } else if (type == 'spend' || subtype == 'spend') {
       leading = spendLeadingIcon;
     } else {
       leading = leadingIcon;
@@ -88,7 +90,8 @@ class TransactionListItem extends StatelessWidget {
               ),
             ],
           ),
-          trailing: (data.type == 'promo')
+          // trailing: (type == 'promo' || type == 'topup') || (subtype == 'promo' || subtype == 'topup')
+          trailing: (type == 'promo') || (subtype == 'promo')
               ? Container(
                   padding: const EdgeInsets.all(4.0),
                   decoration: BoxDecoration(
@@ -97,7 +100,7 @@ class TransactionListItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Text(
-                    data.type == 'promo' ? 'Promo' : 'Info',
+                    (type == 'promo' || subtype == 'promo') ? 'Promo' : 'Info', // ((type == 'topup' || subtype == 'topup') ? 'Refund' : 'Info'),
                     style: GoogleFonts.dmSans(color: primaryColor),
                   ),
                 )
@@ -119,7 +122,7 @@ var freeCreditIcon = _LeadingIcon(
 );
 var topUpLeadingIcon = _LeadingIcon(
   key: UniqueKey(),
-  icon: Icons.credit_card_outlined,
+  icon: Icons.add_card_rounded,
   decoratorIcon: Icons.check,
   decoratorIconBgColor: primaryColor,
   bgColor: darkerPrimaryColor,
@@ -127,16 +130,17 @@ var topUpLeadingIcon = _LeadingIcon(
 
 var spendLeadingIcon = _LeadingIcon(
   key: UniqueKey(),
-  icon: Icons.credit_card,
+  discountIndictor: false,
+  icon: Icons.confirmation_num_rounded,
   decoratorIcon: Icons.minimize,
   withDecorator: false,
   decoratorIconBgColor: neutralYellow,
-  bgColor: neutralYellow,
+  bgColor: primaryColor,
 );
 
 var leadingIcon = _LeadingIcon(
   key: UniqueKey(),
-  icon: Icons.south_america_outlined,
+  icon: Icons.add_card_rounded,
   decoratorIcon: Icons.minimize,
   withDecorator: false,
   decoratorIconBgColor: neutralYellow,
@@ -194,7 +198,7 @@ class ConfidenceBanner extends StatelessWidget {
             ),
           ),
           title: Text(
-            r'54%',
+            r'100%',
             style: GoogleFonts.ibmPlexSans(
               fontSize: 28.0,
               fontStyle: FontStyle.normal,

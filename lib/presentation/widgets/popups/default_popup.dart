@@ -8,8 +8,8 @@ Future showDefaultPopUp(
   required String subtitle,
   required String confirmBtnText,
   required String declineBtnText,
-  required void Function() onConfirm,
-  required void Function() onDecline,
+  void Function()? onConfirm,
+  void Function()? onDecline,
 }) =>
     showDialog(
       context: context,
@@ -33,13 +33,13 @@ Future showDefaultPopUp(
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: onDecline,
             child: Text(
               declineBtnText,
             ),
           ),
           OutlinedButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: onConfirm,
             style: ButtonStyle(
               side: MaterialStatePropertyAll(
                 BorderSide(

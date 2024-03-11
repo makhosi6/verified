@@ -146,6 +146,16 @@ services:
     networks:
       - local_bridge
 
+  whatsapp_messaging_service:
+    image: makhosi/whatsapp_hook:3.0.minimal
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    volumes:
+      - ./apps/whatsapp_messaging/db:/app/db
+    restart: unless-stopped
+    networks:
+      - local_bridge
 
 volumes:
   emqx1_data:

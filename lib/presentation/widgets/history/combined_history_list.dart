@@ -159,5 +159,10 @@ HistoryListData sortByDate(List<TransactionHistory> items) {
     }
   }
 
+  historyList.today.sort((a, b) => (b.timestamp ?? 0).toInt().compareTo((a.timestamp ?? 0).toInt()));
+  historyList.yesterday.sort((a, b) => (b.timestamp ?? 0).toInt().compareTo((a.timestamp ?? 0).toInt()));
+  historyList.thisMonth.sort((a, b) => (b.timestamp ?? 0).toInt().compareTo((a.timestamp ?? 0).toInt()));
+  historyList.older.sort((a, b) => (b.timestamp ?? 0).toInt().compareTo((a.timestamp ?? 0).toInt()));
+
   return historyList;
 }

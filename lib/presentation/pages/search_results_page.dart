@@ -188,7 +188,7 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
 
         Map<String, dynamic>? results = state.verifyIdData?.verification?.toJson();
         print('STATE \n\n$results\n: $state');
-        final apiHealthStatus = context.watch<StoreBloc>().state.resourceHealthStatus;
+        final apiHealthStatus = context.read<StoreBloc>().state.resourceHealthStatus;
         return Center(
           child: SizedBox(
             child: CustomScrollView(

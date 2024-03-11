@@ -6,7 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_asset_picker/gallery_asset_picker.dart';
 import 'package:verified/presentation/theme.dart';
 
-selectMediaConfig() => GalleryAssetPicker.initialize(GalleryConfig(
+
+dynamic selectMediaConfig() => GalleryAssetPicker.initialize(GalleryConfig(
       enableCamera: true,
       crossAxisCount: 3,
       colorScheme: ColorScheme.light(primary: primaryColor),

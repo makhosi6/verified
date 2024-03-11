@@ -21,6 +21,7 @@ function sendPushNotifications({ token, title, body }) {
   const message = {
     to: token,
     collapseKey: "verified_notifications_0234",
+    collapse_key: "verified_notifications_9211",
     notification: {
       title,
       body,
