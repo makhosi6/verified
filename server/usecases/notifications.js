@@ -1,13 +1,13 @@
-let FCM = require("fcm-node");
-const request = require('request')
-const fetch = (...args) => import('node-fetch').then(({
-    default: fetch
-}) => fetch(...args));
-let serverKey = process.env.FB_SERVER_TOKEN || "FB_SERVER_TOKEN";
-let fcm = new FCM(serverKey);
+const FCM = require("fcm-node");
+const logger = require("../packages/logger");
+const serverKey = process.env.FB_SERVER_TOKEN || "FB_SERVER_TOKEN";
+const fcm = new FCM(serverKey);
+const HOST = process.env.HOST || "0.0.0.0";
+const PORT = process.env.PORT || "9092";
+const fetch = (...args) =>
+  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 /// https://github.com/jlcvp/fcm-node
-console.log(serverKey)
 /**
  * Represents a payment event object.
  * @typedef {Object} Notification
@@ -17,11 +17,10 @@ console.log(serverKey)
  * @property {string} body - The body of the FB notification.
  */
 /**
- * 
- * @param {Notification} notification 
+ *
+ * @param {Notification} notification
  */
 function sendPushNotifications({ token, title, body }) {
-
   const message = {
     to: token,
     collapseKey: "verified_notifications_0234",
@@ -31,7 +30,9 @@ function sendPushNotifications({ token, title, body }) {
       body,
     },
   };
-console.log({message});
+  console.log({
+    message,
+  });
   fcm.send(message, function (err, response) {
     if (err) {
       console.log("Something has gone wrong!", err);
@@ -41,30 +42,101 @@ console.log({message});
   });
 }
 /**
- * @param {Notification} notification 
+ * send a email to admin/ help ticket
+ * @param {Object} helpRequest
  */
-function sendEmailNotifications({ email, title, body }){
+function sendHelpEmailNotifications(helpRequest) {
+  try {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", "Bearer TOKEN");
 
+    const options = {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(helpRequest),
+    };
+
+    fetch("https://byteestudio.com/api/send-help-ticket", options)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.error(error));
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function sendWhatsappMessage(data) {
-  const host = (process.env.NODE_ENV === "production" ? `whatsapp_messaging_service:9092`: "localhost:9092")
-  let options = {
-    'method': 'POST',
-    'url': `http://${host}/send`,
-    'headers': {
-      'x-nonce': "NONCE",
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer TOKEN'
-    },
-    body: JSON.stringify(data)
+  try {
+    const host =
+      process.env.NODE_ENV === "production"
+        ? `whatsapp_messaging_service:9092`
+        : "localhost:9092";
+    let options = {
+      method: "POST",
+      url: `http://${host}/send`,
+      headers: {
+        "x-nonce": "NONCE",
+        "Content-Type": "application/json",
+        Authorization: "Bearer TOKEN",
+      },
+      body: JSON.stringify(data),
+    };
+    request(options, function (error, response) {
+      if (error) {
+        sendWhatsappSend(data);
+        throw new Error(error);
+      }
+    });
+  } catch (error) {
+    logger.warn(error.toString(), error)
+  }
+}
 
-  };
-  request(options, function (error, response) {
-    if (error) throw new Error(error);
-  });
+/**
+ * send a successful refund message
+ * @param {Object} helpRequest
+ */
+function sendSuccessfulRefundEmailNotifications(helpRequest) { }
+/**
+ * send a thanks for payment email
+ * @param {Object} helpRequest
+ */
+function sendSuccessfulPaymentEmailNotifications(helpRequest) { }
+
+/**
+ *
+ * @param {object} helpRequest
+ */
+function sendWhatsappSend(helpRequest) {
+  try {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", "Bearer TOKEN");
+
+    const options = {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(helpRequest),
+    };
+    const host =
+      (process.env.NODE_ENV === "production"
+        ? `whatsapp_messaging_service`
+        : `${HOST}`) + `:9092`;
+    fetch(`https://${host}/send`, options)
+      .then((response) => response.json())
+      .then((result) => logger.warn("SEND WA to ADMIN", result))
+      .catch((error) => console.error(error));
+  } catch (error) {
+    logger.error(error.message, error);
+  }
 }
 
 module.exports = {
-  sendPushNotifications, sendEmailNotifications, sendWhatsappMessage
+  sendPushNotifications,
+  sendWhatsappSend,
+  sendWhatsappMessage,
+  sendSuccessfulPaymentEmailNotifications,
+  sendSuccessfulRefundEmailNotifications,
+  sendHelpEmailNotifications,
 };

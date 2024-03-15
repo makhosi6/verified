@@ -6,7 +6,8 @@ const fetch = (...args) => import('node-fetch').then(({
     default: fetch
 }) => fetch(...args));
 const { getWallet, getUserProfile } = require("./store");
-const { sendEmailNotifications, sendPushNotifications } = require("./notifications");
+const { sendEmailNotifications, sendPushNotifications, sendSuccessfulPaymentEmailNotifications, sendSuccessfulRefundEmailNotifications } = require("./notifications");
+const logger = require("../packages/logger");
 const PAYMENTS_TOKEN =
     process.env.PAYMENTS_TOKEN || "sk_test_1d9ae04aBLnrM8nfaf14ba5ac783";
 const HOST = process.env.HOST || "0.0.0.0";
@@ -211,7 +212,7 @@ function handlePaymentEvents(req, res) {
         sendNotification(paymentInformation.payload, eventTypes["refund.succeeded"]);
     } else {
         // Unknown payment event
-        console.log("COLOR", "Unknown payment event: " + paymentInformation?.type);
+       logger.error("Unknown payment event: " + paymentInformation?.type)
     }
 
     // Record transaction and send response
@@ -234,16 +235,17 @@ async function sendNotification(payload, notificationType) {
             console.log("USER NOTIFICATION TOKEN NOT FOUND => ", user.id)
             return;
         }
-///
+        ///
         sendPushNotifications({
             token: user?.notificationToken,
             ...notification
         })
         ///
-       sendEmailNotifications({
-        email: user?.email,
-        ...notification
-       })
+        if (notificationType === "refund.succeeded") {
+            sendSuccessfulRefundEmailNotifications(payload);
+        } else if (notificationType === "payment.succeeded") {
+            sendSuccessfulPaymentEmailNotifications(payload);
+        }
 
     } catch (error) {
         console.log("NOTIFiCATION ERROR => ", error)
