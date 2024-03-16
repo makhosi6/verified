@@ -59,12 +59,12 @@ class _SearchOptionsPageContent extends StatelessWidget {
               actions: [
                 BlocListener<AuthBloc, AuthState>(
                   listener: (context, state) {
-                    if (state.isLoggedIn) {
-                      Navigator.of(context).pop();
-                      print('===========EXIT===============');
-                      exit(0);
-                      // navigate(context, page: const SearchResultsPage(type: f,));
-                    }
+                    // if (state.isLoggedIn) {
+                    //   Navigator.of(context).pop();
+                    //   print('===========EXIT===============');
+                    //   exit(0);
+                    //   // navigate(context, page: const SearchResultsPage(type: f,));
+                    // }
                   },
                   child: ActionButton(
                     key: const Key('go-to-account-btn'),

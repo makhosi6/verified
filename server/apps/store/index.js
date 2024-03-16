@@ -42,7 +42,7 @@ const {
   addIdentifiers,
   addTimestamps,
   lastLoginHook,
-  addWalletHook,
+  onCreateAccountOrLoginHook,
   updateOrPutHook
 } = require("../../middleware/store");
 const { notifyAdmin } = require("../../usecases/admin");
@@ -69,7 +69,7 @@ server.use(authorization);
 server.use(authenticate);
 server.use(addTimestamps);
 server.use(addIdentifiers);
-server.use(addWalletHook);
+server.use(onCreateAccountOrLoginHook);
 server.use(archiveOnDelete);
 server.use(updateOrPutHook);
 server.disable('x-powered-by');

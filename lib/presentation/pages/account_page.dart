@@ -12,12 +12,10 @@ import 'package:verified/application/appbase/appbase_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
-import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/native_scripts/main.dart';
-import 'package:verified/presentation/pages/add_payment_method_page.dart';
 import 'package:verified/presentation/pages/loading_page.dart';
 import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
@@ -290,7 +288,7 @@ class AccountPageContent extends StatelessWidget {
                                                     ..pop()
                                                     ..initState();
 
-                                                  Future.delayed(const Duration(milliseconds: 600),
+                                                  Future.delayed(const Duration(milliseconds: 700),
                                                       () => VerifiedAppNativeCalls.restartApp());
                                                 }
 
@@ -318,8 +316,10 @@ class AccountPageContent extends StatelessWidget {
                                                     ..pop()
                                                     ..initState();
 
-                                                  Future.delayed(const Duration(milliseconds: 600),
-                                                      () => VerifiedAppNativeCalls.restartApp());
+                                                  Future.delayed(
+                                                    const Duration(milliseconds: 700),
+                                                    () => VerifiedAppNativeCalls.restartApp(),
+                                                  );
                                                 }
 
                                                 /// Show Terms of Use
@@ -579,7 +579,7 @@ class _ProfileName extends StatelessWidget {
                             context,
                             title: 'Update Profile Picture?',
                             subtitle: 'Are you sure you want to update your profile picture?',
-                            confirmBtnText: "Yes",
+                            confirmBtnText: 'Yes',
                             declineBtnText: 'No',
                             onConfirm: () => Navigator.pop(context, true),
                             onDecline: () => Navigator.pop(context, false),

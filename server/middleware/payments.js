@@ -2,7 +2,6 @@ const crypto = require('crypto');
 
 
 const paymentsHook = (req, res, next) => {
-    console.log("payments hook");
     next()
 }
 

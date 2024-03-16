@@ -67,6 +67,10 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           ///
           getUserProfile: (e) async {
             if (e.userId.isEmpty) return;
+
+            /// it okay to get user profile multiple times
+            // if (state.userProfileData != null) return;
+
             emit(state.copyWith(
               userProfileError: null,
               userProfileHasError: false,
@@ -97,9 +101,17 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 ),
               );
 
-              ///
-              add(StoreEvent.getAllHistory(data.profileId ?? ''));
-              add(StoreEvent.getWallet(data.walletId ?? ''));
+              /// get history if is empty
+              if (state.historyData.isEmpty && state.historyDataLoading == false) {
+                add(StoreEvent.getAllHistory(data.profileId ?? ''));
+              }
+
+              /// get wallet if is empty
+              if (state.walletData == null && state.walletDataLoading == false) {
+                add(StoreEvent.getWallet(data.walletId ?? ''));
+              }
+
+              /// update local storage
               LocalUser.setUser(data);
             });
             return null;
@@ -216,6 +228,9 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           },
           getAllTickets: (e) async {
             if (e.userId.isEmpty) return;
+            // get only is local state is empty
+            if (state.ticketsData.isNotEmpty || state.ticketsDataLoading == true) return;
+
             emit(state.copyWith(
               ticketsError: null,
               ticketsHasError: false,
@@ -324,6 +339,9 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           },
           getAllHistory: (e) async {
             if (e.userId.isEmpty) return;
+            // get only is local state is empty
+            if (state.historyData.isNotEmpty || state.historyDataLoading == true) return;
+
             emit(state.copyWith(
               historyError: null,
               historyHasError: false,
@@ -463,6 +481,9 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           ///
           getWallet: (e) async {
             if (e.resourceId.isEmpty) return;
+            // get only is local state is empty
+            if (state.walletData != null || state.walletDataLoading == true) return;
+
             emit(
               state.copyWith(
                 walletError: null,

@@ -9,7 +9,6 @@ const PORT = process.env.PORT || process.env.PORT || 5400;
 const HOST = process.env.HOST || "0.0.0.0";
 
 const analytics = (req, res, next) => {
-  console.log("analytics hook");
   const IP = "";
   const time = Math.floor(Date.now() / 1000);
   const sessionId = "";
@@ -19,17 +18,15 @@ const analytics = (req, res, next) => {
 };
 
 const security = (req, res, next) => {
-  console.log("Security hook");
   next();
 };
 const authenticate = (req, res, next) => {
-  console.log("authenticate hook");
   next();
 };
 
 const authorization = (req, res, next) => {
   try {
-    console.log("authorization hook");
+
     let isAuthorized =
       `${req.headers?.authorization}`.includes("TOKEN") ||
       `${req.headers?.authorization}`.includes("TOKEN_1") ||

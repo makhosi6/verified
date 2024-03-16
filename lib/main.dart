@@ -94,7 +94,7 @@ void main() async {
   );
 
   ///
-  if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('192.168.0.132', 9099);
+  if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('0.0.0.0', 9099);
 
   runZonedGuarded(() async {
     ///
@@ -300,10 +300,11 @@ class _AppRootState extends State<AppRoot> {
                 ..add(StoreEvent.getUserProfile(userId))
                 ..add(StoreEvent.getWallet(userWalletId)),
               listener: (context, state) async {
-                if (state.userProfileData is! UserProfile && snapshot.data != null) {
-                  context.read<StoreBloc>().add(StoreEvent.addUser(snapshot.data));
-                  if (kDebugMode) exit(999);
-                }
+                // if (state.userProfileData is! UserProfile && snapshot.data != null) {
+                //   context.read<StoreBloc>().add(StoreEvent.addUser(snapshot.data));
+                //   print('===========EXIT===============');
+                //   if (kDebugMode) exit(0);
+                // }
 
                 if (state.userProfileDataLoading ||
                     state.getHelpDataLoading ||

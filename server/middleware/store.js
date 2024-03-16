@@ -76,15 +76,20 @@ const lastLoginHook = (req, res, next) => {
 };
 
 /**
- *
+ * create a wallet and send a welcome email
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  */
-const addWalletHook = (req, res, next) => {
+const onCreateAccountOrLoginHook = async (req, res, next) => {
   const walletId = uuidv4();
   const method = req.method.toUpperCase();
-  const storedUser = getUserProfile(req?.body?.id || req?.body?.profileId || "")
+  const storedUser = await getUserProfile(req?.body?.id || req?.body?.profileId || "");
+  if (!(storedUser?.id)) {
+    // send a welcome email
+  }
+
+  console.log({ method, walletId, storedUser});
 
   /// also create a wallet on account creation
   if (method == "POST" && req.url.includes("profile/resource")) {
@@ -92,6 +97,8 @@ const addWalletHook = (req, res, next) => {
     req.body["walletId"] = storedUser?.walletId || walletId;
 
     console.log(JSON.stringify({ PROFILE: req.body }, null, 2));
+
+    
     if (!(storedUser?.walletId)) global.queue.push(() =>
       addWallet({
         id: walletId,
@@ -251,6 +258,6 @@ module.exports = {
   addIdentifiers,
   lastLoginHook,
   updateLastSeen,
-  addWalletHook,
+  onCreateAccountOrLoginHook,
   updateOrPutHook,
 };

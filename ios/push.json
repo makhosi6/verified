@@ -3,7 +3,47 @@
         "alert": {
             "body": "Account credited with ZAR 120 on 23 March, 2024, for your next adventure with us.🎉",
             "title": "A successful top-up!"
-            
+
         }
+    },
+    "user":
+
+    {
+        "actualName": "Chicken Peach",
+        "active": true,
+        "avatar": "https://verified.byteestudio.com/media/1710620582248_642785569_9dc136b9991cb5c559321f40c71a9d30_exif_compressed.jpg",
+        "dataProvider": "(google.com)",
+        "metadata": {
+            "creationTime": 1710599762,
+            "lastSignInTime": 1710620069
+        },
+        "softDeleted": false,
+        "displayName": "Chicken Peach",
+        "email": "chicken.peach.350@example.com",
+        "id": "SY0pfuEfw8Xm91jYxB896FkKpVyo",
+        "name": "Chicken Peach",
+        "phone": null,
+        "notificationToken": "frCSMzgZZkQNivbgFxZfzw:APA91bEXfFbcPKXO5hVuciHCfWuLZ3k1dRly1aQ_ZvqjcLrqm1Zs5z4HSkAvalqpLpwWWpUkIoNNuVbxMLi4kDT45rbo-Fw2oIKQf5VuqS5Hv8Nv4YQqdRaluDVY5Xs81n1u7Ib9Mnkz",
+        "profileId": "SY0pfuEfw8Xm91jYxB896FkKpVyo",
+        "walletId": "c486abfe-981f-4b2c-88d5-b153b00769a7",
+        "historyId": null,
+        "last_login_at": null,
+        "account_created_at": 1710620073,
+        "accountCreatedAt": 1710620073,
+        "updatedAt": 1710620586,
+        "createdAt": 1710620073
+    },
+    "wallet": {
+        "id": "c486abfe-981f-4b2c-88d5-b153b00769a7",
+        "profileId": "SY0pfuEfw8Xm91jYxB896FkKpVyo",
+        "balance": 134009,
+        "createdAt": 1710620073,
+        "updatedAt": 1710620432,
+        "deletedAt": null,
+        "isoCurrencyCode": "US",
+        "promotions": [],
+        "accountHolderName": "Frank Jameson",
+        "accountName": "----4511",
+        "expDate": "11/32"
     }
 }
