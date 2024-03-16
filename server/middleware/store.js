@@ -5,6 +5,7 @@ const request = require("request");
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const { Request, Response, NextFunction } = require("express");
+const { getUserProfile } = require("../usecases/store");
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "5400";
 
@@ -15,23 +16,24 @@ const PORT = process.env.PORT || "5400";
  * @param {NextFunction} next
  */
 const addTimestamps = (req, res, next) => {
-  console.log("add_timestamp hook");
   const METHOD = req.method.toUpperCase();
+
   if (METHOD === "POST") {
+    if (req.url.includes("profile/resource")) {
+      req.body["account_created_at"] = Math.floor(Date.now() / 1000);
+      req.body["accountCreatedAt"] = Math.floor(Date.now() / 1000);
+    }
     req.body["updatedAt"] = Math.floor(Date.now() / 1000);
     req.body["createdAt"] = Math.floor(Date.now() / 1000);
   }
-  if (req.url.includes("profile/resource")) {
-    req.body["account_created_at"] = Math.floor(Date.now() / 1000);
-    req.body["accountCreatedAt"] = Math.floor(Date.now() / 1000);
-  }
+
   if (METHOD == "PUT") {
     req.body["updatedAt"] = Math.floor(Date.now() / 1000);
   }
+
+
   if (METHOD == "DELETE") {
-    // req.body["deletedAt"] = Math.floor(Date.now() / 1000)
-  } else {
-    // res.body.last_login_at = Math.floor(Date.now() /1000)
+    req.body["deletedAt"] = Math.floor(Date.now() / 1000)
   }
   next();
 };
@@ -43,7 +45,6 @@ const addTimestamps = (req, res, next) => {
  * @param {NextFunction} next
  */
 const addIdentifiers = (req, res, next) => {
-  console.log("add_IDs hook   " + req.url);
   const METHOD = req.method.toUpperCase();
   // Check if the request is a POST request is not profile or wallet, then add a primary unique identifier
   if (
@@ -54,8 +55,6 @@ const addIdentifiers = (req, res, next) => {
   ) {
     req.body.id = uuidv4();
   }
-
-  console.table({ URL: req.url, ...req.body });
   next();
 };
 
@@ -85,14 +84,15 @@ const lastLoginHook = (req, res, next) => {
 const addWalletHook = (req, res, next) => {
   const walletId = uuidv4();
   const method = req.method.toUpperCase();
+  const storedUser = getUserProfile(req?.body?.id || req?.body?.profileId || "")
 
   /// also create a wallet on account creation
   if (method == "POST" && req.url.includes("profile/resource")) {
     /// add wallet to profile
-    req.body["walletId"] = walletId;
+    req.body["walletId"] = storedUser?.walletId || walletId;
 
     console.log(JSON.stringify({ PROFILE: req.body }, null, 2));
-    global.queue.push(() =>
+    if (!(storedUser?.walletId)) global.queue.push(() =>
       addWallet({
         id: walletId,
         profileId: req.body.id,

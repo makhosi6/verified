@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -560,8 +562,12 @@ class _ProfileName extends StatelessWidget {
                           print('IMAGES: ${images.length}');
 
                           // Convert the picked images to a list of FormData objects.
-                          final files =
-                              await Future.wait(images.map((f) async => await convertToFormData(await f.file)));
+                          final files = await Future.wait(images.map((f) async {
+                            final filePath = await f.getMediaUrl();
+                            final rawFile = (await f.file) ?? File(filePath ?? '');
+                            final compressedImage = await compressForProfilePicture(rawFile);
+                            return await convertToFormData(compressedImage);
+                          }));
 
                           // Filter out any null items from the list and cast to a non-nullable type.
                           return files.whereType<MultipartFile>().toList();

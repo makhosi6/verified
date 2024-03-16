@@ -52,13 +52,21 @@ function sendHelpEmailNotifications(helpRequest) {
     headers.append("Content-Type", "application/json");
     headers.append("Authorization", "Bearer TOKEN");
 
-    const options = {
+
+    // a polyfill for it would be:
+    AbortSignal.timeout ??= function timeout(ms) {
+      const ctrl = new AbortController()
+      setTimeout(() => ctrl.abort(), ms)
+      return ctrl.signal
+    }
+
+    fetch("https://byteestudio.com/api/send-help-ticket", {
       method: "POST",
       headers: headers,
       body: JSON.stringify(helpRequest),
-    };
-
-    fetch("https://byteestudio.com/api/send-help-ticket", options)
+      //abort in 2.5 minutes
+      signal: AbortSignal.timeout(150000)
+    })
       .then((response) => response.text())
       .then((result) => console.log(result))
       .catch((error) => console.error(error));
