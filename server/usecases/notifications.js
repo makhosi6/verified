@@ -53,7 +53,7 @@ function sendHelpEmailNotifications(helpRequest) {
     headers.append("Authorization", "Bearer TOKEN");
 
 
-    // a polyfill for it would be:
+    // a polyfill
     AbortSignal.timeout ??= function timeout(ms) {
       const ctrl = new AbortController()
       setTimeout(() => ctrl.abort(), ms)

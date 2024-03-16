@@ -61,7 +61,7 @@ async function getUserProfile(id) {
     };
 
     const response = await fetch(
-      `http://${host}/api/v1/profile/resource/${id}`,
+      `http://${host}/api/v1/profile/resource/${id}?role=system`,
       requestOptions
     );
 
