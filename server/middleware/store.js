@@ -84,7 +84,7 @@ const lastLoginHook = (req, res, next) => {
 const onCreateAccountOrLoginHook = async (req, res, next) => {
   const walletId = uuidv4();
   const method = req.method.toUpperCase();
-  const storedUser = await getUserProfile(req?.body?.id || req?.body?.profileId || "");
+  const storedUser = await getUserProfile(req?.body?.id || req?.body?.profileId || "null");
   if (!(storedUser?.id)) {
     // send a welcome email
   }
