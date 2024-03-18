@@ -84,21 +84,22 @@ const lastLoginHook = (req, res, next) => {
 const onCreateAccountOrLoginHook = async (req, res, next) => {
   const walletId = uuidv4();
   const method = req.method.toUpperCase();
-  const storedUser = await getUserProfile(req?.body?.id || req?.body?.profileId || "null");
-  if (!(storedUser?.id)) {
-    // send a welcome email
-  }
-
-  console.log({ method, walletId, storedUser});
 
   /// also create a wallet on account creation
   if (method == "POST" && req.url.includes("profile/resource")) {
+    ///
+    const storedUser = await getUserProfile(req?.body?.id || req?.body?.profileId);
+    if (!(storedUser?.id)) {
+      // send a welcome email
+    }
+
+    console.log({ method, walletId, storedUser });
     /// add wallet to profile
     req.body["walletId"] = storedUser?.walletId || walletId;
 
     console.log(JSON.stringify({ PROFILE: req.body }, null, 2));
 
-    
+
     if (!(storedUser?.walletId)) global.queue.push(() =>
       addWallet({
         id: walletId,

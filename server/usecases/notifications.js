@@ -54,9 +54,7 @@ function sendHelpEmailNotifications(helpRequest) {
 
 
     // 
-    // const abortSignal = new AbortSignal();
-
-    // abortSignal.timeout  = function timeout(ms) {
+    // AbortSignal.timeout ??= function timeout(ms) {
     //   const ctrl = new AbortController()
     //   setTimeout(() => ctrl.abort(), ms)
     //   return ctrl.signal
@@ -67,7 +65,7 @@ function sendHelpEmailNotifications(helpRequest) {
       headers: headers,
       body: JSON.stringify(helpRequest),
       //abort in 2.5 minutes
-      // signal: abortSignal.timeout(150000)
+      // signal: AbortSignal.timeout(150000)
     })
       .then((response) => response.text())
       .then((result) => console.log(result))

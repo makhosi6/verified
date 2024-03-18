@@ -1,7 +1,11 @@
 const request = require("request");
-const { generateNonce } = require("../nonce.source");
+const {
+  generateNonce
+} = require("../nonce.source");
 const fetch = (...args) =>
-  import("node-fetch").then(({ default: fetch }) => fetch(...args));
+  import("node-fetch").then(({
+    default: fetch
+  }) => fetch(...args));
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "5400";
 
@@ -36,7 +40,9 @@ async function getWallet(id) {
   } catch (error) {
     console.log(error);
 
-    return { id };
+    return {
+      id
+    };
   }
 }
 
@@ -46,6 +52,9 @@ async function getWallet(id) {
  */
 async function getUserProfile(id) {
   try {
+    //
+    if (!id) throw new Error(`Invalid Id (${id})`);
+
     const header = new Headers();
     header.append(
       "x-nonce",
@@ -72,7 +81,7 @@ async function getUserProfile(id) {
     console.log(error);
 
     return {
-      id,
+
     };
   }
 }
