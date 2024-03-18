@@ -131,6 +131,7 @@ async function updateLastSeen(id) {
     const headers = {
       "x-nonce": generateNonce(),
       Authorization: "Bearer TOKEN",
+      'x-caller': "updateLastSeen",
       "Content-Type": "application/json",
     };
     const host =
@@ -178,6 +179,7 @@ async function updateOrPutHook(req, res, next) {
       /// add a nonce and TOKEN for security/auth
       "x-nonce": generateNonce(),
       Authorization: "Bearer TOKEN",
+      'x-caller': "updateOrPutHook",
       "Content-Type": "application/json",
     };
 
@@ -219,6 +221,7 @@ async function updateWalletLastTopUp({ id, amount }) {
     const headers = {
       "x-nonce": generateNonce(),
       Authorization: "Bearer TOKEN",
+      'x-caller': "updateWalletLastTopUp",
       "Content-Type": "application/json",
     };
     const host =

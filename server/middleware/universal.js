@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require("uuid");
 const { generateNonce } = require("../nonce.source");
 const request = require("request");
 const { archiveRecord } = require("../usecases/store");
+const logger = require("../packages/logger");
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
@@ -12,7 +13,9 @@ const analytics = (req, res, next) => {
   const IP = "";
   const time = Math.floor(Date.now() / 1000);
   const sessionId = "";
-  const headers = {};
+  const caller = req.headers["x-caller"];
+
+  logger.warn(`${time}`, {caller, route : req.method + ' ' + req.url})
 
   next();
 };
@@ -63,6 +66,7 @@ const authorization = (req, res, next) => {
 function addWallet(wallet) {
   let headers = new Headers();
   headers.append("x-nonce", generateNonce());
+  headers.append('x-caller', "addWallet");
   headers.append("Content-Type", "application/json");
   headers.append("Authorization", "Bearer TOKEN");
 
@@ -107,6 +111,7 @@ async function archiveOnDelete(req, res, next) {
       const headers = {
         /// add a nonce and TOKEN for security/auth
         "x-nonce": generateNonce(),
+        'x-caller': "archiveOnDelete",
         Authorization: "Bearer TOKEN",
         "Content-Type": "application/json",
       };

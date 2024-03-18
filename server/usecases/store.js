@@ -16,6 +16,7 @@ const PORT = process.env.PORT || "5400";
 async function getWallet(id) {
   try {
     const header = new Headers();
+    header.append("x-caller", 'getWallet');
     header.append(
       "x-nonce",
       "MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2"
@@ -56,9 +57,11 @@ async function getUserProfile(id) {
     if (!id) throw new Error(`Invalid Id (${id})`);
 
     const header = new Headers();
+    header.append("x-caller", 'getUserProfile')
     header.append(
       "x-nonce",
-      "MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2"
+      "MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2", 
+     
     );
     header.append("Authorization", "Bearer TOKEN");
     const host =
@@ -91,6 +94,7 @@ async function archiveRecord(record) {
     const headers = new Headers();
     headers.append("x-nonce", generateNonce());
     headers.append("Content-Type", "application/json");
+    headers.append("x-caller", 'archiveRecord');
     headers.append("Authorization", "Bearer TOKEN");
 
     const requestOptions = {
@@ -118,7 +122,9 @@ async function cache3rdPartResponse(data) {
   try {
     const headers = new Headers();
     headers.append("x-nonce", generateNonce());
+    headers.append("x-caller", 'cache3rdPartResponse');
     headers.append("Content-Type", "application/json");
+    archiveRecord
     headers.append("Authorization", "Bearer TOKEN");
 
     const requestOptions = {

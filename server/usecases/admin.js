@@ -1,9 +1,6 @@
 const request = require('request');
-const { sendWhatsappSend, sendHelpEmailNotifications } = require('./notifications');
+const { sendHelpEmailNotifications } = require('./notifications');
 const logger = require('../packages/logger');
-const fetch = (...args) => import('node-fetch').then(({
-  default: fetch
-}) => fetch(...args));
 const { sendWhatsappMessage } = require('./notifications.js')
 
 const HOST = process.env.HOST || "0.0.0.0";
