@@ -53,19 +53,21 @@ function sendHelpEmailNotifications(helpRequest) {
     headers.append("Authorization", "Bearer TOKEN");
 
 
-    // a polyfill
-    AbortSignal.timeout ??= function timeout(ms) {
-      const ctrl = new AbortController()
-      setTimeout(() => ctrl.abort(), ms)
-      return ctrl.signal
-    }
+    // 
+    // const abortSignal = new AbortSignal();
+
+    // abortSignal.timeout  = function timeout(ms) {
+    //   const ctrl = new AbortController()
+    //   setTimeout(() => ctrl.abort(), ms)
+    //   return ctrl.signal
+    // }
 
     fetch("https://byteestudio.com/api/send-help-ticket", {
       method: "POST",
       headers: headers,
       body: JSON.stringify(helpRequest),
       //abort in 2.5 minutes
-      signal: AbortSignal.timeout(150000)
+      // signal: abortSignal.timeout(150000)
     })
       .then((response) => response.text())
       .then((result) => console.log(result))
