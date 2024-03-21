@@ -36,7 +36,7 @@ ThemeData theme = ThemeData.light(
 
   scaffoldBackgroundColor: Colors.white,
   textTheme: GoogleFonts.dmSansTextTheme(baseTheme.textTheme),
-  // primaryColor: Colors.redAccent,
+  primaryColor: darkerPrimaryColor,
   primaryColorLight: primaryColor,
   splashColor: darkerPrimaryColor.withOpacity(0.4),
   highlightColor: primaryColor.withOpacity(0.2),

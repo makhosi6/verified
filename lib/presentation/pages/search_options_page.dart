@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +11,7 @@ import 'package:verified/presentation/pages/input_form_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
+import 'package:verified/presentation/utils/test_user_utils.dart';
 import 'package:verified/presentation/utils/trigger_auth_bottom_sheet.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
@@ -94,11 +94,28 @@ class _SearchOptionsPageContent extends StatelessWidget {
                   children: [
                     Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                       //image
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 20.0),
-                        child: const Image(
-                          image: AssetImage('assets/images/12704419_4968099.jpg'),
-                          height: 230.0,
+                      RawGestureDetector(
+                        gestures: <Type, GestureRecognizerFactory>{
+                          // TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+                          //     () => TapGestureRecognizer(), (instance) {
+                          //   instance.onTap = () => debugPrint('ON TAP...');
+                          // }),
+                          LongPressGestureRecognizer: GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>(
+                            () => LongPressGestureRecognizer(
+                              debugOwner: this,
+                              duration: const Duration(seconds: 4),
+                            ),
+                            (LongPressGestureRecognizer instance) {
+                              instance.onLongPress = () => onLogInAsTestUser(context);
+                            },
+                          ),
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 20.0),
+                          child: const Image(
+                            image: AssetImage('assets/images/12704419_4968099.jpg'),
+                            height: 230.0,
+                          ),
                         ),
                       ),
 
@@ -166,12 +183,20 @@ class _SearchOptionsPageContent extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 12.0),
                             child: BaseButton(
                               key: UniqueKey(),
-                              onTap: () => navigate(
-                                context,
-                                page: InputFormPage(
+                              onTap: () {
+                                final user = context.read<StoreBloc>().state.userProfileData;
+                                final selectedPage = InputFormPage(
                                   formType: FormType.phoneNumberForm,
-                                ),
-                              ),
+                                );
+                                if (user == null) {
+                                  triggerAuthBottomSheet(context: context, redirect: selectedPage);
+                                } else {
+                                  navigate(
+                                    context,
+                                    page: selectedPage,
+                                  );
+                                }
+                              },
                               label: 'Verify Phone Number',
                               color: neutralGrey,
                               hasIcon: false,
@@ -188,12 +213,20 @@ class _SearchOptionsPageContent extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 12.0),
                             child: BaseButton(
                               key: UniqueKey(),
-                              onTap: () => navigate(
-                                context,
-                                page: InputFormPage(
+                              onTap: () {
+                                final user = context.read<StoreBloc>().state.userProfileData;
+                                final selectedPage = InputFormPage(
                                   formType: FormType.idForm,
-                                ),
-                              ),
+                                );
+                                if (user == null) {
+                                  triggerAuthBottomSheet(context: context, redirect: selectedPage);
+                                } else {
+                                  navigate(
+                                    context,
+                                    page: selectedPage,
+                                  );
+                                }
+                              },
                               label: 'Verify ID Number',
                               color: neutralGrey,
                               hasIcon: false,

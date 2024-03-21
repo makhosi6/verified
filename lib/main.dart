@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,6 +33,8 @@ import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/services/dio.dart';
 import 'package:verified/services/notifications.dart';
 import 'package:rxdart/subjects.dart';
+
+// await flutterLocalNotificationsPlugin.cancelAll();
 
 ///
 BehaviorSubject<Map<String, dynamic>?> selectNotificationSubject = BehaviorSubject<Map<String, dynamic>?>();
@@ -94,7 +95,7 @@ void main() async {
   );
 
   ///
-  if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('0.0.0.0', 9099);
+  if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('192.168.0.132', 9099);
 
   runZonedGuarded(() async {
     ///

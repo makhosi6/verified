@@ -4,7 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/transaction_history.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/presentation/pages/add_payment_method_page.dart';
 import 'package:verified/presentation/pages/how_it_works_page.dart';
+import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/history/history_list.dart';
@@ -53,7 +55,16 @@ class CombinedHistoryList extends StatelessWidget {
                     leadingBgColor: primaryColor,
                     title: 'Top-Up and get rewarded with a Free Search.',
                     subtitle: 'Reload with ZAR 50 or more and unlock rewards',
-                    onTap: () {},
+                    onTap: () {
+                      final wallet = context.read<StoreBloc>().state.walletData;
+
+                      ///
+                      if (wallet == null) {
+                        navigate(context, page: const AddPaymentMethodPage());
+                      } else {
+                        showTopUpBottomSheet(context);
+                      }
+                    },
                   ),
                 ],
               ),

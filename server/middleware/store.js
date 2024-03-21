@@ -172,9 +172,14 @@ async function updateLastSeen(id) {
  */
 async function updateOrPutHook(req, res, next) {
   const METHOD = req.method.toUpperCase();
-
+  const isSystemCall = (
+    req.originalUrl ||
+    req.pathname ||
+    req.url ||
+    req.href
+  ).includes("?role=system")
   // if it's a PUT request
-  if (METHOD == "PUT") {
+  if (METHOD == "PUT" && !isSystemCall) {
     const headers = {
       /// add a nonce and TOKEN for security/auth
       "x-nonce": generateNonce(),

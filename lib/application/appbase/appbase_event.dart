@@ -4,4 +4,5 @@ part of 'appbase_bloc.dart';
 class AppbaseEvent with _$AppbaseEvent {
   const factory AppbaseEvent.healthCheck() = HealthCheck;
   const factory AppbaseEvent.getAppInfo() = GetAppInfo;
+  const factory AppbaseEvent.getDeviceInfo() = GetDeviceInfo;
 }

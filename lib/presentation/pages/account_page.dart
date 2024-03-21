@@ -16,8 +16,10 @@ import 'package:verified/globals.dart';
 import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/native_scripts/main.dart';
+import 'package:verified/presentation/pages/app_signature_page.dart';
 import 'package:verified/presentation/pages/loading_page.dart';
 import 'package:verified/presentation/utils/select_media.dart';
+import 'package:verified/presentation/utils/url_loader.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
@@ -281,8 +283,7 @@ class AccountPageContent extends StatelessWidget {
 
                                                   context.read<AuthBloc>().add(const AuthEvent.signOut());
                                                   context.read<StoreBloc>()
-                                                    ..add(StoreEvent.deleteUserProfile(user?.id ?? ''))
-                                                    ..add(const StoreEvent.clearUser());
+                                                    .add(const StoreEvent.clearUser());
 
                                                   Navigator.of(context)
                                                     ..pop()
@@ -395,6 +396,7 @@ class AccountPageContent extends StatelessWidget {
                                                 ? List.generate(
                                                     userPersonalDetailsKey.length,
                                                     (index) => accountPageListItems(
+                                                      context,
                                                       key: "${userPersonalDetailsKey[index]['displayName']}",
                                                       value:
                                                           "${user?.toJson()[userPersonalDetailsKey[index]['keyName']]}",
@@ -407,13 +409,15 @@ class AccountPageContent extends StatelessWidget {
                                                         ? List.generate(
                                                             appInfo.length,
                                                             (index) => accountPageListItems(
+                                                              context,
                                                               key: appInfo.keys.toList()[index],
                                                               value: appInfo[appInfo.keys.toList()[index]] ?? '',
                                                               isLast: index == appInfo.length - 1,
                                                             ),
                                                           )
                                                         : [
-                                                            const Text('No Data'),
+                                                            // const Text('No Data'),
+                                                            const Text(' '),
                                                           ],
                                           ),
                       ),
@@ -507,8 +511,8 @@ class _ProfileName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final placeholderAvatar = 'https://robohash.org/${const Uuid().v4()}.png';
     var user = context.watch<StoreBloc>().state.userProfileData;
+    final placeholderAvatar = 'https://robohash.org/${user?.name}.png';
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
@@ -643,7 +647,7 @@ class _ProfileName extends StatelessWidget {
 
                 /// phone
                 Text(
-                  user?.phone ?? '000 000 0000 ${MediaQuery.of(context).size.width}',
+                  user?.phone ?? '(+27) 000 000 0000',
                   textAlign: TextAlign.left,
                 ),
 
@@ -668,17 +672,33 @@ class _ProfileName extends StatelessWidget {
   }
 }
 
-Widget accountPageListItems({required String key, required String value, bool isLast = false}) {
+Widget accountPageListItems(BuildContext context, {required String key, required String value, bool isLast = false}) {
   dynamic transformedValue() => switch (key) {
-        'Build Signature' => InkWell(
-            onTap: () => print("object"),
-            child: Text(
-              '#',
-              style: TextStyle(color: primaryColor),
+        'Build Signature' => IconButton(
+            onPressed: () => navigate(context, page: const AppSignaturePage()),
+            icon: Icon(
+              Icons.tag,
+              color: primaryColor,
             ),
           ),
         'Official Website' => IconButton(
-            onPressed: () {},
+            onPressed: () {
+              try {
+                launchInAppWebPage(value);
+              } catch (e) {
+                print(e);
+                ScaffoldMessenger.of(context)
+                  ..clearSnackBars()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        'Pull To Refresh',
+                      ),
+                      action: SnackBarAction(label: 'Refresh', onPressed: () {}),
+                    ),
+                  );
+              }
+            },
             icon: Icon(
               Icons.open_in_new,
               color: primaryColor,
@@ -687,7 +707,7 @@ Widget accountPageListItems({required String key, required String value, bool is
         'Active' => value == 'true' ? 'Yes' : 'No',
         'Last Login' => (value == 'null') ? 'Unknown' : humanReadable(value),
         'Account Created' => (value == 'Unknown') ? '' : humanReadable(value),
-        _ => value
+        _ => (value == 'null') ? 'Unknown': value
       };
   return Container(
     alignment: Alignment.centerLeft,
@@ -713,16 +733,16 @@ Widget accountPageListItems({required String key, required String value, bool is
 }
 
 Map<String, String> getAppInfo(BuildContext context) {
-  final appBase = context.read<AppbaseBloc>().state;
+  final appBase = context.watch<AppbaseBloc>().state.appInfo;
 
   return {
-    'App Id': TargetPlatform.iOS == defaultTargetPlatform ? 'com.byteestudio.Verified' : 'com.byteestudio.verified',
+    'App Id': appBase?['packageName'] ?? 'Unknown',
     'Name': 'Verified',
-    'App Official Name': appBase.appName ?? '',
+    'App Official Name': appBase?['appName'] ?? '',
     'Vendor': 'Verified (byteestudio.com)',
-    'Version': appBase.version ?? '0.0.0',
-    'Build Number': appBase.buildNumber ?? '',
-    'Build Signature': appBase.buildSignature ?? '#',
+    'Version': appBase?['version'] ?? '0.0.0',
+    'Build Number': appBase?['buildNumber'] ?? '',
+    'Build Signature': appBase?['buildSignature'] ?? '#',
     'Official Website': TargetPlatform.iOS == defaultTargetPlatform
         ? 'https://www.apple.com/app-store/12454534636'
         : (TargetPlatform.android == defaultTargetPlatform)

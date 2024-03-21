@@ -583,7 +583,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             return null;
           },
           addUser: (e) {
-            if (e.user == null) return;
+            if (e.user == null || state.userProfileData != null) return;
             emit(state.copyWith(
               userProfileData: e.user,
             ));

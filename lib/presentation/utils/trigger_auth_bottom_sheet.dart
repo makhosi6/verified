@@ -97,7 +97,8 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
                                     ..onTap = () {
                                       Navigator.of(context).push(
                                         MaterialPageRoute<void>(
-                                            builder: (BuildContext context) => const TermOfUseWebView()),
+                                          builder: (BuildContext context) => const TermOfUseWebView(),
+                                        ),
                                       );
                                     },
                                   style: GoogleFonts.ibmPlexSans(
@@ -128,6 +129,7 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
 List<Widget> buttons(BuildContext context, {required String type}) {
   void handler(AuthProvider provider) => context.read<AuthBloc>().add(AuthEvent.signInWithProvider(provider));
   final label = type == 'signin' ? 'Log In' : 'Sign Up';
+  
   return [
     Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
@@ -254,7 +256,25 @@ Future triggerSignUpBottomSheet<bool>({
                                   color: darkerPrimaryColor,
                                 ),
                               ),
-                              const TextSpan(text: '! \n\n'),
+                              const TextSpan(text: '! \n'),
+                              const TextSpan(
+                                text: 'Read our ',
+                              ),
+                              TextSpan(
+                                text: 'Terms Of Use',
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute<void>(
+                                          builder: (BuildContext context) => const TermOfUseWebView()),
+                                    );
+                                  },
+                                style: GoogleFonts.ibmPlexSans(
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                  color: darkerPrimaryColor,
+                                ),
+                              ),
                             ]),
                         textAlign: TextAlign.center,
                       ),
