@@ -125,3 +125,4 @@ local.properties
 **/db/*.json
 **/*nonce.js
 **/*nonce.source.js
+**/raw.dart

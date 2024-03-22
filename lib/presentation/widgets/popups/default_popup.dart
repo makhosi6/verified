@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/presentation/theme.dart';
@@ -6,13 +7,14 @@ Future showDefaultPopUp(
   BuildContext context, {
   required String title,
   required String subtitle,
-  required String confirmBtnText,
-  required String declineBtnText,
+  String? confirmBtnText,
+  String? declineBtnText,
   void Function()? onConfirm,
   void Function()? onDecline,
 }) =>
     showDialog(
       context: context,
+      barrierColor: darkBlurColor,
       builder: (context) => AlertDialog(
         title: Text(
           title,
@@ -32,34 +34,41 @@ Future showDefaultPopUp(
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: onDecline,
-            child: Text(
-              declineBtnText,
+          /// Decline button
+          if (declineBtnText != null)
+            TextButton(
+              onPressed: onDecline,
+              child: Text(
+                declineBtnText,
+              ),
             ),
-          ),
-          OutlinedButton(
-            onPressed: onConfirm,
-            style: ButtonStyle(
-              side: MaterialStatePropertyAll(
-                BorderSide(
-                  color: primaryColor,
+
+          /// Confirm button
+          if (confirmBtnText != null)
+            OutlinedButton(
+              onPressed: onConfirm,
+              style: ButtonStyle(
+                side: MaterialStatePropertyAll(
+                  BorderSide(
+                    color: primaryColor,
+                  ),
+                ),
+                textStyle: const MaterialStatePropertyAll(
+                  TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                shape: MaterialStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: const BorderSide(color: Colors.red),
+                  ),
                 ),
               ),
-              textStyle: const MaterialStatePropertyAll(
-                TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Text(
+                confirmBtnText,
               ),
-              shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                side: const BorderSide(color: Colors.red),
-              )),
             ),
-            child: Text(
-              confirmBtnText,
-            ),
-          ),
         ],
       ),
     );

@@ -60,6 +60,7 @@ void onLogInAsTestUser(BuildContext context) {
                 child: TextFormField(
                   autofocus: true,
                   textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
                   style: const TextStyle(color: Colors.white, fontSize: 20,),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(

@@ -365,6 +365,15 @@ class StoreRepository implements IStoreRepository {
         data: data,
       );
 
+      ///
+      if (response.statusCode == 413) {
+        return UploadResponse(
+          files: [],
+          message: 'Entity Too Large',
+        );
+      }
+
+      ///
       if (httpRequestIsSuccess(response.statusCode)) {
         return UploadResponse.fromJson(response.data);
       } else {

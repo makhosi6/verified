@@ -62,6 +62,7 @@ dependencies:
   string_scanner: ^1.2.0
   vibration: ^1.8.4
   device_info_plus: ^9.1.2
+  lottie: ^2.6.0
 
 dev_dependencies:
   flutter_test:
@@ -92,4 +93,5 @@ flutter:
     - assets/icons/
     - assets/fonts/
     - assets/images/
+    - assets/lottie/
     - server/

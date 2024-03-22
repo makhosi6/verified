@@ -593,6 +593,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             if (e.uploads.isEmpty) null;
 
             emit(state.copyWith(
+              uploadsTooBig: false,
               uploadsError: null,
               uploadsHasError: false,
               uploadsData: null,
@@ -603,6 +604,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
             emit(
               state.copyWith(
+                uploadsTooBig: data.message == 'Entity Too Large',
                 uploadsError: null,
                 uploadsHasError: false,
                 uploadsDataLoading: false,

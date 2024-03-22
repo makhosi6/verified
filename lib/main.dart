@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/application/appbase/appbase_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
@@ -29,6 +30,7 @@ import 'package:verified/presentation/pages/error_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/transactions_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/lottie_loader.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/services/dio.dart';
 import 'package:verified/services/notifications.dart';
@@ -95,7 +97,8 @@ void main() async {
   );
 
   ///
-  if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('192.168.0.132', 9099);
+  // if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('192.168.0.132', 9099);
+  if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('0.0.0.0', 9099);
 
   runZonedGuarded(() async {
     ///
@@ -368,13 +371,8 @@ void showAppLoader(BuildContext context) {
   Loader.show(
     context,
     overlayFromBottom: 80,
-    overlayColor: const Color.fromARGB(130, 0, 0, 0),
-    progressIndicator: SizedBox(
-        height: 50,
-        width: 50,
-        child: CircularProgressIndicator(
-          color: darkerPrimaryColor,
-        )),
+    overlayColor: darkBlurColor,
+    progressIndicator: const LottieProgressLoader(key: Key('lottie_progress_loader'),),
   );
 
   /// show loader option 2

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
@@ -12,11 +13,13 @@ import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verified/presentation/widgets/popups/default_popup.dart';
 
 final _helpFormGlobalKey = GlobalKey<_HelpFormState>(debugLabel: 'help-form-key');
 
 Future showHelpPopUpForm(BuildContext context) async => await showDialog(
     context: context,
+    barrierColor: darkBlurColor,
     builder: (context) {
       var delta = 10;
       return StatefulBuilder(builder: (context, setState) {
@@ -212,7 +215,8 @@ class _HelpFormState extends State<_HelpForm> {
                       ),
                       validator: (value) {
                         FocusScope.of(context).unfocus();
-                              ///
+
+                        ///
                         if (value == null || value.isEmpty) {
                           return 'The description field is required.';
                         }
@@ -240,6 +244,9 @@ class _HelpFormState extends State<_HelpForm> {
                         return await Future.wait(files.map((f) async => await convertToFormData(await f.file)));
                       }).then((media) {
                         ///
+                        if (media.isEmpty) return;
+
+                        ///
                         if (mounted) {
                           setState(() {
                             selectedMedia = media.where((i) => i != null).cast<MultipartFile>().toList();
@@ -252,6 +259,7 @@ class _HelpFormState extends State<_HelpForm> {
                       }, test: (_) {
                         return true;
                       });
+
                       ///
                     } catch (e) {
                       print(e);
@@ -283,6 +291,22 @@ class _HelpFormState extends State<_HelpForm> {
                         final user = context.read<StoreBloc>().state.userProfileData;
 
                         ///
+                        final isWithinFileSizeLimit = checkTotalFileSizeIsWithLimits(
+                          context.read<StoreBloc>().state.uploadsData?.files ?? [],
+                        );
+
+                        if (isWithinFileSizeLimit == false || context.read<StoreBloc>().state.uploadsTooBig) {
+                          // ignore: use_build_context_synchronously
+                          showDefaultPopUp(
+                            context,
+                            title: 'File(s) size exceeds limit!',
+                            subtitle:
+                                'The total size of the selected files exceeds the 25 MB limit. Please select fewer files or choose smaller files to proceed.',
+                            confirmBtnText: 'Okay',
+                            onConfirm: () => Navigator.pop(context),
+                          );
+                          return;
+                        }
 
                         Future.delayed(const Duration(seconds: 1)).then((_) {
                           final helpRequest = HelpTicket(

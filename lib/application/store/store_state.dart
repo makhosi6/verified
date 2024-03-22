@@ -42,6 +42,7 @@ class StoreState with _$StoreState {
     required Wallet? walletData,
 
     ///
+    required bool uploadsTooBig,
     required GenericApiError? uploadsError,
     required bool uploadsHasError,
     required bool uploadsDataLoading,
@@ -88,6 +89,7 @@ class StoreState with _$StoreState {
         walletData: null,
 
         ///
+        uploadsTooBig: false,
         uploadsError: null,
         uploadsHasError: false,
         uploadsDataLoading: false,

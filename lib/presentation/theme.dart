@@ -16,6 +16,9 @@ Color neutralYellow = const Color(0xFFFFAE58);
 /// common dark green color
 Color darkerPrimaryColor = const Color(0xFF105D38);
 
+/// dark blur color
+Color darkBlurColor = const Color.fromARGB(106, 26, 54, 39);
+
 /// common error color
 Color errorColor = Colors.redAccent;
 

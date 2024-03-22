@@ -54,6 +54,7 @@ class PaymentPage extends StatelessWidget {
 //and show a success popup
         showDialog(
           context: context,
+          barrierColor: darkBlurColor,
           builder: (context) => SuccessfulPaymentModal(
             topUpAmount: formatCurrency(amount, currency),
           ),
@@ -62,6 +63,7 @@ class PaymentPage extends StatelessWidget {
       onPageFailed: () {
         showDialog(
           context: context,
+                   barrierColor: darkBlurColor,
           builder: (context) => const FailedPaymentModal(),
         );
       },
