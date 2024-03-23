@@ -67,7 +67,7 @@ android {
        release {
            keyAlias keystoreProperties['keyAlias']
            keyPassword keystoreProperties['keyPassword']
-           storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : file("../verified.jks")
+           storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : file('verified.jks')
            storePassword keystoreProperties['storePassword']
         //    proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
        }
