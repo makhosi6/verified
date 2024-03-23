@@ -14,13 +14,17 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - run: |
+          echo "PATH IS>>>>"
+          echo ${{ github.workspace }}
+          echo $GITHUB_WORKSPACE
       - uses: actions/setup-java@v1
         with:
           java-version: "12.x"
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-
+            
       # lib/app_config.dart
       - name: Write app config file
         uses: mobiledevops/secret-to-file-action@v1
