@@ -4,9 +4,9 @@ on:
   push:
     tags:
       - v*
-      
+
 permissions:
-   contents: write
+  contents: write
 
 jobs:
   build_ios:
@@ -20,6 +20,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
+
       # lib/app_config.dart
       - name: Write app config file
         uses: mobiledevops/secret-to-file-action@v1
@@ -28,6 +29,25 @@ jobs:
           filename: "lib/app_config.dart"
           is-executable: false
           working-directory: "./"
+
+      # server/nonce.dart
+      - name: Write nonce generator(server/nonce.dart)
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.NONCE_GEN }}
+          filename: "server/nonce.dart"
+          is-executable: false
+          working-directory: "./"
+
+      # lib/helpers/security/nonce.private.dart
+      - name: Write nonce helper(lib/helpers/security/nonce.private.dart)
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.NONCE }}
+          filename: "lib/helpers/security/nonce.private.dart"
+          is-executable: false
+          working-directory: "./"
+
       - run: flutter pub get
       - run: flutter clean
       - run: dart run build_runner build --delete-conflicting-outputs
@@ -48,7 +68,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      
+
       # lib/app_config.dart
       - name: Write app config file
         uses: mobiledevops/secret-to-file-action@v1
@@ -57,7 +77,7 @@ jobs:
           filename: "lib/app_config.dart"
           is-executable: false
           working-directory: "./"
-      
+
       # android/key.properties
       - name: Write android key.properties
         uses: mobiledevops/secret-to-file-action@v1
@@ -66,7 +86,7 @@ jobs:
           filename: "android/key.properties"
           is-executable: false
           working-directory: "./"
-          
+
       # Add/Write Android signing certs
       - name: Write Android signing certificates(.pem)
         uses: mobiledevops/secret-to-file-action@v1
@@ -81,6 +101,25 @@ jobs:
         with:
           base64-encoded-secret: ${{ secrets.JKS_FILE }}
           filename: "android/key.properties"
+          is-executable: false
+          working-directory:
+            "./"
+
+            # server/nonce.dart
+      - name: Write nonce generator(server/nonce.dart)
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.NONCE_GEN }}
+          filename: "server/nonce.dart"
+          is-executable: false
+          working-directory: "./"
+
+      # lib/helpers/security/nonce.private.dart
+      - name: Write nonce helper(lib/helpers/security/nonce.private.dart)
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.NONCE }}
+          filename: "lib/helpers/security/nonce.private.dart"
           is-executable: false
           working-directory: "./"
 

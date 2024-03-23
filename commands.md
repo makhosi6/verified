@@ -55,9 +55,9 @@ flutter build web --web-renderer canvaskit
     gh variable set CONFIG_FILE < "lib/app_config.dart"
     <!-- push to git with a tag -->
     git add .
-    git commit -m "version bump: v1.1.18.beta"
-    git tag -a v1.1.18.beta -m "version bump: v1.1.18.beta"
-    git push origin v1.1.18.beta
+    git commit -m "version bump: v1.1.20.beta"
+    git tag -a v1.1.20.beta -m "version bump: v1.1.20.beta"
+    git push origin v1.1.20.beta
     git push --follow-tags
 
     ```
@@ -73,6 +73,10 @@ flutter build web --web-renderer canvaskit
   base64 -i android/verified.pem -o android/verified_pem.base64
 
   base64 -i lib/app_config.dart -o lib/app_config.base64
+
+  base64 -i lib/helpers/security/nonce.private.dart -o lib/helpers/security/nonce_private.base64
+
+  base64 -i server/nonce.js -o server/nonce.base64
 
   ```
 

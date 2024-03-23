@@ -10,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lottie/lottie.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/application/appbase/appbase_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
@@ -144,50 +143,7 @@ void main() async {
     ///
 
     runApp(
-      MultiBlocProvider(
-        providers: [
-          BlocProvider<AppbaseBloc>(
-            create: (context) => AppbaseBloc({})
-              ..add(
-                const AppbaseEvent.getAppInfo(),
-              ),
-          ),
-          BlocProvider<VerifySaBloc>(
-            create: (BuildContext context) => VerifySaBloc(
-              VerifySaRepository(
-                VerifySaDioClientService.instance,
-              ),
-            )..add(
-                const VerifySaEvent.apiHealthCheck(),
-              ),
-          ),
-          BlocProvider<StoreBloc>(
-            create: (BuildContext context) => StoreBloc(
-              StoreRepository(
-                StoreDioClientService.instance,
-              ),
-            )..add(
-                const StoreEvent.apiHealthCheck(),
-              ),
-          ),
-          BlocProvider<AuthBloc>(
-            create: (BuildContext context) => AuthBloc(
-              AuthRepository(
-                FirebaseAuth.instance,
-              ),
-              context.read<StoreBloc>(),
-            ),
-          ),
-          BlocProvider(
-            create: (context) => PaymentsBloc(
-              PaymentsRepository(
-                PaymentsDioClientService.instance,
-              ),
-            ),
-          )
-        ],
-        child: const AppRoot(),
-      ),
+      const RootAppWithBloc(),
     );
 
     ///
@@ -197,6 +153,60 @@ void main() async {
 
     /// fb crush
   });
+}
+
+class RootAppWithBloc extends StatelessWidget {
+  const RootAppWithBloc({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AppbaseBloc>(
+          create: (context) => AppbaseBloc({})
+            ..add(
+              const AppbaseEvent.getAppInfo(),
+            ),
+        ),
+        BlocProvider<VerifySaBloc>(
+          create: (BuildContext context) => VerifySaBloc(
+            VerifySaRepository(
+              VerifySaDioClientService.instance,
+            ),
+          )..add(
+              const VerifySaEvent.apiHealthCheck(),
+            ),
+        ),
+        BlocProvider<StoreBloc>(
+          create: (BuildContext context) => StoreBloc(
+            StoreRepository(
+              StoreDioClientService.instance,
+            ),
+          )..add(
+              const StoreEvent.apiHealthCheck(),
+            ),
+        ),
+        BlocProvider<AuthBloc>(
+          create: (BuildContext context) => AuthBloc(
+            AuthRepository(
+              FirebaseAuth.instance,
+            ),
+            context.read<StoreBloc>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => PaymentsBloc(
+            PaymentsRepository(
+              PaymentsDioClientService.instance,
+            ),
+          ),
+        )
+      ],
+      child: const AppRoot(),
+    );
+  }
 }
 
 // https://api.flutter.dev/flutter/material/SliverAppBar-class.html

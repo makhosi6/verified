@@ -57,7 +57,7 @@ class HomePageContents extends StatelessWidget {
           ],
         ),
         child: BaseButton(
-          key: UniqueKey(),
+          key: const Key('main-search-fab'),
           onTap: () => navigate(context, page: const SearchOptionsPage()),
           label: 'Search',
           color: Colors.white,

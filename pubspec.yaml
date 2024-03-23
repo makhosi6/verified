@@ -1,7 +1,7 @@
 name: verified
 description: Instantly confirm the legitimacy of personal information with our user-friendly app. Ensure accuracy and trust in your data effortlessly.
 publish_to: "none" 
-version: 1.1.20+4
+version: 1.1.21+4
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -71,6 +71,8 @@ dev_dependencies:
   freezed: ^2.4.2
   flutter_lints: ^2.0.0
   flutter_launcher_icons: ^0.13.1
+  integration_test:
+    sdk: flutter
 
 flutter:
   fonts:
