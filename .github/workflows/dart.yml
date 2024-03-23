@@ -92,7 +92,7 @@ jobs:
         uses: mobiledevops/secret-to-file-action@v1
         with:
           base64-encoded-secret: ${{ secrets.PEM_FILE }}
-          filename: "android/key.properties"
+          filename: "android/verified.pem"
           is-executable: false
           working-directory: "./"
         # Add/Write Android signing certs
@@ -100,7 +100,7 @@ jobs:
         uses: mobiledevops/secret-to-file-action@v1
         with:
           base64-encoded-secret: ${{ secrets.JKS_FILE }}
-          filename: "android/key.properties"
+          filename: "android/verified.jks"
           is-executable: false
           working-directory:
             "./"
