@@ -123,14 +123,14 @@ jobs:
           is-executable: false
           working-directory: "./"
 
-      - uses: actions/checkout@v2
-      - run: |
-          echo "PATH IS>>>>"
+      - name: Log file system as a tree
+        run: |
+          echo "PATH AND FILES >>>>"
           echo ${{ github.workspace }}
           echo $GITHUB_WORKSPACE
           ls ${{ github.workspace }}/android/
-          echo "OKAY!"
-          cat android/key.properties   
+          echo "OKAY"
+          cat ${{ github.workspace }}/android/key.properties   
       # Example Flutter build and test step
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
