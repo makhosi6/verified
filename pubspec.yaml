@@ -1,7 +1,7 @@
 name: verified
 description: Instantly confirm the legitimacy of personal information with our user-friendly app. Ensure accuracy and trust in your data effortlessly.
 publish_to: "none" 
-version: 1.1.21+4
+version: 1.1.23+4
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

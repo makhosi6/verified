@@ -14,10 +14,6 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          echo "PATH IS>>>>"
-          echo ${{ github.workspace }}
-          echo $GITHUB_WORKSPACE
       - uses: actions/setup-java@v1
         with:
           java-version: "12.x"
@@ -66,6 +62,11 @@ jobs:
       FLUTTER_VERSION: "3.7.x"
     steps:
       - uses: actions/checkout@v2
+      - run: |
+          echo "PATH IS>>>>"
+          echo ${{ github.workspace }}
+          echo $GITHUB_WORKSPACE
+          ls ${{ github.workspace }}/android/
       - uses: actions/setup-java@v1
         with:
           java-version: "12.x"
