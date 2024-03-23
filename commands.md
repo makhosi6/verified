@@ -51,20 +51,40 @@ flutter build web --web-renderer canvaskit
   ### push with a tag/ref
 
   - ```bash
+    <!-- set remote configs -->
+    gh variable set CONFIG_FILE < "lib/app_config.dart"
+    <!-- push to git with a tag -->
     git add .
     git commit -m "version bump: v1.1.18.beta"
-    git tag -a v1.1.17.beta -m "version bump: v1.1.17.beta"
-    git push origin v1.1.17.beta
+    git tag -a v1.1.18.beta -m "version bump: v1.1.18.beta"
+    git push origin v1.1.18.beta
     git push --follow-tags
+
     ```
 
+### prepare secrets for git
+
+- ```
+
+  base64 -i android/key.properties -o android/key.base64
+
+  base64 -i android/key.properties -o android/key.base64
+
+  base64 -i android/verified.pem -o android/verified_pem.base64
+
+  base64 -i lib/app_config.dart -o lib/app_config.base64
+
+  ```
+
 ### run backend server
+
 - ```bash
     docker-compose build
     docker-compose -p verified up -d --force-recreate --build --remove-orphans --timestamps
     docker-compose down
 
-  ```
+````
 
-### 
+###
+
 - Trigger a Apple Push Notification; `xcrun simctl push booted com.byteestudio.Verified ios/push.json`
