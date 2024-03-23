@@ -52,9 +52,9 @@ flutter build web --web-renderer canvaskit
 
   - ```bash
     git add .
-    git commit -m "version bump: v1.1.15.beta"
-    git tag -a v1.1.15.beta -m "version bump: v1.1.15.beta"
-    git push origin v1.1.15.beta
+    git commit -m "version bump: v1.1.16.beta"
+    git tag -a v1.1.16.beta -m "version bump: v1.1.16.beta"
+    git push origin v1.1.16.beta
     git push --follow-tags
     ```
 
