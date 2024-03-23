@@ -54,6 +54,12 @@ jobs:
       - run: flutter test
       - run: flutter build ios --release --no-codesign
 
+      - name: Archive iOS Build
+        uses: actions/upload-artifact@v2
+        with:
+          name: ios-package
+          path: build/ios/iphoneos/Runner.app
+
   build_apk:
     name: Build Flutter (Android)
     runs-on: ubuntu-latest
