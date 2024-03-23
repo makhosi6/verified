@@ -67,6 +67,8 @@ jobs:
           echo ${{ github.workspace }}
           echo $GITHUB_WORKSPACE
           ls ${{ github.workspace }}/android/
+          echo "OKAY"
+          cat android/key.properties
       - uses: actions/setup-java@v1
         with:
           java-version: "12.x"
