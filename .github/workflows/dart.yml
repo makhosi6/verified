@@ -37,7 +37,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '{{secrets.AUTH_TOKEN}}';" > ./lib/app_config.dart
+      - run: echo '{{secrets.CONFIG_FILE}}' > ./lib/app_config.dart
       - run: flutter pub get
       - run: flutter clean
       - run: dart run build_runner build --delete-conflicting-outputs
@@ -57,7 +57,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: echo "const displayAppName = 'Verified+', verifySaApiKey = '{{secrets.AUTH_TOKEN}}';" > ./lib/app_config.dart
+      - run: echo '{{secrets.CONFIG_FILE}}' > ./lib/app_config.dart
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter build apk --split-per-abi
