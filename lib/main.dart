@@ -273,6 +273,7 @@ class _AppRootState extends State<AppRoot> {
     didReceiveLocalNotificationSubject.stream.listen((ReceivedNotification receivedNotification) async {
       await showDialog(
         context: context,
+        barrierColor: darkBlurColor,
         builder: (BuildContext context) => CupertinoAlertDialog(
           title: receivedNotification.title != null ? Text(receivedNotification.title!) : null,
           content: receivedNotification.body != null ? Text(receivedNotification.body!) : null,

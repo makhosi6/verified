@@ -46,6 +46,7 @@ void onLogInAsTestUser(BuildContext context) {
     ///
     showDialog(
       context: context,
+      barrierColor: darkBlurColor,
       builder: (context) {
         return Material(
           color: const Color.fromARGB(106, 0, 0, 0),
@@ -61,7 +62,10 @@ void onLogInAsTestUser(BuildContext context) {
                   autofocus: true,
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
-                  style: const TextStyle(color: Colors.white, fontSize: 20,),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(primaryPadding.top),

@@ -63,7 +63,6 @@ class PaymentPage extends StatelessWidget {
       onPageFailed: () {
         showDialog(
           context: context,
-                   barrierColor: darkBlurColor,
           builder: (context) => const FailedPaymentModal(),
         );
       },

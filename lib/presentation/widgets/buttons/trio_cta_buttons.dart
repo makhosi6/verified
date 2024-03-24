@@ -45,6 +45,7 @@ class TrioHomeButtons extends StatelessWidget {
             onTap: () {
               // showDialog(
               //   context: context,
+                  //  barrierColor: darkBlurColor,
               //   builder: (context) => const SuccessfulPaymentModal(),
               // );
 
