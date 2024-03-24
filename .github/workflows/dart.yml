@@ -52,28 +52,24 @@ jobs:
       - run: flutter clean
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter test
-
-      - name: Force Xcode 14
-        run: sudo xcode-select -switch /Applications/Xcode_14.2.app
-      #build and sign the ipa
-      - name: Building IPA
+      - run:   flutter build ios --release --no-codesign
+      
+      - name: Generate Release Notes
         run: |
-          xcode-project use-profiles
-          flutter build ios --release --no-codesign
-          xcode-project build-ipa --workspace ios/Runner.xcworkspace --scheme Runner --config Release
-      #collect the files            
-      - name: collect ipa artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: adhoc-ipa
-          # Path to the release files
-          path: build/ios/ipa/*.ipa
+          echo "### Note
+          Install the .app file using the ideviceinstaller tool:
+          
+          ```bash
+              ideviceinstaller -i Runner.app
+          ```" > release_notes.md
 
       - name: Archive iOS Build
-        uses: actions/upload-artifact@v2
+        uses: ncipollo/release-action@v1
         with:
-          name: ios-package
-          path: build/ios/iphoneos/Runner.app
+          artifacts: "build/ios/iphoneos/*.app"
+          release-notes: "release_notes.md"
+      
+      
 
   build_apk:
     name: Build Flutter (Android)
