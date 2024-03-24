@@ -13,7 +13,7 @@ jobs:
     name: Build Flutter (iOS)
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-java@v1
         with:
           java-version: "12.x"
@@ -52,6 +52,9 @@ jobs:
       - run: flutter clean
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter test
+
+      - name: Force Xcode 14
+        run: sudo xcode-select -switch /Applications/Xcode_14.2.app
       #build and sign the ipa
       - name: Building IPA
         run: |
@@ -152,14 +155,9 @@ jobs:
 
       - name: Log file system as a tree
         run: |
-          echo "PATH AND FILES >>>>"
           echo ${{ github.workspace }}
           echo $GITHUB_WORKSPACE
           ls ${{ github.workspace }}/android/
-          echo "CONFIG FILE"
-          cat ${{ github.workspace }}/lib/app_config.dart
-          echo "KEY.PROPERTIES"
-          cat ${{ github.workspace }}/android/key.properties
       # Example Flutter build and test step
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
