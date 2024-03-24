@@ -31,7 +31,7 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
 
   num parsedAmount = 15000;
 
-  num minimumPayment = 30;
+  num minimumPayment = 3000;
 
   late var inputController = TextEditingController(text: selectedAmount);
 
@@ -139,7 +139,7 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                               int.parse(amount.split('.').join('').replaceAll(',', '').replaceAll('R', ''));
 
                           if (intValue < minimumPayment) {
-                            return 'R $minimumPayment.00 is the minimum deposit amount required.';
+                            return 'R 30.00 is the minimum deposit amount required.';
                           }
 
                           if (mounted) {

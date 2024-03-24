@@ -226,53 +226,55 @@ class _HelpFormState extends State<_HelpForm> {
                   )
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: BaseButton(
-                  key: UniqueKey(),
-                  onTap: () {
-                    try {
-                      ///
-                      GalleryAssetPicker.pick(
-                        context,
-                        maxCount: MAX_FILES_UPLOAD,
-                        requestType: RequestType.all,
-                      ).then((files) async {
-                        print('MEDIA: ${files.length}');
-
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: BaseButton(
+                    key: UniqueKey(),
+                    onTap: () {
+                      try {
                         ///
-                        return await Future.wait(files.map((f) async => await convertToFormData(await f.file)));
-                      }).then((media) {
+                        GalleryAssetPicker.pick(
+                          context,
+                          maxCount: MAX_FILES_UPLOAD,
+                          requestType: RequestType.all,
+                        ).then((files) async {
+                          print('MEDIA: ${files.length}');
+              
+                          ///
+                          return await Future.wait(files.map((f) async => await convertToFormData(await f.file)));
+                        }).then((media) {
+                          ///
+                          if (media.isEmpty) return;
+              
+                          ///
+                          if (mounted) {
+                            setState(() {
+                              selectedMedia = media.where((i) => i != null).cast<MultipartFile>().toList();
+                            });
+                          }
+              
+                          context.read<StoreBloc>().add(StoreEvent.uploadFiles(selectedMedia));
+                        }).catchError((err) {
+                          print('Error at help images upload: $err');
+                        }, test: (_) {
+                          return true;
+                        });
+              
                         ///
-                        if (media.isEmpty) return;
-
-                        ///
-                        if (mounted) {
-                          setState(() {
-                            selectedMedia = media.where((i) => i != null).cast<MultipartFile>().toList();
-                          });
-                        }
-
-                        context.read<StoreBloc>().add(StoreEvent.uploadFiles(selectedMedia));
-                      }).catchError((err) {
-                        print('Error at help images upload: $err');
-                      }, test: (_) {
-                        return true;
-                      });
-
-                      ///
-                    } catch (e) {
-                      print(e);
-                      print('media picker error');
-                    }
-                  },
-                  label: 'Uploads (Optional) ${selectedMedia.isEmpty ? '' : "(${selectedMedia.length})"}',
-                  color: Colors.black87,
-                  buttonIcon: const Image(
-                    image: AssetImage('assets/icons/add-file.png'),
+                      } catch (e) {
+                        print(e);
+                        print('media picker error');
+                      }
+                    },
+                    label: 'Uploads (Optional) ${selectedMedia.isEmpty ? '' : "(${selectedMedia.length})"}',
+                    color: Colors.black87,
+                    buttonIcon: const Image(
+                      image: AssetImage('assets/icons/add-file.png'),
+                    ),
+                    buttonSize: ButtonSize.large,
+                    hasBorderLining: true,
                   ),
-                  buttonSize: ButtonSize.large,
-                  hasBorderLining: true,
                 ),
               ),
               Center(

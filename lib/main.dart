@@ -29,6 +29,7 @@ import 'package:verified/presentation/pages/error_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/transactions_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/device_info.dart';
 import 'package:verified/presentation/utils/lottie_loader.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/services/dio.dart';
@@ -96,8 +97,15 @@ void main() async {
   );
 
   ///
-  // if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('192.168.0.132', 9099);
-  if (kDebugMode) await FirebaseAuth.instance.useAuthEmulator('0.0.0.0', 9099);
+  if (kDebugMode) {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      var device = await getCurrentDeviceInfo();
+      final host = (device['isPhysicalDevice'] == true) ? '192.168.0.132' : 'localhost';
+      await FirebaseAuth.instance.useAuthEmulator(host, 9099);
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      await FirebaseAuth.instance.useAuthEmulator('0.0.0.0', 9099);
+    }
+  }
 
   runZonedGuarded(() async {
     ///
@@ -382,7 +390,9 @@ void showAppLoader(BuildContext context) {
     context,
     overlayFromBottom: 80,
     overlayColor: darkBlurColor,
-    progressIndicator: const LottieProgressLoader(key: Key('lottie_progress_loader'),),
+    progressIndicator: const LottieProgressLoader(
+      key: Key('lottie_progress_loader'),
+    ),
   );
 
   /// show loader option 2
