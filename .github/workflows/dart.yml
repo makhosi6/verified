@@ -54,11 +54,11 @@ jobs:
       - run: flutter test
       - run:   flutter build ios --release --no-codesign
 
-      - name: Archive iOS Build
-        uses: ncipollo/release-action@v1
-        with:
-          generateReleaseNotes: false
-          artifacts: "build/ios/iphoneos/*.app"
+      # - name: Archive iOS Build
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     generateReleaseNotes: false
+      #     artifacts: "build/ios/iphoneos/*.app"
       
       
 
