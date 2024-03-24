@@ -53,22 +53,12 @@ jobs:
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter test
       - run:   flutter build ios --release --no-codesign
-      
-      - name: Generate Release Notes
-        run: |
-          echo "### Note
-          Install the .app file using the ideviceinstaller tool:
-          
-          ```bash
-              ideviceinstaller -i Runner.app
-          ```" > release_notes.md
 
       - name: Archive iOS Build
         uses: ncipollo/release-action@v1
         with:
           generateReleaseNotes: false
           artifacts: "build/ios/iphoneos/*.app"
-          bodyFile: "release_notes.md"
       
       
 
