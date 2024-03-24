@@ -66,8 +66,9 @@ jobs:
       - name: Archive iOS Build
         uses: ncipollo/release-action@v1
         with:
+          generateReleaseNotes: false
           artifacts: "build/ios/iphoneos/*.app"
-          release-notes: "release_notes.md"
+          bodyFile: "release_notes.md"
       
       
 
