@@ -55,8 +55,8 @@ flutter build web --web-renderer canvaskit
     gh variable set CONFIG_FILE < "lib/app_config.dart"
     <!-- push to git with a tag -->
     git add .
-    git commit -m "version bump: v1.1.38.beta"
-    git tag -a v1.1.38.beta -m "with apple(ios) archive, version bump: v1.1.38.beta"
+    git commit -m "Remove iOS artifacts, version bump: v1.1.38.beta"
+    git tag -a v1.1.38.beta -m "Remove iOS artifacts, version bump: v1.1.38.beta"
     git push origin v1.1.38.beta
     git push --follow-tags
 

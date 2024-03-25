@@ -17,17 +17,20 @@ class TransactionListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget leading;
     final type = data.type, subtype = data.subtype;
+    final isType2 = ((data.details?.query?.length) ?? 0) > 10;
+
     if (type == 'credit' || subtype == 'credit') {
       leading = topUpLeadingIcon;
     } else if (type == 'promo' || subtype == 'promo') {
       leading = freeCreditIcon;
-    } else if (type == 'debit' || subtype == 'debit') {
-      leading = spendLeadingIcon;
-    } else if (type == 'spend' || subtype == 'spend') {
+    } else if (type == 'refund' || subtype == 'refund') {
+      leading = refundIcon;
+    } else if ((type == 'debit' || subtype == 'debit') || (type == 'spend' || subtype == 'spend')) {
       leading = spendLeadingIcon;
     } else {
       leading = leadingIcon;
     }
+
     return SizedBox(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -100,7 +103,9 @@ class TransactionListItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Text(
-                    (type == 'promo' || subtype == 'promo') ? 'Promo' : 'Info', // ((type == 'topup' || subtype == 'topup') ? 'Refund' : 'Info'),
+                    (type == 'promo' || subtype == 'promo')
+                        ? 'Promo'
+                        : 'Info', // ((type == 'topup' || subtype == 'topup') ? 'Refund' : 'Info'),
                     style: GoogleFonts.dmSans(color: primaryColor),
                   ),
                 )
@@ -120,6 +125,25 @@ var freeCreditIcon = _LeadingIcon(
   decoratorIconBgColor: primaryColor,
   bgColor: darkerPrimaryColor,
 );
+
+// var spendIcon2 = _LeadingIcon(
+//   key: UniqueKey(),
+//   discountIndictor: false,
+//   icon: Icons.credit_card,
+//   decoratorIcon: Icons.remove,
+//   decoratorIconBgColor: neutralYellow,
+//   bgColor: darkerPrimaryColor,
+// );
+
+var refundIcon = _LeadingIcon(
+  key: UniqueKey(),
+  discountIndictor: false,
+  icon: Icons.credit_card_rounded,
+  decoratorIcon: Icons.add,
+  withDecorator: true,
+  decoratorIconBgColor: primaryColor,
+  bgColor: darkerPrimaryColor,
+);
 var topUpLeadingIcon = _LeadingIcon(
   key: UniqueKey(),
   icon: Icons.add_card_rounded,
@@ -132,8 +156,7 @@ var spendLeadingIcon = _LeadingIcon(
   key: UniqueKey(),
   discountIndictor: false,
   icon: Icons.confirmation_num_rounded,
-  decoratorIcon: Icons.minimize,
-  withDecorator: false,
+  decoratorIcon: Icons.remove,
   decoratorIconBgColor: neutralYellow,
   bgColor: primaryColor,
 );
@@ -355,7 +378,7 @@ class _LeadingIcon extends StatelessWidget {
                   Positioned(
                     right: -0.0,
                     child: Container(
-                      padding: const EdgeInsets.all(4.0),
+                      padding: const EdgeInsets.all(2.0),
                       decoration: BoxDecoration(
                         color: decoratorIconBgColor,
                         shape: BoxShape.circle,
@@ -363,7 +386,7 @@ class _LeadingIcon extends StatelessWidget {
                       child: Icon(
                         decoratorIcon,
                         color: Colors.white,
-                        size: 12.0,
+                        size: 14.0,
                       ),
                     ),
                   ),
