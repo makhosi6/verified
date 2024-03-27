@@ -156,8 +156,8 @@ var spendLeadingIcon = _LeadingIcon(
   key: UniqueKey(),
   discountIndictor: false,
   icon: Icons.confirmation_num_rounded,
-  decoratorIcon: Icons.remove,
-  decoratorIconBgColor: neutralYellow,
+  // decoratorIcon: Icons.remove,
+  // decoratorIconBgColor: neutralYellow,
   bgColor: primaryColor,
 );
 

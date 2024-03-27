@@ -96,7 +96,7 @@ class _TheWebViewState extends State<TheWebView> {
     if (hasError) return VerifiedErrorPage(message: errorMsg);
 
     return Container(
-      color:Colors.white,
+      color:Colors.grey.shade100,
       child: SafeArea(
         child: Scaffold(
           body: SizedBox(

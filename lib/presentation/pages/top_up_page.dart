@@ -21,6 +21,7 @@ class TopUpPage extends StatelessWidget {
 Future showTopUpBottomSheet(BuildContext context) => showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      showDragHandle: true,
       builder: (context) => SingleChildScrollView(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(

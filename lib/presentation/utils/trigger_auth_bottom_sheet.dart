@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/auth_providers.dart';
+import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
 import 'package:verified/presentation/theme.dart';
@@ -17,6 +18,7 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget redirect}) async =>
     showModalBottomSheet(
       context: context,
+            showDragHandle: true,
       builder: (context) => BlocListener<StoreBloc, StoreState>(
         listener: (context, state) {
           if (!state.userProfileDataLoading && state.userProfileData != null && state.userProfileData != null) {
@@ -41,9 +43,7 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
         },
         child: SingleChildScrollView(
           child: Container(
-            constraints: const BoxConstraints(
-              minWidth: 600.0,
-            ),
+            constraints:  appConstraints,
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Column(
               children: [
@@ -204,6 +204,7 @@ Future triggerSignUpBottomSheet<bool>({
 }) async =>
     showModalBottomSheet(
       context: context,
+            showDragHandle: true,
       builder: (context) => SingleChildScrollView(
         child: Container(
           constraints: const BoxConstraints(
