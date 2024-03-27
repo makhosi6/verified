@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:carousel_indicator/carousel_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/theme.dart';
@@ -93,7 +94,7 @@ class _HowItWorksPageState extends State<HowItWorksPage> with TickerProviderStat
                             color: Colors.white,
                             hasIcon: false,
                             bgColor: primaryColor,
-                            label: 'Next',
+                            label: index <= indexMax ? 'Done' : 'Next',
                             onTap: () {
                               var nextIndex = index + 1;
                               if (mounted && index <= indexMax && (nextIndex != index) && nextIndex <= indexMax) {
@@ -116,7 +117,8 @@ class _HowItWorksPageState extends State<HowItWorksPage> with TickerProviderStat
     });
 
     //
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenHeight = MediaQuery.of(context).size.height -
+        (MediaQuery.of(context).padding.top + MediaQuery.of(context).padding.bottom);
     final screenWidth = MediaQuery.of(context).size.width;
     final bottomSheetTop = screenHeight - 320;
     final windowSpace = screenHeight - bottomSheetTop;
@@ -124,73 +126,83 @@ class _HowItWorksPageState extends State<HowItWorksPage> with TickerProviderStat
     ///
     return Scaffold(
       backgroundColor: darkerPrimaryColor,
-      body: Container(
-        color: darkerPrimaryColor,
-        height: screenHeight,
-        child: Column(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: bottomSheetTop,
-              child: Stack(
-                children: [
-                  /// skip text button
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Container(
-                        margin: const EdgeInsets.only(top: 100, right: 50),
-                        child: InkWell(
-                          onTap: Navigator.of(context).pop,
-                          child: const Text(
-                            'Skip',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                        )),
-                  ),
-
-                  /// illustrator
-                  Align(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 100),
-                      child: index > 1
-                          ? FlutterLogo(
-                              size: 200 + index.toDouble(),
-                              key: Key('illust_$index'),
-                            )
-                          : Container(
-                              margin: const EdgeInsets.only(bottom: 20.0),
-                              child: const Image(
-                                image: AssetImage('assets/images/12704419_4968099.jpg'),
-                                height: 230.0,
+      body: SafeArea(
+        child: Container(
+          color: darkerPrimaryColor,
+          height: screenHeight,
+          child: Column(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: bottomSheetTop,
+                child: Stack(
+                  children: [
+                    /// skip text button
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                          margin: const EdgeInsets.only(top: 20, right: 50),
+                          child: InkWell(
+                            onTap: Navigator.of(context).pop,
+                            child: const Text(
+                              'Skip',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 16,
                               ),
                             ),
+                          )),
                     ),
-                  ),
 
-                  /// Progress Indicator
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: CarouselIndicator(
-                      count: tutorials.length,
-                      index: tutorialIndex.toInt(),
+                    /// illustrator
+                    Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 100),
+                        child: index == 0
+                            ? Container(
+                                margin: const EdgeInsets.only(bottom: 20.0),
+                                child: const Image(
+                                  image: AssetImage('assets/images/load_credits.png'),
+                                  height: 230.0,
+                                ),
+                              )
+                            : index == 1
+                                ? Container(
+                                    margin: const EdgeInsets.only(bottom: 20.0),
+                                    child: const Image(
+                                      image: AssetImage('assets/images/face_id.png'),
+                                      height: 230.0,
+                                    ),
+                                  )
+                                : LottieBuilder.asset(
+                                    'assets/lottie/done-lite.json',
+                                    repeat: false,
+                                  ),
+                      ),
                     ),
-                  ),
-                ],
+
+                    /// Progress Indicator
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: CarouselIndicator(
+                        count: tutorials.length,
+                        index: tutorialIndex.toInt(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-            /// space below the bottom_sheet
-            Container(
-              height: windowSpace,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.transparent,
-            ),
-          ],
+              /// space below the bottom_sheet
+              Container(
+                height: windowSpace,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.transparent,
+              ),
+            ],
+          ),
         ),
       ),
     );

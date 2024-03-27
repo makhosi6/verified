@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// https://lottiefiles.com/mahendra
+
 // primary color
 Color primaryColor = const Color(0xFF4CD080);
 
