@@ -170,7 +170,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                               ),
                               const TextSpan(
                                   text:
-                                      ', to ensuring you have the correct information for transactions or background checks.')
+                                      ', to ensuring you have the correct information for transaction or background checks.')
                             ],
                           ),
                         ),

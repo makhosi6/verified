@@ -64,7 +64,7 @@ class TransactionPageContent extends StatelessWidget {
               stretchTriggerOffset: 150.0,
               expandedHeight: 150.0,
               title: const Text(
-                'Transactions History',
+                'Transaction History',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,

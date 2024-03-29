@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gallery_asset_picker/gallery_asset_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/application/appbase/appbase_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
@@ -206,15 +205,7 @@ class AccountPageContent extends StatelessWidget {
                   leadingWidth: 80.0,
                   leading: VerifiedBackButton(
                     key: const Key('acc-page-back-btn'),
-                    onTap: () {
-                      try {
-                        Navigator.of(context)
-                          ..pop()
-                          ..initState();
-                      } catch (e) {
-                        print(e);
-                      }
-                    },
+                    onTap: Navigator.of(context).pop,
                   ),
                 ),
                 SliverList(
@@ -282,8 +273,7 @@ class AccountPageContent extends StatelessWidget {
                                                     );
 
                                                   context.read<AuthBloc>().add(const AuthEvent.signOut());
-                                                  context.read<StoreBloc>()
-                                                    .add(const StoreEvent.clearUser());
+                                                  context.read<StoreBloc>().add(const StoreEvent.clearUser());
 
                                                   Navigator.of(context)
                                                     ..pop()
@@ -707,7 +697,7 @@ Widget accountPageListItems(BuildContext context, {required String key, required
         'Active' => value == 'true' ? 'Yes' : 'No',
         'Last Login' => (value == 'null') ? 'Unknown' : humanReadable(value),
         'Account Created' => (value == 'Unknown') ? '' : humanReadable(value),
-        _ => (value == 'null') ? 'Unknown': value
+        _ => (value == 'null') ? 'Unknown' : value
       };
   return Container(
     alignment: Alignment.centerLeft,

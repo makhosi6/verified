@@ -6,6 +6,7 @@ import 'package:verified/domain/models/transaction_history.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/add_payment_method_page.dart';
 import 'package:verified/presentation/pages/how_it_works_page.dart';
+import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
@@ -74,7 +75,7 @@ class CombinedHistoryList extends StatelessWidget {
           if (state.historyData.isEmpty) {
             return Center(
               child: Text(
-                'NO TRANSACTIONS HISTORY',
+                'NO TRANSACTION HISTORY',
                 style: GoogleFonts.dmSans(
                   fontSize: 18.0,
                   fontStyle: FontStyle.normal,
@@ -84,7 +85,7 @@ class CombinedHistoryList extends StatelessWidget {
             );
           }
 
-          /// ELSE SHOW TRANSACTIONS HISTORY
+          /// ELSE SHOW TRANSACTION HISTORY
           /// ..sort((a, b) => ((a.createdAt ?? 0) as int) - ((b.createdAt ?? 0) as int))
           final list = sortByDate(state.historyData);
 
@@ -96,13 +97,26 @@ class CombinedHistoryList extends StatelessWidget {
           return Column(
             children: [
               if (showBanner == true) learnMoreBanner,
+              const SizedBox(
+                height: 20.0,
+              ),
+              ListItemBanner(
+                type: BannerType.learn_more,
+                bgColor: neutralGrey,
+                leadingIcon: Icons.rocket_launch_outlined,
+                leadingBgColor: primaryColor,
+                title: 'Get the most out of Verified',
+                subtitle: '',
+                buttonText: 'Learn More',
+                onTap: () => navigate(context, page: const LearnMorePage()),
+              ),
               if (showBanner == true)
                 SizedBox(
                   width: double.infinity,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 28.0, left: 8.0),
                     child: Text(
-                      'TRANSACTIONS HISTORY',
+                      'TRANSACTION HISTORY',
                       style: GoogleFonts.dmSans(
                         fontWeight: FontWeight.w700,
                         fontStyle: FontStyle.normal,
@@ -135,7 +149,6 @@ class CombinedHistoryList extends StatelessWidget {
 }
 
 class HistoryListData {
-  HistoryListData();
   List<TransactionHistory> today = [];
   List<TransactionHistory> yesterday = [];
   List<TransactionHistory> thisMonth = [];
@@ -153,20 +166,20 @@ class HistoryListData {
   }
 }
 
-HistoryListData sortByDate(List<TransactionHistory> items) {
+HistoryListData sortByDate(List<TransactionHistory> historyRecords) {
   final historyList = HistoryListData();
-  for (var i = 0; i < items.length; i++) {
+  for (var i = 0; i < historyRecords.length; i++) {
     ///
-    final item = items[i];
-    final date = DateTime.fromMillisecondsSinceEpoch((item.timestamp?.toInt() ?? 0) * 1000);
+    final historyRecord = historyRecords[i];
+    final date = DateTime.fromMillisecondsSinceEpoch((historyRecord.timestamp?.toInt() ?? 0) * 1000);
     if (date.isToday) {
-      historyList.today.add(item);
+      historyList.today.add(historyRecord);
     } else if (date.isYesterday) {
-      historyList.yesterday.add(item);
+      historyList.yesterday.add(historyRecord);
     } else if (date.isThisMonth) {
-      historyList.thisMonth.add(item);
+      historyList.thisMonth.add(historyRecord);
     } else {
-      historyList.older.add(item);
+      historyList.older.add(historyRecord);
     }
   }
 

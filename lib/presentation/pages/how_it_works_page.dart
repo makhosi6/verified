@@ -3,10 +3,10 @@ import 'dart:convert';
 
 import 'package:carousel_indicator/carousel_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-
 import 'package:verified/globals.dart';
+import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 
 class HowItWorksPage extends StatefulWidget {
@@ -27,107 +27,28 @@ class _HowItWorksPageState extends State<HowItWorksPage> with TickerProviderStat
     const indexMin = 0;
     final tutorialIndex = (index > indexMax) ? indexMax : index;
     final currentTutorial = tutorials.firstWhere((t) => t.index == tutorialIndex);
-
-    ///
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      try {
-        showModalBottomSheet(
-          context: context,
-          barrierColor: Colors.transparent,
-          transitionAnimationController: BottomSheet.createAnimationController(this),
-          isDismissible: false,
-          enableDrag: false,
-          isScrollControlled: true,
-          builder: (context) => GestureDetector(
-            onVerticalDragStart: (_) {},
-            onHorizontalDragStart: (_) {},
-            child: BottomSheet(
-                onClosing: () {},
-                showDragHandle: true,
-                constraints: appConstraints.copyWith(maxHeight: 300),
-                animationController: BottomSheet.createAnimationController(this),
-                enableDrag: false,
-                builder: (BuildContext context) {
-                  return Container(
-                    constraints: appConstraints,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0),
-                      ),
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    height: 279,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          ///
-                          Text(
-                            currentTutorial.title ?? '',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 18.0,
-                              fontStyle: FontStyle.normal,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-
-                          ////
-                          Text(
-                            currentTutorial.body ?? '',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: neutralDarkGrey,
-                              fontSize: 14.0,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-
-                          ///
-                          BaseButton(
-                            hasBorderLining: false,
-                            buttonIcon: null,
-                            buttonSize: ButtonSize.large,
-                            color: Colors.white,
-                            hasIcon: false,
-                            bgColor: primaryColor,
-                            label: index <= indexMax ? 'Done' : 'Next',
-                            onTap: () {
-                              var nextIndex = index + 1;
-                              if (mounted && index <= indexMax && (nextIndex != index) && nextIndex <= indexMax) {
-                                setState(() {
-                                  index++;
-                                });
-                              }
-                            },
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-          ),
-        );
-      } catch (err) {
-        print('NO BOTTOMSHEET EVENTS, $err');
-      }
-    });
-
     //
-    final screenHeight = MediaQuery.of(context).size.height -
-        (MediaQuery.of(context).padding.top + MediaQuery.of(context).padding.bottom);
+    final screenHeight = MediaQuery.of(context).size.height;
+    final topSafeArea = MediaQuery.of(context).padding.top;
+    final bottomSafeArea = MediaQuery.of(context).padding.bottom;
     final screenWidth = MediaQuery.of(context).size.width;
-    final bottomSheetTop = screenHeight - 320;
+    final magicNumber = screenHeight * 0.3 > 279 + 90 ? 279 : screenHeight * 0.3;
+    final bottomSheetTop = screenHeight - (magicNumber > 210 ? 300 : 320);
     final windowSpace = screenHeight - bottomSheetTop;
 
     ///
-    return Scaffold(
-      backgroundColor: darkerPrimaryColor,
-      body: SafeArea(
-        child: Container(
+    final illustrationPath = (index == 0)
+        ? 'assets/images/load_credits.png'
+        : (index == 1)
+            ? 'assets/images/face_id.png'
+            : 'assets/images/scan_to_verify.png';
+
+    ///
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        backgroundColor: darkerPrimaryColor,
+        body: Container(
           color: darkerPrimaryColor,
           height: screenHeight,
           child: Column(
@@ -141,7 +62,7 @@ class _HowItWorksPageState extends State<HowItWorksPage> with TickerProviderStat
                     Align(
                       alignment: Alignment.topRight,
                       child: Container(
-                          margin: const EdgeInsets.only(top: 20, right: 50),
+                          margin: EdgeInsets.only(top: 20 + topSafeArea, right: 50),
                           child: InkWell(
                             onTap: Navigator.of(context).pop,
                             child: const Text(
@@ -160,26 +81,12 @@ class _HowItWorksPageState extends State<HowItWorksPage> with TickerProviderStat
                       alignment: Alignment.center,
                       child: Padding(
                         padding: const EdgeInsets.only(top: 100),
-                        child: index == 0
-                            ? Container(
-                                margin: const EdgeInsets.only(bottom: 20.0),
-                                child: const Image(
-                                  image: AssetImage('assets/images/load_credits.png'),
-                                  height: 230.0,
-                                ),
-                              )
-                            : index == 1
-                                ? Container(
-                                    margin: const EdgeInsets.only(bottom: 20.0),
-                                    child: const Image(
-                                      image: AssetImage('assets/images/face_id.png'),
-                                      height: 230.0,
-                                    ),
-                                  )
-                                : LottieBuilder.asset(
-                                    'assets/lottie/done-lite.json',
-                                    repeat: false,
-                                  ),
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 20.0),
+                          child: Image(
+                            image: AssetImage(illustrationPath),
+                          ),
+                        ),
                       ),
                     ),
 
@@ -200,6 +107,77 @@ class _HowItWorksPageState extends State<HowItWorksPage> with TickerProviderStat
                 height: windowSpace,
                 width: MediaQuery.of(context).size.width,
                 color: Colors.transparent,
+                child: BottomSheet(
+                    onClosing: () {},
+                    showDragHandle: true,
+                    constraints: appConstraints.copyWith(maxHeight: 300),
+                    animationController: BottomSheet.createAnimationController(this),
+                    enableDrag: false,
+                    builder: (BuildContext context) {
+                      return Container(
+                        constraints: appConstraints,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                          ),
+                        ),
+                        width: MediaQuery.of(context).size.width,
+                        height: 279,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ///
+                              Text(
+                                currentTutorial.title ?? 'Instant Background Check, Done right',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 18.0,
+                                  fontStyle: FontStyle.normal,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+
+                              ////
+                              Text(
+                                currentTutorial.body ??
+                                    'Get your verification results immediately for seamless access to services.',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  color: neutralDarkGrey,
+                                  fontSize: 14.0,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+
+                              ///
+                              BaseButton(
+                                hasBorderLining: false,
+                                buttonIcon: null,
+                                buttonSize: ButtonSize.large,
+                                color: Colors.white,
+                                hasIcon: false,
+                                bgColor: primaryColor,
+                                label: index == indexMax ? 'Get Started' : 'Next',
+                                onTap: () {
+                                  var nextIndex = index + 1;
+                                  if (mounted && index <= indexMax && (nextIndex != index) && nextIndex <= indexMax) {
+                                    setState(() {
+                                      index++;
+                                    });
+                                  } else {
+                                    navigate(context, page: const SearchOptionsPage(), replaceCurrentPage: true);
+                                  }
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
               ),
             ],
           ),
@@ -211,18 +189,19 @@ class _HowItWorksPageState extends State<HowItWorksPage> with TickerProviderStat
 
 final tutorials = <HowToTutorial>[
   HowToTutorial(
-    title: 'Fastest payment',
-    body: 'I have a problem with this BottomSheet, it works fine but as soon as I tap on it, I will get an error',
+    title: 'Load Money',
+    body: 'Easily fund your account with credits. Add as little as R30 to get started',
     index: 0,
   ),
   HowToTutorial(
-    title: 'Safest Payment',
-    body: 'I have a problem with this BottomSheet, it works fine but as soon as I tap on it, I will get an error',
+    title: 'Instant Background Check',
+    body:
+        'Enter a phone number or ID for verification, and get immediate confirmation of legitimacy. Accuracy and trust at your fingertips.',
     index: 1,
   ),
   HowToTutorial(
-    title: 'Pay Anything',
-    body: 'I have a problem with this BottomSheet, it works fine but as soon as I tap on it, I will get an error',
+    title: 'Get Instant Results',
+    body: 'Obtain your verification outcome instantly. Ensure accuracy and trust in seconds',
     index: 2,
   )
 ];

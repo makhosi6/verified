@@ -18,7 +18,7 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget redirect}) async =>
     showModalBottomSheet(
       context: context,
-      // showDragHandle: true,
+      showDragHandle: true,
       builder: (context) => BlocListener<StoreBloc, StoreState>(
         listener: (context, state) {
           if (!state.userProfileDataLoading && state.userProfileData != null && state.userProfileData != null) {
@@ -43,7 +43,9 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
         },
         child: SingleChildScrollView(
           child: Container(
-            constraints:  appConstraints,
+         constraints: const BoxConstraints(
+            minWidth: 600.0,
+          ),
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Column(
               children: [
@@ -204,7 +206,7 @@ Future triggerSignUpBottomSheet<bool>({
 }) async =>
     showModalBottomSheet(
       context: context,
-      // showDragHandle: true,
+      showDragHandle: true,
       builder: (context) => SingleChildScrollView(
         child: Container(
           constraints: const BoxConstraints(

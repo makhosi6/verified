@@ -31,20 +31,50 @@ Color warningColor = Colors.amberAccent[700] ?? Colors.amberAccent;
 EdgeInsets primaryPadding = const EdgeInsets.all(16.0);
 
 ///
-var baseTheme = ThemeData(brightness: Brightness.light);
+const scaffoldBackgroundColor = Color(0xFFF5FCF8);
 
-// App theme
+///
+final baseTheme = ThemeData(brightness: Brightness.light);
+
+MaterialColor generateMaterialColor(Color color) {
+  List strengths = <double>[.05];
+  Map<int, Color> swatch = <int, Color>{};
+  final int r = color.red, g = color.green, b = color.blue;
+
+  for (int i = 1; i < 10; i++) {
+    strengths.add(0.1 * i);
+  }
+
+  for (final double strength in strengths) {
+    final double ds = 0.5 - strength;
+    swatch[(strength * 1000).round()] = Color.fromRGBO(
+      r + ((ds < 0 ? r : (255 - r)) * ds).round(),
+      g + ((ds < 0 ? g : (255 - g)) * ds).round(),
+      b + ((ds < 0 ? b : (255 - b)) * ds).round(),
+      1,
+    );
+  }
+
+  return MaterialColor(color.value, swatch);
+}
+
+/// [primaryColor] as a Material Color
+MaterialColor primaryMaterialColor = generateMaterialColor(primaryColor);
+
+/// App theme
 ThemeData theme = ThemeData.light(
   useMaterial3: true,
 ).copyWith(
   appBarTheme: const AppBarTheme(centerTitle: true),
 
+  // scaffoldBackgroundColor: scaffoldBackgroundColor,
   scaffoldBackgroundColor: Colors.white,
   textTheme: GoogleFonts.dmSansTextTheme(baseTheme.textTheme),
   primaryColor: darkerPrimaryColor,
   primaryColorLight: primaryColor,
   splashColor: darkerPrimaryColor.withOpacity(0.4),
   highlightColor: primaryColor.withOpacity(0.2),
+  dividerColor: Colors.grey[400],
   colorScheme: ColorScheme(
     brightness: baseTheme.brightness,
     primary: primaryColor,
