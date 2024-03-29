@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:stepper_list_view/stepper_list_view.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
