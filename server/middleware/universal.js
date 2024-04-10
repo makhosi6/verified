@@ -137,7 +137,7 @@ async function archiveOnDelete(req, res, next) {
       const data = await response.json();
 
       const urlArr = url.split("/");
-      const type = urlArr[urlArr.length - 2];
+      const type = urlArr[urlArr.length - 3];
 
       await archiveRecord({
         id: uuidv4(),
