@@ -150,7 +150,7 @@ services:
       - local_bridge
 
   whatsapp_messaging_service:
-    image: makhosi/whatsapp_hook:3.2.minimal
+    image: makhosi/whatsapp_hook:3.3.minimal
     ports:
       - "9092:9092"
       - "9093:9093"
