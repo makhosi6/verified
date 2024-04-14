@@ -63,9 +63,7 @@ class _TheWebViewState extends State<TheWebView> {
               });
             }
           },
-          onPageStarted: (String url) {},
-          onPageFinished: (String url) {},
-          onWebResourceError: (WebResourceError error) {
+          onWebResourceError: (error) {
             if (mounted) {
               setState(() {
                 hasError = true;

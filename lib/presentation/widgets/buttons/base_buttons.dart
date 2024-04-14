@@ -85,9 +85,9 @@ class BaseButton extends StatelessWidget {
                   ),
                 ),
               Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Center(
+                child: Center(
+                  child: Container(
+                    padding: hasIcon ? null : const EdgeInsets.all(10.0),
                     child: Text(
                       label,
                       style: TextStyle(

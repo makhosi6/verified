@@ -44,33 +44,33 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
         child: SingleChildScrollView(
           child: Container(
          constraints: const BoxConstraints(
-            minWidth: 600.0,
+            minWidth: 600,
           ),
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             child: Column(
               children: [
                 /// sign in text
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Column(
                     children: [
                       const Text(
                         'Sign in to continue',
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 18.0,
+                          fontSize: 18,
                           fontStyle: FontStyle.normal,
                         ),
                         textAlign: TextAlign.center,
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
                         child: RichText(
                           text: TextSpan(
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 color: neutralDarkGrey,
-                                fontSize: 14.0,
+                                fontSize: 14,
                               ),
                               children: [
                                 const TextSpan(
@@ -134,7 +134,20 @@ List<Widget> buttons(BuildContext context, {required String type}) {
   
   return [
     Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 8),
+      child: BaseButton(
+        key: UniqueKey(),
+        onTap: () => handler(VerifiedAuthProvider.facebook),
+        label:  type == 'signin' ? 'Login with an Email':'Create an Account',
+            buttonIcon: const Image(
+          image: AssetImage('assets/icons/email.png'),
+        ),
+        buttonSize: ButtonSize.large,
+        hasBorderLining: true,
+      ),
+    ),
+    Padding(
+      padding: const EdgeInsets.only(bottom: 8),
       child: BaseButton(
         key: UniqueKey(),
         onTap: () => handler(VerifiedAuthProvider.google),
@@ -147,20 +160,7 @@ List<Widget> buttons(BuildContext context, {required String type}) {
       ),
     ),
     Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: BaseButton(
-        key: UniqueKey(),
-        onTap: () => handler(VerifiedAuthProvider.facebook),
-        label: '$label with Facebook',
-        buttonIcon: const Image(
-          image: AssetImage('assets/icons/facebook.png'),
-        ),
-        buttonSize: ButtonSize.large,
-        hasBorderLining: true,
-      ),
-    ),
-    Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 8),
       child: BaseButton(
         key: UniqueKey(),
         onTap: () => handler(VerifiedAuthProvider.apple),
@@ -173,20 +173,7 @@ List<Widget> buttons(BuildContext context, {required String type}) {
       ),
     ),
     Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: BaseButton(
-        key: UniqueKey(),
-        onTap: () => handler(VerifiedAuthProvider.twitter),
-        label: '$label with Twitter',
-        buttonIcon: const Image(
-          image: AssetImage('assets/icons/twitter.png'),
-        ),
-        buttonSize: ButtonSize.large,
-        hasBorderLining: true,
-      ),
-    ),
-    Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 8),
       child: BaseButton(
         key: UniqueKey(),
         onTap: () => handler(VerifiedAuthProvider.microsoft),
@@ -210,33 +197,33 @@ Future triggerSignUpBottomSheet<bool>({
       builder: (context) => SingleChildScrollView(
         child: Container(
           constraints: const BoxConstraints(
-            minWidth: 600.0,
+            minWidth: 600,
           ),
-          padding: const EdgeInsets.symmetric(vertical: 20.0),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           child: Column(
             children: [
               /// sign in text
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Column(
                   children: [
                     const Text(
                       'Sign Up to continue',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        fontSize: 18.0,
+                        fontSize: 18,
                         fontStyle: FontStyle.normal,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: RichText(
                         text: TextSpan(
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: neutralDarkGrey,
-                              fontSize: 14.0,
+                              fontSize: 14,
                             ),
                             children: [
                               const TextSpan(

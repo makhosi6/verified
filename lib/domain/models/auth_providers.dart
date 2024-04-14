@@ -10,4 +10,6 @@ class VerifiedAuthProvider {
   static final twitter = TwitterAuthProvider();
 
   static final facebook = FacebookAuthProvider();
+
+  static final email = PhoneAuthProvider();
 }

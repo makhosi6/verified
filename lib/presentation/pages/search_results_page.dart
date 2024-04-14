@@ -9,6 +9,7 @@ import 'package:verified/globals.dart';
 import 'package:verified/main.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/data_view_item.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
@@ -298,7 +299,7 @@ Widget _renderSliverListItems({
       ),
       child: Column(
         children: [
-          DataItem(keyName: key, value: value),
+          DataViewItem(keyName: key, value: value),
           Divider(
             color: Colors.grey[400],
             indent: 0,
@@ -308,35 +309,4 @@ Widget _renderSliverListItems({
       ),
     );
 
-class DataItem extends StatelessWidget {
-  final String keyName;
 
-  /// can be a Widget or String
-  final dynamic value;
-  const DataItem({
-    super.key,
-    required this.keyName,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            keyName,
-            style: TextStyle(color: neutralDarkGrey, fontSize: 16.0),
-          ),
-          value is Widget
-              ? value
-              : Text(
-                  value,
-                )
-        ],
-      ),
-    );
-  }
-}

@@ -57,7 +57,7 @@ Future<Map<String, dynamic>> getCurrentDeviceInfo() async {
     return switch (defaultTargetPlatform) {
       TargetPlatform.android => _readAndroidBuildData(await deviceInfoPlugin.androidInfo),
       TargetPlatform.iOS => _readIosDeviceInfo(await deviceInfoPlugin.iosInfo),
-      _ => {'name': 'unknown'}
+      _ => {'name': 'Web'}
     };
   } catch (e) {
     return {'name': 'unknown'};

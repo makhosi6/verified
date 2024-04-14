@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 // primary color
 Color primaryColor = const Color(0xFF4CD080);
+// light version of the primary color
+Color litePrimaryColor = const Color(0xFFB7CEC3);
 
 /// common light grey color
 Color neutralGrey = const Color(0xFFF2F2F2);
@@ -19,7 +21,7 @@ Color neutralYellow = const Color(0xFFFFAE58);
 Color darkerPrimaryColor = const Color(0xFF105D38);
 
 /// dark blur color
-Color darkBlurColor = const Color.fromARGB(106, 26, 54, 39);
+Color darkBlurColor = Color(0x6A1A3627);
 
 /// common error color
 Color errorColor = Colors.redAccent;

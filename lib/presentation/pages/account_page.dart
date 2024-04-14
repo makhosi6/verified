@@ -17,6 +17,8 @@ import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/native_scripts/main.dart';
 import 'package:verified/presentation/pages/app_signature_page.dart';
 import 'package:verified/presentation/pages/loading_page.dart';
+import 'package:verified/presentation/pages/webviews/privacy_clause.dart';
+import 'package:verified/presentation/utils/data_view_item.dart';
 import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/utils/url_loader.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
@@ -228,7 +230,9 @@ class AccountPageContent extends StatelessWidget {
                             : accountSettings[index]['text'] == 'balance'
                                 ? Column(
                                     children: [
-                                      const _ProfileName(),
+                                      _ProfileName(
+                                        user: user,
+                                      ),
                                       Divider(
                                         color: Colors.grey[400],
                                         indent: 0,
@@ -316,6 +320,11 @@ class AccountPageContent extends StatelessWidget {
                                                 /// Show Terms of Use
                                                 if (accountSettings[index]['text'] == 'Terms of Use') {
                                                   navigate(context, page: const TermOfUseWebView());
+                                                }
+
+                                                /// Show privacy
+                                                if (accountSettings[index]['text'] == 'Privacy & Security'  ) {
+                                                  navigate(context, page: const PrivacyClauseWebView());
                                                 }
 
                                                 /// show get help pop-up
@@ -451,38 +460,38 @@ var userPersonalDetailsKey = [
 var accountSettings = [
   {
     'type': 'expandable',
-    'text': 'balance',
+    'text': 'balance'
   },
   {
     'type': 'expandable',
-    'text': 'title',
+    'text': 'title'
   },
   {
     'type': 'expandable',
     'text': 'Personal',
-    'icon': Icons.person_2_outlined,
+    'icon': Icons.person_2_outlined
   },
   {
     'type': 'expandable',
     'text': 'Transactions',
-    'icon': Icons.payments_outlined,
+    'icon': Icons.payments_outlined
   },
   {
     'type': 'button',
     'text': 'Help',
-    'icon': Icons.info_outline,
+    'icon': Icons.info_outline
   },
-  {'type': 'expandable', 'text': 'App Information', 'icon': Icons.app_settings_alt_outlined},
-  {'type': 'expandable', 'text': 'Privacy &  Security', 'icon': Icons.security_outlined},
+  {'type': 'expandable', 'text': 'App Information', 'icon': Icons.app_settings_alt_outlined,},
+  {'type': 'button', 'text': 'Privacy & Security', 'icon': Icons.security_outlined},
   {
     'type': 'button',
     'text': 'Terms of Use',
-    'icon': Icons.article_outlined,
+    'icon': Icons.article_outlined
   },
   {
     'type': 'button',
     'text': 'Logout',
-    'icon': Icons.logout_outlined,
+    'icon': Icons.logout_outlined
   },
   {
     'type': 'button',
@@ -492,17 +501,17 @@ var accountSettings = [
   },
   {
     'type': 'space',
-    'text': '',
+    'text': ''
   },
 ];
 
 class _ProfileName extends StatelessWidget {
-  const _ProfileName();
+  UserProfile? user;
+  _ProfileName({Key? key, required this.user}) : super(key: key);
 
+  late String placeholderAvatar = 'https://robohash.org/${user?.displayName}.png';
   @override
   Widget build(BuildContext context) {
-    var user = context.watch<StoreBloc>().state.userProfileData;
-    final placeholderAvatar = 'https://robohash.org/${user?.name}.png';
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
@@ -621,7 +630,7 @@ class _ProfileName extends StatelessWidget {
                 Container(
                   width: MediaQuery.of(context).size.width * 0.5,
                   clipBehavior: Clip.none,
-                  child: Text(
+                  child: Text( user?.name ??
                     user?.displayName ?? user?.actualName ?? 'Hello',
                     style: const TextStyle(
                       fontSize: 24.0,
@@ -709,7 +718,7 @@ Widget accountPageListItems(BuildContext context, {required String key, required
     ),
     child: Column(
       children: [
-        DataItem(keyName: key, value: transformedValue()),
+        DataViewItem(keyName: key, value: transformedValue()),
         (!isLast)
             ? Divider(
                 color: Colors.grey[400],

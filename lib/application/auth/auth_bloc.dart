@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -7,6 +6,7 @@ import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/auth/repository.dart';
+import 'package:verified/helpers/extensions/user.dart';
 
 part 'auth_state.dart';
 part 'auth_event.dart';
@@ -21,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             authStateChanges: _authProviderRepository.authStateChanges().asBroadcastStream()
               ..listen((user) {
                 try {
+                  print(user.toString());
                   if (user != null && _storeBloc.state.userProfileData == null) {
                     ///
 
@@ -59,13 +60,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
           final user = userCredential.user;
 
+          print(user.toString());
+          print("======>>>>>>>>========");
+          print(userCredential.toString());
+
           final userProfile = UserProfile.fromJson({
             'id': user?.uid,
             'profileId': user?.uid,
             'email': user?.email,
-            'actualName': user?.displayName,
-            'displayName': user?.displayName,
-            'name': user?.displayName,
+            'actualName': user?.displayName ?? user?.email?.getFullNameFromEmail(),
+            'displayName': user?.displayName ?? user?.email?.extractUsernameFromEmail(),
+            'name': user?.displayName ?? user?.email?.getFullNameFromEmail(),
             'avatar':
                 user?.photoURL ?? 'https://robohash.org/${(user?.uid.replaceRange(0, 2, "P_"))?.toLowerCase()}.png',
             // 'walletId': 'logged-in-user-wallet',
@@ -104,9 +109,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 'id': user?.uid,
                 'profileId': user?.uid,
                 'email': user?.email,
-                'actualName': user?.displayName,
-                'displayName': user?.displayName,
-                'name': user?.displayName,
+                'actualName': user?.displayName ?? user?.email?.getFullNameFromEmail(),
+                'displayName': user?.displayName ?? user?.email?.extractUsernameFromEmail(),
+                'name': user?.displayName ?? user?.email?.getFullNameFromEmail(),
                 'avatar': user?.photoURL ??
                     'https://robohash.org/${(user?.displayName?.replaceAll(" ", "_") ?? user?.uid)?.toLowerCase()}.png',
                 'phone': user?.phoneNumber,
@@ -136,9 +141,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 'id': user?.uid,
                 'profileId': user?.uid,
                 'email': user?.email,
-                'actualName': user?.displayName,
-                'displayName': user?.displayName,
-                'name': user?.displayName,
+                'actualName': user?.displayName ?? user?.email?.getFullNameFromEmail(),
+                'displayName': user?.displayName ?? user?.email?.extractUsernameFromEmail(),
+                'name': user?.displayName ?? user?.email?.getFullNameFromEmail(),
                 'avatar': user?.photoURL ??
                     'https://robohash.org/${(user?.displayName?.replaceAll(" ", "_") ?? user?.uid)?.toLowerCase()}.png',
                 'phone': user?.phoneNumber,
