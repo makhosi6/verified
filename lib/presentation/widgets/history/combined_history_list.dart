@@ -75,7 +75,7 @@ class CombinedHistoryList extends StatelessWidget {
           if (state.historyData.isEmpty) {
             return Center(
               child: Text(
-                'NO TRANSACTION HISTORY',
+                'NO HISTORY',
                 style: GoogleFonts.dmSans(
                   fontSize: 18.0,
                   fontStyle: FontStyle.normal,

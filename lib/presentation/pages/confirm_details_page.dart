@@ -39,7 +39,6 @@ class ConfirmDetailsPage extends StatelessWidget {
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
-              const AppErrorWarningIndicator(),
               SliverAppBar(
                 stretch: true,
                 onStretchTrigger: () async {},
@@ -56,20 +55,7 @@ class ConfirmDetailsPage extends StatelessWidget {
                   onTap: () => Navigator.pop(context),
                   isLight: true,
                 ),
-                actions: [
-                  ActionButton(
-                    key: const Key('go-to-search-btn'),
-                    tooltip: 'Go to Search Page',
-                    iconColor: Colors.black,
-                    bgColor: Colors.white,
-                    onTap: () => Navigator.of(context).pushReplacement(
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) => const SearchOptionsPage(),
-                      ),
-                    ),
-                    icon: Icons.person_2_outlined,
-                  ),
-                ],
+                actions: const [],
               ),
               SliverList(
                 delegate: SliverChildBuilderDelegate(

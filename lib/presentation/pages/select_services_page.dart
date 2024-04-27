@@ -44,20 +44,7 @@ class _SelectServicesPageState extends State<SelectServicesPage> {
                   onTap: () => Navigator.pop(context),
                   isLight: true,
                 ),
-                actions: [
-                  ActionButton(
-                    key: const Key('go-to-search-btn'),
-                    tooltip: 'Go to Search Page',
-                    iconColor: Colors.black,
-                    bgColor: Colors.white,
-                    onTap: () => Navigator.of(context).pushReplacement(
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) => const SearchOptionsPage(),
-                      ),
-                    ),
-                    icon: Icons.person_2_outlined,
-                  ),
-                ],
+                actions: const [],
               ),
               SliverList(
                 delegate: SliverChildBuilderDelegate(

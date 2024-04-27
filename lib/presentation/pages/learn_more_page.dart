@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:verified/globals.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
@@ -50,7 +50,6 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                         children: [
                           Container(
                             padding: primaryPadding.copyWith(left: primaryPadding.left, right: primaryPadding.right),
-                            constraints: appConstraints,
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -106,12 +105,13 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                     child: BottomSheet(
                         onClosing: () {},
                         showDragHandle: true,
-                        constraints: appConstraints.copyWith(maxHeight: MediaQuery.of(context).size.height - 300.0),
+                        constraints: BoxConstraints().copyWith(maxHeight: MediaQuery.of(context).size.height - 300.0),
                         animationController: BottomSheet.createAnimationController(this),
                         enableDrag: false,
                         builder: (BuildContext context) {
                           return Container(
-                            constraints: appConstraints,
+                            
+                            // constraints: appConstraints,
                             decoration: const BoxDecoration(
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(20.0),
@@ -215,7 +215,7 @@ class ListOfHelpTipsTopics extends StatelessWidget {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
-        itemCount: 7,
+        itemCount: 90,
         itemBuilder: (context, index) => Container(
           width: 160,
           height: 100,
@@ -223,7 +223,7 @@ class ListOfHelpTipsTopics extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(color: Colors.white70),
             borderRadius: BorderRadius.circular(20),
-            color: primaryMaterialColor[(index * 2) * 100],
+            color: Color.fromARGB(Random().nextInt(255), 0, 0, 0),
           ),
         ),
       ),

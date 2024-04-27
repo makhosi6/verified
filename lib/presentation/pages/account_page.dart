@@ -182,7 +182,7 @@ class AccountPageContent extends StatelessWidget {
                                   ),
                                   ActionButton(
                                     key: const Key('add-payment-method-or-topup-btn'),
-                                    tooltip: wallet != null ? 'Add payment method' : 'Top up',
+                                    tooltip: wallet == null ? 'Add payment method' : 'Top up',
                                     iconColor: Colors.white,
                                     bgColor: neutralYellow,
                                     padding: const EdgeInsets.all(0),
@@ -216,9 +216,9 @@ class AccountPageContent extends StatelessWidget {
                     (BuildContext context, int index) => UnconstrainedBox(
                       child: Container(
                         // color: Colors.blueAccent,
-                        width: MediaQuery.of(context).size.width - 16,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                        width: MediaQuery.of(context).size.width - primaryPadding.top,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: primaryPadding.top / 2,
                         ),
                         constraints: appConstraints,
                         child: (accountSettings[index]['type'] == 'space')
@@ -323,7 +323,7 @@ class AccountPageContent extends StatelessWidget {
                                                 }
 
                                                 /// Show privacy
-                                                if (accountSettings[index]['text'] == 'Privacy & Security'  ) {
+                                                if (accountSettings[index]['text'] == 'Privacy & Security') {
                                                   navigate(context, page: const PrivacyClauseWebView());
                                                 }
 
@@ -458,51 +458,26 @@ var userPersonalDetailsKey = [
 ];
 
 var accountSettings = [
+  {'type': 'expandable', 'text': 'balance'},
+  {'type': 'expandable', 'text': 'title'},
+  {'type': 'expandable', 'text': 'Personal', 'icon': Icons.person_2_outlined},
+  {'type': 'expandable', 'text': 'History', 'icon': Icons.history_rounded},
+  {'type': 'button', 'text': 'Help', 'icon': Icons.info_outline},
   {
     'type': 'expandable',
-    'text': 'balance'
+    'text': 'App Information',
+    'icon': Icons.app_settings_alt_outlined,
   },
-  {
-    'type': 'expandable',
-    'text': 'title'
-  },
-  {
-    'type': 'expandable',
-    'text': 'Personal',
-    'icon': Icons.person_2_outlined
-  },
-  {
-    'type': 'expandable',
-    'text': 'Transactions',
-    'icon': Icons.payments_outlined
-  },
-  {
-    'type': 'button',
-    'text': 'Help',
-    'icon': Icons.info_outline
-  },
-  {'type': 'expandable', 'text': 'App Information', 'icon': Icons.app_settings_alt_outlined,},
   {'type': 'button', 'text': 'Privacy & Security', 'icon': Icons.security_outlined},
-  {
-    'type': 'button',
-    'text': 'Terms of Use',
-    'icon': Icons.article_outlined
-  },
-  {
-    'type': 'button',
-    'text': 'Logout',
-    'icon': Icons.logout_outlined
-  },
+  {'type': 'button', 'text': 'Terms of Use', 'icon': Icons.article_outlined},
+  {'type': 'button', 'text': 'Logout', 'icon': Icons.logout_outlined},
   {
     'type': 'button',
     'text': 'Delete Account',
     'icon': Icons.delete_outline_outlined,
     'color': const Color.fromARGB(255, 248, 112, 110)
   },
-  {
-    'type': 'space',
-    'text': ''
-  },
+  {'type': 'space', 'text': ''},
 ];
 
 class _ProfileName extends StatelessWidget {
@@ -512,6 +487,8 @@ class _ProfileName extends StatelessWidget {
   late String placeholderAvatar = 'https://robohash.org/${user?.displayName}.png';
   @override
   Widget build(BuildContext context) {
+    var windowWidth = MediaQuery.of(context).size.width;
+    var calculatedWidth = appConstraints.maxWidth - (100 + primaryPadding.horizontal);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
@@ -519,7 +496,7 @@ class _ProfileName extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.only(right: 16.0),
+              padding: EdgeInsets.only(right: primaryPadding.right),
               child: Stack(
                 children: [
                   Container(
@@ -628,10 +605,10 @@ class _ProfileName extends StatelessWidget {
               children: [
                 /// name
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.5,
+                  width:  windowWidth > 600 ? calculatedWidth :  windowWidth * 0.5,
                   clipBehavior: Clip.none,
-                  child: Text( user?.name ??
-                    user?.displayName ?? user?.actualName ?? 'Hello',
+                  child: Text(
+                    user?.name ?? user?.displayName ?? user?.actualName ?? 'Hello',
                     style: const TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.w600,
@@ -652,9 +629,8 @@ class _ProfileName extends StatelessWidget {
 
                 /// email
                 Container(
-                  width: MediaQuery.of(context).size.width > 400
-                      ? MediaQuery.of(context).size.width * 0.6
-                      : MediaQuery.of(context).size.width * 0.5,
+                  width:
+                      windowWidth > 600 ? calculatedWidth : (windowWidth > 400 ? windowWidth * 0.6 : windowWidth * 0.5),
                   clipBehavior: Clip.none,
                   child: Text(
                     user?.email ?? 'nomail@mailbox.com',

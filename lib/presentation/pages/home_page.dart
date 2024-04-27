@@ -92,6 +92,7 @@ class HomePageContents extends StatelessWidget {
                   automaticallyImplyLeading: true,
                   title: const Text('Verified'),
                 ),
+                leading: const SizedBox.shrink(),
                 actions: [
                   ActionButton(
                     key: const Key('go-to-user-account-btn'),

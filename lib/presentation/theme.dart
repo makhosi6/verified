@@ -21,7 +21,7 @@ Color neutralYellow = const Color(0xFFFFAE58);
 Color darkerPrimaryColor = const Color(0xFF105D38);
 
 /// dark blur color
-Color darkBlurColor = Color(0x6A1A3627);
+Color darkBlurColor = const Color(0x6A1A3627);
 
 /// common error color
 Color errorColor = Colors.redAccent;
@@ -67,7 +67,13 @@ MaterialColor primaryMaterialColor = generateMaterialColor(primaryColor);
 ThemeData theme = ThemeData.light(
   useMaterial3: true,
 ).copyWith(
-  appBarTheme: const AppBarTheme(centerTitle: true),
+  appBarTheme: const AppBarTheme(
+    centerTitle: true,
+
+    /// if using MaterialUI 2
+    // elevation: 0,
+    // backgroundColor: Colors.white,
+  ),
 
   // scaffoldBackgroundColor: scaffoldBackgroundColor,
   scaffoldBackgroundColor: Colors.white,

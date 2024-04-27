@@ -77,17 +77,13 @@ class _HelpFormState extends State<_HelpForm> {
   final _formKey = GlobalKey<FormState>();
 
   ///
-  final issueTypes = [
-    'Bug Report',
-    'Billing/Payments/Refund',
-    'Service Complaint',
-    'Deletion of Personal Information',
-    'Other'
-  ];
+  final List<String> issueTypes = List.unmodifiable(
+      ['Bug Report', 'Billing/Payments/Refund', 'Service Complaint', 'Deletion of Personal Information', 'Other']);
   late String? selectedIssueType = issueTypes.last;
 
   ///
-  final preferredCommunicationChannel = ['In-App Notification', 'SMS', 'Email', 'Whatsapp'];
+  final List<String> preferredCommunicationChannel =
+      List.unmodifiable(['In-App Notification', 'SMS', 'Email', 'Whatsapp']);
   late String? selectedPreferredCommunicationChannel = preferredCommunicationChannel.first;
 
   ///
@@ -240,27 +236,27 @@ class _HelpFormState extends State<_HelpForm> {
                           requestType: RequestType.all,
                         ).then((files) async {
                           print('MEDIA: ${files.length}');
-              
+
                           ///
                           return await Future.wait(files.map((f) async => await convertToFormData(await f.file)));
                         }).then((media) {
                           ///
                           if (media.isEmpty) return;
-              
+
                           ///
                           if (mounted) {
                             setState(() {
                               selectedMedia = media.where((i) => i != null).cast<MultipartFile>().toList();
                             });
                           }
-              
+
                           context.read<StoreBloc>().add(StoreEvent.uploadFiles(selectedMedia));
                         }).catchError((err) {
                           print('Error at help images upload: $err');
                         }, test: (_) {
                           return true;
                         });
-              
+
                         ///
                       } catch (e) {
                         print(e);

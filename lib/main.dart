@@ -217,8 +217,6 @@ class RootAppWithBloc extends StatelessWidget {
   }
 }
 
-// https://api.flutter.dev/flutter/material/SliverAppBar-class.html
-
 class AppRoot extends StatefulWidget {
   const AppRoot({super.key});
 
