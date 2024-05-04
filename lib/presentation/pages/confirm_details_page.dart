@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -47,7 +48,7 @@ class ConfirmDetailsPage extends StatelessWidget {
                 expandedHeight: 90.0,
                 flexibleSpace: AppBar(
                   automaticallyImplyLeading: true,
-                  title: const Text('Search'),
+                  title: const Text('Confirm'),
                 ),
                 leadingWidth: 80.0,
                 leading: VerifiedBackButton(
@@ -68,43 +69,72 @@ class ConfirmDetailsPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                              padding: EdgeInsets.only(bottom: primaryPadding.bottom, left: primaryPadding.left),
-                              child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    color: neutralDarkGrey,
-                                    fontSize: 14.0,
-                                  ),
-                                  children: [
-                                    const TextSpan(
-                                      text: ' Page 1 ',
-                                    ),
-                                    TextSpan(
-                                      text: ' > ',
-                                      style: GoogleFonts.ibmPlexSans(
-                                        fontWeight: FontWeight.w600,
-                                        color: darkerPrimaryColor,
-                                      ),
-                                    ),
-                                    const TextSpan(
-                                      text: ' Page 2 ',
-                                    ),
-                                    TextSpan(
-                                      text: ' > ',
-                                      style: GoogleFonts.ibmPlexSans(
-                                        fontWeight: FontWeight.w600,
-                                        color: darkerPrimaryColor,
-                                      ),
-                                    ),
-                                    const TextSpan(text: ' Page 3 ')
-                                  ],
-                                ),
-                              )),
+                            padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
+                            child: Text(
+                              'Instantly confirm the legitimacy of personal information with our user-friendly app.',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: neutralDarkGrey,
+                                fontSize: 14.0,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                           const SizedBox(
+                            width: 20,
                             height: 40,
-                            width: 40,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 0, left: 0),
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  color: neutralDarkGrey,
+                                  fontSize: 14.0,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: 'Details ',
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () => Navigator.of(context)
+                                        ..pop()
+                                        ..pop(),
+                                    style: GoogleFonts.ibmPlexSans(
+                                      color: darkerPrimaryColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' > ',
+                                    style: GoogleFonts.ibmPlexSans(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' Options ',
+                                    recognizer: TapGestureRecognizer()..onTap = () => Navigator.of(context).pop(),
+                                    style: GoogleFonts.ibmPlexSans(
+                                      color: darkerPrimaryColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' > ',
+                                    style: GoogleFonts.ibmPlexSans(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' Confirm ',
+                                    style: GoogleFonts.ibmPlexSans(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
 
                           /// confirm details
@@ -158,7 +188,7 @@ class ConfirmDetailsPage extends StatelessWidget {
                                 Padding(
                                   padding: EdgeInsets.symmetric(vertical: primaryPadding.top),
                                   child: const Text(
-                                    'Selected Product',
+                                    'Selected Options',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 18.0,
@@ -207,7 +237,8 @@ class ConfirmDetailsPage extends StatelessWidget {
                                   context: context,
                                   builder: (context) => SuccessfulActionModal(
                                     title: 'Action & Done',
-                                    subtitle: 'Your Action of has been successfully processed. Thank you for your top-up! 🎉',
+                                    subtitle:
+                                        'Your Action of has been successfully processed. Thank you for your top-up! 🎉',
                                     nextAction: () => Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute(builder: (_) => const HomePage()),
                                       (_) => false,

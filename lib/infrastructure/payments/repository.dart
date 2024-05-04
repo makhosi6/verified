@@ -9,14 +9,14 @@ import 'package:verified/domain/models/payment_refund_response.dart';
 import 'package:verified/services/dio.dart';
 
 class PaymentsRepository implements IPaymentsRepository {
-  final Dio httpClient;
+  final Dio _httpClient;
 
-  PaymentsRepository(this.httpClient);
+  PaymentsRepository(this._httpClient);
 
   @override
   Future<Either<GenericApiError, PaymentCheckoutResponse>> yocoPayment(PaymentCheckoutRequest payment) async {
     try {
-      final response = await httpClient.post(
+      final response = await _httpClient.post(
         '/payment/yoco',
         data: payment.toJson(),
       );
@@ -44,7 +44,7 @@ class PaymentsRepository implements IPaymentsRepository {
   @override
   Future<Either<GenericApiError, PaymentRefundResponse>> yocoRefund(PaymentMetadata refund) async {
     try {
-      final response = await httpClient.post(
+      final response = await _httpClient.post(
         '/refund/yoco/${refund.checkoutId}',
         data: refund.toJson(),
       );

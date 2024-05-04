@@ -16,9 +16,9 @@ import 'package:verified/helpers/security/nonce.dart';
 import 'package:verified/services/dio.dart';
 
 class StoreRepository implements IStoreRepository {
-  final Dio httpClient;
+  final Dio _httpClient;
 
-  StoreRepository(this.httpClient);
+  StoreRepository(this._httpClient);
 
   @override
   Future<Either<GenericApiError, GenericResponse>> deleteUserProfile(String id) async =>
@@ -44,7 +44,7 @@ class StoreRepository implements IStoreRepository {
     try {
       var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
 
-      var response = await httpClient.delete(
+      var response = await _httpClient.delete(
         '$collection/resource/$id',
         options: Options(
           method: 'DELETE',
@@ -114,7 +114,7 @@ class StoreRepository implements IStoreRepository {
       String collection, String resourceId, T Function(dynamic json) transform) async {
     try {
       var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
-      var response = await httpClient.get(
+      var response = await _httpClient.get(
         '$collection/resource/$resourceId',
         options: Options(
           method: 'GET',
@@ -151,7 +151,7 @@ class StoreRepository implements IStoreRepository {
       required T Function(dynamic json) transform}) async {
     try {
       var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
-      var response = await httpClient.get('$collection/resource/${resourceId ?? ""}',
+      var response = await _httpClient.get('$collection/resource/${resourceId ?? ""}',
           options: Options(
             method: 'GET',
             headers: headers,
@@ -206,7 +206,7 @@ class StoreRepository implements IStoreRepository {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $storeApiKey'
       };
-      var response = await httpClient.post(
+      var response = await _httpClient.post(
         '$collection/resource',
         options: Options(
           method: 'POST',
@@ -260,7 +260,7 @@ class StoreRepository implements IStoreRepository {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $storeApiKey'
       };
-      var response = await httpClient.put(
+      var response = await _httpClient.put(
         '$collection/resource/${data['id']}',
         options: Options(
           method: 'PUT',
@@ -295,7 +295,7 @@ class StoreRepository implements IStoreRepository {
         'Authorization': 'Bearer $storeApiKey'
       };
 
-      var response = await httpClient.post(
+      var response = await _httpClient.post(
         'help',
         options: Options(
           method: 'POST',
@@ -326,7 +326,7 @@ class StoreRepository implements IStoreRepository {
   Future<ResourceHealthStatus> getHealthStatus() async {
     try {
       var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
-      var response = await httpClient.get(
+      var response = await _httpClient.get(
         'health-check',
         options: Options(
           method: 'GET',

@@ -14,6 +14,10 @@ String? validateIdNumber(String? idNumber) {
   return null;
 }
 
+String? validateBankAccountNumber(String? value) {
+  return null;
+}
+
 String? validateMobile(String? value) {
   // Pattern for validating a phone number
   String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
@@ -25,10 +29,12 @@ String? validateMobile(String? value) {
   }
 
   // Allow SA codes only
-  if (value.startsWith('+') && !value.startsWith('+27')) {
-    return 'Invalid country code(+27) - South African Numbers only';
+  if ((value.startsWith('+') && !value.startsWith('+27')) || value.startsWith('00')) {
+    return 'Invalid country/area code - South African Numbers only';
   }
-
+  if (!value.startsWith('0')) {
+    return "South African Numbers only (It should starts with a '0')";
+  }
   // Example of disallowing sequential/repeated numbers
   if (RegExp(r'(.)\1{3}').hasMatch(value)) {
     return 'Invalid mobile number (sequential/repeated digits detected)';
@@ -40,7 +46,7 @@ String? validateMobile(String? value) {
   }
 
   // //Validate length
-  // if (value.replaceAll(' ', '').length <= 9) {
+  // if (value.replaceAll(' ', '').length < 9) {
   //   return 'A valid phone number has 10 digits';
   // }
 

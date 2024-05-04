@@ -32,7 +32,7 @@ class BaseButton extends StatelessWidget {
 
   final String label;
 
-  final void Function() onTap;
+  final void Function()? onTap;
 
   final Color? borderColor;
 
@@ -49,7 +49,7 @@ class BaseButton extends StatelessWidget {
     required this.hasBorderLining,
     required this.buttonSize,
     required this.label,
-    required this.onTap,
+     this.onTap,
   }) : super(key: key);
 
   @override

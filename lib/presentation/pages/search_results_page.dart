@@ -107,45 +107,42 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
                 ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    childCount: (results?.length ?? 0) + 1,
+                    childCount: 1,
                     (_, int index) => UnconstrainedBox(
-                      child: (index == results?.length)
-                          ? Container(
-                              height: 20,
-                              width: 100,
-                              color: Colors.transparent,
-                            )
-                          : Container(
-                              constraints: appConstraints,
-                              width: MediaQuery.of(context).size.width,
-                              padding: EdgeInsets.only(top: primaryPadding.top),
+                      child: Container(
+                        constraints: appConstraints,
+                        width: MediaQuery.of(context).size.width,
+                        padding: EdgeInsets.only(top: primaryPadding.top),
+                        child: Column(
+                          key: ValueKey(results.hashCode),
+                          children: (results ?? []).map((result) {
+                            var data = result.toJson();
+                            var keys = data.keys.toList();
+                            var values = data.values.toList();
+
+                            return Container(
                               child: Column(
-                                key: ValueKey(results),
+                                key: ValueKey(results.hashCode),
                                 children: [
                                   Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8),
-                                      child: Center(
-                                        child: Text(
-                                          (index + 1).toString(),
-                                          style: GoogleFonts.dmSans(
-                                            color: neutralDarkGrey,
-                                            fontSize: 20.0,
-                                            fontStyle: FontStyle.normal,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                    alignment: Alignment.centerLeft,
+                                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8),
+                                    child: Center(
+                                      child: Text(
+                                        ((results?.indexWhere((element) => element.idnumber == result.idnumber) ?? 1) +
+                                                1)
+                                            .toString(),
+                                        style: GoogleFonts.dmSans(
+                                          color: neutralDarkGrey,
+                                          fontSize: 20.0,
+                                          fontStyle: FontStyle.normal,
+                                          fontWeight: FontWeight.w600,
                                         ),
-                                      )),
-                                  ...(results ?? []).map((result) {
-                                    var data = result.toJson();
-                                    var keys = data.keys.toList();
-                                    var values = data.values.toList();
-                                    print('DATA: $data');
-                                    print('KEYS : $keys');
-
-                                    print('VALUES: $values');
-
-                                    return SizedBox(
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    child: SizedBox(
                                       child: Column(
                                         key: ValueKey(data),
                                         children: List.generate(
@@ -156,11 +153,14 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                    );
-                                  }),
+                                    ),
+                                  ),
                                 ],
                               ),
-                            ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -180,7 +180,6 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<VerifySaBloc, VerifySaState>(
       builder: (context, state) {
-        
         if (state.verifyIdDataLoading || state.verifyIdData == null) {
           showAppLoader(context);
         } else {
@@ -308,5 +307,3 @@ Widget _renderSliverListItems({
         ],
       ),
     );
-
-

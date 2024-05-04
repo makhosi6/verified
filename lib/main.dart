@@ -14,6 +14,7 @@ import 'package:verified/app_config.dart';
 import 'package:verified/application/appbase/appbase_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/payments/payments_bloc.dart';
+import 'package:verified/application/search_request/search_request_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
@@ -186,6 +187,13 @@ class RootAppWithBloc extends StatelessWidget {
           )..add(
               const VerifySaEvent.apiHealthCheck(),
             ),
+        ),
+        BlocProvider<SearchRequestBloc>(
+          create: (BuildContext context) => SearchRequestBloc(
+            VerifySaRepository(
+              VerifySaDioClientService.instance,
+            ),
+          ),
         ),
         BlocProvider<StoreBloc>(
           create: (BuildContext context) => StoreBloc(

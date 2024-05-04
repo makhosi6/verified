@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
-import 'package:verified/domain/models/form_type.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/capture_details_page.dart';
@@ -177,13 +176,41 @@ class _SearchOptionsPageContent extends StatelessWidget {
                   SizedBox(
                     child: Column(
                       children: [
+                        /// Quick Verification
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12.0),
                           child: BaseButton(
                             key: UniqueKey(),
                             onTap: () {
                               final user = context.read<StoreBloc>().state.userProfileData;
-                              const selectedPage = CaptureDetailsPage();
+                              const selectedPage = InputFormPage();
+                              if (user == null) {
+                                triggerAuthBottomSheet(context: context, redirect: selectedPage);
+                              } else {
+                                navigate(context, page: selectedPage);
+                              }
+                            },
+                            label: 'Quick Verification',
+                            color: neutralGrey,
+                            hasIcon: false,
+                            bgColor: neutralYellow,
+                            buttonIcon: Icon(
+                              Icons.lock_outline,
+                              color: neutralYellow,
+                            ),
+                            buttonSize: ButtonSize.large,
+                            hasBorderLining: false,
+                          ),
+                        ),
+
+                        ///Comprehensive Verification
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: BaseButton(
+                            key: UniqueKey(),
+                            onTap: () {
+                              final user = context.read<StoreBloc>().state.userProfileData;
+                              final selectedPage = CaptureDetailsPage();
                               if (user == null) {
                                 triggerAuthBottomSheet(context: context, redirect: selectedPage);
                               } else {
@@ -193,47 +220,39 @@ class _SearchOptionsPageContent extends StatelessWidget {
                                 );
                               }
                             },
-                            label: 'With a Link',
+                            label: 'Comprehensive Verification',
                             color: neutralGrey,
                             hasIcon: false,
-                            bgColor: neutralYellow,
-                            buttonIcon: Icon(
-                              Icons.transcribe,
-                              color: neutralYellow,
-                            ),
-                            buttonSize: ButtonSize.large,
-                            hasBorderLining: false,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 12.0),
-                          child: BaseButton(
-                            key: UniqueKey(),
-                            onTap: () {
-                              final user = context.read<StoreBloc>().state.userProfileData;
-                              final selectedPage = InputFormPage(
-                                formType: FormType.idForm,
-                              );
-                              if (user == null) {
-                                triggerAuthBottomSheet(context: context, redirect: selectedPage);
-                              } else {
-                                navigate(context, page: selectedPage);
-                              }
-                            },
-                            label: 'In-Person Verification',
-                            color: neutralGrey,
-                            hasIcon: false,
+                            buttonIcon: null,
                             bgColor: primaryColor,
-                            buttonIcon: Icon(
-                              Icons.lock_outline,
-                              color: primaryColor,
-                            ),
                             buttonSize: ButtonSize.large,
                             hasBorderLining: false,
                           ),
                         ),
 
-               
+                        /// Disabled Button
+                        // Padding(
+                        //   padding: const EdgeInsets.only(bottom: 12.0),
+                        //   child: Tooltip(
+                        //     message: 'Disabled',
+                        //     onTriggered: () {},
+                        //     triggerMode: TooltipTriggerMode.tap,
+                        //     child: BaseButton(
+                        //       key: UniqueKey(),
+                        //       label: 'Quick Verification',
+                        //       color: Colors.grey.shade400,
+                        //       hasIcon: false,
+                        //       bgColor: Colors.white,
+                        //       buttonIcon: Icon(
+                        //         Icons.lock_outline,
+                        //         color: primaryColor,
+                        //       ),
+                        //       buttonSize: ButtonSize.large,
+                        //       hasBorderLining: true,
+                        //       borderColor: Colors.grey.shade400,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   )

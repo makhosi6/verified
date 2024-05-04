@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:verified/application/search_request/search_request_bloc.dart';
+import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/create_account_page.dart';
 import 'package:verified/presentation/pages/select_services_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
+import 'package:verified/presentation/utils/validate_inputs.dart';
 import 'package:verified/presentation/utils/verified_input_formatter.dart';
 import 'package:verified/presentation/utils/widget_generator_options.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
@@ -14,15 +18,20 @@ import 'package:verified/presentation/widgets/inputs/generic_input.dart';
 final _globalKeyCaptureDetailsPageForm = GlobalKey<FormState>(debugLabel: 'capture-details-page-key');
 
 class CaptureDetailsPage extends StatelessWidget {
-  const CaptureDetailsPage({super.key});
+  CaptureDetailsPage({super.key});
 
-  //
+  ///
   final keyboardType = TextInputType.number;
+
+  ///
+  var person = SearchPerson();
 
   ///
   @override
   Widget build(BuildContext context) {
+    //
     return Scaffold(
+      key: const Key('capture-details-page'),
       body: Center(
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
@@ -50,7 +59,7 @@ class CaptureDetailsPage extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 12.0),
                   child: BaseButton(
                     key: UniqueKey(),
-                    onTap: () => navigate(context, page:  CreateAccountPage()),
+                    onTap: () => navigate(context, page: CreateAccountPage()),
                     height: 49.0,
                     label: 'Bulk Upload',
                     borderColor: primaryColor,
@@ -74,6 +83,7 @@ class CaptureDetailsPage extends StatelessWidget {
                     child: Form(
                       key: _globalKeyCaptureDetailsPageForm,
                       child: Column(
+                        key: const Key('capture-details-field-inputs'),
                         children: [
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
@@ -101,8 +111,15 @@ class CaptureDetailsPage extends StatelessWidget {
                               autofocus: true,
                               inputFormatters: [],
                               keyboardType: TextInputType.text,
-                              validator: (_) => null,
-                              onChangeHandler: print,
+                              validator: (name) {
+                                if ((name != null && name.isNotEmpty) && name.length < 2) {
+                                  return 'Name must be at least 2 characters long';
+                                }
+                                return null;
+                              },
+                              onChangeHandler: (name) {
+                                person = person.copyWith(name: name);
+                              },
                             ),
                             CaptureUserDetailsInputOption(
                               hintText: 'Type their Id Number',
@@ -113,8 +130,24 @@ class CaptureDetailsPage extends StatelessWidget {
                               maxLength: 13,
                               inputFormatters: [],
                               keyboardType: TextInputType.number,
-                              validator: (_) => null,
-                              onChangeHandler: print,
+                              validator: (idNumber) {
+                                /// if phone is define the Id is optional
+                                if ((person.phoneNumber != null && person.phoneNumber?.isNotEmpty == true) &&
+                                    (idNumber == null || idNumber.isEmpty)) {
+                                  return null;
+                                }
+
+                                if (idNumber == null || idNumber.isEmpty) {
+                                  return 'You have to provide a phone number or a ID number';
+                                }
+                                return validateIdNumber(idNumber);
+                              },
+                              onChangeHandler: (idNumber) {
+                                person = person.copyWith(idNumber: idNumber);
+
+                                /// and validate the form
+                                _globalKeyCaptureDetailsPageForm.currentState?.validate();
+                              },
                             ),
                             CaptureUserDetailsInputOption(
                               hintText: '00000000000',
@@ -125,11 +158,18 @@ class CaptureDetailsPage extends StatelessWidget {
                               maxLength: null,
                               inputFormatters: [],
                               keyboardType: TextInputType.number,
-                              validator: (_) => null,
-                              onChangeHandler: print,
+                              validator: (accNumber) {
+                                if ((accNumber != null && accNumber.isNotEmpty) && accNumber.length < 10) {
+                                  return 'Acc Number must be at least 10 characters long';
+                                }
+                                return null;
+                              },
+                              onChangeHandler: (bankAccountNumber) {
+                                person = person.copyWith(bankAccountNumber: bankAccountNumber);
+                              },
                             ),
                             CaptureUserDetailsInputOption(
-                              hintText: 'Type their phone number',
+                              hintText: '000 000 0000',
                               initialValue: null,
                               label: 'Phone Number (Optional)',
                               inputMask: '000 000 0000',
@@ -137,8 +177,24 @@ class CaptureDetailsPage extends StatelessWidget {
                               autofocus: false,
                               inputFormatters: [],
                               keyboardType: TextInputType.number,
-                              validator: (_) => null,
-                              onChangeHandler: print,
+                              validator: (phone) {
+                                /// if idNumber is define the then Phone is optional
+                                if ((person.idNumber != null && person.idNumber?.isNotEmpty == true) &&
+                                    (phone == null || phone.isEmpty)) {
+                                  return null;
+                                }
+
+                                if (phone == null || phone.isEmpty) {
+                                  return 'You have to provide a phone number or a ID number';
+                                }
+                                return validateMobile(phone);
+                              },
+                              onChangeHandler: (phoneNumber) {
+                                person = person.copyWith(phoneNumber: phoneNumber);
+
+                                /// and validate the form
+                                _globalKeyCaptureDetailsPageForm.currentState?.validate();
+                              },
                             ),
                             CaptureUserDetailsInputOption(
                               hintText: 'Type their email address',
@@ -148,17 +204,21 @@ class CaptureDetailsPage extends StatelessWidget {
                               inputFormatters: [],
                               keyboardType: TextInputType.emailAddress,
                               validator: (_) => null,
-                              onChangeHandler: print,
+                              onChangeHandler: (email) {
+                                person = person.copyWith(email: email);
+                              },
                             ),
                             CaptureUserDetailsInputOption(
-                              hintText: 'Share additional information',
+                              hintText: 'Additional information',
                               initialValue: null,
                               label: 'Notes/Description (Optional)',
                               autofocus: false,
                               inputFormatters: [],
                               keyboardType: TextInputType.text,
                               validator: (_) => null,
-                              onChangeHandler: print,
+                              onChangeHandler: (notes) {
+                                person = person.copyWith(description: notes);
+                              },
                             ),
                           ]
                               .map((inputOption) => Padding(
@@ -191,7 +251,6 @@ class CaptureDetailsPage extends StatelessWidget {
                                     ),
                                   ))
                               .toList(),
-///
 
                           ///
                           Padding(
@@ -212,7 +271,19 @@ class CaptureDetailsPage extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 40),
                             child: BaseButton(
                               key: UniqueKey(),
-                              onTap: () => navigate(context, page: const SelectServicesPage()),
+                              onTap: () {
+                                if (_globalKeyCaptureDetailsPageForm.currentState?.validate() == true) {
+                                  context.read<SearchRequestBloc>().add(
+                                        SearchRequestEvent.createPersonalDetails(
+                                          person,
+                                        ),
+                                      );
+
+                                  navigate(context, page: const SelectServicesPage());
+                                } else {
+                                  print('FALSE, ${person.toJson()}');
+                                }
+                              },
                               label: 'Next',
                               color: neutralGrey,
                               hasIcon: false,

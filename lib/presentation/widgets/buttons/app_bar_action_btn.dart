@@ -29,7 +29,11 @@ class ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     ///
     Future.delayed(const Duration(seconds: 2), () {
-      _tooltipKey.currentState?.ensureTooltipVisible();
+      try {
+        _tooltipKey.currentState?.ensureTooltipVisible();
+      } catch (e) {
+        print(e);
+      }
     });
 
     ///

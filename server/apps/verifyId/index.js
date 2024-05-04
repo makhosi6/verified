@@ -56,9 +56,9 @@ const {
 // setup the logger
 const accessLogStream = fs.createWriteStream(
     path.join(__dirname, "..", "..", "/log/verify_id/access.log"), {
-        flags: "a+",
-        interval: "1d"
-    });
+    flags: "a+",
+    interval: "1d"
+});
 server.use(morgan("combined", {
     stream: accessLogStream
 }));
@@ -81,7 +81,5 @@ server.get("/api/v1/health-check", handleGetCreditsReq);
 server.get("/api/v1/my_credits", handleGetCreditsReq);
 server.post("/api/v1/contact_enquiry", handleContactEnquiry);
 server.post("/api/v1/said_verification", handleSaidVerification);
-
-server.listen(PORT, () => {
-    console.log(`JSON Server is running @ http://${HOST}:${PORT}`);
-});
+server.post("/api/v1/comprehensive_verification", (_, res) => res.json({ "message": "successful" }));
+server.listen(PORT, () => console.log(`JSON Server is running @ http://${HOST}:${PORT}`));

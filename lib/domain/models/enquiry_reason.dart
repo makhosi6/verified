@@ -1,5 +1,4 @@
 enum EnquiryReason {
-  p2p_safety(value: 'Safety in Peer-to-Peer Platforms'),
   security_enhancement(value: 'Security Enhancement'),
   compliance(value: 'Regulatory Compliance'),
   fraud(value: 'Fraud and Identity Theft Prevention'),
@@ -7,6 +6,7 @@ enum EnquiryReason {
   shared_services(value: 'User Safety in Shared Services'),
   restricted_access(value: 'Eligibility Verification for Restricted Access'),
   operational_risk_management(value: 'Operational Risk Management'),
+  p2p_safety(value: 'Safety in Peer-to-Peer Platforms'),
   other(value: 'Other');
 
   const EnquiryReason({required this.value});
@@ -14,7 +14,7 @@ enum EnquiryReason {
   final String value;
 
   static EnquiryReason fromString(String? reason) => switch (reason) {
-        'myPI' => EnquiryReason.compliance,
+        '*' => EnquiryReason.compliance,
         _ => EnquiryReason.other,
       };
 }

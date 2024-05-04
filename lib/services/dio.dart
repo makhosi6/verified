@@ -11,6 +11,7 @@ class VerifySaDioClientService {
         'Authorization': 'Bearer $verifySaApiKey',
         'x-client-env': 'test',
         'Accept': 'application/json',
+        'Content-Type': 'application/json'
       },
     ),
   )..interceptors.addAll(interceptors);
@@ -61,6 +62,7 @@ class StoreDioClientService {
         'x-client': '',
         // 'x-nonce': 'MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2',
         'Accept': 'application/json',
+        'Content-Type': 'application/json'
       },
     ),
   )..interceptors.addAll(interceptors);
@@ -111,6 +113,7 @@ class PaymentsDioClientService {
         'x-client': '',
         // 'x-nonce': 'MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2',
         'Accept': 'application/json',
+        'Content-Type': 'application/json'
       },
     ),
   )..interceptors.addAll(interceptors);

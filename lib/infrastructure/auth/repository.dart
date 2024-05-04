@@ -1,28 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:verified/domain/interfaces/i_auth_repository.dart';
 
 class AuthRepository implements IAuthRepository {
-  final FirebaseAuth authClient;
+  final FirebaseAuth _authClient;
 
-  AuthRepository(this.authClient);
-
-  @override
-  Stream<User?> authStateChanges() => authClient.authStateChanges();
+  AuthRepository(this._authClient);
 
   @override
-  User? get currentUser => authClient.currentUser;
+  Stream<User?> authStateChanges() => _authClient.authStateChanges();
 
   @override
-  Future<UserCredential> signInAnonymously() async => await authClient.signInAnonymously();
+  User? get currentUser => _authClient.currentUser;
 
   @override
-  Future<UserCredential> signInWithPopup(AuthProvider provider) async => await authClient.signInWithPopup(provider);
+  Future<UserCredential> signInAnonymously() async => await _authClient.signInAnonymously();
+
+  @override
+  Future<UserCredential> signInWithPopup(AuthProvider provider) async => await _authClient.signInWithPopup(provider);
 
   @override
   Future<UserCredential> signInWithProvider(AuthProvider provider) async =>
-      await authClient.signInWithProvider(provider);
+      await _authClient.signInWithProvider(provider);
 
   @override
-  Future<void> signOut() async => await authClient.signOut();
+  Future<void> signOut() async => await _authClient.signOut();
 }

@@ -11,9 +11,9 @@ import 'package:verified/helpers/security/nonce.dart';
 import 'package:verified/services/dio.dart';
 
 class VerifySaRepository implements IVerifySaRepository {
-  final Dio httpClient;
+  final Dio _httpClient;
 
-  VerifySaRepository(this.httpClient);
+  VerifySaRepository(this._httpClient);
 
   @override
   Future<Either<Exception, ContactTracingResponse>> contactTracing({
@@ -28,7 +28,7 @@ class VerifySaRepository implements IVerifySaRepository {
         'reason': reason.value,
       };
 
-      final response = await httpClient.post(
+      final response = await _httpClient.post(
         '/contact_enquiry?client=$clientId',
         options: Options(
           headers: headers,
@@ -59,7 +59,7 @@ class VerifySaRepository implements IVerifySaRepository {
         'reason': reason.value,
       };
 
-      final response = await httpClient.post(
+      final response = await _httpClient.post(
         '/said_verification?client=$clientId',
         options: Options(
           headers: headers,
@@ -94,7 +94,7 @@ class VerifySaRepository implements IVerifySaRepository {
           'enquiry_reason': reason.value,
         };
 
-      final response = await httpClient.post(
+      final response = await _httpClient.post(
         '/home_affairs_id_photo?client=$clientId',
         options: Options(
           headers: headers,
@@ -115,7 +115,7 @@ class VerifySaRepository implements IVerifySaRepository {
   Future<ResourceHealthStatus> getHealthStatus() async {
     try {
       final headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
-      final response = await httpClient.get(
+      final response = await _httpClient.get(
         'health-check?client=system',
         options: Options(
           method: 'GET',
