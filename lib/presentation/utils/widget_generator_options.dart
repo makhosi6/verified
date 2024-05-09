@@ -13,8 +13,10 @@ class CaptureUserDetailsInputOption {
   final List<TextInputFormatter>? inputFormatters;
 
   final bool autofocus;
-  
+
   final int? maxLength;
+
+  final int? maxLines;
 
   final TextInputType? keyboardType;
 
@@ -28,6 +30,7 @@ class CaptureUserDetailsInputOption {
     required this.label,
     this.maxLength,
     this.inputMask,
+    this.maxLines,
     required this.autofocus,
     required this.inputFormatters,
     required this.keyboardType,
@@ -35,7 +38,6 @@ class CaptureUserDetailsInputOption {
     required this.onChangeHandler,
   });
 }
-
 
 class AuthButtonsOption {
   final VoidCallback onTapHandler;

@@ -105,14 +105,17 @@ class CaptureDetailsPage extends StatelessWidget {
                           ///
                           ...[
                             CaptureUserDetailsInputOption(
-                              hintText: 'Person to verify (optional)',
+                              hintText: 'Person to be verify',
                               label: 'Name or Nickname (Optional)',
                               initialValue: null,
                               autofocus: true,
                               inputFormatters: [],
                               keyboardType: TextInputType.text,
                               validator: (name) {
-                                if ((name != null && name.isNotEmpty) && name.length < 2) {
+                                if(name == null || name.isEmpty == true) {
+                                  return 'Please provide a name/surname';
+                                }
+                                if (name.length < 2) {
                                   return 'Name must be at least 2 characters long';
                                 }
                                 return null;
@@ -213,6 +216,7 @@ class CaptureDetailsPage extends StatelessWidget {
                               initialValue: null,
                               label: 'Notes/Description (Optional)',
                               autofocus: false,
+                              maxLines: 10,
                               inputFormatters: [],
                               keyboardType: TextInputType.text,
                               validator: (_) => null,
@@ -228,6 +232,7 @@ class CaptureDetailsPage extends StatelessWidget {
                                       initialValue: inputOption.initialValue,
                                       hintText: inputOption.hintText,
                                       label: inputOption.label,
+                                      maxLines: inputOption.maxLines,
                                       autofocus: inputOption.autofocus,
                                       keyboardType: inputOption.keyboardType,
                                       inputFormatters: [

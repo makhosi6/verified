@@ -8,6 +8,7 @@ class GenericInputField extends StatelessWidget {
   final String? label;
   final String? initialValue;
   final bool autofocus;
+  final int? maxLines;
   final String? Function(String? value)? validator;
   final void Function(String value) onChange;
   final List<TextInputFormatter>? inputFormatters;
@@ -22,6 +23,7 @@ class GenericInputField extends StatelessWidget {
     this.autofocus = false,
     required this.validator,
     required this.onChange,
+    this.maxLines,
     this.inputFormatters,
     required this.keyboardType,
   }) : super(key: key);
@@ -45,6 +47,8 @@ class GenericInputField extends StatelessWidget {
           initialValue: initialValue,
           inputFormatters: inputFormatters,
           keyboardType: keyboardType,
+          maxLines: maxLines,
+          minLines: 1,
           autofocus: autofocus,
           decoration: InputDecoration(
             hintText: hintText,

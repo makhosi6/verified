@@ -58,3 +58,31 @@ class SearchPerson {
     return map;
   }
 }
+
+class VerifyComprehensiveResponse {
+  String? message;
+  int? status;
+  SearchPerson? data;
+
+  VerifyComprehensiveResponse({this.message, this.status, this.data});
+
+  VerifyComprehensiveResponse.fromJson(Map<String, dynamic> json) {
+    if (json['message'] is String) {
+      message = json['message'];
+    }
+    if (json['status'] is int) {
+      status = json['status'];
+    }
+    if (json['data'] is Map) {
+      data = json['data'] == null ? null : SearchPerson.fromJson(json['data']);
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final output = <String, dynamic>{};
+    output['message'] = message;
+    output['status'] = status;
+    output['data'] = data?.toJson();
+    return output;
+  }
+}

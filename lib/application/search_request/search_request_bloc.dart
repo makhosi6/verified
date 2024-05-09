@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:verified/domain/models/enquiry_reason.dart';
 import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/infrastructure/verifysa/repository.dart';
 
@@ -17,6 +16,8 @@ class SearchRequestBloc extends Bloc<SearchRequestEvent, SearchRequestState> {
               state.copyWith(
                 person: e.person,
                 data: null,
+                hasError: false,
+                error: null,
               ),
             );
             return;
@@ -25,6 +26,8 @@ class SearchRequestBloc extends Bloc<SearchRequestEvent, SearchRequestState> {
             emit(
               state.copyWith(
                 data: null,
+                hasError: false,
+                error: null,
                 person: (state.person ?? SearchPerson()).copyWith(
                   selectedServices: e.serviceOrJob,
                 ),
@@ -32,7 +35,19 @@ class SearchRequestBloc extends Bloc<SearchRequestEvent, SearchRequestState> {
             );
             return;
           },
-          validateAndSubmit: (_) async {
+          validateAndSubmit: (e) async {
+            ///
+            emit(state.copyWith(isLoading: true));
+
+            if (state.hasError == true || state.error != null) {
+              emit(
+                state.copyWith(
+                  error: null,
+                  hasError: false,
+                ),
+              );
+            }
+
             if ((state.person?.idNumber == null) && (state.person?.phoneNumber == null)) {
               ///
               emit(
@@ -40,40 +55,38 @@ class SearchRequestBloc extends Bloc<SearchRequestEvent, SearchRequestState> {
                   error: AssertionError('No Phone number or Id Number'),
                   hasError: true,
                   data: null,
+                  isLoading: false,
                 ),
               );
             }
 
-            ///
-       
-              print('||==> ${state.person?.toJson()}');
+            final response = await _verifySaRepository.comprehensiveVerification(
+              person: state.person,
+              clientId: 'clientId',
+            );
 
-              ///
-
-              final response = await _verifySaRepository.getDhaIdPhoto(
-                idNumber: 'idNumber',
-                reason: EnquiryReason.compliance,
-                clientId: 'clientId',
+            response.fold((error) {
+              print('ERROR:  ${error.toString()}');
+              emit(
+                state.copyWith(
+                  error: AssertionError(error.toString()),
+                  hasError: true,
+                  data: null,
+                  isLoading: false,
+                ),
               );
+            }, (data) {
+              print('RESPONSE:  ${data.toJson()}');
+              emit(
+                state.copyWith(
+                  hasError: false,
+                  error: null,
+                  data: data,
+                  isLoading: false,
+                ),
+              );
+            });
 
-              response.fold((error) {
-                emit(
-                  state.copyWith(
-                    error: AssertionError(error.toString()),
-                    hasError: true,
-                    data: null,
-                  ),
-                );
-              }, (data) {
-                emit(
-                  state.copyWith(
-                    hasError: false,
-                    error: null,
-                    data: data,
-                  ),
-                );
-              });
-            
             return;
           },
         ));

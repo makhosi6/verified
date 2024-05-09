@@ -6,6 +6,7 @@ import 'package:verified/domain/models/contact_tracing_response.dart';
 import 'package:verified/domain/models/dha_image_response.dart';
 import 'package:verified/domain/models/enquiry_reason.dart';
 import 'package:verified/domain/models/resource_health_status_enum.dart';
+import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/domain/models/verify_id_response.dart';
 import 'package:verified/helpers/security/nonce.dart';
 import 'package:verified/services/dio.dart';
@@ -53,7 +54,7 @@ class VerifySaRepository implements IVerifySaRepository {
     required String clientId,
   }) async {
     try {
-      final headers = {'Content-Type':'application/json'};
+      final headers = {'Content-Type': 'application/json'};
       final data = {
         'id_number': idNumber,
         'reason': reason.value,
@@ -84,18 +85,17 @@ class VerifySaRepository implements IVerifySaRepository {
   }) async {
     try {
       final headers = {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/json',
         'Accept': 'application/json',
       };
-      final data = 
-        {
-          'api_key': verifySaApiKey,
-          'id_number': idNumber,
-          'enquiry_reason': reason.value,
-        };
+      final data = {
+        'api_key': verifySaApiKey,
+        'id_number': idNumber,
+        'enquiry_reason': reason.value,
+      };
 
       final response = await _httpClient.post(
-        '/home_affairs_id_photo?client=$clientId',
+        'home_affairs_id_photo?client=$clientId',
         options: Options(
           headers: headers,
         ),
@@ -129,6 +129,38 @@ class VerifySaRepository implements IVerifySaRepository {
       return ResourceHealthStatus.bad;
     } catch (e) {
       return ResourceHealthStatus.bad;
+    }
+  }
+
+  @override
+  Future<Either<Exception, VerifyComprehensiveResponse>> comprehensiveVerification(
+      {required SearchPerson? person, required String clientId}) async {
+    try {
+      if (person == null) return left(Exception('Empty request Object'));
+      final headers = {
+        'Content-Type': 'multipart/form-data',
+        'Accept': 'application/json',
+      };
+      final response = await _httpClient.post(
+        '/comprehensive_verification?client=$clientId',
+        options: Options(
+          headers: headers,
+        ),
+        data: person.toJson(),
+      );
+      if (httpRequestIsSuccess(response.statusCode)) {
+        // if (response.statusCode == 200) throw Exception('Some made up error.');
+
+        return right(
+          VerifyComprehensiveResponse.fromJson(
+            {'status': response.statusCode, 'data': person.toJson(), 'message': response.data['message']},
+          ),
+        );
+      } else {
+        return left(Exception(response.statusMessage));
+      }
+    } catch (e) {
+      return left(Exception(e.toString()));
     }
   }
 }

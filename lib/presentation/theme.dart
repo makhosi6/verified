@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// https://lottiefiles.com/mahendra
+///https://lottiefiles.com/mahendra
 
-// primary color
+/// primary color
 Color primaryColor = const Color(0xFF4CD080);
-// light version of the primary color
+
+/// light version of the primary color
 Color litePrimaryColor = const Color(0xFFB7CEC3);
 
 /// common light grey color

@@ -84,8 +84,12 @@ class _SelectServicesPageState extends State<SelectServicesPage> {
                               padding: EdgeInsets.only(bottom: primaryPadding.bottom),
                               child: ListViewAsSwitch(
                                 name: name.toString(),
-                                value: key == 'identity_verification' ? true : (selectedValues[key] ?? false),
-                                color: key == 'identity_verification' ? const Color.fromARGB(255, 183, 227, 206) : null,
+                                value: name == ServiceOptionsEnum.identity_verification
+                                    ? true
+                                    : (selectedValues[key] ?? false),
+                                color: name == ServiceOptionsEnum.identity_verification
+                                    ? const Color.fromARGB(255, 183, 227, 206)
+                                    : null,
                                 didChange: (value) {
                                   setState(() {
                                     if (key == 'all') {
@@ -109,10 +113,7 @@ class _SelectServicesPageState extends State<SelectServicesPage> {
                                       .toList()
 
                                     /// and add the default value(s)
-                                    ..add(ServiceOptionsEnum.identity_verification.toString());
-
-                                  ///
-                                  print('$selectedServicesOrJobs');
+                                    ..add(ServiceOptionsEnum.identity_verification.toJson());
 
                                   ///
                                   context
@@ -129,11 +130,7 @@ class _SelectServicesPageState extends State<SelectServicesPage> {
                           padding: const EdgeInsets.symmetric(vertical: 40),
                           child: BaseButton(
                             key: UniqueKey(),
-                            onTap: () {
-                              context.read<SearchRequestBloc>().add(const SearchRequestEvent.validateAndSubmit());
-
-                              navigate(context, page: ConfirmDetailsPage());
-                            },
+                            onTap: () => navigate(context, page: ConfirmDetailsPage()),
                             label: 'Next',
                             color: neutralGrey,
                             hasIcon: false,

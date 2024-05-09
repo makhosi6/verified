@@ -1,5 +1,5 @@
 enum ServiceOptionsEnum {
-  identity_verification('Identity Verification (Default'),
+  identity_verification('Identity Verification (Default)'),
   qualifications_verification('Qualifications Verification'),
   criminal_verification('Criminal Record Checks'),
   credit_check_verification('Credit History Check'),

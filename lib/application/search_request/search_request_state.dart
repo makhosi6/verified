@@ -5,9 +5,10 @@ class SearchRequestState with _$SearchRequestState {
   const factory SearchRequestState({
     SearchPerson? person,
     Error? error,
-    bool? hasError,
-    Object? data
+   required bool hasError,
+    Object? data,
+   required bool isLoading
   }) = _SearchRequestState;
 
- factory SearchRequestState.initial() => const SearchRequestState();
+ factory SearchRequestState.initial() => const SearchRequestState(isLoading: false, hasError: false);
 }

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:verified/presentation/theme.dart';
 
@@ -24,10 +23,21 @@ class DataViewItem extends StatelessWidget {
             keyName,
             style: TextStyle(color: neutralDarkGrey, fontSize: 16.0),
           ),
+          const SizedBox(
+            width: 40,
+            height: 10,
+          ),
           value is Widget
               ? value
-              : Text(
-                  value,
+              : Expanded(
+                  child: Text(
+                    value,
+                    maxLines: 1,
+                    style: const TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
                 )
         ],
       ),

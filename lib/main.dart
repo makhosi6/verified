@@ -364,18 +364,27 @@ class _AppRootState extends State<AppRoot> {
                   });
                 }
               },
-              child: BlocListener<AuthBloc, AuthState>(
-                listener: (context, state) {
-                  if (state.processing) {
+              child: BlocListener<SearchRequestBloc, SearchRequestState>(
+                listener: (context, searchRequestState) {
+                  if (searchRequestState.isLoading) {
                     showAppLoader(context);
                   } else {
                     hideAppLoader();
                   }
                 },
-                child: RefreshIndicator(
-                  key: _refreshIndicatorKey,
-                  onRefresh: () => Future<void>.delayed(const Duration(seconds: 2)),
-                  child: const HomePage(),
+                child: BlocListener<AuthBloc, AuthState>(
+                  listener: (context, state) {
+                    if (state.processing) {
+                      showAppLoader(context);
+                    } else {
+                      hideAppLoader();
+                    }
+                  },
+                  child: RefreshIndicator(
+                    key: _refreshIndicatorKey,
+                    onRefresh: () => Future<void>.delayed(const Duration(seconds: 2)),
+                    child: const HomePage(),
+                  ),
                 ),
               ),
             ),
@@ -407,3 +416,4 @@ void showAppLoader(BuildContext context) {
 }
 
 final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+

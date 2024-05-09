@@ -5,21 +5,28 @@ import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/dotted_line.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 
-class SuccessfulActionModal extends StatelessWidget {
+class SuccessfulActionModal extends StatefulWidget {
   final String title;
   final String subtitle;
   final VoidCallback nextAction;
   final Widget? promoBanner;
+  final bool showDottedDivider;
   final List<Widget>? children;
   const SuccessfulActionModal({
     super.key,
     required this.title,
     required this.subtitle,
     required this.nextAction,
+     this.showDottedDivider = true,
     this.promoBanner,
     this.children,
   });
 
+  @override
+  State<SuccessfulActionModal> createState() => _SuccessfulActionModalState();
+}
+
+class _SuccessfulActionModalState extends State<SuccessfulActionModal> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -56,7 +63,7 @@ class SuccessfulActionModal extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        title,
+                        widget.title,
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 18.0,
@@ -70,7 +77,7 @@ class SuccessfulActionModal extends StatelessWidget {
                           vertical: 12.0,
                         ),
                         child: Text(
-                          subtitle,
+                          widget.subtitle,
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                             color: neutralDarkGrey,
@@ -84,10 +91,10 @@ class SuccessfulActionModal extends StatelessWidget {
                 ),
 
                 ///
-                ...(children ?? []),
+                ...(widget.children ?? []),
 
                 ///divider
-                Padding(
+               if(widget.showDottedDivider) Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: DottedLine(
                     color: neutralDarkGrey,
@@ -95,13 +102,13 @@ class SuccessfulActionModal extends StatelessWidget {
                 ),
 
                 ///
-                (promoBanner ?? const SizedBox.shrink()),
+                (widget.promoBanner ?? const SizedBox.shrink()),
 
                 Padding(
                   padding: const EdgeInsets.only(top: 12.0),
                   child: BaseButton(
                     key: UniqueKey(),
-                    onTap: nextAction,
+                    onTap: widget.nextAction,
                     label: 'Done',
                     color: neutralGrey,
                     hasIcon: false,
