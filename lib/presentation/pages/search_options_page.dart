@@ -8,6 +8,7 @@ import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/capture_details_page.dart';
 import 'package:verified/presentation/pages/input_form_page.dart';
+import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
@@ -64,20 +65,13 @@ class _SearchOptionsPageContent extends StatelessWidget {
                   // }
                 },
                 child: ActionButton(
-                  key: const Key('go-to-account-btn'),
-                  tooltip: 'Account',
-                  iconColor: Colors.black,
+                  key: const Key('go-to-tutorials-btn'),
+                  tooltip: 'Information',
+                  iconColor: darkerPrimaryColor.withOpacity(0.7),
                   bgColor: Colors.white,
-                  onTap: () async {
-                    final user = context.read<StoreBloc>().state.userProfileData;
-                    final page = AccountPage();
-                    if (user == null) {
-                      await triggerAuthBottomSheet(context: context, redirect: page);
-                    } else {
-                      navigate(context, page: page);
-                    }
-                  },
-                  icon: Icons.person_2_outlined,
+                  onTap: () => navigate(context, page: const LearnMorePage()),
+                  icon: Icons.help_rounded,
+                  borderColor: darkerPrimaryColor.withOpacity(0.3),
                 ),
               ),
             ],

@@ -12,19 +12,18 @@ import 'package:verified/domain/models/form_type.dart';
 
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/add_payment_method_page.dart';
+import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
+import 'package:verified/presentation/utils/learn_more_highlighted_btn.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/validate_inputs.dart';
 import 'package:verified/presentation/utils/verified_input_formatter.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/inputs/generic_input.dart';
-
-final _globalKeyInputPage = GlobalKey<_InputFormPageState>(debugLabel: 'input-form-page-key');
-final _globalKeyFormPage = GlobalKey<FormState>(debugLabel: 'input-form-key');
 
 class InputFormPage extends StatefulWidget {
   const InputFormPage({super.key});
@@ -35,7 +34,7 @@ class InputFormPage extends StatefulWidget {
 
 class _InputFormPageState extends State<InputFormPage> {
   List<String> reasonsForRequest = EnquiryReason.values.map((reason) => reason.value).toList();
-
+  final _globalKeyFormPage = GlobalKey<FormState>(debugLabel: 'input-form-key');
   String? reason;
 
   String? idOrPhoneNumber;
@@ -103,6 +102,7 @@ class _InputFormPageState extends State<InputFormPage> {
   List<Widget> getWidgets(BuildContext context) {
     final user = context.watch<StoreBloc>().state.userProfileData;
     final MIDDLE_INDEX = ((FormType.values.length - 1) / 2).ceil();
+    final HELP_TEXT_INDEX = ((FormType.values.length + 1)).ceil();
     return [
       BlocBuilder<VerifySaBloc, VerifySaState>(
           builder: (context, state) => Padding(
@@ -127,7 +127,7 @@ class _InputFormPageState extends State<InputFormPage> {
           index: stackIndex,
           children: [
             Container(
-              padding: EdgeInsets.only(bottom: primaryPadding.bottom * 3, top: primaryPadding.top * 3),
+              padding: EdgeInsets.only(bottom: primaryPadding.bottom , top: primaryPadding.top * 3),
               child: Form(
                 key: _globalKeyFormPage,
                 child: Column(
@@ -199,7 +199,20 @@ class _InputFormPageState extends State<InputFormPage> {
                           ),
                         ),
                       ),
-                    ),
+                    )
+                    ..insert(
+                      HELP_TEXT_INDEX,
+                       Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 40, 0, 30),
+                            child: LearnMoreHighlightedButton(
+                              text: 'Please type and click send to verify the details.',
+                              onTap: () => navigate(
+                                context,
+                                page: const LearnMorePage(),
+                              ),
+                            ),
+                          ),
+                    )
                 ),
               ),
             ),

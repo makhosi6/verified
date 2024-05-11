@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -42,7 +43,9 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
           hideAppLoader();
         }
         final results = state.contactTracingData?.contactEnquiry?.results;
-        print('STATE \n\n$results\n: $state');
+        if (kDebugMode) {
+          print('STATE \n\n$results\n: $state');
+        }
         return Center(
           child: SizedBox(
             child: CustomScrollView(
@@ -115,41 +118,7 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
                         width: MediaQuery.of(context).size.width,
                         padding: EdgeInsets.only(top: primaryPadding.top),
                         child: (results == null || results.isEmpty)
-                            ? Column(
-                                children: List.generate(
-                                12,
-                                (index) => Skeletonizer.bones(
-                                  containersColor: primaryColor,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                   const Padding(
-                                        padding:  EdgeInsets.symmetric(vertical: 20),
-                                        child:  Bone.text(width: 30,),
-                                      ),
-                                      Card(
-                                        child: Container(
-                                            constraints: appConstraints.copyWith(minHeight: 300),
-                                            padding: const EdgeInsets.only(
-                                              left: 16.0,
-                                              right: 16.0,
-                                              bottom: 12.0,
-                                              top: 15.0,
-                                            ),
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly  ,
-                                              children: List.generate(5, (i) => const Row(
-                                                children: [
-                                                  Expanded(child: Bone.text()),
-                                                  SizedBox(width: 30,height:20),
-                                                  Expanded(child: Bone.text()),
-                                                ],
-                                              ),),),),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ))
+                            ? const ResultsSkeleton(numberOfCards: 12, itemsPerCard: 5, cardsHasTitle: true)
                             : Column(
                                 key: ValueKey(results.hashCode),
                                 children: results.map((result) {
@@ -157,42 +126,40 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
                                   var keys = data.keys.toList();
                                   var values = data.values.toList();
 
-                                  return Container(
-                                    child: Column(
-                                      key: ValueKey(results.hashCode),
-                                      children: [
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8),
-                                          child: Center(
-                                            child: Text(
-                                              (results.indexWhere((element) => element.idnumber == result.idnumber) + 1)
-                                                  .toString(),
-                                              style: GoogleFonts.dmSans(
-                                                color: neutralDarkGrey,
-                                                fontSize: 20.0,
-                                                fontStyle: FontStyle.normal,
-                                                fontWeight: FontWeight.w600,
-                                              ),
+                                  return Column(
+                                    key: ValueKey(keys.hashCode),
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8),
+                                        child: Center(
+                                          child: Text(
+                                            (results.indexWhere((element) => element.idnumber == result.idnumber) + 1)
+                                                .toString(),
+                                            style: GoogleFonts.dmSans(
+                                              color: neutralDarkGrey,
+                                              fontSize: 20.0,
+                                              fontStyle: FontStyle.normal,
+                                              fontWeight: FontWeight.w600,
                                             ),
                                           ),
                                         ),
-                                        Card(
-                                          child: SizedBox(
-                                            child: Column(
-                                              key: ValueKey(data),
-                                              children: List.generate(
-                                                keys.length,
-                                                (i) => _renderSliverListItems(
-                                                    key: keys[i],
-                                                    value: values[i] ?? 'Unknown',
-                                                    isLast: i == (keys.length - 1)),
-                                              ),
+                                      ),
+                                      Card(
+                                        child: SizedBox(
+                                          child: Column(
+                                            key: ValueKey(data),
+                                            children: List.generate(
+                                              keys.length,
+                                              (i) => _renderSliverListItems(
+                                                  key: keys[i],
+                                                  value: values[i] ?? 'Unknown',
+                                                  isLast: i == (keys.length - 1)),
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   );
                                 }).toList(),
                               ),
@@ -223,7 +190,9 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
         }
 
         Map<String, dynamic>? results = state.verifyIdData?.verification?.toJson();
-        print('STATE \n\n$results\n: $state');
+        if (kDebugMode) {
+          print('STATE \n\n$results\n: $state');
+        }
         final apiHealthStatus = context.read<StoreBloc>().state.resourceHealthStatus;
         return Center(
           child: SizedBox(
@@ -290,16 +259,19 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
                 ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    childCount: (results?.length ?? 0),
+                    childCount: (results?.length ?? 1),
                     (_, int index) => UnconstrainedBox(
                       child: Container(
                         padding: EdgeInsets.only(top: (index == 0 ? 12 : 0)),
                         constraints: appConstraints,
                         width: MediaQuery.of(context).size.width,
-                        child: _renderSliverListItems(
-                            key: results?.keys.toList()[index] ?? 'Key',
-                            value: '${results?.values.toList()[index] ?? 'Unknown'}',
-                            isLast: index == ((results?.values.toList().length ?? 0) - 1)),
+                        child: (results == null || results.isEmpty)
+                            ? const ResultsSkeleton(cardsHasTitle: false, itemsPerCard: 6, numberOfCards: 3)
+                            : _renderSliverListItems(
+                                key: results.keys.toList()[index],
+                                value: '${results.values.toList()[index] ?? 'Unknown'}',
+                                isLast: index == (results.values.toList().length - 1),
+                              ),
                       ),
                     ),
                   ),
@@ -334,3 +306,65 @@ Widget _renderSliverListItems({required String key, required String value, requi
         ],
       ),
     );
+
+class ResultsSkeleton extends StatelessWidget {
+  final bool cardsHasTitle;
+  final int numberOfCards;
+  final int itemsPerCard;
+
+  const ResultsSkeleton({
+    super.key,
+    required this.cardsHasTitle,
+    required this.itemsPerCard,
+    required this.numberOfCards,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: List.generate(
+        numberOfCards,
+        (index) => Skeletonizer.bones(
+          containersColor: primaryColor,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (cardsHasTitle)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Bone.text(
+                    width: 30,
+                  ),
+                ),
+              Card(
+                elevation: cardsHasTitle ? null : 0,
+                child: Container(
+                  constraints: appConstraints.copyWith(minHeight: 300),
+                  padding: const EdgeInsets.only(
+                    left: 16.0,
+                    right: 16.0,
+                    bottom: 12.0,
+                    top: 12.0,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: cardsHasTitle ? MainAxisAlignment.spaceEvenly : MainAxisAlignment.spaceBetween,
+                    children: List.generate(
+                      itemsPerCard,
+                      (i) => const Row(
+                        children: [
+                          Expanded(child: Bone.text()),
+                          SizedBox(width: 30, height: 20),
+                          Expanded(child: Bone.text()),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

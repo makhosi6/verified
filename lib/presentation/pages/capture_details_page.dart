@@ -5,8 +5,10 @@ import 'package:verified/application/search_request/search_request_bloc.dart';
 import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/create_account_page.dart';
+import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/pages/select_services_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/learn_more_highlighted_btn.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/validate_inputs.dart';
 import 'package:verified/presentation/utils/verified_input_formatter.dart';
@@ -112,7 +114,7 @@ class CaptureDetailsPage extends StatelessWidget {
                               inputFormatters: [],
                               keyboardType: TextInputType.text,
                               validator: (name) {
-                                if(name == null || name.isEmpty == true) {
+                                if (name == null || name.isEmpty == true) {
                                   return 'Please provide a name/surname';
                                 }
                                 if (name.length < 2) {
@@ -259,15 +261,13 @@ class CaptureDetailsPage extends StatelessWidget {
 
                           ///
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 40, 20, 30),
-                            child: Text(
-                              'Please type a phone/id number and click send to verify.',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                color: neutralDarkGrey,
-                                fontSize: 14.0,
+                            padding: const EdgeInsets.fromLTRB(0, 40, 0, 30),
+                            child: LearnMoreHighlightedButton(
+                              text: 'Please type and click send to verify the details.',
+                              onTap: () => navigate(
+                                context,
+                                page: const LearnMorePage(),
                               ),
-                              textAlign: TextAlign.left,
                             ),
                           ),
 

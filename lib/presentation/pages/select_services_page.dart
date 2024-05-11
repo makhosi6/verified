@@ -115,10 +115,18 @@ class _SelectServicesPageState extends State<SelectServicesPage> {
                                     /// and add the default value(s)
                                     ..add(ServiceOptionsEnum.identity_verification.toJson());
 
+                                    
+
                                   ///
-                                  context
-                                      .read<SearchRequestBloc>()
-                                      .add(SearchRequestEvent.selectJobsOrService(selectedServicesOrJobs));
+                                  context.read<SearchRequestBloc>().add(
+                                        SearchRequestEvent.selectJobsOrService(
+                                          selectedServicesOrJobs
+
+                                              /// make it a unique list
+                                              .toSet()
+                                              .toList(),
+                                        ),
+                                      );
                                 },
                               ),
                             );

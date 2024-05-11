@@ -211,7 +211,9 @@ Future triggerSignUpBottomSheet<bool>({required BuildContext context, required W
         },
         child: SingleChildScrollView(
           child: Container(
-            constraints: appConstraints,
+      constraints: const BoxConstraints(
+              minWidth: 600,
+            ),
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: Column(
               children: [

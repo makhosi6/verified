@@ -8,7 +8,6 @@ import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/services_options_enum.dart';
 
 import 'package:verified/globals.dart';
-import 'package:verified/presentation/pages/capture_details_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/data_view_item.dart';
@@ -324,7 +323,7 @@ class _DataView extends StatelessWidget {
 
 var displayValuesForPerson = {
   'name': 'Name',
-  'idNumber': 'ID Number',
+  'idNumber': 'Id Number',
   'phoneNumber': 'Phone Number',
   'bankAccountNumber': 'Bank Account Number',
   'email': 'Email Address',

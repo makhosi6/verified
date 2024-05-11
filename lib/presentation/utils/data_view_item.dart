@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/verified_input_formatter.dart';
 
 class DataViewItem extends StatelessWidget {
   final String keyName;
@@ -20,7 +21,7 @@ class DataViewItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            keyName,
+           capitalizeWords(keyName),
             style: TextStyle(color: neutralDarkGrey, fontSize: 16.0),
           ),
           const SizedBox(
