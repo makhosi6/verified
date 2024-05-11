@@ -10,7 +10,6 @@ class LearnMoreHighlightedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: primaryColor.withOpacity(0.5),
         borderRadius: BorderRadius.circular(10),
@@ -18,31 +17,34 @@ class LearnMoreHighlightedButton extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: onTap,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Icon(
-              Icons.help_rounded,
-              color: darkerPrimaryColor,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            SizedBox(
-              child: Text(
-                text,
-                style: TextStyle(
-                  color: darkerPrimaryColor,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14.0,
-                ),
-                textAlign: TextAlign.left,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 3,
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.help_rounded,
+                color: darkerPrimaryColor,
               ),
-            ),
-          ],
+              const SizedBox(
+                width: 10,
+              ),
+              SizedBox(
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    color: darkerPrimaryColor,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14.0,
+                  ),
+                  textAlign: TextAlign.left,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

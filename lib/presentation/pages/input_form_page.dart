@@ -9,6 +9,7 @@ import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
 import 'package:verified/domain/models/enquiry_reason.dart';
 import 'package:verified/domain/models/form_type.dart';
+import 'package:verified/domain/models/user_profile.dart';
 
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/add_payment_method_page.dart';
@@ -32,7 +33,7 @@ class InputFormPage extends StatefulWidget {
   State<InputFormPage> createState() => _InputFormPageState();
 }
 
-class _InputFormPageState extends State<InputFormPage> {
+class _InputFormPageState extends State<InputFormPage> with SingleTickerProviderStateMixin {
   List<String> reasonsForRequest = EnquiryReason.values.map((reason) => reason.value).toList();
   final _globalKeyFormPage = GlobalKey<FormState>(debugLabel: 'input-form-key');
   String? reason;
@@ -79,7 +80,6 @@ class _InputFormPageState extends State<InputFormPage> {
                 },
                 isLight: true,
               ),
-           
             ),
             SliverList(
               delegate: SliverChildBuilderDelegate(
@@ -99,273 +99,288 @@ class _InputFormPageState extends State<InputFormPage> {
     );
   }
 
+  ///
   List<Widget> getWidgets(BuildContext context) {
     final user = context.watch<StoreBloc>().state.userProfileData;
     final MIDDLE_INDEX = ((FormType.values.length - 1) / 2).ceil();
     final HELP_TEXT_INDEX = ((FormType.values.length + 1)).ceil();
     return [
       BlocBuilder<VerifySaBloc, VerifySaState>(
-          builder: (context, state) => Padding(
-                padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
-                child: Text(
-                 '${selectedFormType?.index.toString()}' + 'Please type a phone/id number and click send to verify.',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    color: neutralDarkGrey,
-                    fontSize: 14.0,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),),
+        builder: (context, state) => Padding(
+          padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
+          child: Text(
+            'Please type a phone/id number and click send to verify.',
+            style: TextStyle(
+              fontWeight: FontWeight.w400,
+              color: neutralDarkGrey,
+              fontSize: 14.0,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
       AnimatedSwitcher(
         duration: const Duration(milliseconds: 200),
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return ScaleTransition(scale: animation, child: child);
+        transitionBuilder: (child, animation) {
+          return child;
         },
         child: IndexedStack(
           key: ValueKey<int>(stackIndex),
           index: stackIndex,
           children: [
-            Container(
-              padding: EdgeInsets.only(bottom: primaryPadding.bottom , top: primaryPadding.top * 3),
-              child: Form(
-                key: _globalKeyFormPage,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: FormType.values.map<Widget>((formType) {
-                    ///
-                    bool isIdNumber = formType == FormType.idForm;
-                    final copy = isIdNumber ? PageCopy.idNumberForm : PageCopy.phoneNumberForm;
-                    final inputLength = isIdNumber ? 13 : 10;
-                    final inputMask = isIdNumber ? '000000 0000 000' : '000 000 0000';
-                    final keyboardType = isIdNumber ? TextInputType.number : TextInputType.phone;
-                    final validator = isIdNumber ? validateIdNumber : validateMobile;
+            Column(
+              key: const Key('IndexedStackWidgetOne'),
+              children: [
+                Container(
+                  padding: EdgeInsets.only(bottom: primaryPadding.bottom * 3, top: primaryPadding.top * 3),
+                  child: Form(
+                    key: _globalKeyFormPage,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: FormType.values.map<Widget>((formType) {
+                          ///
+                          bool isIdNumber = formType == FormType.idForm;
+                          final copy = isIdNumber ? PageCopy.idNumberForm : PageCopy.phoneNumberForm;
+                          final inputLength = isIdNumber ? 13 : 10;
+                          final inputMask = isIdNumber ? '000000 0000 000' : '000 000 0000';
+                          final keyboardType = isIdNumber ? TextInputType.number : TextInputType.phone;
+                          final validator = isIdNumber ? validateIdNumber : validateMobile;
 
-                    return GenericInputField(
-                      key: ValueKey(copy.inputLabel),
-                      hintText: copy.formPlaceholderText ?? 'Please type...',
-                      label: copy.inputLabel ?? '',
-                      autofocus: true,
-                      keyboardType: keyboardType,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(inputLength),
-                        VerifiedTextInputFormatter(mask: inputMask)
-                      ],
-                      validator: (value) {
-                        if (kDebugMode) {
-                          print('====>>====');
-                          print(value);
-                          print(value.runtimeType);
-                          print(idOrPhoneNumber != null);
-                          print(idOrPhoneNumber?.isNotEmpty == true);
-                        }
-                        if ((idOrPhoneNumber != null && idOrPhoneNumber?.isNotEmpty == true) &&
-                            (value == null || value.isEmpty)) {
-                          return null;
-                        }
+                          return GenericInputField(
+                            key: ValueKey(copy.inputLabel),
+                            hintText: copy.formPlaceholderText ?? 'Please type...',
+                            label: copy.inputLabel ?? '',
+                            autofocus: true,
+                            keyboardType: keyboardType,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(inputLength),
+                              VerifiedTextInputFormatter(mask: inputMask)
+                            ],
+                            validator: (value) {
+                              if (kDebugMode) {
+                                print('====>>====');
+                                print(value);
+                                print(value.runtimeType);
+                                print(idOrPhoneNumber != null);
+                                print(idOrPhoneNumber?.isNotEmpty == true);
+                              }
+                              if ((idOrPhoneNumber != null && idOrPhoneNumber?.isNotEmpty == true) &&
+                                  (value == null || value.isEmpty)) {
+                                return null;
+                              }
 
-                        return validator(value);
-                      },
-                      onChange: (value) {
-                        ///
-                        _globalKeyFormPage.currentState?.validate();
+                              return validator(value);
+                            },
+                            onChange: (value) {
+                              ///
+                              _globalKeyFormPage.currentState?.validate();
 
-                        ///
-                        if (mounted) {
-                          setState(() {
-                            idOrPhoneNumber = value;
-                            selectedFormType = formType;
-                          });
-                        }
-                      },
-                    );
-                  }).toList()
+                              ///
+                              if (mounted) {
+                                setState(() {
+                                  idOrPhoneNumber = value;
+                                  selectedFormType = formType;
+                                });
+                              }
+                            },
+                          );
+                        }).toList()
 
-                    /// and OR in between the two input fields
-                    ..insert(
-                      MIDDLE_INDEX,
-                      Container(
-                        height: 100,
-                        padding: const EdgeInsets.only(top: 34),
+                          /// and OR in between the two input fields
+                          ..insert(
+                            MIDDLE_INDEX,
+                            Container(
+                              height: 100,
+                              padding: const EdgeInsets.only(top: 34),
+                              child: Text(
+                                'OR',
+                                style: TextStyle(
+                                  color: primaryColor,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 20,
+                                  fontStyle: FontStyle.normal,
+                                ),
+                              ),
+                            ),
+                          )
+                          ..insert(
+                            HELP_TEXT_INDEX,
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 40, 0, 30),
+                              child: LearnMoreHighlightedButton(
+                                text: 'Please type and click send to verify the details.',
+                                onTap: () => navigate(
+                                  context,
+                                  page: const LearnMorePage(),
+                                ),
+                              ),
+                            ),
+                          )),
+                  ),
+                ),
+                submitButton(context, user)
+              ],
+            ),
+            Column(
+              key: const Key('IndexedStackWidgetTwo'),
+              children: [
+                Container(
+                  padding: EdgeInsets.only(bottom: primaryPadding.bottom * 3, top: primaryPadding.top * 3),
+                  constraints: appConstraints,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(4),
                         child: Text(
-                          'OR',
+                          'Reason',
                           style: TextStyle(
-                            color: primaryColor,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20,
-                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16.0,
                           ),
                         ),
                       ),
-                    )
-                    ..insert(
-                      HELP_TEXT_INDEX,
-                       Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 40, 0, 30),
-                            child: LearnMoreHighlightedButton(
-                              text: 'Please type and click send to verify the details.',
-                              onTap: () => navigate(
-                                context,
-                                page: const LearnMorePage(),
-                              ),
-                            ),
+                      InputDecorator(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(primaryPadding.top),
                           ),
-                    )
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: reason,
+                            hint: const Text('Select a reason.'),
+                            isExpanded: true,
+                            isDense: true,
+                            items: reasonsForRequest
+                                .map((opt) => DropdownMenuItem(
+                                      value: opt,
+                                      child: Text(opt),
+                                    ))
+                                .toList(),
+                            onChanged: (otp) {
+                              if (mounted) {
+                                setState(() {
+                                  reason = otp ?? 'Other';
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(bottom: primaryPadding.bottom * 3, top: primaryPadding.top * 3),
-              constraints: appConstraints,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(4),
-                    child: Text(
-                      'Reason',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  ),
-                  InputDecorator(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(primaryPadding.top),
-                      ),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: reason,
-                        hint: const Text('Select a reason.'),
-                        isExpanded: true,
-                        isDense: true,
-                        items: reasonsForRequest
-                            .map((opt) => DropdownMenuItem(
-                                  value: opt,
-                                  child: Text(opt),
-                                ))
-                            .toList(),
-                        onChanged: (otp) {
-                          if (mounted) {
-                            setState(() {
-                              reason = otp ?? 'Other';
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                submitButton(context, user)
+              ],
             ),
           ],
         ),
       ),
-      InputFormSubmitButton(
-          pageButtonName: 'Next',
-          nextHandler: () {
-            ///
-            if (stackIndex == 0 && mounted) {
-              ///
-              if (_globalKeyFormPage.currentState?.validate() != true) return;
-
-              ///
-              setState(() {
-                stackIndex = 1;
-              });
-            } else {
-              ///
-              if (reason == null) {
-                ///
-                ScaffoldMessenger.of(context)
-                  ..clearSnackBars()
-                  ..showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Select a reason',
-                      ),
-                    ),
-                  );
-
-                return;
-              }
-
-              ///
-              final wallet = context.read<StoreBloc>().state.walletData;
-
-              if (wallet == null) {
-                navigate(context, page: const AddPaymentMethodPage());
-
-                return;
-              }
-              print(wallet);
-              print('============');
-              if ((wallet.balance ?? 0) < POINTS_PER_TRANSACTION) {
-                showTopUpBottomSheet(context);
-
-                return;
-              }
-
-              ///
-              if (selectedFormType == FormType.idForm) {
-                ///
-                context.read<VerifySaBloc>()
-                  ..add(const VerifySaEvent.apiHealthCheck())
-                  ..add(
-                    VerifySaEvent.verifyIdNumber(
-                      idNumber: (idOrPhoneNumber ?? '').replaceAll(' ', ''),
-                      reason: EnquiryReason.fromString(reason),
-                      clientId: user?.id ?? user?.profileId ?? 'system',
-                    ),
-                  );
-              } else if (selectedFormType == FormType.phoneNumberForm) {
-                ///
-                context.read<VerifySaBloc>()
-                  ..add(const VerifySaEvent.apiHealthCheck())
-                  ..add(
-                    VerifySaEvent.contactTracing(
-                      phoneNumber: (idOrPhoneNumber ?? '').replaceAll(' ', ''),
-                      reason: EnquiryReason.fromString(reason),
-                      clientId: user?.id ?? user?.profileId ?? 'system',
-                    ),
-                  );
-              } else {
-                ScaffoldMessenger.of(context)
-                  ..clearSnackBars()
-                  ..showSnackBar(
-                    SnackBar(
-                      backgroundColor: warningColor,
-                      content: const Text(
-                        'Unknown error occurred, Please try again later.',
-                      ),
-                    ),
-                  );
-
-                return;
-              }
-
-              ///
-              navigate(
-                context,
-                page: SearchResultsPage(
-                  type: selectedFormType ?? FormType.idForm,
-                ),
-                replaceCurrentPage: true,
-              );
-            }
-          })
     ];
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  Widget submitButton(BuildContext context, UserProfile? user) {
+    return InputFormSubmitButton(
+      pageButtonName: stackIndex == 0 ? 'Next' : 'Submit',
+      nextHandler: () {
+        ///
+        if (stackIndex == 0 && mounted) {
+          ///
+          if (_globalKeyFormPage.currentState?.validate() != true) return;
+
+          ///
+          setState(() {
+            stackIndex = 1;
+          });
+        } else {
+          ///
+          if (reason == null) {
+            ///
+            ScaffoldMessenger.of(context)
+              ..clearSnackBars()
+              ..showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Select a reason',
+                  ),
+                ),
+              );
+
+            return;
+          }
+
+          ///
+          final wallet = context.read<StoreBloc>().state.walletData;
+
+          if (wallet == null) {
+            navigate(context, page: const AddPaymentMethodPage());
+
+            return;
+          }
+          if (kDebugMode) {
+            print(wallet);
+            print('============');
+          }
+          if ((wallet.balance ?? 0) < POINTS_PER_TRANSACTION) {
+            showTopUpBottomSheet(context);
+
+            return;
+          }
+
+          ///
+          if (selectedFormType == FormType.idForm) {
+            ///
+            context.read<VerifySaBloc>()
+              ..add(const VerifySaEvent.apiHealthCheck())
+              ..add(
+                VerifySaEvent.verifyIdNumber(
+                  idNumber: (idOrPhoneNumber ?? '').replaceAll(' ', ''),
+                  reason: EnquiryReason.fromString(reason),
+                  clientId: user?.id ?? user?.profileId ?? 'system',
+                ),
+              );
+          } else if (selectedFormType == FormType.phoneNumberForm) {
+            ///
+            context.read<VerifySaBloc>()
+              ..add(const VerifySaEvent.apiHealthCheck())
+              ..add(
+                VerifySaEvent.contactTracing(
+                  phoneNumber: (idOrPhoneNumber ?? '').replaceAll(' ', ''),
+                  reason: EnquiryReason.fromString(reason),
+                  clientId: user?.id ?? user?.profileId ?? 'system',
+                ),
+              );
+          } else {
+            ScaffoldMessenger.of(context)
+              ..clearSnackBars()
+              ..showSnackBar(
+                SnackBar(
+                  backgroundColor: warningColor,
+                  content: const Text(
+                    'Unknown error occurred, Please try again later.',
+                  ),
+                ),
+              );
+
+            return;
+          }
+
+          ///
+          navigate(
+            context,
+            page: SearchResultsPage(
+              type: selectedFormType ?? FormType.idForm,
+            ),
+            replaceCurrentPage: true,
+          );
+        }
+      },
+    );
   }
+
 }
 
 class InputFormSubmitButton extends StatelessWidget {
@@ -394,7 +409,7 @@ class InputFormSubmitButton extends StatelessWidget {
           Icons.lock_outline,
           color: primaryColor,
         ),
-        buttonSize: ButtonSize.small,
+        buttonSize: ButtonSize.large,
         hasBorderLining: false,
       ),
     );

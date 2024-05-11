@@ -414,9 +414,11 @@ class AccountPageContent extends StatelessWidget {
                                                               isLast: index == appInfo.length - 1,
                                                             ),
                                                           )
-                                                        : [
-                                                            const Text(' '),
-                                                          ],
+                                                        : accountSettings[index]['text'] == 'Alerts And Notifications'
+                                                            ? [const _NotificationsSettings(key: Key('notifications-settings'),)]
+                                                            : [
+                                                                const Text(' '),
+                                                              ],
                                           ),
                       ),
                     ),
@@ -426,6 +428,53 @@ class AccountPageContent extends StatelessWidget {
             ),
           );
         });
+  }
+}
+
+class _NotificationsSettings extends StatefulWidget {
+  const _NotificationsSettings({super.key});
+
+  @override
+  State<_NotificationsSettings> createState() => __NotificationsSettingsState();
+}
+
+class __NotificationsSettingsState extends State<_NotificationsSettings> {
+  ///
+  bool email = true, inApp = true;
+
+  ///
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SwitchListTile(
+          title: const Text('In-App push Notification'),
+          subtitle: const Text('Also have to enable OS notification'),
+          value: inApp,
+          onChanged: (bool? value) {
+            if (mounted) {
+              setState(() {
+                inApp = value ?? false;
+              });
+            }
+          },
+        ),
+        SwitchListTile(
+          title: const Text(
+            'Email Notifications',
+          ),
+          subtitle: const Text('important notification like payment receipts,a nd refund notification are mandatory'),
+          value: email,
+          onChanged: (bool? value) {
+            if (mounted) {
+              setState(() {
+                email = value ?? false;
+              });
+            }
+          },
+        )
+      ],
+    );
   }
 }
 
@@ -466,6 +515,11 @@ var accountSettings = [
     'type': 'expandable',
     'text': 'App Information',
     'icon': Icons.app_settings_alt_outlined,
+  },
+  {
+    'type': 'expandable',
+    'text': 'Alerts And Notifications',
+    'icon': Icons.notifications_none_rounded,
   },
   {'type': 'button', 'text': 'Privacy & Security', 'icon': Icons.security_outlined},
   {'type': 'button', 'text': 'Terms of Use', 'icon': Icons.article_outlined},
@@ -604,7 +658,7 @@ class _ProfileName extends StatelessWidget {
               children: [
                 /// name
                 Container(
-                  width:  windowWidth > 600 ? calculatedWidth :  windowWidth * 0.5,
+                  width: windowWidth > 600 ? calculatedWidth : windowWidth * 0.5,
                   clipBehavior: Clip.none,
                   child: Text(
                     user?.name ?? user?.displayName ?? user?.actualName ?? 'Hello',
