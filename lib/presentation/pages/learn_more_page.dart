@@ -215,18 +215,22 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                                       Padding(
                                         padding: const EdgeInsets.only(bottom: 20),
                                         child: ListView.builder(
+                                          key: ValueKey(content.hashCode),
                                           physics: const NeverScrollableScrollPhysics(),
                                           shrinkWrap: true,
                                           itemCount: content.length,
                                           itemBuilder: (context, index) {
+                                            var question = content.keys.toList()[index];
+                                            var answer = content.values.toList()[index];
+
                                             return ExpansionTile(
-                                              key: Key('expansion_tile_$index'),
+                                              key: Key('expansion_tile_${question.hashCode}'),
                                               tilePadding: const EdgeInsets.all(0.0),
                                               backgroundColor: Colors.grey[100],
                                               collapsedBackgroundColor: Colors.transparent,
                                               initiallyExpanded: index == 0,
                                               title: Text(
-                                                content.keys.toList()[index],
+                                                question,
                                                 style: const TextStyle(
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w600,
@@ -237,7 +241,7 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                                               ),
                                               children: [
                                                 Text(
-                                                  content.values.toList()[index],
+                                                  answer,
                                                 ),
                                                 const Text('')
                                               ],
