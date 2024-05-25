@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:app_links/app_links.dart';
+import 'package:appscheme/appscheme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -10,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:uuid/validation.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/application/appbase/appbase_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
@@ -29,6 +32,7 @@ import 'package:verified/presentation/pages/custom_splash_screen.dart';
 import 'package:verified/presentation/pages/error_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/transactions_page.dart';
+import 'package:verified/presentation/pages/verification_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/device_info.dart';
 import 'package:verified/presentation/utils/lottie_loader.dart';
@@ -142,12 +146,21 @@ void main() async {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
     /// Fallback page onError
-    ErrorWidget.builder = (details) => MaterialApp(
-          home: VerifiedErrorPage(
-            key: const Key('fallback-error-page'),
-            message: details.summary.toDescription(),
-          ),
-        );
+    ErrorWidget.builder = (details) {
+      //
+      verifiedErrorLogger(details);
+
+      ///
+      return MaterialApp(
+        theme: theme,
+        debugShowCheckedModeBanner: false,
+        title: 'Error: $displayAppName',
+        home: VerifiedErrorPage(
+          key: Key('fallback-error-page-${details.hashCode}'),
+          message: details.summary.toDescription(),
+        ),
+      );
+    };
 
     ///
 
@@ -158,7 +171,7 @@ void main() async {
     ///
   }, (error, stack) {
     verifiedErrorLogger(error);
-    if (kDebugMode) print(stack);
+    print(stack);
 
     /// fb crush
   });
@@ -234,45 +247,186 @@ class AppRoot extends StatefulWidget {
 
 class _AppRootState extends State<AppRoot> {
   //with SingleTickerProviderStateMixin
+
   String? token;
 
-  @override
-  void didChangeDependencies() {
-//log changing deps
-    super.didChangeDependencies();
-    print('=========================+++++++didChangeDependencies+++++++======================');
-  }
+  ///
+  SnackbarValue? snackBarValue;
+  String? uriUuidFragment;
 
-  @override
-  void didUpdateWidget(covariant AppRoot oldWidget) {
-    super.didUpdateWidget(oldWidget);
+  ///
+  late AppLinks _appLinks;
+  late AppScheme? _appScheme;
+  StreamSubscription<Uri>? _linkSubscription;
 
-    print('=========================+++++++didUpdateWidget+++++++======================');
-  }
+  ///
 
   @override
   void initState() {
     super.initState();
 
     ///
-    FirebaseMessaging.instance.getToken().then((fcmToken) {
-      print('\n\nFMC TOKEN 2: $fcmToken\n\n');
-
-      token = fcmToken;
-    });
+    _initDeepLinks();
 
     ///
-    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
-      print('\n\nFMC TOKEN: $fcmToken\n\n');
+    FirebaseMessaging.instance.getToken().then(_setFMCToken);
 
-      token = fcmToken;
-    }).onError((err) {
-      print('Error while trying to get a TOKEN ${err.toString()}');
-    });
+    ///
+    FirebaseMessaging.instance.onTokenRefresh.listen(_setFMCToken);
 
     ///
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
+  }
+
+  @override
+  void didChangeDependencies() {
+    //log changing deps
+    print('=========================+++++++didChangeDependencies+++++++======================');
+
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(covariant AppRoot oldWidget) {
+    print('=========================+++++++didUpdateWidget+++++++======================');
+
+    super.didUpdateWidget(oldWidget);
+  }
+
+  Future<void> _initDeepLinks() async {
+    _appLinks = AppLinks();
+    _appScheme = AppSchemeImpl.getInstance();
+
+    // Handle links
+    _linkSubscription = _appLinks.uriLinkStream.listen(_openAppLink);
+    _appScheme?.getInitScheme().then((value) {
+      print('APP SCHEME VALUE:  $value ||  Init  ${value?.dataString}');
+      if (value != null) {
+        var uri = Uri.parse(value.dataString ?? '${value.host}/{$value.path}');
+        _openAppLink(uri);
+      }
+    });
+    _appScheme?.registerSchemeListener().listen((value) {
+      print('APP SCHEME VALUE2:  $value ||  Init  ${value?.dataString}');
+      var uri = Uri.parse(value?.dataString ?? '${value?.host}/{$value.path}');
+      _openAppLink(uri);
+    });
+  }
+
+  void _openAppLink(Uri uri) {
+    var urlSegments = uri.toString().split('/').where((segment) => UuidValidation.isValidUUID(fromString: segment));
+    print('A VALID UUID SEGMENT: $urlSegments');
+    if (mounted) {
+      setState(() {
+        uriUuidFragment = urlSegments.isNotEmpty ? urlSegments.first : null;
+        snackBarValue = (urlSegments.isEmpty)
+            ? SnackbarValue.error
+            : (urlSegments.length > 1)
+                ? SnackbarValue.warning
+                : (urlSegments.length == 1)
+                    ? SnackbarValue.success
+                    : SnackbarValue.unknown;
+      });
+
+      print('Set Snackbar State: $uriUuidFragment  |  $snackBarValue');
+      //
+
+      Future.delayed(
+        const Duration(seconds: 2),
+        () => _displaySnackBarAndNavigate(context, value: snackBarValue ?? SnackbarValue.unknown),
+      );
+    }
+
+    //
+  }
+
+  _setFMCToken(fcmToken) {
+    if (mounted) {
+      print('\n\nFMC TOKEN 2: $fcmToken\n\n');
+      setState(() {
+        token = fcmToken;
+      });
+    }
+  }
+
+  void _displaySnackBarAndNavigate(BuildContext context, {required SnackbarValue value}) {
+    print('Try to display the snackbar $value');
+    final __uriUuidFragment = uriUuidFragment;
+    final __snackBarValue = snackBarValue;
+
+    print('???? ==> $mounted  && $uriUuidFragment && $snackBarValue');
+    if (mounted && (uriUuidFragment != null || snackBarValue != null)) {
+      print('RESET THE SNACKBAR STATE');
+      setState(() {
+        uriUuidFragment = null;
+        snackBarValue = null;
+      });
+    }
+
+    switch (__snackBarValue) {
+      case SnackbarValue.error:
+        {
+          ScaffoldMessenger.of(_navigatorKey.currentState?.context ?? context)
+            ..clearSnackBars()
+            ..showSnackBar(
+              SnackBar(
+                content: const Text(
+                  'Invalid Launch URL',
+                ),
+                backgroundColor: errorColor,
+              ),
+            );
+
+          break;
+        }
+      case SnackbarValue.warning:
+        {
+          ScaffoldMessenger.of(_navigatorKey.currentState?.context ?? context)
+            ..clearSnackBars()
+            ..showSnackBar(
+              SnackBar(
+                content: const Text(
+                  'Warning: Minor error detected on the URL',
+                ),
+                backgroundColor: warningColor,
+              ),
+            );
+
+          navigateToNamedRoute(
+            _navigatorKey.currentState?.context ?? context,
+            arguments: VerificationPageArgs(
+              __uriUuidFragment ?? '0000000-0000-0000-0000-00000000000',
+            ),
+          );
+          break;
+        }
+      case SnackbarValue.success:
+        {
+          ScaffoldMessenger.of(_navigatorKey.currentState?.context ?? context)
+            ..clearSnackBars()
+            ..showSnackBar(
+              SnackBar(
+                content: const Text(
+                  'Launching a Verification Page',
+                ),
+                backgroundColor: primaryColor,
+              ),
+            );
+
+          navigateToNamedRoute(
+            _navigatorKey.currentState?.context ?? context,
+            arguments: VerificationPageArgs(
+              __uriUuidFragment ?? '0000000-0000-0000-0000-00000000000',
+            ),
+          );
+          break;
+        }
+      default:
+        {
+          print('Unknown Value($value) at displaySnackbar');
+        }
+    }
   }
 
   void _configureDidReceiveLocalNotificationSubject() {
@@ -299,9 +453,42 @@ class _AppRootState extends State<AppRoot> {
   }
 
   void _configureSelectNotificationSubject() {
-    selectNotificationSubject.stream.listen((payload) async {
-      navigate(context, page: const TransactionPage());
-    });
+    selectNotificationSubject.stream.listen(
+      (_) async {
+        navigate(
+          context,
+          page: const TransactionPage(),
+        );
+      },
+    );
+  }
+
+  void _hideAppLoader() {
+    print('HIDE LOADER...');
+
+    /// hide loader option 1
+    Loader.hide();
+  }
+
+  void _showAppLoader(BuildContext context) {
+    print('SHOW LOADER...');
+
+    /// show loader option 1
+    Loader.show(
+      context,
+      overlayFromBottom: 80,
+      overlayColor: darkBlurColor,
+      progressIndicator: const LottieProgressLoader(
+        key: Key('lottie_progress_loader'),
+      ),
+    );
+
+    /// show loader option 2
+    _refreshIndicatorKey.currentState?.show();
+    Future.delayed(
+      const Duration(seconds: 2),
+      () => _displaySnackBarAndNavigate(context, value: snackBarValue ?? SnackbarValue.unknown),
+    );
   }
 
   @override
@@ -318,23 +505,23 @@ class _AppRootState extends State<AppRoot> {
 
           /// remove the splash screen
           return MaterialApp(
+            navigatorKey: _navigatorKey,
             builder: FToastBuilder(),
             debugShowCheckedModeBanner: false,
             theme: theme,
             title: displayAppName,
+            routes: {
+              '/secure': (context) => VerificationPage(),
+              '/secure/:id': (context) => VerificationPage(),
+            },
             home: BlocListener<StoreBloc, StoreState>(
               bloc: context.read<StoreBloc>()
+                ..add(const StoreEvent.apiHealthCheck())
                 ..add(StoreEvent.addUser(snapshot.data))
                 ..add(StoreEvent.getAllHistory(userId))
                 ..add(StoreEvent.getUserProfile(userId))
                 ..add(StoreEvent.getWallet(userWalletId)),
-              listener: (context, state) async {
-                // if (state.userProfileData is! UserProfile && snapshot.data != null) {
-                //   context.read<StoreBloc>().add(StoreEvent.addUser(snapshot.data));
-                //   print('===========EXIT===============');
-                //   if (kDebugMode) exit(0);
-                // }
-
+              listener: (context, state) {
                 if (state.userProfileDataLoading ||
                     state.getHelpDataLoading ||
                     state.walletDataLoading ||
@@ -342,9 +529,9 @@ class _AppRootState extends State<AppRoot> {
                     state.promotionDataLoading ||
                     state.uploadsDataLoading ||
                     state.ticketsDataLoading) {
-                  showAppLoader(context);
+                  _showAppLoader(context);
                 } else {
-                  hideAppLoader();
+                  _hideAppLoader();
                 }
                 if (state.userProfileData != null &&
                     (state.userProfileData?.notificationToken != token) &&
@@ -359,7 +546,7 @@ class _AppRootState extends State<AppRoot> {
                             ),
                           );
                     } catch (e) {
-                      print('Error while trying to add a token,  $e');
+                      debugPrint('Error while trying to add a token,  $e');
                     }
                   });
                 }
@@ -367,17 +554,17 @@ class _AppRootState extends State<AppRoot> {
               child: BlocListener<SearchRequestBloc, SearchRequestState>(
                 listener: (context, searchRequestState) {
                   if (searchRequestState.isLoading) {
-                    showAppLoader(context);
+                    _showAppLoader(context);
                   } else {
-                    hideAppLoader();
+                    _hideAppLoader();
                   }
                 },
                 child: BlocListener<AuthBloc, AuthState>(
                   listener: (context, state) {
                     if (state.processing) {
-                      showAppLoader(context);
+                      _showAppLoader(context);
                     } else {
-                      hideAppLoader();
+                      _hideAppLoader();
                     }
                   },
                   child: RefreshIndicator(
@@ -391,29 +578,19 @@ class _AppRootState extends State<AppRoot> {
           );
         });
   }
+
+  @override
+  void dispose() {
+    _linkSubscription?.cancel();
+    super.dispose();
+  }
 }
 
-void hideAppLoader() {
-  /// hide loader option 1
-  Loader.hide();
-
-  /// hide loader option 2
-}
-
-void showAppLoader(BuildContext context) {
-  /// show loader option 1
-  Loader.show(
-    context,
-    overlayFromBottom: 80,
-    overlayColor: darkBlurColor,
-    progressIndicator: const LottieProgressLoader(
-      key: Key('lottie_progress_loader'),
-    ),
-  );
-
-  /// show loader option 2
-  _refreshIndicatorKey.currentState?.show();
-}
-
+//
 final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
+//
+enum SnackbarValue { error, warning, success, unknown }
+
+//
+final _navigatorKey = GlobalKey<NavigatorState>();
