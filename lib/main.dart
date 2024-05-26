@@ -1,3 +1,5 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'dart:async';
 import 'dart:io';
 import 'package:app_links/app_links.dart';
@@ -350,82 +352,84 @@ class _AppRootState extends State<AppRoot> {
     }
   }
 
-  void _displaySnackBarAndNavigate(BuildContext context, {required SnackbarValue value}) {
-    print('Try to display the snackbar $value');
-    final __uriUuidFragment = uriUuidFragment;
-    final __snackBarValue = snackBarValue;
+  void _displaySnackBarAndNavigate(BuildContext context, {required SnackbarValue value}) async {
+    try {
+      debugPrint('Try to display the snackbar $value');
+      final __uriUuidFragment = uriUuidFragment;
+      final __snackBarValue = snackBarValue;
+      final user = await LocalUser.getUser();
+      debugPrint('???? ==> $mounted  && $uriUuidFragment && $snackBarValue');
+      if (mounted && (uriUuidFragment != null || snackBarValue != null)) {
+        print('RESET THE SNACKBAR STATE');
+        setState(() {
+          uriUuidFragment = null;
+          snackBarValue = null;
+        });
+      }
 
-    print('???? ==> $mounted  && $uriUuidFragment && $snackBarValue');
-    if (mounted && (uriUuidFragment != null || snackBarValue != null)) {
-      print('RESET THE SNACKBAR STATE');
-      setState(() {
-        uriUuidFragment = null;
-        snackBarValue = null;
-      });
-    }
-
-    switch (__snackBarValue) {
-      case SnackbarValue.error:
-        {
-          ScaffoldMessenger.of(_navigatorKey.currentState?.context ?? context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              SnackBar(
-                content: const Text(
-                  'Invalid Launch URL',
+      switch (__snackBarValue) {
+        case SnackbarValue.error:
+          {
+            ScaffoldMessenger.of(_navigatorKey.currentState?.context ?? context)
+              ..clearSnackBars()
+              ..showSnackBar(
+                SnackBar(
+                  content: const Text(
+                    'Invalid Launch URL',
+                  ),
+                  backgroundColor: errorColor,
                 ),
-                backgroundColor: errorColor,
-              ),
-            );
+              );
 
-          break;
-        }
-      case SnackbarValue.warning:
-        {
-          ScaffoldMessenger.of(_navigatorKey.currentState?.context ?? context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              SnackBar(
-                content: const Text(
-                  'Warning: Minor error detected on the URL',
+            break;
+          }
+        case SnackbarValue.warning:
+          {
+            ScaffoldMessenger.of(_navigatorKey.currentState?.context ?? context)
+              ..clearSnackBars()
+              ..showSnackBar(
+                SnackBar(
+                  content: const Text(
+                    'Warning: Minor error detected on the URL',
+                  ),
+                  backgroundColor: warningColor,
                 ),
-                backgroundColor: warningColor,
-              ),
-            );
+              );
 
-          navigateToNamedRoute(
-            _navigatorKey.currentState?.context ?? context,
-            arguments: VerificationPageArgs(
-              __uriUuidFragment ?? '0000000-0000-0000-0000-00000000000',
-            ),
-          );
-          break;
-        }
-      case SnackbarValue.success:
-        {
-          ScaffoldMessenger.of(_navigatorKey.currentState?.context ?? context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              SnackBar(
-                content: const Text(
-                  'Launching a Verification Page',
+            navigateToNamedRoute(_navigatorKey.currentState?.context ?? context,
+                arguments: VerificationPageArgs(
+                  __uriUuidFragment ?? '0000000-0000-0000-0000-00000000000',
                 ),
-                backgroundColor: primaryColor,
-              ),
-            );
+                replaceCurrentPage: user == null);
+            break;
+          }
+        case SnackbarValue.success:
+          {
+            ScaffoldMessenger.of(_navigatorKey.currentState?.context ?? context)
+              ..clearSnackBars()
+              ..showSnackBar(
+                SnackBar(
+                  content: const Text(
+                    'Launching a Verification Page',
+                  ),
+                  backgroundColor: primaryColor,
+                ),
+              );
 
-          navigateToNamedRoute(
-            _navigatorKey.currentState?.context ?? context,
-            arguments: VerificationPageArgs(
-              __uriUuidFragment ?? '0000000-0000-0000-0000-00000000000',
-            ),
-          );
-          break;
-        }
-      default:
-        {
-          print('Unknown Value($value) at displaySnackbar');
-        }
+            navigateToNamedRoute(_navigatorKey.currentState?.context ?? context,
+                arguments: VerificationPageArgs(
+                  __uriUuidFragment ?? '0000000-0000-0000-0000-00000000000',
+                ),
+                replaceCurrentPage: user == null);
+            break;
+          }
+        default:
+          {
+            print('Unknown Value($value) at displaySnackbar');
+          }
+      }
+    } catch (e) {
+      print('_displaySnackBarAndNavigate Error: $e');
     }
   }
 
@@ -493,90 +497,90 @@ class _AppRootState extends State<AppRoot> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<UserProfile?>(
+    return MaterialApp(
+      navigatorKey: _navigatorKey,
+      builder: FToastBuilder(),
+      debugShowCheckedModeBanner: false,
+      theme: theme,
+      title: displayAppName,
+      routes: {
+        '/secure': (context) => VerificationPage(),
+      },
+      home: FutureBuilder<UserProfile?>(
         future: LocalUser.getUser(),
         builder: (context, snapshot) {
           final userId = snapshot.data?.id ?? '';
           final userWalletId = snapshot.data?.walletId ?? '';
 
-          if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
+          /// splash screen
+          if (snapshot.connectionState != ConnectionState.done) {
             return const CustomSplashScreen();
           }
 
-          /// remove the splash screen
-          return MaterialApp(
-            navigatorKey: _navigatorKey,
-            builder: FToastBuilder(),
-            debugShowCheckedModeBanner: false,
-            theme: theme,
-            title: displayAppName,
-            routes: {
-              '/secure': (context) => VerificationPage(),
-              '/secure/:id': (context) => VerificationPage(),
+          return BlocListener<StoreBloc, StoreState>(
+            bloc: context.read<StoreBloc>()
+              ..add(const StoreEvent.apiHealthCheck())
+              ..add(StoreEvent.addUser(snapshot.data))
+              ..add(StoreEvent.getAllHistory(userId))
+              ..add(StoreEvent.getUserProfile(userId))
+              ..add(StoreEvent.getWallet(userWalletId)),
+            listener: (context, state) {
+              if (state.userProfileDataLoading ||
+                  state.getHelpDataLoading ||
+                  state.walletDataLoading ||
+                  state.historyDataLoading ||
+                  state.promotionDataLoading ||
+                  state.uploadsDataLoading ||
+                  state.ticketsDataLoading) {
+                _showAppLoader(context);
+              } else {
+                _hideAppLoader();
+              }
+              if (state.userProfileData != null &&
+                  (state.userProfileData?.notificationToken != token) &&
+                  (token != null)) {
+                Future.delayed(const Duration(seconds: 5), () {
+                  try {
+                    context.read<StoreBloc>().add(
+                          StoreEvent.updateUserProfile(
+                            state.userProfileData!.copyWith(
+                              notificationToken: token,
+                            ),
+                          ),
+                        );
+                  } catch (e) {
+                    debugPrint('Error while trying to add a token,  $e');
+                  }
+                });
+              }
             },
-            home: BlocListener<StoreBloc, StoreState>(
-              bloc: context.read<StoreBloc>()
-                ..add(const StoreEvent.apiHealthCheck())
-                ..add(StoreEvent.addUser(snapshot.data))
-                ..add(StoreEvent.getAllHistory(userId))
-                ..add(StoreEvent.getUserProfile(userId))
-                ..add(StoreEvent.getWallet(userWalletId)),
-              listener: (context, state) {
-                if (state.userProfileDataLoading ||
-                    state.getHelpDataLoading ||
-                    state.walletDataLoading ||
-                    state.historyDataLoading ||
-                    state.promotionDataLoading ||
-                    state.uploadsDataLoading ||
-                    state.ticketsDataLoading) {
+            child: BlocListener<SearchRequestBloc, SearchRequestState>(
+              listener: (context, searchRequestState) {
+                if (searchRequestState.isLoading) {
                   _showAppLoader(context);
                 } else {
                   _hideAppLoader();
                 }
-                if (state.userProfileData != null &&
-                    (state.userProfileData?.notificationToken != token) &&
-                    (token != null)) {
-                  Future.delayed(const Duration(seconds: 5), () {
-                    try {
-                      context.read<StoreBloc>().add(
-                            StoreEvent.updateUserProfile(
-                              state.userProfileData!.copyWith(
-                                notificationToken: token,
-                              ),
-                            ),
-                          );
-                    } catch (e) {
-                      debugPrint('Error while trying to add a token,  $e');
-                    }
-                  });
-                }
               },
-              child: BlocListener<SearchRequestBloc, SearchRequestState>(
-                listener: (context, searchRequestState) {
-                  if (searchRequestState.isLoading) {
+              child: BlocListener<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state.processing) {
                     _showAppLoader(context);
                   } else {
                     _hideAppLoader();
                   }
                 },
-                child: BlocListener<AuthBloc, AuthState>(
-                  listener: (context, state) {
-                    if (state.processing) {
-                      _showAppLoader(context);
-                    } else {
-                      _hideAppLoader();
-                    }
-                  },
-                  child: RefreshIndicator(
-                    key: _refreshIndicatorKey,
-                    onRefresh: () => Future<void>.delayed(const Duration(seconds: 2)),
-                    child: const HomePage(),
-                  ),
+                child: RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: () => Future<void>.delayed(const Duration(seconds: 3)),
+                  child: const HomePage(),
                 ),
               ),
             ),
           );
-        });
+        },
+      ),
+    );
   }
 
   @override
