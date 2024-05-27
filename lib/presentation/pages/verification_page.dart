@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:verified/presentation/pages/face_detector_page.dart';
+import 'package:verified/presentation/widgets/ml_face_painter/camera_view.dart';
 
 class VerificationPage extends StatelessWidget {
   const VerificationPage({super.key});
@@ -10,7 +10,7 @@ class VerificationPage extends StatelessWidget {
     final uuid = args?.uuid;
     return Scaffold(
       backgroundColor:Colors.black,
-      body: FaceDetectorPage(),
+      body: CameraView()
     );
   }
 }

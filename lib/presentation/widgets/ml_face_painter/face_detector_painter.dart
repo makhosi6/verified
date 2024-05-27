@@ -30,7 +30,7 @@ class FaceDetectorPainter extends CustomPainter {
 
     for (final Face face in faces) {
       final faceBoundingBox = face.boundingBox;
-      var faceMarkerBorderColor = (_isFaceCloseEnough(faceBoundingBox)) ? Colors.green : Colors.red;
+      var faceMarkerBorderColor = (isFaceCloseEnough(faceBoundingBox)) ? Colors.green : Colors.red;
       ovalPaint.color = faceMarkerBorderColor;
       final left = translateX(
         face.boundingBox.left,
@@ -90,7 +90,7 @@ class FaceDetectorPainter extends CustomPainter {
     return oldDelegate.imageSize != imageSize || oldDelegate.faces != faces;
   }
 
-  bool _isFaceCloseEnough(Rect boundingBox) {
+  bool isFaceCloseEnough(Rect boundingBox) {
     const closeThreshold = 0.3;
     final imageWidth = imageSize.width;
     final imageHeight = imageSize.height;
