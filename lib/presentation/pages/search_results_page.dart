@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:verified/application/store/store_bloc.dart';
@@ -13,6 +14,7 @@ import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/data_view_item.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
+import 'package:verified/presentation/utils/lottie_loader.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/history/history_list_item.dart';
@@ -367,4 +369,21 @@ class ResultsSkeleton extends StatelessWidget {
       ),
     );
   }
+}
+
+void hideAppLoader() {
+  /// hide loader option 1
+  Loader.hide();
+}
+
+void showAppLoader(BuildContext context) {
+  /// show loader option 1
+  Loader.show(
+    context,
+    overlayFromBottom: 80,
+    overlayColor: darkBlurColor,
+    progressIndicator: const LottieProgressLoader(
+      key: Key('lottie_progress_loader-2'),
+    ),
+  );
 }

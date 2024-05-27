@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/lottie_loader.dart';
 
 class CustomSplashScreen extends StatelessWidget {
   const CustomSplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: theme,
-      home: const Scaffold(
+    return  const Scaffold(
         body: Center(
-          child: Text("Loading..."),
+          child: LottieProgressLoader(key: Key('app-splash-screen-loader'),),
         ),
-      ),
-    );
+      );
   }
 }

@@ -1,13 +1,13 @@
 name: verified
 description: Instantly confirm the legitimacy of personal information with our user-friendly app. Ensure accuracy and trust in your data effortlessly.
 publish_to: "none" 
-version: 1.1.40+7
+version: 1.2.46+12
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
 
 flutter_native_splash:
-  color: "ed2939"
+  color: "#ffffff"
   image: assets/images/logo.png
 
 flutter_launcher_icons:
@@ -42,15 +42,17 @@ dependencies:
   firebase_auth: ^4.10.0
   firebase_core: ^2.16.0
   firebase_auth_platform_interface: 
+
   flutter_overlay_loader: ^2.0.0
   http: ^1.1.0
   restart_app: ^1.2.1
   sliver_tools: ^0.2.12
   easy_rich_text: ^2.1.0
   rsa_id_number: ^0.1.8
-  gallery_asset_picker: ^0.0.4
+  gallery_asset_picker: 
+    git:
+      url: https://github.com/makhosi6/gallery_asset_picker.git
   fluttertoast: ^8.2.4
-  uuid: ^3.0.7
   package_info_plus: ^4.2.0
   firebase_messaging: ^14.7.10
   flutter_local_notifications: ^16.3.2
@@ -65,6 +67,15 @@ dependencies:
   lottie: ^2.6.0
   carousel_indicator: ^1.0.6
   skeletonizer: ^1.0.1
+  app_links: ^3.5.1
+  uuid: ^4.0.0
+  appscheme: ^1.0.8
+  google_mlkit_face_detection: ^0.11.0
+  camera: ^0.10.5+9
+  google_mlkit_commons: ^0.7.1
+  google_ml_kit: ^0.18.0
+  tflite_flutter: ^0.10.4
+  flutter_beep: ^1.0.0
 
 dev_dependencies:
   flutter_test:

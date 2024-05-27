@@ -1,0 +1,15 @@
+[
+    {
+      "relation": [
+        "delegate_permission/common.handle_all_urls"
+      ],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.byteestudio.verified",
+        "sha256_cert_fingerprints": [
+          "CD:A1:23:E0:1A:5C:7A:19:21:B6:24:BC:25:75:7E:4C:E9:DB:4A:90:35:15:DF:17:ED:93:78:58:16:E7:69:59"
+        ]
+      }
+    }
+  ]
+  

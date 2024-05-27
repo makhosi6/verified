@@ -1,4 +1,8 @@
 PODS:
+  - app_links (0.0.1):
+    - Flutter
+  - appscheme (1.0.4):
+    - Flutter
   - camera_avfoundation (0.0.1):
     - Flutter
   - device_info_plus (0.0.1):
@@ -65,10 +69,27 @@ PODS:
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
-  - GoogleDataTransport (9.4.0):
+  - google_mlkit_commons (0.7.1):
+    - Flutter
+    - MLKitVision
+  - google_mlkit_face_detection (0.11.0):
+    - Flutter
+    - google_mlkit_commons
+    - GoogleMLKit/FaceDetection (~> 6.0.0)
+  - GoogleDataTransport (9.4.1):
     - GoogleUtilities/Environment (~> 7.7)
-    - nanopb (< 2.30910.0, >= 2.30908.0)
+    - nanopb (< 2.30911.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleMLKit/FaceDetection (6.0.0):
+    - GoogleMLKit/MLKitCore
+    - MLKitFaceDetection (~> 5.0.0)
+  - GoogleMLKit/MLKitCore (6.0.0):
+    - MLKitCommon (~> 11.0.0)
+  - GoogleToolboxForMac/Defines (4.2.1)
+  - GoogleToolboxForMac/Logger (4.2.1):
+    - GoogleToolboxForMac/Defines (= 4.2.1)
+  - "GoogleToolboxForMac/NSData+zlib (4.2.1)":
+    - GoogleToolboxForMac/Defines (= 4.2.1)
   - GoogleUtilities/AppDelegateSwizzler (7.13.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -94,7 +115,9 @@ PODS:
   - GoogleUtilities/UserDefaults (7.13.0):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
-  - GTMSessionFetcher/Core (3.3.1)
+  - GoogleUtilitiesComponents (1.1.0):
+    - GoogleUtilities/Logger
+  - GTMSessionFetcher/Core (3.4.1)
   - integration_test (0.0.1):
     - Flutter
   - libwebp (1.3.2):
@@ -112,6 +135,23 @@ PODS:
   - Mantle (2.2.0):
     - Mantle/extobjc (= 2.2.0)
   - Mantle/extobjc (2.2.0)
+  - MLImage (1.0.0-beta5)
+  - MLKitCommon (11.0.0):
+    - GoogleDataTransport (< 10.0, >= 9.4.1)
+    - GoogleToolboxForMac/Logger (< 5.0, >= 4.2.1)
+    - "GoogleToolboxForMac/NSData+zlib (< 5.0, >= 4.2.1)"
+    - GoogleUtilities/UserDefaults (< 8.0, >= 7.13.0)
+    - GoogleUtilitiesComponents (~> 1.0)
+    - GTMSessionFetcher/Core (< 4.0, >= 3.3.2)
+  - MLKitFaceDetection (5.0.0):
+    - MLKitCommon (~> 11.0)
+    - MLKitVision (~> 7.0)
+  - MLKitVision (7.0.0):
+    - GoogleToolboxForMac/Logger (< 5.0, >= 4.2.1)
+    - "GoogleToolboxForMac/NSData+zlib (< 5.0, >= 4.2.1)"
+    - GTMSessionFetcher/Core (< 4.0, >= 3.3.2)
+    - MLImage (= 1.0.0-beta5)
+    - MLKitCommon (~> 11.0)
   - nanopb (2.30909.1):
     - nanopb/decode (= 2.30909.1)
     - nanopb/encode (= 2.30909.1)
@@ -147,6 +187,8 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - app_links (from `.symlinks/plugins/app_links/ios`)
+  - appscheme (from `.symlinks/plugins/appscheme/ios`)
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Firebase/Auth
@@ -160,6 +202,8 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - google_mlkit_commons (from `.symlinks/plugins/google_mlkit_commons/ios`)
+  - google_mlkit_face_detection (from `.symlinks/plugins/google_mlkit_face_detection/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
@@ -180,10 +224,17 @@ SPEC REPOS:
     - FirebaseInstallations
     - FirebaseMessaging
     - GoogleDataTransport
+    - GoogleMLKit
+    - GoogleToolboxForMac
     - GoogleUtilities
+    - GoogleUtilitiesComponents
     - GTMSessionFetcher
     - libwebp
     - Mantle
+    - MLImage
+    - MLKitCommon
+    - MLKitFaceDetection
+    - MLKitVision
     - nanopb
     - PromisesObjC
     - RecaptchaInterop
@@ -192,6 +243,10 @@ SPEC REPOS:
     - Toast
 
 EXTERNAL SOURCES:
+  app_links:
+    :path: ".symlinks/plugins/app_links/ios"
+  appscheme:
+    :path: ".symlinks/plugins/appscheme/ios"
   camera_avfoundation:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
   device_info_plus:
@@ -214,6 +269,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
+  google_mlkit_commons:
+    :path: ".symlinks/plugins/google_mlkit_commons/ios"
+  google_mlkit_face_detection:
+    :path: ".symlinks/plugins/google_mlkit_face_detection/ios"
   integration_test:
     :path: ".symlinks/plugins/integration_test/ios"
   package_info_plus:
@@ -234,6 +293,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
+  app_links: e70ca16b4b0f88253b3b3660200d4a10b4ea9795
+  appscheme: b1c3f8862331cb20430cf9e0e4af85dbc1572ad8
   camera_avfoundation: 8b8d780bcfb6a4a02b0fbe2b4bd17b5b71946e68
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Firebase: 414ad272f8d02dfbf12662a9d43f4bba9bec2a06
@@ -252,12 +313,21 @@ SPEC CHECKSUMS:
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   fluttertoast: 31b00dabfa7fb7bacd9e7dbee580d7a2ff4bf265
-  GoogleDataTransport: bed3a36c04c8552479fbb9b76326e0fc69bddcb2
+  google_mlkit_commons: 96aaca445520311b84a2da013dedf3427fe4cc69
+  google_mlkit_face_detection: b760d6035222630f347352b3b13f4a23ea9fb994
+  GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
+  GoogleMLKit: 97ac7af399057e99182ee8edfa8249e3226a4065
+  GoogleToolboxForMac: d1a2cbf009c453f4d6ded37c105e2f67a32206d8
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
-  GTMSessionFetcher: 8a1b34ad97ebe6f909fb8b9b77fba99943007556
+  GoogleUtilitiesComponents: 679b2c881db3b615a2777504623df6122dd20afe
+  GTMSessionFetcher: 8000756fc1c19d2e5697b90311f7832d2e33f6cd
   integration_test: 13825b8a9334a850581300559b8839134b124670
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
+  MLImage: 1824212150da33ef225fbd3dc49f184cf611046c
+  MLKitCommon: afec63980417d29ffbb4790529a1b0a2291699e1
+  MLKitFaceDetection: 7c0e8bf09ddd27105da32d088fca978a99fc30cc
+  MLKitVision: e858c5f125ecc288e4a31127928301eaba9ae0c1
   nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
   package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943

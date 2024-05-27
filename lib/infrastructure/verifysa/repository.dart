@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/domain/interfaces/i_verify_sa_repository.dart';
 import 'package:verified/domain/models/contact_tracing_response.dart';
@@ -8,13 +11,21 @@ import 'package:verified/domain/models/enquiry_reason.dart';
 import 'package:verified/domain/models/resource_health_status_enum.dart';
 import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/domain/models/verify_id_response.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/helpers/security/nonce.dart';
 import 'package:verified/services/dio.dart';
 
 class VerifySaRepository implements IVerifySaRepository {
   final Dio _httpClient;
 
-  VerifySaRepository(this._httpClient);
+  VerifySaRepository(this._httpClient) {
+    (_httpClient.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        (HttpClient dioClient) => dioClient
+          ..badCertificateCallback = ((X509Certificate cert, String host, int port) {
+            verifiedErrorLogger('CERT: $cert \n HOST: $host:$port \n Error: Bad Certificate Error');
+            return true;
+          });
+  }
 
   @override
   Future<Either<Exception, ContactTracingResponse>> contactTracing({

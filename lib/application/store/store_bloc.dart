@@ -26,7 +26,21 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
     on<StoreEvent>((event, emit) async => event.map(
           apiHealthCheck: (e) async {
-            print('CHECKING API STATUS...');
+            final response = await _storeRepository.getUserProfile('sJa6oWBDzW3L4NI81UGneYhXPORG');
+
+            response.fold((error) {
+              emit(
+                state.copyWith(
+                  userProfileDataLoading: false,
+                  resourceHealthStatus: ResourceHealthStatus.bad,
+                ),
+              );
+            }, (data) {
+              emit(state.copyWith(
+                getHelpDataLoading: false,
+                resourceHealthStatus: ResourceHealthStatus.good,
+              ));
+            });
             return null;
           },
 

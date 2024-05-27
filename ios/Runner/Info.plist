@@ -28,10 +28,11 @@
 				<key>CFBundleTypeRole</key>
 				<string>Editor</string>
 				<key>CFBundleURLName</key>
-				<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+				<string>byteestudio.com</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>verified</string>
+					<string>app</string>
 					<string>app-1-59242207359-ios-8e9fbd18f9f42545ff874a</string>
 					<string>customscheme</string>
 					<string>http</string>

@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  app_links
   firebase_auth
   firebase_core
   flutter_js
@@ -10,6 +11,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
+  tflite_flutter
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

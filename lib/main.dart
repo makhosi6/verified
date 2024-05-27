@@ -525,20 +525,26 @@ class _AppRootState extends State<AppRoot> {
               ..add(StoreEvent.getUserProfile(userId))
               ..add(StoreEvent.getWallet(userWalletId)),
             listener: (context, state) {
-              if (state.userProfileDataLoading ||
+              
+              /// has a pending store API request
+              bool storeRequestInProgress = state.userProfileDataLoading ||
                   state.getHelpDataLoading ||
                   state.walletDataLoading ||
                   state.historyDataLoading ||
                   state.promotionDataLoading ||
                   state.uploadsDataLoading ||
-                  state.ticketsDataLoading) {
+                  state.ticketsDataLoading ||
+                  false;
+
+              if (storeRequestInProgress) {
                 _showAppLoader(context);
               } else {
                 _hideAppLoader();
               }
-              if (state.userProfileData != null &&
-                  (state.userProfileData?.notificationToken != token) &&
-                  (token != null)) {
+              final hasUser = state.userProfileData != null;
+              final hasToken = token != null;
+              final isNewToken = state.userProfileData?.notificationToken != token;
+              if (hasUser && isNewToken && hasToken) {
                 Future.delayed(const Duration(seconds: 5), () {
                   try {
                     context.read<StoreBloc>().add(
@@ -556,6 +562,7 @@ class _AppRootState extends State<AppRoot> {
             },
             child: BlocListener<SearchRequestBloc, SearchRequestState>(
               listener: (context, searchRequestState) {
+                ///
                 if (searchRequestState.isLoading) {
                   _showAppLoader(context);
                 } else {
@@ -572,7 +579,7 @@ class _AppRootState extends State<AppRoot> {
                 },
                 child: RefreshIndicator(
                   key: _refreshIndicatorKey,
-                  onRefresh: () => Future<void>.delayed(const Duration(seconds: 3)),
+                  onRefresh: () => Future.delayed(const Duration(seconds: 3)),
                   child: const HomePage(),
                 ),
               ),
@@ -591,7 +598,7 @@ class _AppRootState extends State<AppRoot> {
 }
 
 //
-final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
 //
 enum SnackbarValue { error, warning, success, unknown }

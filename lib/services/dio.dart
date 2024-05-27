@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:verified/app_config.dart';
@@ -18,7 +20,7 @@ class VerifySaDioClientService {
 
   static List<Interceptor> interceptors = [
     /// logger
-    PrettyDioLogger(),
+    // PrettyDioLogger(),
 
     /// for the purpose of caching
     InterceptorsWrapper(
@@ -69,7 +71,7 @@ class StoreDioClientService {
 
   static List<Interceptor> interceptors = [
     /// logger
-    PrettyDioLogger(),
+    // PrettyDioLogger(),
 
     /// for the purpose of caching
     InterceptorsWrapper(

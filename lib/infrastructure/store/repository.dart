@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/domain/interfaces/i_store_repository.dart';
@@ -12,13 +15,20 @@ import 'package:verified/domain/models/transaction_history.dart';
 import 'package:verified/domain/models/upload_response.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/wallet.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/helpers/security/nonce.dart';
 import 'package:verified/services/dio.dart';
 
 class StoreRepository implements IStoreRepository {
   final Dio _httpClient;
 
-  StoreRepository(this._httpClient);
+  StoreRepository(this._httpClient){
+      (_httpClient.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (HttpClient dioClient) =>
+        dioClient..badCertificateCallback = ((X509Certificate cert, String host, int port) {
+            verifiedErrorLogger('CERT: $cert \n HOST: $host:$port \n Error: Bad Certificate Error');
+            return true;
+          });
+  }
 
   @override
   Future<Either<GenericApiError, GenericResponse>> deleteUserProfile(String id) async =>
@@ -393,3 +403,5 @@ class StoreRepository implements IStoreRepository {
     }
   }
 }
+
+

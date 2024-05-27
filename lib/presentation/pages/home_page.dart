@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/presentation/pages/account_page.dart';
+import 'package:verified/presentation/pages/verification_page.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/theme.dart';
@@ -30,8 +31,18 @@ class HomePageContents extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> widgets = [
-      const Balance(
-        key: Key('homepage-balance-section'),
+      GestureDetector(
+        onTap: () {
+          navigateToNamedRoute(
+            context,
+            arguments: VerificationPageArgs(
+              '0000000-0000-0000-0000-00000000000',
+            ),
+          );
+        },
+        child: const Balance(
+          key: Key('homepage-balance-section'),
+        ),
       ),
       const TrioHomeButtons(
         key: Key('homepage-trio-home-search-btns'),
