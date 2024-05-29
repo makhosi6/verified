@@ -98,6 +98,7 @@ class VerifiedBackButton extends StatelessWidget {
             iconColor: isLight ? Colors.black : Colors.white,
             bgColor: isLight ? Colors.white : darkerPrimaryColor,
             onTap: onTap,
+            borderColor: isLight? const Color.fromARGB(70, 237, 237, 237) : null,
             icon: Icons.arrow_back_ios_new_rounded,
             padding: const EdgeInsets.all(0.0),
           ),

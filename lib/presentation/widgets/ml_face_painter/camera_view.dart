@@ -1,15 +1,20 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_beep/flutter_beep.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+
 import 'package:verified/presentation/pages/home_page.dart';
+import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
+import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/ml_face_painter/face_detector_painter.dart';
+
+final buttonTheme = _SecondaryCameraButtonTheme();
 
 class CameraView extends StatefulWidget {
   const CameraView({
@@ -37,6 +42,7 @@ class _CameraViewState extends State<CameraView> {
   List<Face> _faces = [];
   CustomPaint? _customPaint;
   bool isFaceCloseEnough = false;
+  var _activeAspectRatioOption = PortraitAspectRatio.a916;
 
   @override
   void initState() {
@@ -68,10 +74,6 @@ class _CameraViewState extends State<CameraView> {
   }
 
   Future<void> _processImage(InputImage inputImage) async {
-    if (!_canProcess) return;
-    if (_isBusy) return;
-    _isBusy = true;
-
     final faces = await _faceDetector.processImage(inputImage);
     _hasFaces = faces.isNotEmpty;
     _faces = faces;
@@ -87,7 +89,7 @@ class _CameraViewState extends State<CameraView> {
     } else {
       _customPaint = null;
     }
-    _isBusy = false;
+print("${faces.length} ENOUGH FACES ${isFaceCloseEnough}");
     if (mounted) {
       setState(() {});
     }
@@ -103,7 +105,9 @@ class _CameraViewState extends State<CameraView> {
 
   void _processCameraImage(CameraImage image) {
     final inputImage = _inputImageFromCameraImage(image);
+    print("WILLMPROCEED: $inputImage");
     if (inputImage == null) return;
+
     _processImage(inputImage);
     if (mounted) setState(() {});
   }
@@ -186,58 +190,142 @@ class _CameraViewState extends State<CameraView> {
     if (_controller == null) return const SizedBox.shrink();
     if (_controller?.value.isInitialized == false) return const SizedBox.shrink();
 
-    return Container(
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-       
-              Center(
-                child: Container(
-                  // height: height,
-                  // width: width,
-                  color: Colors.blue,
-                  child: CameraPreview(
-                    _controller!,
-                    child: _customPaint,
-                  ),
-                ),
-              ),
-              // Positioned(
-              //   left: 0,
-              //   right: 0,
-              //   bottom: 0,
-              //   child: Container(
-              //     color: Colors.black45,
-              //     // padding: const EdgeInsets.all(10),
-              //     // child: const Text(
-              //     //   'Position your face inside the guide.',
-              //     //   style: TextStyle(color: Colors.white),
-              //     //   textAlign: TextAlign.center,
-              //     // ),
-              //   ),
-              // ),
-          
-          Positioned(
-            bottom: 90,
-            left: 20,
-            child: Center(
-              child: Text(
-                'Camera: ${_cameraLensDirection.name}\nHas Faces: $_hasFaces\nNumber Of Faces: ${_faces.length}\nImage: /data/${_capturedImage?.path.split('/').last}\nFace Close Enough: $isFaceCloseEnough\nIs Busy: $_isBusy\nCan Process: $_canProcess',
-                style: GoogleFonts.sourceCodePro(
-                  color: Colors.white,
-                ),
-              ),
+    return Stack(
+      fit: StackFit.expand,
+      alignment: Alignment.center,
+      children: [
+        Center(
+          child: AspectRatio(
+            aspectRatio: _activeAspectRatioOption.toDouble(),
+            child: CameraPreview(
+              _controller!,
+              child: _customPaint,
             ),
           ),
-          _backButton(),
-          _imagePreview(context),
-          _takeOrRetakePhotoBtns(),
-        ],
-      ),
+        ),
+        // Positioned(
+        //   left: 0,
+        //   right: 0,
+        //   bottom: 0,
+        //   child: Container(
+        //     color: Colors.black45,
+        //     // padding: const EdgeInsets.all(10),
+        //     // child: const Text(
+        //     //   'Position your face inside the guide.',
+        //     //   style: TextStyle(color: Colors.white),
+        //     //   textAlign: TextAlign.center,
+        //     // ),
+        //   ),
+        // ),
+
+        // Positioned(
+        //   bottom: 90,
+        //   left: 20,
+        //   child: Center(
+        //     child: Text(
+        //       'Camera: ${_cameraLensDirection.name}\nHas Faces: $_hasFaces\nNumber Of Faces: ${_faces.length}\nImage: /data/${_capturedImage?.path.split('/').last}\nFace Close Enough: $isFaceCloseEnough\nIs Busy: $_isBusy\nCan Process: $_canProcess',
+        //       style: GoogleFonts.sourceCodePro(
+        //         color: Colors.white,
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            width: width,
+            height: height * 0.15,
+            color: const Color.fromARGB(116, 0, 0, 0),
+            child: Row(
+              children: [_backButton()],
+            ),
+          ),
+        ),
+        _imagePreview(context),
+        // _takeOrRetakePhotoBtns(),
+        Positioned(
+          bottom: height * 0.25,
+          child: Align(
+            alignment: Alignment.center,
+            child: AspectRatioOptionsBtnGrp(
+              setActiveAspectRatioOption: (value) {
+                setState(() {
+                  _activeAspectRatioOption = value;
+                });
+              },
+              activeAspectRatioOption: _activeAspectRatioOption,
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            width: width,
+            height: height * 0.2,
+            color: Colors.black54,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    _faces.length > 1
+                        ? 'Please ensure only one face is in frame'
+                        : (isFaceCloseEnough
+                            ? 'Please move closer to the camera '
+                            : (_hasFaces == false ? 'No Face Detected' : '')),
+                    style: const TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
+                  ),
+                ),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                  Tooltip(
+                    message: 'Done',
+                    child: GestureDetector(
+                      child: CircleSecondaryCameraBtn.icon(
+                        icon: Icons.done_rounded,
+                        iconColor: _capturedImage != null ? Colors.white : const Color.fromARGB(93, 193, 193, 193),
+                        bgColor: _capturedImage != null ? primaryColor : null,
+                      ),
+                    ),
+                  ),
+                  IOSCameraButton(
+                    onTap: () async {
+                    
+              
+
+                      if (mounted) {
+                        setState(() {
+                          _capturedImage = null;
+                        });
+
+                        var img = await _controller?.takePicture();
+                        setState(() {
+                          _capturedImage = img;
+                        });
+
+                        FlutterBeep.beep();
+                      }
+                    },
+                  ),
+                  const CircleSecondaryCameraBtn.icon(
+                    icon: Icons.flip_camera_android,
+                    iconColor: Color.fromARGB(93, 193, 193, 193),
+                  ),
+                ]),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  _takeOrRetakePhotoBtns() => Positioned(
+  Widget _takeOrRetakePhotoBtns() => Positioned(
         bottom: 16,
         left: 16,
         right: 16,
@@ -295,53 +383,230 @@ class _CameraViewState extends State<CameraView> {
     final width = MediaQuery.of(context).size.width;
 
     /// preview image
-    const previewImageHeight = 250.0;
-    const previewImageWidth = previewImageHeight * (4 / 5);
+    const previewImageHeight = 180.0;
+    const previewImageWidth = previewImageHeight * (2 / 3);
 
     return AnimatedPositioned(
       width: _capturedImage != null ? previewImageWidth : 0,
       height: _capturedImage != null ? previewImageHeight : 0,
       top: _capturedImage != null ? 18 : height / 2,
-      right: _capturedImage != null ? -20 : width / 2,
+      right: _capturedImage != null ? 20 : width / 2,
       duration: const Duration(milliseconds: 700),
       curve: Curves.elasticInOut,
       child: Container(
-        color: Colors.transparent,
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        clipBehavior: Clip.hardEdge,
         child: AspectRatio(
-          aspectRatio: 4 / 5,
+          aspectRatio: 2 / 3,
           child: _capturedImage == null
               ? const SizedBox.shrink()
               : Image.file(
                   File(_capturedImage?.path ?? ''),
                   width: previewImageWidth,
                   height: previewImageHeight,
+                  fit: BoxFit.fill,
                 ),
         ),
       ),
     );
   }
 
-  Widget _backButton() => Positioned(
-        top: 40,
-        left: 8,
-        child: SizedBox(
-          height: 50.0,
-          width: 50.0,
-          child: FloatingActionButton(
-            heroTag: Object(),
-            onPressed: () => navigate(context, page: const HomePage(), replaceCurrentPage: true),
-            backgroundColor: Colors.black54,
-            child: const Icon(
-              Icons.arrow_back_ios_outlined,
-              size: 20,
-            ),
-          ),
-        ),
+  Widget _backButton() =>  VerifiedBackButton(
+          key: UniqueKey(),
+          isLight: true,
+          onTap: () => navigate(context, page: const HomePage(), replaceCurrentPage: true),
+      
       );
 
   @override
   void dispose() {
     _stopLiveFeed();
     super.dispose();
+  }
+}
+
+enum PortraitAspectRatio {
+  a23(2 / 3),
+  a916(9 / 16),
+  a45(4 / 5);
+  // a11(1 / 1);
+
+  const PortraitAspectRatio(this.value);
+
+  final double value;
+
+  @override
+  String toString() => switch (this) {
+        PortraitAspectRatio.a916 => '9:16',
+        PortraitAspectRatio.a23 => '2:3',
+        PortraitAspectRatio.a45 => '4:5',
+        _ => '1:1'
+      };
+
+  double toDouble() => switch (this) {
+        PortraitAspectRatio.a916 => PortraitAspectRatio.a916.value,
+        PortraitAspectRatio.a23 => PortraitAspectRatio.a23.value,
+        PortraitAspectRatio.a45 => PortraitAspectRatio.a916.value,
+        _ => PortraitAspectRatio.a916.value
+      };
+}
+
+class CircleSecondaryCameraBtn extends StatelessWidget {
+  final Widget? child;
+  final IconData? icon;
+  final double size;
+  final double scale;
+  final Color? iconColor;
+  final Color? bgColor;
+
+  const CircleSecondaryCameraBtn.icon({
+    super.key,
+    this.size = 50.0,
+    required IconData this.icon,
+    this.scale = 1.0,
+    this.iconColor,
+    this.bgColor,
+  }) : child = null;
+
+  CircleSecondaryCameraBtn({
+    super.key,
+    this.size = 50.0,
+    required Widget this.child,
+    this.scale = 1.3,
+    this.iconColor,
+    this.bgColor,
+  }) : icon = null;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      shape: buttonTheme.shape,
+      color: bgColor ?? buttonTheme.backgroundColor,
+      child: Padding(
+        padding: buttonTheme.padding * scale,
+        child: child ??
+            Icon(
+              icon,
+              color: iconColor ?? buttonTheme.foregroundColor,
+              size: buttonTheme.iconSize * scale,
+            ),
+      ),
+    );
+  }
+}
+
+class _SecondaryCameraButtonTheme {
+  final Color foregroundColor;
+  final Color backgroundColor;
+  final double iconSize;
+  final EdgeInsets padding;
+  final ShapeBorder shape;
+  final bool rotateWithCamera;
+  static const double baseIconSize = 25;
+
+  _SecondaryCameraButtonTheme({
+    this.foregroundColor = Colors.white,
+    this.backgroundColor = Colors.black12,
+    this.iconSize = baseIconSize,
+    this.padding = const EdgeInsets.all(12),
+    this.shape = const CircleBorder(),
+    this.rotateWithCamera = true,
+  });
+}
+
+class IOSCameraButton extends StatelessWidget {
+  final VoidCallback onTap;
+  const IOSCameraButton({super.key, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 72.0,
+        height: 72.0,
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(70, 237, 237, 237),
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Container(
+            width: 60.0,
+            height: 60.0,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: const Color.fromARGB(90, 222, 222, 222),
+                width: 1.5,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AspectRatioOptionsBtnGrp extends StatelessWidget {
+  final PortraitAspectRatio activeAspectRatioOption;
+
+  final void Function(PortraitAspectRatio) setActiveAspectRatioOption;
+
+  const AspectRatioOptionsBtnGrp({
+    Key? key,
+    required this.activeAspectRatioOption,
+    required this.setActiveAspectRatioOption,
+  }) : super(key: key);
+
+  Widget _buildAspectRatioOptionsButton(PortraitAspectRatio value) {
+    bool isActive = activeAspectRatioOption == value;
+    return GestureDetector(
+      onTap: () => setActiveAspectRatioOption(value),
+      child: AnimatedContainer(
+        padding: EdgeInsets.all(isActive ? 10 : 6),
+        margin: EdgeInsets.symmetric(horizontal: isActive ? 4 : 2),
+        duration: const Duration(milliseconds: 250),
+        width: isActive ? 60 : 40,
+        decoration: BoxDecoration(color: buttonTheme.backgroundColor, borderRadius: BorderRadius.circular(20)),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              value.toString(),
+              style: TextStyle(
+                color: isActive ? Colors.amberAccent : Colors.white,
+                fontSize: 10.0,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        padding: primaryPadding,
+        child: Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: buttonTheme.backgroundColor,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: PortraitAspectRatio.values.map(_buildAspectRatioOptionsButton).toList(),
+          ),
+        ),
+      ),
+    );
   }
 }

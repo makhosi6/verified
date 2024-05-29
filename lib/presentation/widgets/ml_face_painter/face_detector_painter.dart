@@ -22,12 +22,12 @@ class FaceDetectorPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Paint ovalPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 4.0
+      ..strokeWidth = 2.0
       ..color = primaryColor;
 
     final Paint overlayPaint = Paint()
       ..style = PaintingStyle.fill
-      ..color = Colors.black.withOpacity(0.4);
+      ..color = Colors.black.withOpacity(0.2);
 
     for (final Face face in faces) {
       final faceBoundingBox = face.boundingBox;
