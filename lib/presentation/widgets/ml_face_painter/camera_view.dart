@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_beep/flutter_beep.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/utils/navigate.dart';
@@ -13,7 +12,7 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/ml_face_painter/face_detector_painter.dart';
 
 class CameraView extends StatefulWidget {
-  CameraView({
+  const CameraView({
     Key? key,
   }) : super(key: key);
 
@@ -23,20 +22,21 @@ class CameraView extends StatefulWidget {
 
 class _CameraViewState extends State<CameraView> {
   static List<CameraDescription> _cameras = [];
-  CameraController? _controller;
-  XFile? _capturedImage;
+  final _cameraLensDirection = CameraLensDirection.front;
   final FaceDetector _faceDetector = FaceDetector(
     options: FaceDetectorOptions(
       enableContours: true,
       enableLandmarks: true,
     ),
   );
+  CameraController? _controller;
+  XFile? _capturedImage;
   bool _canProcess = true;
   bool _isBusy = false;
   bool _hasFaces = false;
   List<Face> _faces = [];
   CustomPaint? _customPaint;
-  final _cameraLensDirection = CameraLensDirection.front;
+  bool isFaceCloseEnough = false;
 
   @override
   void initState() {
@@ -82,6 +82,7 @@ class _CameraViewState extends State<CameraView> {
         inputImage.metadata!.rotation,
         _cameraLensDirection,
       );
+      isFaceCloseEnough = painter.isFaceCloseEnough;
       _customPaint = CustomPaint(painter: painter);
     } else {
       _customPaint = null;
@@ -172,35 +173,67 @@ class _CameraViewState extends State<CameraView> {
 
   @override
   Widget build(BuildContext context) {
+    /// safeArea padding
+    final tp = MediaQuery.of(context).padding.top;
+    final bp = MediaQuery.of(context).padding.bottom;
+
+    /// safeArea height
+    final height = MediaQuery.of(context).size.height - (tp + bp);
+    final width = MediaQuery.of(context).size.width;
+
+    ///
     if (_cameras.isEmpty) return const SizedBox.shrink();
     if (_controller == null) return const SizedBox.shrink();
     if (_controller?.value.isInitialized == false) return const SizedBox.shrink();
 
-    return Stack(
-      fit: StackFit.expand,
-      children: <Widget>[
-        Center(
-          child: CameraPreview(
-            _controller!,
-            child: _customPaint,
-          ),
-        ),
-        Positioned(
-          bottom: 100,
-          left: 20,
-          child: Center(
-            child: Text(
-              'Has Faces: $_hasFaces\nNumber Of Faces: ${_faces.length}\nImage: ${_capturedImage?.path.toLowerCase().replaceAll('/com.byteestudio.verified', '')}\nFace Close Enough: ${false}\nIs Busy: $_isBusy\nCan Process: $_canProcess',
-              style: GoogleFonts.sourceCodePro(
-                color: Colors.white,
+    return Container(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+       
+              Center(
+                child: Container(
+                  // height: height,
+                  // width: width,
+                  color: Colors.blue,
+                  child: CameraPreview(
+                    _controller!,
+                    child: _customPaint,
+                  ),
+                ),
+              ),
+              // Positioned(
+              //   left: 0,
+              //   right: 0,
+              //   bottom: 0,
+              //   child: Container(
+              //     color: Colors.black45,
+              //     // padding: const EdgeInsets.all(10),
+              //     // child: const Text(
+              //     //   'Position your face inside the guide.',
+              //     //   style: TextStyle(color: Colors.white),
+              //     //   textAlign: TextAlign.center,
+              //     // ),
+              //   ),
+              // ),
+          
+          Positioned(
+            bottom: 90,
+            left: 20,
+            child: Center(
+              child: Text(
+                'Camera: ${_cameraLensDirection.name}\nHas Faces: $_hasFaces\nNumber Of Faces: ${_faces.length}\nImage: /data/${_capturedImage?.path.split('/').last}\nFace Close Enough: $isFaceCloseEnough\nIs Busy: $_isBusy\nCan Process: $_canProcess',
+                style: GoogleFonts.sourceCodePro(
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
-        ),
-        _backButton(),
-        _imagePreview(context),
-        _takeOrRetakePhotoBtns(),
-      ],
+          _backButton(),
+          _imagePreview(context),
+          _takeOrRetakePhotoBtns(),
+        ],
+      ),
     );
   }
 

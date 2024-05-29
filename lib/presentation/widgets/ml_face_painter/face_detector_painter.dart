@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:verified/presentation/theme.dart';
 import 'coordinates_translator.dart';
 
 class FaceDetectorPainter extends CustomPainter {
@@ -11,7 +12,7 @@ class FaceDetectorPainter extends CustomPainter {
     this.rotation,
     this.cameraLensDirection,
   );
-
+  bool isFaceCloseEnough = false;
   final List<Face> faces;
   final Size imageSize;
   final InputImageRotation rotation;
@@ -22,7 +23,7 @@ class FaceDetectorPainter extends CustomPainter {
     final Paint ovalPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4.0
-      ..color = Colors.green;
+      ..color = primaryColor;
 
     final Paint overlayPaint = Paint()
       ..style = PaintingStyle.fill
@@ -30,7 +31,8 @@ class FaceDetectorPainter extends CustomPainter {
 
     for (final Face face in faces) {
       final faceBoundingBox = face.boundingBox;
-      var faceMarkerBorderColor = (isFaceCloseEnough(faceBoundingBox)) ? Colors.green : Colors.red;
+      isFaceCloseEnough = _isFaceCloseEnough(faceBoundingBox);
+      var faceMarkerBorderColor = (isFaceCloseEnough) ? primaryColor : errorColor;
       ovalPaint.color = faceMarkerBorderColor;
       final left = translateX(
         face.boundingBox.left,
@@ -89,8 +91,9 @@ class FaceDetectorPainter extends CustomPainter {
   bool shouldRepaint(FaceDetectorPainter oldDelegate) {
     return oldDelegate.imageSize != imageSize || oldDelegate.faces != faces;
   }
+  
 
-  bool isFaceCloseEnough(Rect boundingBox) {
+  bool _isFaceCloseEnough(Rect boundingBox) {
     const closeThreshold = 0.3;
     final imageWidth = imageSize.width;
     final imageHeight = imageSize.height;

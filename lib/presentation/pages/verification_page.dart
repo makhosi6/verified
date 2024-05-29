@@ -8,9 +8,11 @@ class VerificationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as VerificationPageArgs?;
     final uuid = args?.uuid;
-    return Scaffold(
-      backgroundColor:Colors.black,
-      body: CameraView()
+    return const SafeArea(
+      child:  Scaffold(
+        backgroundColor:Colors.black,
+        body: CameraView()
+      ),
     );
   }
 }

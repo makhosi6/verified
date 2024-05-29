@@ -73,8 +73,6 @@ dependencies:
   google_mlkit_face_detection: ^0.11.0
   camera: ^0.10.5+9
   google_mlkit_commons: ^0.7.1
-  google_ml_kit: ^0.18.0
-  tflite_flutter: ^0.10.4
   flutter_beep: ^1.0.0
 
 dev_dependencies:
