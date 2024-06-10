@@ -4,6 +4,7 @@ part of 'search_request_bloc.dart';
 class SearchRequestState with _$SearchRequestState {
   const factory SearchRequestState({
     SearchPerson? person,
+    VerifeeRequest? verifiee,
     Error? error,
    required bool hasError,
     Object? data,

@@ -30,6 +30,7 @@ import 'package:verified/infrastructure/auth/repository.dart';
 import 'package:verified/infrastructure/payments/repository.dart';
 import 'package:verified/infrastructure/store/repository.dart';
 import 'package:verified/infrastructure/verifysa/repository.dart';
+import 'package:verified/presentation/pages/capture_verifiee_details_page.dart';
 import 'package:verified/presentation/pages/custom_splash_screen.dart';
 import 'package:verified/presentation/pages/error_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
@@ -504,7 +505,8 @@ class _AppRootState extends State<AppRoot> {
       theme: theme,
       title: displayAppName,
       routes: {
-        '/secure': (context) => VerificationPage(),
+        '/secure': (context) => const VerificationPage(),
+        '/capture-details': (context) => CaptureVerifieeDetailsPage(),
       },
       home: FutureBuilder<UserProfile?>(
         future: LocalUser.getUser(),

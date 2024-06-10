@@ -30,18 +30,16 @@ class LearnMoreHighlightedButton extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              SizedBox(
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    color: darkerPrimaryColor,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14.0,
-                  ),
-                  textAlign: TextAlign.left,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 3,
+              Text(
+                text,
+                style: TextStyle(
+                  color: darkerPrimaryColor,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12.0,
                 ),
+                textAlign: TextAlign.left,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 3,
               ),
             ],
           ),

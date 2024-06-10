@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:verified/domain/models/search_request.dart';
+import 'package:verified/domain/models/verifee_request.dart';
 import 'package:verified/infrastructure/verifysa/repository.dart';
 
 part 'search_request_bloc.freezed.dart';
@@ -88,7 +89,14 @@ class SearchRequestBloc extends Bloc<SearchRequestEvent, SearchRequestState> {
             });
 
             return;
-          },
+          }, createVerifieeDetails: (e) { 
+            print(e.verifiee.toString());
+
+            emit(state.copyWith(
+              verifiee: e.verifiee
+            ));
+            return;
+           },
         ));
   }
 

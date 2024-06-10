@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_beep/flutter_beep.dart';
@@ -13,6 +14,8 @@ import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/ml_face_painter/face_detector_painter.dart';
+import 'package:verified/presentation/widgets/ml_face_painter/paints/face_painter.dart';
+import 'package:verified/presentation/widgets/ml_face_painter/res/enums.dart';
 
 final buttonTheme = _SecondaryCameraButtonTheme();
 
@@ -41,7 +44,7 @@ class _CameraViewState extends State<CameraView> {
   bool _hasFaces = false;
   List<Face> _faces = [];
   CustomPaint? _customPaint;
-  bool isFaceCloseEnough = false;
+  // bool isFaceCloseEnough = false;
   var _activeAspectRatioOption = PortraitAspectRatio.a916;
 
   @override
@@ -78,18 +81,21 @@ class _CameraViewState extends State<CameraView> {
     _hasFaces = faces.isNotEmpty;
     _faces = faces;
     if (inputImage.metadata?.size != null && inputImage.metadata?.rotation != null) {
-      final painter = FaceDetectorPainter(
-        faces,
-        inputImage.metadata!.size,
-        inputImage.metadata!.rotation,
-        _cameraLensDirection,
-      );
-      isFaceCloseEnough = painter.isFaceCloseEnough;
+      final painter = FacePainter(
+          imageSize: inputImage.metadata!.size,
+          indicatorShape: IndicatorShape.defaultShape,
+          face: (faces.isNotEmpty) ? faces.first : null);
+// faces,
+      // inputImage.metadata!.size,
+      // inputImage.metadata!.rotation,
+      // _cameraLensDirection,
+      ///
+      // isFaceCloseEnough = painter.isFaceCloseEnough;
       _customPaint = CustomPaint(painter: painter);
     } else {
       _customPaint = null;
     }
-print("${faces.length} ENOUGH FACES ${isFaceCloseEnough}");
+// print("${faces.length} ENOUGH FACES ${isFaceCloseEnough}");
     if (mounted) {
       setState(() {});
     }
@@ -99,13 +105,13 @@ print("${faces.length} ENOUGH FACES ${isFaceCloseEnough}");
     await _controller?.stopImageStream();
     await _controller?.dispose();
     _canProcess = false;
-    _faceDetector.close();
+    // _faceDetector.close();
     _controller = null;
   }
 
   void _processCameraImage(CameraImage image) {
     final inputImage = _inputImageFromCameraImage(image);
-    print("WILLMPROCEED: $inputImage");
+    print('WILLMPROCEED: $inputImage');
     if (inputImage == null) return;
 
     _processImage(inputImage);
@@ -177,7 +183,9 @@ print("${faces.length} ENOUGH FACES ${isFaceCloseEnough}");
 
   @override
   Widget build(BuildContext context) {
-    /// safeArea padding
+
+
+ /// safeArea padding
     final tp = MediaQuery.of(context).padding.top;
     final bp = MediaQuery.of(context).padding.bottom;
 
@@ -246,7 +254,7 @@ print("${faces.length} ENOUGH FACES ${isFaceCloseEnough}");
         _imagePreview(context),
         // _takeOrRetakePhotoBtns(),
         Positioned(
-          bottom: height * 0.25,
+          bottom: height * 0.2,
           child: Align(
             alignment: Alignment.center,
             child: AspectRatioOptionsBtnGrp(
@@ -276,9 +284,10 @@ print("${faces.length} ENOUGH FACES ${isFaceCloseEnough}");
                   child: Text(
                     _faces.length > 1
                         ? 'Please ensure only one face is in frame'
-                        : (isFaceCloseEnough
-                            ? 'Please move closer to the camera '
-                            : (_hasFaces == false ? 'No Face Detected' : '')),
+                        : (
+                            kReleaseMode
+                                ? 'Please move closer to the camera '
+                                : (_hasFaces == false ? 'No Face Detected' : '')),
                     style: const TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
                   ),
                 ),
@@ -295,9 +304,6 @@ print("${faces.length} ENOUGH FACES ${isFaceCloseEnough}");
                   ),
                   IOSCameraButton(
                     onTap: () async {
-                    
-              
-
                       if (mounted) {
                         setState(() {
                           _capturedImage = null;
@@ -373,7 +379,7 @@ print("${faces.length} ENOUGH FACES ${isFaceCloseEnough}");
         ),
       );
 
-  _imagePreview(BuildContext context) {
+  Widget _imagePreview(BuildContext context) {
     /// safeArea padding
     final tp = MediaQuery.of(context).padding.top;
     final bp = MediaQuery.of(context).padding.bottom;
@@ -400,25 +406,24 @@ print("${faces.length} ENOUGH FACES ${isFaceCloseEnough}");
         ),
         clipBehavior: Clip.hardEdge,
         child: AspectRatio(
-          aspectRatio: 2 / 3,
+          aspectRatio: PortraitAspectRatio.a916.value,
           child: _capturedImage == null
               ? const SizedBox.shrink()
               : Image.file(
                   File(_capturedImage?.path ?? ''),
                   width: previewImageWidth,
                   height: previewImageHeight,
-                  fit: BoxFit.fill,
+                  fit: BoxFit.cover,
                 ),
         ),
       ),
     );
   }
 
-  Widget _backButton() =>  VerifiedBackButton(
-          key: UniqueKey(),
-          isLight: true,
-          onTap: () => navigate(context, page: const HomePage(), replaceCurrentPage: true),
-      
+  Widget _backButton() => VerifiedBackButton(
+        key: UniqueKey(),
+        isLight: true,
+        onTap: () => navigate(context, page: const HomePage(), replaceCurrentPage: true),
       );
 
   @override
@@ -448,7 +453,7 @@ enum PortraitAspectRatio {
 
   double toDouble() => switch (this) {
         PortraitAspectRatio.a916 => PortraitAspectRatio.a916.value,
-        PortraitAspectRatio.a23 => PortraitAspectRatio.a23.value,
+        PortraitAspectRatio.a23 => PortraitAspectRatio.a916.value,
         PortraitAspectRatio.a45 => PortraitAspectRatio.a916.value,
         _ => PortraitAspectRatio.a916.value
       };
@@ -578,7 +583,7 @@ class AspectRatioOptionsBtnGrp extends StatelessWidget {
             child: Text(
               value.toString(),
               style: TextStyle(
-                color: isActive ? Colors.amberAccent : Colors.white,
+                color: isActive ? Colors.amber[700] : Colors.white,
                 fontSize: 10.0,
                 fontWeight: FontWeight.bold,
               ),
@@ -610,3 +615,4 @@ class AspectRatioOptionsBtnGrp extends StatelessWidget {
     );
   }
 }
+
