@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/search_request/search_request_bloc.dart';
 import 'package:verified/domain/models/verifee_request.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/pages/select_services_page.dart';
 import 'package:verified/presentation/theme.dart';
@@ -32,7 +33,7 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
   ///
   @override
   Widget build(BuildContext context) {
-        final image = ModalRoute.of(context)?.settings.arguments as File?;
+    final image = ModalRoute.of(context)?.settings.arguments as File?;
     //
     return Scaffold(
       key: const Key('capture-verifiee-details-page'),
@@ -120,8 +121,6 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
                               inputFormatters: [],
                               keyboardType: TextInputType.number,
                               validator: (idNumber) {
-                          
-
                                 if (idNumber == null || idNumber.isEmpty) {
                                   return 'You have to provide a phone number or a ID number';
                                 }
@@ -133,7 +132,8 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
                                 /// and validate the form
                                 _globalKeyCaptureVerifieeDetailsPageForm.currentState?.validate();
                               },
-                            ), CaptureUserDetailsInputOption(
+                            ),
+                            CaptureUserDetailsInputOption(
                               hintText: '000 000 0000',
                               initialValue: null,
                               label: 'Phone Number (Optional)',
@@ -143,8 +143,6 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
                               inputFormatters: [],
                               keyboardType: TextInputType.number,
                               validator: (phone) {
-                        
-
                                 if (phone == null || phone.isEmpty) {
                                   return 'You have to provide a phone number or a ID number';
                                 }
@@ -240,7 +238,7 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
                                         ),
                                       );
 
-                                  navigate(context, page: const SelectServicesPage());
+                                  navigate(context, page: const HomePage(), replaceCurrentPage: true);
                                 } else {
                                   print('FALSE, ${verifiee.toJson()}');
                                 }

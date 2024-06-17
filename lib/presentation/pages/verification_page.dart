@@ -62,6 +62,8 @@ class _VerificationPageState extends State<VerificationPage> {
                     onTap: () => navigate(context, page: const HomePage(), replaceCurrentPage: true),
                   ),
                   onCapture: (image) {
+
+                    ///
                     if (mounted && image != null) {
                       FlutterBeep.beep();
                       setState(() {
@@ -69,13 +71,21 @@ class _VerificationPageState extends State<VerificationPage> {
                       });
                     }
                   },
+
+                
                   messageBuilder: (context, face) {
+
+                    ///
                     if (face == null) {
                       return _message('Place your face in the camera');
                     }
+
+                    ///
                     if (!face.wellPositioned) {
                       return _message('Center your face in the square');
                     }
+
+                    ///
                     return null;
                   },
                 ),
@@ -140,10 +150,6 @@ class _VerificationPageState extends State<VerificationPage> {
           style: const TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
         ),
       );
-  @override
-  void deactivate() {
-    super.deactivate();
-  }
 
   @override
   void dispose() {

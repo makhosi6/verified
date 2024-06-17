@@ -537,7 +537,7 @@ class _ProfileName extends StatelessWidget {
   UserProfile? user;
   _ProfileName({Key? key, required this.user}) : super(key: key);
 
-  late String placeholderAvatar = 'https://robohash.org/${user?.displayName}.png';
+  late String placeholderAvatar = 'https://robohash.org/${user?.displayName?.substring(1,2)}.png';
   @override
   Widget build(BuildContext context) {
     var windowWidth = MediaQuery.of(context).size.width;
@@ -565,11 +565,11 @@ class _ProfileName extends StatelessWidget {
                     ),
                     child: Image.network(
                       // if avatar is not null and it's from byteestudio or robohash
-                      (user?.avatar != null &&
+                      ((user?.avatar != null &&
                               ((user?.avatar ?? '').contains('byteestudio') ||
                                   (user?.avatar ?? '').contains('robohash')))
                           ? user?.avatar?.replaceAll(' ', '') ?? placeholderAvatar
-                          : placeholderAvatar,
+                          : placeholderAvatar).replaceAll('https', 'http'),
                       height: 100.0,
                       width: 100.0,
                       fit: BoxFit.cover,

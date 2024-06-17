@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:carousel_indicator/carousel_indicator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
@@ -109,7 +110,7 @@ class _HowItWorksPageState extends State<HowItWorksPage> with TickerProviderStat
                 color: Colors.transparent,
                 child: BottomSheet(
                     onClosing: () {},
-                    showDragHandle: true,
+                    showDragHandle: TargetPlatform.android != defaultTargetPlatform,
                     constraints: appConstraints.copyWith(maxHeight: 300),
                     animationController: BottomSheet.createAnimationController(this),
                     enableDrag: false,

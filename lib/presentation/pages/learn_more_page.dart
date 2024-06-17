@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
@@ -153,7 +154,7 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                     color: darkerPrimaryColor,
                     child: BottomSheet(
                         onClosing: () {},
-                        showDragHandle: true,
+                        showDragHandle: TargetPlatform.android != defaultTargetPlatform,
                         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 300.0),
                         animationController: BottomSheet.createAnimationController(this),
                         enableDrag: false,

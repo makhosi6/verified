@@ -13,7 +13,6 @@ import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
-import 'package:verified/presentation/widgets/ml_face_painter/face_detector_painter.dart';
 import 'package:verified/presentation/widgets/ml_face_painter/paints/face_painter.dart';
 import 'package:verified/presentation/widgets/ml_face_painter/res/enums.dart';
 

@@ -9,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/auth_providers.dart';
-import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
 import 'package:verified/presentation/theme.dart';
@@ -20,7 +19,7 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget redirect}) async =>
     showModalBottomSheet(
       context: context,
-      showDragHandle: true,
+      showDragHandle: TargetPlatform.android != defaultTargetPlatform,
       builder: (context) => BlocListener<StoreBloc, StoreState>(
         listener: (context, state) {
           if (!state.userProfileDataLoading && state.userProfileData != null && state.userProfileData != null) {
@@ -186,7 +185,7 @@ List<Widget> buttons(BuildContext context, {required String type}) {
 Future triggerSignUpBottomSheet<bool>({required BuildContext context, required Widget redirect}) async =>
     showModalBottomSheet(
       context: context,
-      showDragHandle: true,
+      showDragHandle: TargetPlatform.android != defaultTargetPlatform,
       builder: (context) => BlocListener<StoreBloc, StoreState>(
         listener: (context, state) {
           if (!state.userProfileDataLoading && state.userProfileData != null && state.userProfileData != null) {

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/presentation/pages/account_page.dart';
+import 'package:verified/presentation/pages/scan_document_page.dart';
 import 'package:verified/presentation/pages/verification_page.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
@@ -105,6 +106,9 @@ class HomePageContents extends StatelessWidget {
                 ),
                 leading: const SizedBox.shrink(),
                 actions: [
+                  ActionButton(iconColor: Colors.black, bgColor: Colors.white, onTap: (){
+                    navigate(context, page: const ScanDocumentPage());
+                  }, icon: Icons.light, tooltip: 'Tap'),
                   ActionButton(
                     key: const Key('go-to-user-account-btn'),
                     tooltip: 'User Account',

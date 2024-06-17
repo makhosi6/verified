@@ -118,7 +118,7 @@ const _transactionDescription = (amount) => {
             "You've successfully recharged #AMOUNT on #DATE. The excitement never stops!",
             "On #DATE, your account gained an extra #AMOUNT. Enjoy more of our features!",
             "#DATE: Account recharged with #AMOUNT. Your journey, your rules!",
-            // "Welcome boost! #AMOUNTadded to your account on #DATE. Dive back into action!",
+            //"Welcome boost! #AMOUNT added to your account on #DATE. Dive back into action!",
             "Your wallet's happier with an extra #AMOUNT on #DATE. Enjoy more of our features!",
             "Recharged #AMOUNT on #DATE. Thanks for your support!",
         ];

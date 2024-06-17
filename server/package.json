@@ -9,6 +9,7 @@
     "dev": "nodemon --ignore '**/db/**' index.js",
     "transform": "javascript-obfuscator nonce.source.js --output nonce.js  --config transform.config.json",
     "payments": "node  apps/payments/index.js",
+    "image_transcoder": "node  apps/image_transcoder/index.js",
     "store": "node  apps/store/index.js",
     "cdn": "node  apps/cdn/index.js",
     "verifyid": "node  apps/verifyId/index.js",
@@ -25,8 +26,15 @@
     "nodemon": "^3.0.1",
     "rollup-obfuscator": "^4.0.0"
   },
+  "opencv4nodejs": {
+    "disableAutoBuild": 1,
+    "opencvIncludeDir": "/opt/homebrew/opt/opencv/include/opencv4",
+    "opencvLibDir": "/opt/homebrew/opt/opencv/lib",
+    "opencvBinDir": "/opt/homebrew/opt/opencv/bin"
+  },
   "dependencies": {
     "compression": "^1.7.4",
+    "express": "^4.19.2",
     "fcm-node": "^1.6.1",
     "json-server": "^0.17.3",
     "morgan": "^1.10.0",
@@ -35,6 +43,7 @@
     "queue": "^7.0.0",
     "raw-body": "^2.5.2",
     "request": "^2.88.2",
+    "tesseract.js": "^5.1.0",
     "uuid": "^9.0.1"
   }
 }

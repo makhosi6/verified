@@ -134,6 +134,18 @@ services:
     networks:
       - local_bridge
 
+  image_transcoder_service:
+    build:
+      context: .
+      dockerfile: ./apps/image_transcoder/Dockerfile
+    volumes:
+      - ./apps/image_transcoder:/app/apps/image_transcoder
+    environment:
+      - PORT=${IMAGE_TRANSCODER_PORT}
+    restart: unless-stopped
+    networks:
+      - local_bridge
+
   
   verify_id_service:
     build:
