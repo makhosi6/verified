@@ -65,6 +65,7 @@ services:
       - store_service
       - verify_id_service
       - cdn_service
+      - image_transcoder_service
     networks:
       - local_bridge
   
@@ -124,7 +125,6 @@ services:
     build:
       context: .
       dockerfile: ./apps/cdn/Dockerfile
-    platform: linux/amd64
     volumes:
       - ./apps/cdn/root:/app/apps/cdn/root
       - ./apps/cdn/static:/app/apps/cdn/static

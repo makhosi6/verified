@@ -31,17 +31,19 @@ ENV TESSDATA_PREFIX=/usr/share/tesseract-ocr/tessdata/
 # Verify Tesseract installation
 RUN tesseract --version
 
+
 WORKDIR /app
 
 COPY . .
 
-WORKDIR /app/apps/image_transcoder/pkgs/mrz_reader/
+WORKDIR /app/apps/image_transcoder/
+
+# Install Python packages
+RUN pip install --no-cache-dir opencv-python-headless pytesseract flask
 
 RUN ls -la
 
-RUN pip install -r /app/apps/image_transcoder/pkgs/mrz_reader/requirements.txt
-
-CMD python3 mrz_reader.py
-
-# CMD python3 mrz_reader.py
-# CMD ["python3", "--version"]
+# RUN pip install -r /app/apps/image_transcoder/pkgs/mrz_reader/requirements.txt
+# EXPOSE 5693
+# Command to run the Flask server
+CMD ["python", "app.py"]
