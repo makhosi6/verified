@@ -18,7 +18,7 @@ class mrz_reader:
     def __init__(self, facedetection_protxt="./face_detector/deploy.prototxt",
                  facedetection_caffemodel="./face_detector/res10_300x300_ssd_iter_140000.caffemodel",
                  mrzdetection_model="./mrz_detector/mrz_seg.tflite",
-                 tesseract_exe=r"./Tesseract-OCR/tesseract.exe"):
+                 tesseract_exe=r"tesseract_exe"):
         self.facedetection_protxt=facedetection_protxt
         self.facedetection_caffemodel=facedetection_caffemodel
         self.mrzdetection_model=mrzdetection_model
@@ -30,7 +30,10 @@ class mrz_reader:
         self.IsLoad=False
         
     def load(self,tesseract_models="mrz+OCRB"):
-        pytesseract.pytesseract.tesseract_cmd =self.tesseract_exe
+        # pytesseract.pytesseract.tesseract_cmd =self.tesseract_exe
+        pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+        # tessdata_dir_config = r'--tessdata-dir "/usr/share/tesseract-ocr/tessdata/"'
+        
         self.facedetection=FaceDetection(self.facedetection_protxt,
                                     self.facedetection_caffemodel)
         self.mrzdetection=SegmentationMRZ_DL(self.mrzdetection_model)
@@ -55,3 +58,8 @@ class mrz_reader:
 mrz_reader=mrz_reader()
 mrz_reader.load()
 mrz_dl,face=mrz_reader.predict("./image.jpg")
+print('MRZ: ' + mrz_dl)
+if(face != None):
+    print(face)
+    
+    
