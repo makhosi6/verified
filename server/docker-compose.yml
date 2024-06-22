@@ -65,7 +65,8 @@ services:
       - store_service
       - verify_id_service
       - cdn_service
-      - image_transcoder_service
+      - mrz_reader_service
+      - mrz_decoder_service
     networks:
       - local_bridge
   
