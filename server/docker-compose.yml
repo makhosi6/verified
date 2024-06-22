@@ -135,18 +135,6 @@ services:
     networks:
       - local_bridge
 
-  image_transcoder_service:
-    build:
-      context: .
-      dockerfile: ./apps/image_transcoder/Dockerfile
-    volumes:
-      - ./apps/image_transcoder:/app/apps/image_transcoder
-    environment:
-      - PORT=${IMAGE_TRANSCODER_PORT}
-    restart: unless-stopped
-    networks:
-      - local_bridge
-
   
   verify_id_service:
     build:
@@ -169,6 +157,26 @@ services:
       - "9093:9093"
     volumes:
       - ./apps/whatsapp_messaging/db:/app/db
+    restart: unless-stopped
+    networks:
+      - local_bridge
+
+  mrz_decoder_service:
+    image: makhosi/mrz_decoder:1.0.1
+    ports:
+      - "5694:5694"
+    volumes:
+      - ./apps/image_transcoder/pkgs/mrz_decoder/:/app/
+    restart: unless-stopped
+    networks:
+      - local_bridge
+
+  mrz_reader_service:
+    image: makhosi/mrz_reader:1.0.0
+    ports:
+      - "5693:5693"
+    volumes:
+      - ./apps/image_transcoder/pkgs/mrz_reader/:/app/
     restart: unless-stopped
     networks:
       - local_bridge

@@ -4,3 +4,4 @@ pytesseract>=0.3.8
 scipy>=1.5.2
 imutils>=0.5.4
 deskew>=0.10.36
+Pillow==9.1.1

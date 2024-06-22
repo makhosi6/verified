@@ -1,4 +1,12 @@
-# MRZ_Passport_Reader_From_Image
+## MRZ Decoder
+
+#### Build
+
+```bash
+docker build -t makhosi/mrz_reader:{version} -t makhosi/mrz_reader:latest . --platform="linux/amd64" &> docker_build_1.log
+```
+
+## Intro
 
 The of this study are to detect and recognize MRZ ID from one-shot passport images. It includes our own model to segment mrz area. Then, we are using Tesseract OCR to recognize text.
 
