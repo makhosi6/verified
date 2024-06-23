@@ -163,7 +163,7 @@ services:
       - local_bridge
 
   mrz_decoder_service:
-    image: makhosi/mrz_decoder:1.0.1
+    image: makhosi/mrz_decoder:1.0.2
     ports:
       - "5694:5694"
     volumes:
@@ -173,7 +173,7 @@ services:
       - local_bridge
 
   mrz_reader_service:
-    image: makhosi/mrz_reader:1.0.0
+    image: makhosi/mrz_reader:1.0.1
     ports:
       - "5693:5693"
     volumes:
