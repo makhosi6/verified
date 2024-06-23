@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from mrz_reader import MrzReader
+from mrz_reader import MrzReader, PASSPORT_MRZ_LINE_LENGTH
 from PIL import Image
 import base64
 import io

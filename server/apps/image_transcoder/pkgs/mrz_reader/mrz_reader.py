@@ -40,7 +40,6 @@ class MrzReader:
         self.text_recognition=TextRecognition(tesseract_models)
         self.IsLoad=True
 
-        
     def predict(self,img):
         if self.IsLoad:
             self.img_dl=self.mrzdetection.predict(img)
