@@ -57,4 +57,4 @@ class MrzReader:
 
 
     
-    
+PASSPORT_MRZ_LINE_LENGTH = 44

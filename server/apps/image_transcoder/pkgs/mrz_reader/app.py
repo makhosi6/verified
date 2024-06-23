@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import MrzReader
+from mrz_reader import MrzReader
 from PIL import Image
 import base64
 import io
@@ -45,7 +45,6 @@ def ocr():
     mrz_reader=MrzReader()
     mrz_reader.load()
     mrz_dl,face=mrz_reader.predict(temp_file_path)
-    print('MRZ: ' + mrz_dl)
     # For now, just return a placeholder response
     return jsonify({"message": "successful", "data": mrz_dl})
 

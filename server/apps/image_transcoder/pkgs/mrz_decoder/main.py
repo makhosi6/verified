@@ -60,7 +60,6 @@ def ocr():
     image.save(temp_file_path)
     
     mrz_dl=extract_mrz_from_passport_image(temp_file_path)
-    print('MRZ: ' + mrz_dl)
     # For now, just return a placeholder response
     return jsonify({"message": "successful", "data": mrz_dl})
 
