@@ -4,10 +4,9 @@ import 'package:face_camera/face_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_beep/flutter_beep.dart';
 import 'package:verified/presentation/pages/home_page.dart';
-import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/pages/id_document_scanner_page.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
-import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 
 var _smartCameraGlobalKey = GlobalKey<SmartFaceCameraState>();
 
@@ -40,8 +39,8 @@ class _VerificationPageState extends State<VerificationPage> {
     final width = MediaQuery.of(context).size.width;
 
     /// preview image
-    final previewImageHeight = height * 0.8;
-    final previewImageWidth = width * 0.8;
+    final previewImageHeight = height;
+    final previewImageWidth = width;
 
     return WillPopScope(
       onWillPop: () async {
@@ -59,10 +58,17 @@ class _VerificationPageState extends State<VerificationPage> {
                   backBtn: VerifiedBackButton(
                     key: UniqueKey(),
                     isLight: true,
-                    onTap: () => navigate(context, page: const HomePage(), replaceCurrentPage: true),
+                    onTap: () => navigate(context,
+                        page: IDDocumentScanner(
+                          documentType: DocumentType.id_card,
+                          onCapture: (File file, DetectSide side) {},
+                          onMessage: (List<String> msgs) {},
+                          onStateChanged: (CameraEventsState state) {},
+                          onNext: () {},
+                        ),
+                        replaceCurrentPage: true),
                   ),
                   onCapture: (image) {
-
                     ///
                     if (mounted && image != null) {
                       FlutterBeep.beep();
@@ -71,10 +77,7 @@ class _VerificationPageState extends State<VerificationPage> {
                       });
                     }
                   },
-
-                
                   messageBuilder: (context, face) {
-
                     ///
                     if (face == null) {
                       return _message('Place your face in the camera');
@@ -89,23 +92,19 @@ class _VerificationPageState extends State<VerificationPage> {
                     return null;
                   },
                 ),
+
                 if (_capturedImage != null)
                   Container(
-                    color: const Color.fromARGB(190, 0, 0, 0),
-                    width: double.infinity,
-                    height: double.infinity,
+                    width: height,
+                    height: width,
+                    color: Colors.black,
                   ),
                 if (_capturedImage != null)
                   Center(
                     child: Container(
                       width: previewImageWidth,
                       height: previewImageHeight,
-                      // constraints: appConstraints,
-                      decoration: BoxDecoration(
-                        color: Colors.black87,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      clipBehavior: Clip.hardEdge,
+                      color: Colors.black87,
                       child: Image.file(
                         _capturedImage!,
                         width: previewImageWidth,
@@ -115,27 +114,39 @@ class _VerificationPageState extends State<VerificationPage> {
                     ),
                   ),
                 if (_capturedImage != null)
-                  Positioned(
-                    bottom: 60,
-                    child: BaseButton(
+
+                  ///
+                  AnimatedPositioned(
+                    bottom: 20,
+                    right: 20,
+                    curve: Curves.elasticInOut,
+                    duration: const Duration(milliseconds: 250),
+                    child: FloatingActionButton.extended(
                       key: UniqueKey(),
-                      onTap: () => navigateToNamedRoute(
+                      onPressed: () => navigate(
                         context,
-                        arguments: _capturedImage,
-                        routeName: '/capture-details',
+                        page: IDDocumentScanner(
+                          documentType: DocumentType.id_card,
+                          onCapture: (File file, DetectSide side) {},
+                          onMessage: (List<String> msgs) {},
+                          onStateChanged: (CameraEventsState state) {},
+                          onNext: () {},
+                        ),
                         replaceCurrentPage: true,
                       ),
-                      label: 'Next',
-                      borderColor: primaryColor,
-                      color: primaryColor,
-                      buttonIcon: Icon(
-                        Icons.check_circle_outline_rounded,
-                        color: primaryColor,
+                      label: const Row(
+                        children: [
+                          Text(' Proceed '),
+                          Icon(
+                            Icons.arrow_forward,
+                            size: 28,
+                          ),
+                        ],
                       ),
-                      buttonSize: ButtonSize.small,
-                      hasBorderLining: true,
                     ),
-                  )
+                  ),
+
+                ///
               ],
             ),
           )),

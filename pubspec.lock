@@ -372,9 +372,11 @@ packages:
   face_camera:
     dependency: "direct main"
     description:
-      path: "../face_camera"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "01be6b9c1040c3973dfd2267b126fb483c3c1725"
+      url: "https://github.com/makhosi6/face_camera.git"
+    source: git
     version: "0.1.1"
   fake_async:
     dependency: transitive
@@ -730,8 +732,16 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.0"
-  google_mlkit_commons:
+  google_mlkit_barcode_scanning:
     dependency: "direct main"
+    description:
+      name: google_mlkit_barcode_scanning
+      sha256: f1a2a39cf1730b9a5e2784a07efa1ca5bfdfdde6aa00b193b3f8cd1953c638ec
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.12.0"
+  google_mlkit_commons:
+    dependency: transitive
     description:
       name: google_mlkit_commons
       sha256: "27d626c66a181351a953eba5b6ff1ff123aadb891b4dab085b292118f039d6ac"
@@ -746,6 +756,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.0"
+  google_mlkit_text_recognition:
+    dependency: "direct main"
+    description:
+      name: google_mlkit_text_recognition
+      sha256: "89c848329355f165ff17ca8645cab5998770e9e25e431fe6dd8261ed9cf7bdc4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.13.0"
   graphs:
     dependency: transitive
     description:

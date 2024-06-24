@@ -91,4 +91,12 @@ flutter build web --web-renderer canvaskit
 
 ### Apple Push Notification
 
-  - Trigger a Apple Push Notification; `xcrun simctl push booted com.byteestudio.Verified ios/push.json`
+- Trigger a Apple Push Notification; `xcrun simctl push booted com.byteestudio.Verified ios/push.json`
+
+### Apple trigger deep-link click
+
+- `/usr/bin/xcrun simctl openurl booted "app://byteestudio.com/foo/secure/123e4567-e89b-12d3-a456-426614174000/123e4567-e89b-12d3-a456-426614174000"`
+
+### Android trigger deep-link click
+
+- `adb shell am start -a android.intent.action.VIEW  -d "app://byteestudio.com/foo/secure/89b-12d3-a456-426614174000/123e4567-e89b-12d3-a456-426614174000" `
