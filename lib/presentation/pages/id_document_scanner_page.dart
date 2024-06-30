@@ -3,13 +3,17 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_beep/flutter_beep.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:verified/presentation/pages/home_page.dart';
+import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/navigate.dart';
 
 class IDDocumentScanner extends StatefulWidget {
   final DocumentType documentType;
-  final VoidCallback onNext;
+  final void Function(BuildContext ctx) onNext;
   final void Function(File file, DetectSide side) onCapture;
   final void Function(List<String> msgs) onMessage;
   final void Function(CameraEventsState state) onStateChanged;
@@ -45,6 +49,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     initializeCamera();
   }
 
+
   Future<void> initializeCamera() async {
     final cameras = await availableCameras();
     final camera = cameras.first;
@@ -71,8 +76,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       DetectSide? detectedSide = detectSide(recognizedText);
       final hasMrzCode = await processMachineReadableImage(recognizedText);
 
-      var allFalse =
-          !(hasCode39Barcode || hasCodePdf417Barcode || hasFace || hasMrzCode);
+      var allFalse = !(hasCode39Barcode || hasCodePdf417Barcode || hasFace || hasMrzCode);
 
       if (!allFalse) {
         if (widget.documentType == DocumentType.passport) {
@@ -83,8 +87,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
                   : (detectedSide != DetectSide.front)
                       ? 'Personal Details Section'
                       : 'Some Landmarks';
-          messages.add(
-              '$missingPart is missing from the ${widget.documentType.name}');
+          messages.add('$missingPart is missing from the ${widget.documentType.name}');
         } else {
           var missingPart = !hasFace
               ? 'Portrait'
@@ -110,7 +113,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
             widget.documentType != DocumentType.passport) {
           await captureImage(detectedSide.name);
           if (imageFiles.length == 2) {
-            await _cameraController!.stopImageStream();
+            // await _cameraController!.stopImageStream();
           }
         }
         if (hasCode39Barcode &&
@@ -119,14 +122,14 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
             widget.documentType == DocumentType.passport) {
           await captureImage(detectedSide.name);
           if (imageFiles.length == 2) {
-            await _cameraController!.stopImageStream();
+            // await _cameraController!.stopImageStream();
           }
         }
 
         if (hasFace && detectedSide == DetectSide.front) {
           await captureImage(detectedSide.name);
           if (imageFiles.length == 2) {
-            await _cameraController!.stopImageStream();
+            // await _cameraController!.stopImageStream();
           }
         }
       }
@@ -139,15 +142,13 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     }
   }
 
-  bool processMachineReadableImage(RecognizedText recognizedText) =>
-      recognizedText.blocks.any((block) {
+  bool processMachineReadableImage(RecognizedText recognizedText) => recognizedText.blocks.any((block) {
         try {
           debugPrint('MachineReadableZone : ${block.text}');
           var hasMRZIdentifiers = block.text.contains(RegExp(r'>>|<<|>|<'));
           var startSegment = block.text.startsWith(RegExp(r'P'));
 
-          if (hasMRZIdentifiers &&
-              machineReadableCode.contains(block.text) == false) {
+          if (hasMRZIdentifiers && machineReadableCode.contains(block.text) == false) {
             setState(() {
               if (startSegment) {
                 machineReadableCode = '${block.text}$machineReadableCode';
@@ -175,8 +176,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
   Future<bool> processPdf417Image(InputImage inputImage) async {
     try {
       final pdf417BarcodeScanner = BarcodeScanner(formats: [BarcodeFormat.pdf417]);
-      final pdf417Barcodes =
-          await pdf417BarcodeScanner.processImage(inputImage);
+      final pdf417Barcodes = await pdf417BarcodeScanner.processImage(inputImage);
       if (pdf417Barcodes.isNotEmpty) {
         setState(() {
           pdf417BarcodesText = pdf417Barcodes.first.rawValue;
@@ -198,8 +198,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
 
   Future<bool> processGenericBarcodeImage(InputImage inputImage) async {
     try {
-      final barcodeScanner =
-          BarcodeScanner(formats: [BarcodeFormat.all]);
+      final barcodeScanner = BarcodeScanner(formats: [BarcodeFormat.all]);
       final barcodes = await barcodeScanner.processImage(inputImage);
       if (barcodes.isNotEmpty) {
         // setState(() {
@@ -222,8 +221,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
 
   Future<bool> processBarcodeImage(InputImage inputImage) async {
     try {
-      final barcodeScanner =
-          BarcodeScanner(formats: [BarcodeFormat.code39]);
+      final barcodeScanner = BarcodeScanner(formats: [BarcodeFormat.code39]);
       final barcodes = await barcodeScanner.processImage(inputImage);
       if (barcodes.isNotEmpty) {
         setState(() {
@@ -275,8 +273,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     }
     final bytes = allBytes.done().buffer.asUint8List();
 
-    final Size imageSize =
-        Size(image.width.toDouble(), image.height.toDouble());
+    final Size imageSize = Size(image.width.toDouble(), image.height.toDouble());
 
     return InputImage.fromBytes(
       bytes: bytes,
@@ -293,8 +290,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
   DetectSide? detectSide(RecognizedText recognizedText) {
     bool isFront = recognizedText.blocks.any((block) {
       debugPrint('BLOCKS: ${block.text}');
-      var value = block.text
-          .contains(RegExp(r'Surname|Names|Sex|Nationality|Identity Number'));
+      var value = block.text.contains(RegExp(r'Surname|Names|Sex|Nationality|Identity Number'));
 
       if (value) {
         setState(() {
@@ -307,8 +303,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
         ? false
         : recognizedText.blocks.any((block) {
             debugPrint('BLOCKS FROM BACK: ${block.text}');
-            bool value =
-                block.text.contains(RegExp(r'Conditions|Date Of Issue'));
+            bool value = block.text.contains(RegExp(r'Conditions|Date Of Issue'));
 
             if (value) {
               setState(() {
@@ -323,25 +318,30 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
   }
 
   Future<void> captureImage(String side) async {
-    final image = await _cameraController!.takePicture();
-    debugPrint('Captured $side image: ${image.path}');
-    if (mounted && imageFiles.where((i) => i?['side'] == side).isEmpty) {
-      setState(() {
-        messages = [];
-        imageFiles.add({'side': side, 'file': File(image.path)});
-      });
-    }
-    widget.onCapture(
-        File(image.path), DetectSide.values.where((e) => e.name == side).first);
+    try {
+      final image = await _cameraController!.takePicture();
+      debugPrint('Captured $side image: ${image.path}');
+      if (mounted && imageFiles.where((i) => i?['side'] == side).isEmpty) {
+        setState(() {
+          messages = [];
+          imageFiles.add({'side': side, 'file': File(image.path)});
+        });
 
-    debugPrint('BARCODE TEXT: $barcodeText \n\n');
-    debugPrint('Pdf417 Barcodes Text: $pdf417BarcodesText \n\n');
-    debugPrint('MachineReadableCode: $machineReadableCode \n\n');
-    debugPrint('MachineReadableCode2: $machineReadableCode2 \n\n');
-    debugPrint(
-        'MachineReadableCode3: ${machineReadableCode.split(' ').toSet().join('|')} \n\n');
-    debugPrint(
-        'MachineReadableCode4: ${split3(machineReadableCode2).toSet().join('|')} \n\n');
+        FlutterBeep.beep();
+      }
+      widget.onCapture(File(image.path), DetectSide.values.where((e) => e.name == side).first);
+
+      debugPrint('BARCODE TEXT: $barcodeText \n\n');
+      debugPrint('Pdf417 Barcodes Text: $pdf417BarcodesText \n\n');
+      debugPrint('MachineReadableCode: $machineReadableCode \n\n');
+      debugPrint('MachineReadableCode2: $machineReadableCode2 \n\n');
+      debugPrint('MachineReadableCode3: ${machineReadableCode.split(' ').toSet().join('|')} \n\n');
+      debugPrint('MachineReadableCode4: ${split3(machineReadableCode2).toSet().join('|')} \n\n');
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {});
+    }
   }
 
   @override
@@ -353,110 +353,117 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-          color: Colors.black,
-          height: MediaQuery.of(context).size.height,
-          child:
-              _cameraController != null && _cameraController!.value.isInitialized
-                  ? Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        CameraPreview(_cameraController!),
-                        if (widget.documentType == DocumentType.passport)
-                          CustomOverlay(
-                            aspectRatio: 2 / 3,
-                            borderColor: Colors.red,
-                            type: widget.documentType,
-                          )
-                        else
-                          CustomOverlay(
-                            aspectRatio: 2 / 3,
-                            borderColor: Colors.blue,
-                            type: widget.documentType,
-                          ),
-      
-                        if (DocumentType.passport != widget.documentType
-                            ? imageFiles.length < 2
-                            : imageFiles.isEmpty)
-                          Positioned(
-                            top: 10,
-                            child: Container(
-                              padding: const EdgeInsets.all(2),
-                              color: Colors.yellowAccent.shade700,
-                              child: const Column(
-                                children: [
-                                  Text(
-                                    'Position your ID document within the on-screen guidelines.',
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  // ...messages
-                                  //     .toSet()
-                                  //     .map((text) => Text(text))
-                                  //     .toList()
-                                ],
-                              ),
-                            ),
-                          ),
-                        if (imageFiles.isNotEmpty)
-                          Positioned(
-                            top: 20,
-                            right: 20,
-                            child: Column(
-                              children: imageFiles
-                                  .map((imageFile) => Card(
-                                        clipBehavior: Clip.hardEdge,
-                                        child: Column(
-                                          children: [
-                                            Text(imageFile?['side']),
-                                            Image.file(
-                                              imageFile?['file'],
-                                              height: 180,
-                                              fit: BoxFit.fitHeight,
-                                            ),
-                                          ],
-                                        ),
-                                      ))
-                                  .toList(),
-                            ),
-                          ),
-      
-                        Positioned(
-                          bottom: 10,
-                          left: 10,
-                          child: Container(
-                              color: Colors.black,
-                              child: Text(
-                                  widget.documentType.name.split('_').join(' '))),
+    return WillPopScope(
+      onWillPop: () async {
+        navigate(context, page: const HomePage(), replaceCurrentPage: true);
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          body: Container(
+            color: Colors.black,
+            height: MediaQuery.of(context).size.height,
+            child: _cameraController != null && _cameraController!.value.isInitialized
+                ? Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      CameraPreview(_cameraController!),
+                      if (widget.documentType == DocumentType.passport)
+                        CustomOverlay(
+                          aspectRatio: 2 / 3,
+                          borderColor: Colors.red,
+                          type: widget.documentType,
+                        )
+                      else
+                        CustomOverlay(
+                          aspectRatio: 2 / 3,
+                          borderColor: Colors.blue,
+                          type: widget.documentType,
                         ),
-      
-                        ///
-      
-                        if (DocumentType.passport != widget.documentType
-                            ? (imageFiles.isNotEmpty && imageFiles.length == 2)
-                            : (imageFiles.isNotEmpty && imageFiles.length == 1))
-                          AnimatedPositioned(
-                            bottom: 20,
-                            right: 20,
-                            curve: Curves.elasticInOut,
-                            duration: const Duration(milliseconds: 250),
-                            child: FloatingActionButton.extended(
-                              onPressed: widget.onNext,
-                              label: const Row(
-                                children: [
-                                  Text(' Proceed '),
-                                  Icon(
-                                    Icons.arrow_forward,
-                                    size: 28,
-                                  ),
-                                ],
-                              ),
+
+                      if (DocumentType.passport != widget.documentType ? imageFiles.length < 2 : imageFiles.isEmpty)
+                        Positioned(
+                          top: 10,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            color: Colors.yellowAccent.shade700,
+                            child: const Column(
+                              children: [
+                                Text(
+                                  'Position your ID document within the on-screen guidelines.',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                // ...messages
+                                //     .toSet()
+                                //     .map((text) => Text(text))
+                                //     .toList()
+                              ],
                             ),
                           ),
-                      ],
-                    )
-                  : const Center(child: CircularProgressIndicator()),
+                        ),
+                      if (imageFiles.isNotEmpty)
+                        Positioned(
+                          top: 20,
+                          right: 20,
+                          child: Column(
+                            children: imageFiles
+                                .map(
+                                  (imageFile) => ImagePreviewCard(
+                                    onClearImage: () {
+                                     setState(() {
+                                        imageFiles.removeWhere((img) => img?['file'] == imageFile?['file']);
+                                     });
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Text(imageFile?['side']),
+                                        Image.file(
+                                          imageFile?['file'],
+                                          height: 180,
+                                          fit: BoxFit.fitHeight,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+
+                      Positioned(
+                        bottom: 10,
+                        left: 10,
+                        child:
+                            Container(color: Colors.black, child: Text(widget.documentType.name.split('_').join(' '))),
+                      ),
+
+                      ///
+
+                      if (DocumentType.passport != widget.documentType
+                          ? (imageFiles.isNotEmpty && imageFiles.length == 2)
+                          : (imageFiles.isNotEmpty && imageFiles.length == 1))
+                        AnimatedPositioned(
+                          bottom: 20,
+                          right: 20,
+                          curve: Curves.elasticInOut,
+                          duration: const Duration(milliseconds: 250),
+                          child: FloatingActionButton.extended(
+                            onPressed: () => widget.onNext(context),
+                            label: const Row(
+                              children: [
+                                Text(' Proceed '),
+                                Icon(
+                                  Icons.arrow_forward,
+                                  size: 28,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  )
+                : const Center(child: CircularProgressIndicator()),
+          ),
         ),
       ),
     );
@@ -470,10 +477,7 @@ class CustomOverlay extends StatelessWidget {
   final Color borderColor;
   final DocumentType type;
 
-  const CustomOverlay(
-      {super.key, required this.aspectRatio,
-      required this.borderColor,
-      required this.type});
+  const CustomOverlay({super.key, required this.aspectRatio, required this.borderColor, required this.type});
 
   @override
   Widget build(BuildContext context) {
@@ -545,30 +549,18 @@ class CardPainter extends CustomPainter {
     scaleX = size.width / imageSize.width;
     scaleY = size.height / imageSize.height;
 
-    canvas.drawRRect(
-        _scaleRect(
-            rect: cardRect!, widgetSize: size, scaleX: scaleX, scaleY: scaleY),
-        paint);
+    canvas.drawRRect(_scaleRect(rect: cardRect!, widgetSize: size, scaleX: scaleX, scaleY: scaleY), paint);
   }
 
   @override
   bool shouldRepaint(CardPainter oldDelegate) {
-    return oldDelegate.imageSize != imageSize ||
-        oldDelegate.cardRect != cardRect;
+    return oldDelegate.imageSize != imageSize || oldDelegate.cardRect != cardRect;
   }
 }
 
-RRect _scaleRect(
-    {required Rect rect,
-    required Size widgetSize,
-    double? scaleX,
-    double? scaleY}) {
-  return RRect.fromLTRBR(
-      (widgetSize.width - rect.left.toDouble() * scaleX!),
-      rect.top.toDouble() * scaleY!,
-      widgetSize.width - rect.right.toDouble() * scaleX,
-      rect.bottom.toDouble() * scaleY,
-      const Radius.circular(10));
+RRect _scaleRect({required Rect rect, required Size widgetSize, double? scaleX, double? scaleY}) {
+  return RRect.fromLTRBR((widgetSize.width - rect.left.toDouble() * scaleX!), rect.top.toDouble() * scaleY!,
+      widgetSize.width - rect.right.toDouble() * scaleX, rect.bottom.toDouble() * scaleY, const Radius.circular(10));
 }
 
 List<String> split3(String str) {
@@ -582,8 +574,84 @@ class CameraEventsState {
   final String? idCode39Text;
   final String? idPdf417Text;
   final String? passportMRZtext;
-  const CameraEventsState(
-      this.idCode39Text, this.idPdf417Text, this.passportMRZtext);
+  const CameraEventsState(this.idCode39Text, this.idPdf417Text, this.passportMRZtext);
 }
 
 enum DocumentType { id_card, driver_license, passport }
+
+class ImagePreviewCard extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onClearImage;
+
+  const ImagePreviewCard({super.key, required this.child, required this.onClearImage});
+
+  @override
+  State<ImagePreviewCard> createState() => _ImagePreviewCardState();
+}
+
+class _ImagePreviewCardState extends State<ImagePreviewCard> {
+  bool? _isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        setState(() {
+          _isActive = false;
+        });
+      },
+      child: Card(
+        elevation: _isActive == true ? 5 : null,
+        clipBehavior: Clip.hardEdge,
+        child: Stack(
+          children: [
+            MouseRegion(
+              onEnter: (_) {
+                setState(() {
+                  _isActive = true;
+                });
+              },
+              onHover: (_) {
+                setState(() {
+                  _isActive = true;
+                });
+              },
+              onExit: (_) {
+                setState(() {
+                  _isActive = false;
+                });
+              },
+              child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isActive = true;
+                    });
+                  },
+                  child: widget.child),
+            ),
+            if (_isActive == true)
+              FittedBox(
+                fit: BoxFit.fitHeight,
+                child: Container(
+                  height: _isActive! ? 180 + 18 : null,
+                  width: _isActive! ? (180 * (2 / 3) - 18) : null,
+                  color: const Color.fromARGB(179, 0, 0, 0),
+                  child: Center(
+                      child: IconButton(
+                    alignment: Alignment.topLeft,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.white),
+                      padding: MaterialStateProperty.all(primaryPadding),
+                    ),
+                    icon: const Icon(Icons.close),
+                    onPressed: widget.onClearImage,
+                  )),
+                ),
+              )
+          ],
+        ),
+      ),
+    );
+  }
+}

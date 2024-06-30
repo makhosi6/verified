@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:face_camera/face_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_beep/flutter_beep.dart';
+import 'package:verified/presentation/pages/choose_document_type_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
-import 'package:verified/presentation/pages/id_document_scanner_page.dart';
+import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 
@@ -58,15 +59,11 @@ class _VerificationPageState extends State<VerificationPage> {
                   backBtn: VerifiedBackButton(
                     key: UniqueKey(),
                     isLight: true,
-                    onTap: () => navigate(context,
-                        page: IDDocumentScanner(
-                          documentType: DocumentType.id_card,
-                          onCapture: (File file, DetectSide side) {},
-                          onMessage: (List<String> msgs) {},
-                          onStateChanged: (CameraEventsState state) {},
-                          onNext: () {},
-                        ),
-                        replaceCurrentPage: true),
+                    onTap: () => navigate(
+                      context,
+                      page: const HomePage(),
+                      replaceCurrentPage: true,
+                    ),
                   ),
                   onCapture: (image) {
                     ///
@@ -100,19 +97,49 @@ class _VerificationPageState extends State<VerificationPage> {
                     color: Colors.black,
                   ),
                 if (_capturedImage != null)
-                  Center(
-                    child: Container(
-                      width: previewImageWidth,
-                      height: previewImageHeight,
-                      color: Colors.black87,
-                      child: Image.file(
-                        _capturedImage!,
+                  SafeArea(
+                    child: Center(
+                      child: Container(
                         width: previewImageWidth,
                         height: previewImageHeight,
-                        fit: BoxFit.cover,
+                        color: Colors.black,
+                        child: Image.file(
+                          _capturedImage!,
+                          width: previewImageWidth,
+                          height: previewImageHeight,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
+                if (_capturedImage != null)
+                  Positioned(
+                    top: 30,
+                    right: 30,
+                    child: SafeArea(
+                      child: IconButton(
+                          alignment: Alignment.topLeft,
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(errorColor),
+                            padding: MaterialStateProperty.all(primaryPadding),
+                          ),
+                          icon: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            try {
+                              setState(() {
+                                _capturedImage = null;
+                              });
+                                _smartCameraGlobalKey.currentState?.controller.initialize();
+                            } catch (e) {
+                              print(e);
+                            }
+                          }),
+                    ),
+                  ),
+
                 if (_capturedImage != null)
 
                   ///
@@ -123,17 +150,7 @@ class _VerificationPageState extends State<VerificationPage> {
                     duration: const Duration(milliseconds: 250),
                     child: FloatingActionButton.extended(
                       key: UniqueKey(),
-                      onPressed: () => navigate(
-                        context,
-                        page: IDDocumentScanner(
-                          documentType: DocumentType.id_card,
-                          onCapture: (File file, DetectSide side) {},
-                          onMessage: (List<String> msgs) {},
-                          onStateChanged: (CameraEventsState state) {},
-                          onNext: () {},
-                        ),
-                        replaceCurrentPage: true,
-                      ),
+                      onPressed: () => navigate(context, page: const ChooseDocumentPage(), replaceCurrentPage: true),
                       label: const Row(
                         children: [
                           Text(' Proceed '),

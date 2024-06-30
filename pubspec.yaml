@@ -73,8 +73,10 @@ dependencies:
   camera: ^0.10.5+9
   flutter_beep: ^1.0.0
   face_camera:
-    git:
-      url: https://github.com/makhosi6/face_camera.git
+    path: ../face_camera
+  # face_camera:
+  #   git:
+  #     url: https://github.com/makhosi6/face_camera.git
   flutter_mrz_scanner: ^2.1.0
   google_mlkit_face_detection: ^0.11.0
   google_mlkit_barcode_scanning: ^0.12.0

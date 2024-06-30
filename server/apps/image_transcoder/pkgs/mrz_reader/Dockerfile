@@ -43,7 +43,8 @@ COPY . .
 
 # Set the Tesseract data prefix environment variable to the default location
 ENV TESSDATA_PREFIX=/app/Tesseract-OCR/tessdata
-
+#
+ENV TZ=Africa/Johannesburg
 
 # Install Python packages
 RUN pip install --no-cache-dir opencv-python-headless pytesseract flask

@@ -4,6 +4,9 @@ WORKDIR /app
 
 # COPY package*.json ./
 
+#
+ENV TZ=Africa/Johannesburg
+
 # RUN npm install
 
 COPY . .

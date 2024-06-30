@@ -6,6 +6,8 @@ WORKDIR /app
 
 # RUN npm install
 
+ENV TZ=Africa/Johannesburg
+
 COPY . .
 
 CMD ["ls" , "-la"]

@@ -43,6 +43,8 @@ COPY . .
 
 # Set the Tesseract data prefix environment variable to the default location
 ENV TESSDATA_PREFIX=/app/config/
+#
+ENV TZ=Africa/Johannesburg
 
 
 # Install Python packages

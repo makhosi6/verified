@@ -4,6 +4,7 @@ services:
     image: emqx:5.0.26
     container_name: emqx1
     environment:
+    - TZ=Africa/Johannesburg
     - "EMQX_NODE_NAME=emqx@node1.emqx.io"
     - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
     - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
@@ -30,6 +31,7 @@ services:
     image: emqx:5.0.26
     container_name: emqx2
     environment:
+    - TZ=Africa/Johannesburg
     - "EMQX_NODE_NAME=emqx@node2.emqx.io"
     - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
     - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
@@ -94,6 +96,7 @@ services:
     volumes:
       - ./log/payments:/app/log/payments
     environment:
+      - TZ=Africa/Johannesburg
       - PORT=${PAYMENTS_PORT}
       - NODE_ENV=production
       - PAYMENTS_PORT=${PAYMENTS_PORT}
@@ -116,6 +119,7 @@ services:
     environment:
       - PORT=${STORE_PORT}
       - NODE_ENV=production
+      - TZ=Africa/Johannesburg
       - STORE_PORT=${STORE_PORT}
     restart: unless-stopped
     networks:
@@ -132,6 +136,7 @@ services:
       - ./log/cdn:/app/log/cdn
     environment:
       - PORT=${CDN_PORT}
+      - TZ=Africa/Johannesburg
     restart: unless-stopped
     networks:
       - local_bridge
@@ -147,12 +152,15 @@ services:
       - PORT=${VERIFYID_PORT}
       - NODE_ENV=production
       - VERIFYID_PORT=${VERIFYID_PORT}
+      - TZ=Africa/Johannesburg
     restart: unless-stopped
     networks:
       - local_bridge
 
   whatsapp_messaging_service:
     image: makhosi/whatsapp_hook:3.3.minimal
+    environment:
+      - TZ=Africa/Johannesburg
     ports:
       - "9092:9092"
       - "9093:9093"
@@ -181,6 +189,37 @@ services:
     restart: unless-stopped
     networks:
       - local_bridge
+
+  app_verified_io_service:
+    image: makhosi/app_verified_io:1.0.1
+    tty: true
+    environment:
+      APP_NAME: ${VERIFIEDWEB_APP_NAME}
+      APP_URL: ${VERIFIEDWEB_APP_URL}
+      APP_ENV: ${VERIFIEDWEB_APP_ENV}
+      APP_DEBUG: ${VERIFIEDWEB_APP_DEBUG}
+      APP_KEY: ${VERIFIEDWEB_APP_KEY}
+      DB_CONNECTION: ${VERIFIEDWEB_DB_CONNECTION}
+      DB_HOST: ${VERIFIEDWEB_DB_HOST}
+      DB_PORT: ${VERIFIEDWEB_DB_PORT}
+      DB_DATABASE: ${VERIFIEDWEB_DB_DATABASE}
+      DB_USERNAME: ${VERIFIEDWEB_DB_USERNAME}
+      DB_PASSWORD: ${VERIFIEDWEB_DB_PASSWORD}
+      MAIL_HOST: ${VERIFIEDWEB_MAIL_HOST}
+      MAIL_PORT: ${VERIFIEDWEB_MAIL_PORT}
+      MAIL_USERNAME: ${VERIFIEDWEB_MAIL_USERNAME}
+      MAIL_PASSWORD: ${VERIFIEDWEB_MAIL_PASSWORD}
+      MAIL_FROM_ADDRESS: ${VERIFIEDWEB_MAIL_FROM_ADDRESS}
+      MAIL_FROM_NAME: ${VERIFIEDWEB_MAIL_FROM_NAME}
+      TZ: Africa/Johannesburg
+    ports:
+      - "9000:80"
+    # volumes:
+      # - ./apps/app_verified_io:/var/www
+    restart: unless-stopped
+    networks:
+      - local_bridge  
+
 
 volumes:
   emqx1_data:

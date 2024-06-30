@@ -89,6 +89,12 @@ flutter build web --web-renderer canvaskit
 
   ```
 
+### Build
+
+- ```bash
+    docker build -t makhosi/{{image}}:1.0.0 -t makhosi/{{image}}:latest . --platform="linux/amd64"
+  ```
+
 ### Apple Push Notification
 
 - Trigger a Apple Push Notification; `xcrun simctl push booted com.byteestudio.Verified ios/push.json`

@@ -36,6 +36,13 @@ class ActionButton extends StatelessWidget {
       }
     });
 
+    Future.delayed(const Duration(seconds: 5), () {
+      try {
+        _tooltipKey.currentState?.deactivate();
+      } catch (e) {
+        print(e);
+      }
+    });
     ///
     return Tooltip(
       key: _tooltipKey,

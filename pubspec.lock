@@ -372,11 +372,9 @@ packages:
   face_camera:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "01be6b9c1040c3973dfd2267b126fb483c3c1725"
-      url: "https://github.com/makhosi6/face_camera.git"
-    source: git
+      path: "../face_camera"
+      relative: true
+    source: path
     version: "0.1.1"
   fake_async:
     dependency: transitive
