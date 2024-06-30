@@ -191,7 +191,7 @@ services:
       - local_bridge
 
   app_verified_io_service:
-    image: makhosi/app_verified_io:1.0.1
+    image: makhosi/app_verified_io:1.0.12
     tty: true
     environment:
       APP_NAME: ${VERIFIEDWEB_APP_NAME}
