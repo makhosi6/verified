@@ -200,7 +200,7 @@ services:
       APP_DEBUG: ${VERIFIEDWEB_APP_DEBUG}
       APP_KEY: ${VERIFIEDWEB_APP_KEY}
       DB_CONNECTION: ${VERIFIEDWEB_DB_CONNECTION}
-      DB_HOST: ${VERIFIEDWEB_DB_HOST}
+      DB_HOST: 'mysql_db_service'
       DB_PORT: ${VERIFIEDWEB_DB_PORT}
       DB_DATABASE: ${VERIFIEDWEB_DB_DATABASE}
       DB_USERNAME: ${VERIFIEDWEB_DB_USERNAME}
@@ -220,6 +220,20 @@ services:
     networks:
       - local_bridge  
 
+  mysql_db_service:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${VERIFIEDWEB_DB_DATABASE}
+      MYSQL_USER: ${VERIFIEDWEB_DB_USERNAME}
+      MYSQL_PASSWORD: ${VERIFIEDWEB_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${VERIFIEDWEB_DB_PASSWORD}
+    volumes:
+      - ./apps/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - local_bridge  
 
 volumes:
   emqx1_data:
