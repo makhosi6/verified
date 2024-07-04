@@ -69,6 +69,7 @@ services:
       - cdn_service
       - mrz_reader_service
       - mrz_decoder_service
+      - app_verified_io_service
     networks:
       - local_bridge
   
@@ -191,7 +192,7 @@ services:
       - local_bridge
 
   app_verified_io_service:
-    image: makhosi/app_verified_io:1.0.12
+    image: makhosi/app_verified_io:1.1.1
     tty: true
     environment:
       APP_NAME: ${VERIFIEDWEB_APP_NAME}
