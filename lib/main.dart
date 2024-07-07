@@ -35,6 +35,7 @@ import 'package:verified/presentation/pages/custom_splash_screen.dart';
 import 'package:verified/presentation/pages/error_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/transactions_page.dart';
+import 'package:verified/presentation/pages/verification_info_page.dart';
 import 'package:verified/presentation/pages/verification_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/device_info.dart';
@@ -397,11 +398,13 @@ class _AppRootState extends State<AppRoot> {
                 ),
               );
 
-            navigateToNamedRoute(_navigatorKey.currentState?.context ?? context,
-                arguments: VerificationPageArgs(
-                  __uriUuidFragment ?? '0000000-0000-0000-0000-00000000000',
-                ),
-                replaceCurrentPage: user == null);
+            navigateToNamedRoute(
+              _navigatorKey.currentState?.context ?? context,
+              arguments: VerificationPageArgs(
+                __uriUuidFragment ?? '0000000-0000-0000-0000-00000000000',
+              ),
+              replaceCurrentPage: user == null,
+            );
             break;
           }
         case SnackbarValue.success:
@@ -505,8 +508,15 @@ class _AppRootState extends State<AppRoot> {
       theme: theme,
       title: displayAppName,
       routes: {
-        '/secure': (context) => const VerificationPage(),
-        '/capture-details': (context) => CaptureVerifieeDetailsPage(),
+        '/secure': (context) => VerificationPage(
+              key: UniqueKey(),
+            ),
+        '/capture-details': (context) => CaptureVerifieeDetailsPage(
+              key: UniqueKey(),
+            ),
+        '/capture-details-info': (context) => VerificationInfoPage(
+              key: UniqueKey(),
+            )
       },
       home: FutureBuilder<UserProfile?>(
         future: LocalUser.getUser(),
@@ -527,7 +537,6 @@ class _AppRootState extends State<AppRoot> {
               ..add(StoreEvent.getUserProfile(userId))
               ..add(StoreEvent.getWallet(userWalletId)),
             listener: (context, state) {
-              
               /// has a pending store API request
               bool storeRequestInProgress = state.userProfileDataLoading ||
                   state.getHelpDataLoading ||

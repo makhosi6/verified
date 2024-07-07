@@ -9,6 +9,7 @@ class ActionButton extends StatelessWidget {
   final IconData icon;
   final String tooltip;
   final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry innerPadding;
   final Color? borderColor;
   final bool hasBorderLining;
 
@@ -22,39 +23,23 @@ class ActionButton extends StatelessWidget {
     this.borderColor,
     this.hasBorderLining = true,
     this.padding = const EdgeInsets.only(right: 12.0),
+    this.innerPadding = const  EdgeInsets.all(4.0),
   }) : super(key: key);
 
   late final _tooltipKey = GlobalKey<TooltipState>(debugLabel: 'action-button-tooltip-[$tooltip][${key.toString()}]');
   @override
   Widget build(BuildContext context) {
     ///
-    Future.delayed(const Duration(seconds: 2), () {
-      try {
-        _tooltipKey.currentState?.ensureTooltipVisible();
-      } catch (e) {
-        print(e);
-      }
-    });
-
-    Future.delayed(const Duration(seconds: 5), () {
-      try {
-        _tooltipKey.currentState?.deactivate();
-      } catch (e) {
-        print(e);
-      }
-    });
-    ///
     return Tooltip(
       key: _tooltipKey,
       message: tooltip,
-      triggerMode: TooltipTriggerMode.manual,
       showDuration: const Duration(seconds: 5),
       child: Padding(
         padding: padding,
         child: Container(
           height: 49.0,
           width: 49.0,
-          padding: const EdgeInsets.all(4.0),
+          padding: innerPadding ?? const EdgeInsets.all(4.0),
           decoration: BoxDecoration(
               color: bgColor,
               borderRadius: BorderRadius.circular(12.0),
@@ -105,7 +90,7 @@ class VerifiedBackButton extends StatelessWidget {
             iconColor: isLight ? Colors.black : Colors.white,
             bgColor: isLight ? Colors.white : darkerPrimaryColor,
             onTap: onTap,
-            borderColor: isLight? const Color.fromARGB(70, 237, 237, 237) : null,
+            borderColor: isLight ? const Color.fromARGB(70, 237, 237, 237) : null,
             icon: Icons.arrow_back_ios_new_rounded,
             padding: const EdgeInsets.all(0.0),
           ),

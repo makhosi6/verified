@@ -155,7 +155,7 @@ class _VerificationPageState extends State<VerificationPage> {
                         children: [
                           Text(' Proceed '),
                           Icon(
-                            Icons.arrow_forward,
+                            Icons.arrow_forward_ios_rounded,
                             size: 28,
                           ),
                         ],

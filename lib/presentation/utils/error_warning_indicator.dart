@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -5,7 +7,7 @@ class AppErrorWarningIndicator extends StatelessWidget {
   final IndicatorType type;
   final bool show;
   final String message;
-  const AppErrorWarningIndicator(
+   const AppErrorWarningIndicator( 
       {super.key, this.show = false, this.type = IndicatorType.error, this.message = 'No Internet Connection'});
 
   @override

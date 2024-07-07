@@ -1,10 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/presentation/pages/account_page.dart';
-import 'package:verified/presentation/pages/scan_document_page.dart';
+import 'package:verified/presentation/pages/input_verification_url.dart';
 import 'package:verified/presentation/pages/verification_page.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
@@ -33,14 +36,12 @@ class HomePageContents extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> widgets = [
       GestureDetector(
-        onTap: () {
-          navigateToNamedRoute(
-            context,
-            arguments: VerificationPageArgs(
-              '0000000-0000-0000-0000-00000000000',
-            ),
-          );
-        },
+        onTap: () => navigateToNamedRoute(
+          context,
+          arguments: VerificationPageArgs(
+            '0000000-0000-0000-0000-00000000000',
+          ),
+        ),
         child: const Balance(
           key: Key('homepage-balance-section'),
         ),
@@ -89,7 +90,7 @@ class HomePageContents extends StatelessWidget {
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: <Widget>[
-              const AppErrorWarningIndicator(
+               const AppErrorWarningIndicator(
                 key: Key('homepage_app_error_warning_indicator'),
                 type: IndicatorType.warning,
                 message: 'Your phone date/time is inaccurate!',
@@ -100,15 +101,29 @@ class HomePageContents extends StatelessWidget {
                 surfaceTintColor: Colors.transparent,
                 stretchTriggerOffset: 300.0,
                 expandedHeight: 90.0,
+                centerTitle: false,
                 flexibleSpace: AppBar(
                   automaticallyImplyLeading: true,
+                  centerTitle: false,
+                  // title: Image.asset('assets/icons/logo.png', width: 40, height: 40, fit: BoxFit.fitHeight,),
                   title: const Text('Verified'),
                 ),
                 leading: const SizedBox.shrink(),
                 actions: [
-                  ActionButton(iconColor: Colors.black, bgColor: Colors.white, onTap: (){
-                    navigate(context, page: const ScanDocumentPage());
-                  }, icon: Icons.light, tooltip: 'Tap'),
+                  Padding(
+                    padding: primaryPadding,
+                    child: InkWell(
+                      onTap: () => navigate(context, page: const InputVerificationURL()),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Tap or Click',
+                            style: GoogleFonts.dmSans(color: primaryColor, fontWeight: FontWeight.w700),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   ActionButton(
                     key: const Key('go-to-user-account-btn'),
                     tooltip: 'User Account',

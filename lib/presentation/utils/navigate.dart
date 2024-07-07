@@ -25,7 +25,7 @@ void navigate(BuildContext context, {required Widget page, bool replaceCurrentPa
   }
 }
 
-void navigateToNamedRoute(BuildContext context,  { Object? arguments, String routeName = '/secure', bool replaceCurrentPage = false }) {
+void navigateToNamedRoute(BuildContext context,  { Object? arguments, String routeName = '/capture-details-info', bool replaceCurrentPage = false }) {
   bool isRouteOnTop = ModalRoute.of(context)?.settings.name == routeName;
 
   if (!isRouteOnTop) {

@@ -46,7 +46,7 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = getWidgets(context);
+    List<Widget> widgets = _getWidgets(context);
 
     return Scaffold(
       body: Center(
@@ -100,7 +100,7 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
   }
 
   ///
-  List<Widget> getWidgets(BuildContext context) {
+  List<Widget> _getWidgets(BuildContext context) {
     final user = context.watch<StoreBloc>().state.userProfileData;
     final MIDDLE_INDEX = ((FormType.values.length - 1) / 2).ceil();
     final HELP_TEXT_INDEX = ((FormType.values.length + 1)).ceil();
@@ -160,7 +160,7 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
                             ],
                             validator: (value) {
                               if (kDebugMode) {
-                                print('====>>====');
+                                print('====>><<====');
                                 print(value);
                                 print(value.runtimeType);
                                 print(idOrPhoneNumber != null);

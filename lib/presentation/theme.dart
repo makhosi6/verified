@@ -27,6 +27,9 @@ Color darkBlurColor = const Color(0x6A1A3627);
 /// common error color
 Color errorColor = Colors.redAccent;
 
+/// common success color
+Color successColor = Colors.greenAccent;
+
 /// common error color
 Color warningColor = Colors.amberAccent[700] ?? Colors.amberAccent;
 

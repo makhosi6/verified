@@ -23,7 +23,6 @@ import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/utils/url_loader.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
-import 'package:verified/presentation/pages/search_results_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
 import 'package:verified/presentation/theme.dart';
@@ -569,7 +568,7 @@ class _ProfileName extends StatelessWidget {
                               ((user?.avatar ?? '').contains('byteestudio') ||
                                   (user?.avatar ?? '').contains('robohash')))
                           ? user?.avatar?.replaceAll(' ', '') ?? placeholderAvatar
-                          : placeholderAvatar).replaceAll('https', 'http'),
+                          : placeholderAvatar),
                       height: 100.0,
                       width: 100.0,
                       fit: BoxFit.cover,

@@ -8,9 +8,11 @@ class GenericInputField extends StatelessWidget {
   final String? label;
   final String? initialValue;
   final bool autofocus;
+  final bool readOnly;
   final int? maxLines;
   final String? Function(String? value)? validator;
   final void Function(String value) onChange;
+  final void Function()? onTap;
   final List<TextInputFormatter>? inputFormatters;
 
   TextInputType? keyboardType;
@@ -21,8 +23,10 @@ class GenericInputField extends StatelessWidget {
     this.label,
     this.initialValue,
     this.autofocus = false,
+    this.readOnly = false,
     required this.validator,
     required this.onChange,
+    this.onTap,
     this.maxLines,
     this.inputFormatters,
     required this.keyboardType,
@@ -49,7 +53,9 @@ class GenericInputField extends StatelessWidget {
           keyboardType: keyboardType,
           maxLines: maxLines,
           minLines: 1,
+          readOnly: readOnly,
           autofocus: autofocus,
+          onTap: onTap,
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(color: Colors.grey[400]),
