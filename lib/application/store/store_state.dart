@@ -10,6 +10,13 @@ class StoreState with _$StoreState {
     required bool getHelpHasError,
     required bool getHelpDataLoading,
     required GenericResponse? getHelpData,
+    ///
+    required CapturedVerifeeDetails? capturedVerifeeDetails,
+    ///
+    required GenericApiError? decodePassportDataError,
+    required bool decodePassportHasError,
+    required bool decodePassportDataLoading,
+    required PassportResponseData? decodePassportData,
 
     ///
     required GenericApiError? ticketsError,
@@ -47,6 +54,7 @@ class StoreState with _$StoreState {
     required bool uploadsHasError,
     required bool uploadsDataLoading,
     required UploadResponse? uploadsData,
+    
   }) = _StoreState;
 
   factory StoreState.initial() => const StoreState(
@@ -58,6 +66,13 @@ class StoreState with _$StoreState {
         getHelpDataLoading: false,
         getHelpData: null,
 
+        ///
+        capturedVerifeeDetails: null,
+        ///
+        decodePassportDataError: null,
+        decodePassportHasError: false,
+        decodePassportDataLoading: false,
+        decodePassportData: null,
         ///
         ticketsError: null,
         ticketsHasError: false,
@@ -96,3 +111,6 @@ class StoreState with _$StoreState {
         uploadsData: null,
       );
 }
+
+
+

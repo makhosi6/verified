@@ -17,7 +17,7 @@ import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/inputs/generic_input.dart';
 
-final _globalKeyCaptureDetailsPageForm = GlobalKey<FormState>(debugLabel: 'capture-details-page-key');
+final _globalKeyCaptureDetailsPageForm = GlobalKey<FormState>(debugLabel: 'captured-details-page-key');
 
 class CaptureDetailsPage extends StatelessWidget {
   CaptureDetailsPage({super.key});
@@ -33,7 +33,7 @@ class CaptureDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     //
     return Scaffold(
-      key: const Key('capture-details-page'),
+      key: const Key('captured-details-page'),
       body: Center(
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
@@ -52,7 +52,7 @@ class CaptureDetailsPage extends StatelessWidget {
               ),
               leadingWidth: 80.0,
               leading: VerifiedBackButton(
-                key: const Key('capture-details-page-back-btn'),
+                key: const Key('captured-details-page-back-btn'),
                 onTap: () => Navigator.pop(context),
                 isLight: true,
               ),
@@ -85,7 +85,7 @@ class CaptureDetailsPage extends StatelessWidget {
                     child: Form(
                       key: _globalKeyCaptureDetailsPageForm,
                       child: Column(
-                        key: const Key('capture-details-field-inputs'),
+                        key: const Key('captured-details-field-inputs'),
                         children: [
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),

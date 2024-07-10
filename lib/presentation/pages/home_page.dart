@@ -84,80 +84,78 @@ class HomePageContents extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: Container(
-          // constraints: appConstraints,
-          // padding: primaryPadding.copyWith(bottom: 0, top: 0),
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: <Widget>[
-               const AppErrorWarningIndicator(
-                key: Key('homepage_app_error_warning_indicator'),
-                type: IndicatorType.warning,
-                message: 'Your phone date/time is inaccurate!',
-              ),
-              SliverAppBar(
-                stretch: true,
-                onStretchTrigger: () async {},
-                surfaceTintColor: Colors.transparent,
-                stretchTriggerOffset: 300.0,
-                expandedHeight: 90.0,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: <Widget>[
+             const AppErrorWarningIndicator(
+              key: Key('homepage_app_error_warning_indicator'),
+              type: IndicatorType.warning,
+              message: 'Your phone date/time is inaccurate!',
+            ),
+            SliverAppBar(
+              stretch: true,
+              onStretchTrigger: () async {},
+              surfaceTintColor: Colors.transparent,
+              stretchTriggerOffset: 300.0,
+              expandedHeight: 90.0,
+              centerTitle: false,
+              flexibleSpace: AppBar(
+                automaticallyImplyLeading: true,
                 centerTitle: false,
-                flexibleSpace: AppBar(
-                  automaticallyImplyLeading: true,
-                  centerTitle: false,
-                  // title: Image.asset('assets/icons/logo.png', width: 40, height: 40, fit: BoxFit.fitHeight,),
-                  title: const Text('Verified'),
-                ),
-                leading: const SizedBox.shrink(),
-                actions: [
-                  Padding(
-                    padding: primaryPadding,
-                    child: InkWell(
-                      onTap: () => navigate(context, page: const InputVerificationURL()),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Tap or Click',
-                            style: GoogleFonts.dmSans(color: primaryColor, fontWeight: FontWeight.w700),
-                          ),
-                        ],
-                      ),
+                // title: Image.asset('assets/icons/logo.png', width: 40, height: 40, fit: BoxFit.fitHeight,),
+                title: const Text('Verified'),
+              ),
+              leading: const SizedBox.shrink(),
+              actions: [
+                Padding(
+                  padding: primaryPadding,
+                  child: InkWell(
+                    onTap: () => navigate(context, page: const InputVerificationURL()),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Start Verification',
+                          style: GoogleFonts.dmSans(color: primaryColor),
+                        ),
+                      ],
                     ),
                   ),
-                  ActionButton(
-                    key: const Key('go-to-user-account-btn'),
-                    tooltip: 'User Account',
-                    iconColor: Colors.black,
-                    bgColor: Colors.white,
-                    onTap: () async {
-                      try {
-                        final user = context.read<StoreBloc>().state.userProfileData ?? (await LocalUser.getUser());
-                        final page = AccountPage();
-                        if (user == null) {
-                          // ignore: use_build_context_synchronously
-                          await triggerAuthBottomSheet(context: context, redirect: page);
-                        } else {
-                          // ignore: use_build_context_synchronously
-                          navigate(context, page: page);
-                        }
-                      } catch (e) {
-                        if (kDebugMode) print('\n\n=============================\n $e');
-                      }
-                    },
-                    icon: Icons.person_2_outlined,
-                  ),
-                ],
-              ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) => UnconstrainedBox(key: ValueKey(index), child: widgets[index]),
-                  childCount: widgets.length,
                 ),
+                ActionButton(
+                  key: const Key('go-to-user-account-btn'),
+                  tooltip: 'User Account',
+                  iconColor: Colors.black,
+                  bgColor: Colors.white,
+                  onTap: () async {
+                    try {
+                      final user = context.read<StoreBloc>().state.userProfileData ?? (await LocalUser.getUser());
+                      final page = AccountPage();
+                      if (user == null) {
+                        // ignore: use_build_context_synchronously
+                        await triggerAuthBottomSheet(context: context, redirect: page);
+                      } else {
+                        // ignore: use_build_context_synchronously
+                        navigate(context, page: page);
+                      }
+                    } catch (e) {
+                      if (kDebugMode) print('\n\n=============================\n $e');
+                    }
+                  },
+                  icon: Icons.person_2_outlined,
+                ),
+              ],
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) => UnconstrainedBox(key: ValueKey(index), child: widgets[index]),
+                childCount: widgets.length,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+
+

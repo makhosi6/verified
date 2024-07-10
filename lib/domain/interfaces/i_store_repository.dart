@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:verified/domain/models/generic_api_error.dart';
 import 'package:verified/domain/models/generic_response.dart';
 import 'package:verified/domain/models/help_ticket.dart';
+import 'package:verified/domain/models/passport_response_data.dart';
 import 'package:verified/domain/models/promotion.dart';
 import 'package:verified/domain/models/resource_health_status_enum.dart';
 import 'package:verified/domain/models/transaction_history.dart';
@@ -16,6 +17,9 @@ abstract class IStoreRepository {
 
   ///
   Future<UploadResponse> uploadFiles(List<MultipartFile> uploads);
+
+  ///
+  Future<Either<GenericApiError, PassportResponseData>> decodePassportData(FormData data);
 
   /// GET
   Future<Either<GenericApiError, GenericResponse>> requestHelp(HelpTicket help);

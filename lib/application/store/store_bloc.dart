@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:verified/domain/models/captured_verifee_details.dart';
 import 'package:verified/domain/models/generic_api_error.dart';
 import 'package:verified/domain/models/generic_response.dart';
+import 'package:verified/domain/models/passport_response_data.dart';
 import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/promotion.dart';
 import 'package:verified/domain/models/resource_health_status_enum.dart';
@@ -40,6 +42,61 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 getHelpDataLoading: false,
                 resourceHealthStatus: ResourceHealthStatus.good,
               ));
+            });
+            return null;
+          },
+
+          ///
+          addVerifee: (e) async {
+            emit(
+              state.copyWith(
+                decodePassportDataLoading: true,
+              ),
+            );
+            await Future.delayed(const Duration(milliseconds: 500), () {});
+            emit(
+              state.copyWith(
+                capturedVerifeeDetails: e.data,
+                decodePassportDataLoading: false,
+              ),
+            );
+            return null;
+          },
+
+          ///
+          decodePassportData: (e) async {
+            emit(
+              state.copyWith(
+                decodePassportData: null,
+                decodePassportDataLoading: true,
+                decodePassportHasError: false,
+                decodePassportDataError: null,
+              ),
+            );
+
+            final response = await _storeRepository.decodePassportData(e.data);
+
+            response.fold((error) {
+              emit(
+                state.copyWith(
+                  decodePassportHasError: true,
+                  decodePassportDataError: error,
+                  decodePassportData: null,
+                  getHelpDataLoading: false,
+                ),
+              );
+            }, (res) {
+              emit(
+                state.copyWith(
+                  decodePassportHasError: false,
+                  decodePassportDataError: null,
+                  decodePassportData: res,
+                  getHelpDataLoading: false,
+                  capturedVerifeeDetails: CapturedVerifeeDetails.fromPassportString(
+                    res.data ?? [],
+                  ),
+                ),
+              );
             });
             return null;
           },

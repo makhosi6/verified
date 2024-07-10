@@ -28,6 +28,7 @@ class _VerificationPageState extends State<VerificationPage> {
 
   @override
   Widget build(BuildContext context) {
+
     final args = ModalRoute.of(context)?.settings.arguments as VerificationPageArgs?;
     final uuid = args?.uuid;
 

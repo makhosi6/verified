@@ -1,10 +1,15 @@
-import 'dart:ffi';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/domain/models/captured_verifee_details.dart';
 import 'package:verified/globals.dart';
-import 'package:verified/infrastructure/native_scripts/main.dart';
-import 'package:verified/presentation/pages/capture_verifiee_details_page.dart';
+import 'package:verified/helpers/image.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/id_document_scanner_page.dart';
 import 'package:verified/presentation/theme.dart';
@@ -21,6 +26,8 @@ class ChooseDocumentPage extends StatefulWidget {
 }
 
 class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
+  CameraEventsState? documentScannerState;
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -57,10 +64,11 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, indx) {
                     var index = indx - 1;
-    
+
                     if (index == -1) {
                       return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal,vertical: primaryPadding.vertical * 2),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: primaryPadding.horizontal, vertical: primaryPadding.vertical * 2),
                         child: Text(
                           'StakeWise brings solo stakers access to DeFi and liquidity! Mint osETH for your solo stake, and use Arbitrum, Aave, EigenLayer, and others',
                           style: TextStyle(
@@ -72,7 +80,7 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                         ),
                       );
                     }
-    
+
                     return UnconstrainedBox(
                       child: Container(
                         width: MediaQuery.of(context).size.width - primaryPadding.horizontal,
@@ -85,10 +93,109 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                               context,
                               page: IDDocumentScanner(
                                 documentType: DocumentType.values[index],
-                                onCapture: (File file, DetectSide side) {},
+                                onCapture: (File file, DetectSide side) {
+                                  if (mounted &&
+                                      documentScannerState?.imageFiles.where((i) => i.side == side.name).isEmpty ==
+                                          true) {
+                                    setState(() {
+                                      documentScannerState?.copyWith(
+                                          imageFiles: documentScannerState?.imageFiles
+                                            ?..add(vImageFile(side: side.name, file: file)));
+                                    });
+                                  }
+                                },
                                 onMessage: (List<String> msgs) {},
-                                onStateChanged: (CameraEventsState state) {},
-                                onNext: (ctx) => navigate(ctx, page: CaptureVerifieeDetailsPage(), replaceCurrentPage: true),
+                                onStateChanged: (CameraEventsState? state) {
+                                  if (mounted) {
+                                    setState(() {
+                                      documentScannerState = state;
+                                    });
+                                  }
+                                },
+                                onNext: (ctx, state) {
+                                  try {
+                                    // ignore: no_leading_underscores_for_local_identifiers
+                                    final _documentScannerState = documentScannerState ?? state;
+
+                                    ///
+                                    if (_documentScannerState == null ||
+                                        _documentScannerState.imageFiles.isEmpty == true ||
+                                        (DocumentType.values[index] == DocumentType.id_card &&
+                                            (documentScannerState?.idPdf417Text ?? documentScannerState?.idCode39Text)
+                                                    ?.isEmpty ==
+                                                true)) {
+                                      ScaffoldMessenger.of(ctx)
+                                        ..clearSnackBars()
+                                        ..showSnackBar(
+                                          SnackBar(
+                                            content: const Text(
+                                              'State Changed!!!',
+                                            ),
+                                            backgroundColor: errorColor,
+                                          ),
+                                        );
+
+                                      print(
+                                          'ONE ==> ${_documentScannerState == null} || ${_documentScannerState?.imageFiles.isEmpty == true} || ${(DocumentType.values[index] == DocumentType.id_card && (documentScannerState?.idPdf417Text ?? documentScannerState?.idCode39Text)?.isEmpty == true)}');
+                                      return;
+                                    }
+                                    if (DocumentType.values[index] == DocumentType.passport) {
+                                      ///
+                                      var image = _documentScannerState.imageFiles.first;
+                                      var bytes = image.file.readAsBytesSync();
+
+                                      ///
+                                      Future.microtask(() async {
+                                        ctx.read<StoreBloc>().add(
+                                              StoreEvent.decodePassportData(
+                                                FormData.fromMap(
+                                                  {
+                                                    // 'files': [
+                                                    //   await MultipartFile.fromFile(
+                                                    //     image.file.absolute.path,
+                                                    //     filename: image.file.path.split('/').last,
+                                                    //   )
+                                                    // ],
+                                                    'data_url':
+                                                        bytesToDataUrl(bytes, getExtension(image.file.absolute.path)),
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                      });
+                                    }
+
+                                    if (DocumentType.values[index] == DocumentType.id_card) {
+                                      var data = CapturedVerifeeDetails.fromIdString(
+                                        _documentScannerState.idPdf417Text ?? '',
+                                      )..identityNumber2 = _documentScannerState.idCode39Text;
+
+                                      ///
+                                      print("SAVE DATA $data");
+
+                                      ///
+                                      ctx.read<StoreBloc>().add(
+                                            StoreEvent.addVerifee(
+                                              data,
+                                            ),
+                                          );
+                                    }
+                                    print('navigateToNamedRoute.....>>>>>>>>>>>');
+
+                                    ///
+                                    navigateToNamedRoute(
+                                      ctx,
+                                      routeName: '/captured-details',
+                                      arguments: null,
+                                      replaceCurrentPage: true,
+                                    );
+                                  } catch (error, stackTrace) {
+                                    // 31878): Error @ onNext of _choose docs Looking up a deactivated widget's ancestor is unsafe.
+                                    debugPrintStack(stackTrace: stackTrace, label: 'Error @ onNext of _choose docs');
+
+                                    if (kDebugMode) exit(0);
+                                  }
+                                },
                               ),
                               replaceCurrentPage: true,
                             ),

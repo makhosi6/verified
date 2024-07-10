@@ -1,22 +1,24 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_beep/flutter_beep.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 
 class IDDocumentScanner extends StatefulWidget {
   final DocumentType documentType;
-  final void Function(BuildContext ctx) onNext;
+  final void Function(BuildContext ctx, CameraEventsState? state) onNext;
   final void Function(File file, DetectSide side) onCapture;
   final void Function(List<String> msgs) onMessage;
-  final void Function(CameraEventsState state) onStateChanged;
+  final void Function(CameraEventsState? state) onStateChanged;
 
   const IDDocumentScanner(
       {super.key,
@@ -40,15 +42,15 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
   String machineReadableCode = '';
   String machineReadableCode2 = '';
   List? facesFound;
-  List<Map?> imageFiles = [];
+  List<vImageFile> imageFiles = [];
   Rect? detectedCardRect;
+  CameraEventsState? documentScannerState;
 
   @override
   void initState() {
     super.initState();
     initializeCamera();
   }
-
 
   Future<void> initializeCamera() async {
     final cameras = await availableCameras();
@@ -133,12 +135,13 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
           }
         }
       }
+      if (mounted) setState(() {});
     } catch (e) {
       debugPrint('Error processing image: $e');
     } finally {
       _isProcessing = false;
 
-      setState(() {});
+      if (mounted) setState(() {});
     }
   }
 
@@ -243,9 +246,8 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
   }
 
   Future<bool> processFaceImage(InputImage inputImage) async {
-    final faceScanner = FaceDetector(options: FaceDetectorOptions());
-
     try {
+      final faceScanner = FaceDetector(options: FaceDetectorOptions());
       final faces = await faceScanner.processImage(inputImage);
       if (faces.isNotEmpty) {
         setState(() {
@@ -321,22 +323,27 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     try {
       final image = await _cameraController!.takePicture();
       debugPrint('Captured $side image: ${image.path}');
-      if (mounted && imageFiles.where((i) => i?['side'] == side).isEmpty) {
-        setState(() {
-          messages = [];
-          imageFiles.add({'side': side, 'file': File(image.path)});
-        });
+      if (mounted && imageFiles.where((i) => i.side == side).isEmpty) {
+        messages = [];
+        imageFiles.add(vImageFile(side: side, file: File(image.path)));
 
         FlutterBeep.beep();
       }
-      widget.onCapture(File(image.path), DetectSide.values.where((e) => e.name == side).first);
-
+      documentScannerState = CameraEventsState(
+        idCode39Text: barcodeText,
+        idPdf417Text: pdf417BarcodesText,
+        passportMRZtext: '',
+        imageFiles: imageFiles,
+      );
+      widget.onStateChanged(documentScannerState);
+      // widget.onCapture(File(image.path), DetectSide.values.where((e) => e.name == side).first);
       debugPrint('BARCODE TEXT: $barcodeText \n\n');
       debugPrint('Pdf417 Barcodes Text: $pdf417BarcodesText \n\n');
       debugPrint('MachineReadableCode: $machineReadableCode \n\n');
       debugPrint('MachineReadableCode2: $machineReadableCode2 \n\n');
       debugPrint('MachineReadableCode3: ${machineReadableCode.split(' ').toSet().join('|')} \n\n');
       debugPrint('MachineReadableCode4: ${split3(machineReadableCode2).toSet().join('|')} \n\n');
+      debugPrint('documentScannerState: ${documentScannerState?.imageFiles.length} \n\n');
     } catch (e) {
       print(e);
     } finally {
@@ -410,15 +417,15 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
                                 .map(
                                   (imageFile) => ImagePreviewCard(
                                     onClearImage: () {
-                                     setState(() {
-                                        imageFiles.removeWhere((img) => img?['file'] == imageFile?['file']);
-                                     });
+                                      setState(() {
+                                        imageFiles.removeWhere((img) => img.file == imageFile.file);
+                                      });
                                     },
                                     child: Column(
                                       children: [
-                                        Text(imageFile?['side']),
+                                        Text(imageFile.side),
                                         Image.file(
-                                          imageFile?['file'],
+                                          imageFile.file,
                                           height: 180,
                                           fit: BoxFit.fitHeight,
                                         ),
@@ -448,7 +455,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
                           curve: Curves.elasticInOut,
                           duration: const Duration(milliseconds: 250),
                           child: FloatingActionButton.extended(
-                            onPressed: () => widget.onNext(context),
+                            onPressed: () => widget.onNext(context, documentScannerState),
                             label: const Row(
                               children: [
                                 Text(' Proceed '),
@@ -574,7 +581,25 @@ class CameraEventsState {
   final String? idCode39Text;
   final String? idPdf417Text;
   final String? passportMRZtext;
-  const CameraEventsState(this.idCode39Text, this.idPdf417Text, this.passportMRZtext);
+  final List<vImageFile> imageFiles;
+
+  const CameraEventsState(
+      {required this.idCode39Text,
+      required this.idPdf417Text,
+      required this.passportMRZtext,
+      required this.imageFiles});
+
+  CameraEventsState copyWith({
+    String? idCode39Text,
+    String? idPdf417Text,
+    String? passportMRZtext,
+    List<vImageFile>? imageFiles,
+  }) =>
+      CameraEventsState(
+          idCode39Text: idCode39Text ?? this.idCode39Text,
+          idPdf417Text: idPdf417Text ?? this.idPdf417Text,
+          passportMRZtext: passportMRZtext ?? this.passportMRZtext,
+          imageFiles: imageFiles ?? this.imageFiles);
 }
 
 enum DocumentType { id_card, driver_license, passport }
@@ -654,4 +679,13 @@ class _ImagePreviewCardState extends State<ImagePreviewCard> {
       ),
     );
   }
+}
+
+// ignore: camel_case_types
+class vImageFile {
+  /// string version of [DetectSide], i.e, front or back
+  final String side;
+  final File file;
+
+  vImageFile({required this.side, required this.file});
 }

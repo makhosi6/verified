@@ -9,6 +9,7 @@ import 'package:verified/domain/interfaces/i_store_repository.dart';
 import 'package:verified/domain/models/generic_api_error.dart';
 import 'package:verified/domain/models/generic_response.dart';
 import 'package:verified/domain/models/help_ticket.dart';
+import 'package:verified/domain/models/passport_response_data.dart';
 import 'package:verified/domain/models/promotion.dart';
 import 'package:verified/domain/models/resource_health_status_enum.dart';
 import 'package:verified/domain/models/transaction_history.dart';
@@ -22,12 +23,72 @@ import 'package:verified/services/dio.dart';
 class StoreRepository implements IStoreRepository {
   final Dio _httpClient;
 
-  StoreRepository(this._httpClient){
-      (_httpClient.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (HttpClient dioClient) =>
-        dioClient..badCertificateCallback = ((X509Certificate cert, String host, int port) {
-            verifiedErrorLogger('CERT: $cert \n HOST: $host:$port \n Error: Bad Certificate Error');
-            return true;
-          });
+  StoreRepository(this._httpClient) {
+    (_httpClient.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (HttpClient dioClient) => dioClient
+      ..badCertificateCallback = ((X509Certificate cert, String host, int port) {
+        verifiedErrorLogger(
+          'CERT: $cert \n HOST: $host:$port \n Error: Bad Certificate Error',
+        );
+        return true;
+      });
+  }
+
+  @override
+  Future<Either<GenericApiError, PassportResponseData>> decodePassportData(FormData data) async {
+    try {
+      final headers = {
+        'Authorization': 'Bearer $storeApiKey',
+        'Content-Type': 'multipart/form-data',
+      };
+
+      final dio = Dio();
+      final response = await dio.request(
+        OCR_URL,
+        options: Options(
+          method: 'POST',
+          headers: headers,
+        ),
+        data: data,
+      );
+
+      var statusCode = response.statusCode;
+      if (httpRequestIsSuccess(response.statusCode)) {
+        var data = PassportResponseData.fromJson(response.data);
+        if (data.error is String || data.message != 'successful') {
+          return left(
+            GenericApiError(
+              error: data.error,
+              status: 'unknown error',
+            ),
+          );
+        }
+
+        return right(data);
+      } else {
+        return left(
+          GenericApiError(
+            error: 'Error Occurred',
+            status: '$statusCode',
+          ),
+        );
+      }
+    } on DioException {
+     print('DioException ============>>>');
+      return left(
+        GenericApiError(
+          error: 'Error Occurred',
+          status: 'unknown dio error',
+        ),
+      );
+    } catch (error, stackTrace) {
+      debugPrintStack(stackTrace: stackTrace, label: error.toString());
+      return left(
+        GenericApiError(
+          status: 'unknown',
+          error: error.toString(),
+        ),
+      );
+    }
   }
 
   @override
@@ -228,7 +289,10 @@ class StoreRepository implements IStoreRepository {
       if (httpRequestIsSuccess(response.statusCode)) {
         return right(transform(response.data));
       } else {
-        return left(GenericApiError(error: 'Error Occurred', status: '$statusCode'));
+        return left(GenericApiError(
+          error: 'Error Occurred',
+          status: '$statusCode',
+        ));
       }
     } on DioException {
       return (await _genericGetRequest<T>('profile', data['id'], transform));
@@ -284,7 +348,10 @@ class StoreRepository implements IStoreRepository {
           transform(response.data),
         );
       } else {
-        return left(GenericApiError(error: 'Error Occurred', status: '$statusCode'));
+        return left(GenericApiError(
+          error: 'Error Occurred',
+          status: '$statusCode',
+        ));
       }
     } catch (e) {
       return left(
@@ -403,5 +470,3 @@ class StoreRepository implements IStoreRepository {
     }
   }
 }
-
-

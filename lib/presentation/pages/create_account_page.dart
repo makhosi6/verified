@@ -10,7 +10,7 @@ import 'package:verified/presentation/utils/widget_generator_options.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/inputs/generic_input.dart';
 
-final _globalKeyCaptureDetailsPageForm = GlobalKey<FormState>(debugLabel: 'capture-details-page-key');
+final _globalKeyCaptureDetailsPageForm = GlobalKey<FormState>(debugLabel: 'captured-details-page-key');
 
 class CreateAccountPage extends StatefulWidget {
   CreateAccountPage({super.key});

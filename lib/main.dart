@@ -10,10 +10,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gallery_asset_picker/gallery_asset_picker.dart';
 import 'package:uuid/validation.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/application/appbase/appbase_bloc.dart';
@@ -501,6 +503,9 @@ class _AppRootState extends State<AppRoot> {
 
   @override
   Widget build(BuildContext context) {
+    ///
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    ///
     return MaterialApp(
       navigatorKey: _navigatorKey,
       builder: FToastBuilder(),
@@ -511,10 +516,10 @@ class _AppRootState extends State<AppRoot> {
         '/secure': (context) => VerificationPage(
               key: UniqueKey(),
             ),
-        '/capture-details': (context) => CaptureVerifieeDetailsPage(
+        '/captured-details': (context) => CaptureVerifieeDetailsPage(
               key: UniqueKey(),
             ),
-        '/capture-details-info': (context) => VerificationInfoPage(
+        '/captured-details-info': (context) => VerificationInfoPage(
               key: UniqueKey(),
             )
       },
@@ -541,6 +546,7 @@ class _AppRootState extends State<AppRoot> {
               bool storeRequestInProgress = state.userProfileDataLoading ||
                   state.getHelpDataLoading ||
                   state.walletDataLoading ||
+                  state.decodePassportDataLoading ||
                   state.historyDataLoading ||
                   state.promotionDataLoading ||
                   state.uploadsDataLoading ||

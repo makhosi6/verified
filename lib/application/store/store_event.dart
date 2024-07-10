@@ -9,6 +9,8 @@ class StoreEvent with _$StoreEvent {
 
   ///
   const factory StoreEvent.uploadFiles(List<MultipartFile> uploads) = UploadFiles;
+  const factory StoreEvent.decodePassportData(FormData data) = DecodePassportData;
+  const factory StoreEvent.addVerifee(CapturedVerifeeDetails data) = AddVerifee;
 
   ///
   const factory StoreEvent.getUserProfile(String userId) = GetUserProfile;

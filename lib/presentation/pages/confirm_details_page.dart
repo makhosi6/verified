@@ -77,7 +77,7 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                   ),
                   leadingWidth: 80.0,
                   leading: VerifiedBackButton(
-                    key: const Key('capture-details-page-back-btn'),
+                    key: const Key('captured-details-page-back-btn'),
                     onTap: () => Navigator.pop(context),
                     isLight: true,
                   ),
