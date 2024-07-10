@@ -1,13 +1,17 @@
-version: '3'
+version: "3"
 services:
   emqx1:
     image: emqx:5.0.26
+    deploy:
+      resources:
+        limits:
+          memory: "200M"
     container_name: emqx1
     environment:
-    - TZ=Africa/Johannesburg
-    - "EMQX_NODE_NAME=emqx@node1.emqx.io"
-    - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
-    - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
+      - TZ=Africa/Johannesburg
+      - "EMQX_NODE_NAME=emqx@node1.emqx.io"
+      - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
+      - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
     healthcheck:
       test: ["CMD", "/opt/emqx/bin/emqx_ctl", "status"]
       interval: 5s
@@ -17,24 +21,28 @@ services:
     networks:
       emqx-bridge:
         aliases:
-        - node1.emqx.io
+          - node1.emqx.io
     ports:
       - 1883:1883
       - 8083:8083
       - 8084:8084
       - 8883:8883
-      - 18083:18083 
+      - 18083:18083
     volumes:
       - emqx1_data:/opt/emqx/data
 
   emqx2:
     image: emqx:5.0.26
+    deploy:
+      resources:
+        limits:
+          memory: "200M"
     container_name: emqx2
     environment:
-    - TZ=Africa/Johannesburg
-    - "EMQX_NODE_NAME=emqx@node2.emqx.io"
-    - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
-    - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
+      - TZ=Africa/Johannesburg
+      - "EMQX_NODE_NAME=emqx@node2.emqx.io"
+      - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
+      - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
     healthcheck:
       test: ["CMD", "/opt/emqx/bin/emqx_ctl", "status"]
       interval: 5s
@@ -44,15 +52,55 @@ services:
     networks:
       emqx-bridge:
         aliases:
-        - node2.emqx.io
+          - node2.emqx.io
     volumes:
       - emqx2_data:/opt/emqx/data
 
+  influxdb:
+    image: influxdb:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ${VERIFIED_INFLUXDB_ADMIN_USER}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${VERIFIED_INFLUXDB_ADMIN_PASSWORD}
+      DOCKER_INFLUXDB_INIT_ORG: ${VERIFIED_INFLUXDB_ORG}
+      DOCKER_INFLUXDB_INIT_BUCKET: ${VERIFIED_INFLUXDB_BUCKET}
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
+
+  telegraf:
+      image: telegraf:latest
+      deploy:
+            resources:
+              limits:
+                memory: '200M'
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ./apps/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      environment:
+        INFLUXDB_URL: http://influxdb:8086
+        INFLUXDB_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
+        INFLUXDB_ORG: ${VERIFIED_INFLUXDB_ORG}
+        INFLUXDB_BUCKET: ${VERIFIED_INFLUXDB_BUCKET}
+      depends_on:
+        - influxdb
 
   nginx_proxy:
     build:
       context: .
       dockerfile: ./apps/nginx_proxy/Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
     ports:
       - "80:80"
       - "443:443"
@@ -72,28 +120,16 @@ services:
       - app_verified_io_service
     networks:
       - local_bridge
-  
-  # fb_notifications_service:
-  #   build:
-  #     context: .
-  #     dockerfile: ./apps/notifications/Dockerfile
-  #   volumes:
-  #     - ./log/notifications:/app/log/notifications
-  #   environment:
-  #     - PORT=${FB_NOTIF_PORT}
-  #     - NODE_ENV=production
-  #     - FB_NOTIF_PORT=${FB_NOTIF_PORT}
-  #     - FB_SERVER_TOKEN=${FB_SERVER_TOKEN}
-  #     # - NODE_DEBUG=http
-  #   restart: unless-stopped
-  #   networks:
-  #     - local_bridge
 
-  
   payments_service:
     build:
       context: .
       dockerfile: ./apps/payments/Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
     volumes:
       - ./log/payments:/app/log/payments
     environment:
@@ -109,11 +145,15 @@ services:
     networks:
       - local_bridge
 
-  
   store_service:
     build:
       context: .
       dockerfile: ./apps/store/Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
     volumes:
       - ./apps/store/db:/app/apps/store/db
       - ./log/store:/app/log/store
@@ -126,11 +166,15 @@ services:
     networks:
       - local_bridge
 
-    
   cdn_service:
     build:
       context: .
       dockerfile: ./apps/cdn/Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
     volumes:
       - ./apps/cdn/root:/app/apps/cdn/root
       - ./apps/cdn/static:/app/apps/cdn/static
@@ -142,11 +186,15 @@ services:
     networks:
       - local_bridge
 
-  
   verify_id_service:
     build:
       context: .
       dockerfile: ./apps/verifyId/Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
     volumes:
       - ./log/verify_id:/app/log/verify_id
     environment:
@@ -160,6 +208,11 @@ services:
 
   whatsapp_messaging_service:
     image: makhosi/whatsapp_hook:3.3.minimal
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '200M'
     environment:
       - TZ=Africa/Johannesburg
     ports:
@@ -173,6 +226,12 @@ services:
 
   mrz_decoder_service:
     image: makhosi/mrz_decoder:1.0.2
+    deploy:
+      resources:
+        limits:
+          memory: "512M"
+          cpus: '0.5'
+
     ports:
       - "5694:5694"
     volumes:
@@ -183,6 +242,11 @@ services:
 
   mrz_reader_service:
     image: makhosi/mrz_reader:1.0.1
+    deploy:
+      resources:
+        limits:
+          memory: "512M"
+          cpus: '0.5'
     ports:
       - "5693:5693"
     volumes:
@@ -193,6 +257,11 @@ services:
 
   app_verified_io_service:
     image: makhosi/app_verified_io:1.1.1
+    deploy:
+      resources:
+        limits:
+          memory: "512M"
+          cpus: '0.5'
     tty: true
     environment:
       APP_NAME: ${VERIFIEDWEB_APP_NAME}
@@ -201,7 +270,7 @@ services:
       APP_DEBUG: ${VERIFIEDWEB_APP_DEBUG}
       APP_KEY: ${VERIFIEDWEB_APP_KEY}
       DB_CONNECTION: ${VERIFIEDWEB_DB_CONNECTION}
-      DB_HOST: 'mysql_db_service'
+      DB_HOST: "mysql_db_service"
       DB_PORT: ${VERIFIEDWEB_DB_PORT}
       DB_DATABASE: ${VERIFIEDWEB_DB_DATABASE}
       DB_USERNAME: ${VERIFIEDWEB_DB_USERNAME}
@@ -216,13 +285,18 @@ services:
     ports:
       - "9000:80"
     # volumes:
-      # - ./apps/app_verified_io:/var/www
+    # - ./apps/app_verified_io:/var/www
     restart: unless-stopped
     networks:
-      - local_bridge  
+      - local_bridge
 
   mysql_db_service:
     image: mysql:8.0
+    deploy:
+      resources:
+        limits:
+          memory: "512M"
+          cpus: '0.5'
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${VERIFIEDWEB_DB_DATABASE}
@@ -234,14 +308,15 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - local_bridge  
+      - local_bridge
 
 volumes:
   emqx1_data:
     driver: local
   emqx2_data:
     driver: local
-
+  influxdb_data:
+    driver: local
 
 networks:
   emqx-bridge:
