@@ -256,7 +256,7 @@ services:
       - local_bridge
 
   app_verified_io_service:
-    image: makhosi/app_verified_io:1.1.1
+    image: makhosi/app_verified_io:1.1.2
     deploy:
       resources:
         limits:
