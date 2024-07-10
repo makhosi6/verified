@@ -84,6 +84,7 @@ services:
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
         - ./apps/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+        - ./log/nginx:/var/log/nginx:ro
       environment:
         INFLUXDB_URL: http://influxdb:8086
         INFLUXDB_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
