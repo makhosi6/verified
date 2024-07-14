@@ -12,9 +12,11 @@ import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/passport_response_data.dart';
 import 'package:verified/domain/models/promotion.dart';
 import 'package:verified/domain/models/resource_health_status_enum.dart';
+import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/domain/models/transaction_history.dart';
 import 'package:verified/domain/models/upload_response.dart';
 import 'package:verified/domain/models/user_profile.dart';
+import 'package:verified/domain/models/verification_request.dart';
 import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/helpers/logger.dart';
 import 'package:verified/helpers/security/nonce.dart';
@@ -41,8 +43,7 @@ class StoreRepository implements IStoreRepository {
         'Content-Type': 'multipart/form-data',
       };
 
-      final dio = Dio();
-      final response = await dio.request(
+      final response = await _httpClient.request(
         OCR_URL,
         options: Options(
           method: 'POST',
@@ -72,8 +73,9 @@ class StoreRepository implements IStoreRepository {
           ),
         );
       }
-    } on DioException {
-     print('DioException ============>>>');
+    } on DioException catch (error, stackTrace) {
+      debugPrintStack(stackTrace: stackTrace, label: error.toString());
+      print('DioException ============>>> ');
       return left(
         GenericApiError(
           error: 'Error Occurred',
@@ -431,9 +433,8 @@ class StoreRepository implements IStoreRepository {
         'files': uploads,
       });
 
-      final dio = Dio();
       const url = '$CDN/api/v1/media/upload';
-      final response = await dio.request(
+      final response = await _httpClient.request(
         url,
         options: Options(
           method: 'POST',
@@ -467,6 +468,46 @@ class StoreRepository implements IStoreRepository {
         files: [],
         message: 'No file uploaded',
       );
+    }
+  }
+
+  @override
+  Future<Either<GenericApiError, GenericResponse>> makeIdVerificationRequest(VerificationRequest data) =>
+      _genericPostRequest('verification', data.toJson(), (_) => _);
+
+  @override
+  Future<Either<GenericApiError, GenericResponse>> makePassportVerificationRequest(VerificationRequest data) =>
+      _genericPostRequest('verification', data.toJson(), (_) => _);
+
+  @override
+  Future<Either<Exception, VerifyComprehensiveResponse>> comprehensiveVerification(
+      {required SearchPerson? person, required String clientId}) async {
+    try {
+      if (person == null) return left(Exception('Empty request Object'));
+      final headers = {
+        'Content-Type': 'multipart/form-data',
+        'Accept': 'application/json',
+      };
+      final response = await _httpClient.post(
+        '/comprehensive_verification?client=$clientId',
+        options: Options(
+          headers: headers,
+        ),
+        data: person.toJson(),
+      );
+      if (httpRequestIsSuccess(response.statusCode)) {
+        // if (response.statusCode == 200) throw Exception('Some made up error.');
+
+        return right(
+          VerifyComprehensiveResponse.fromJson(
+            {'status': response.statusCode, 'data': person.toJson(), 'message': response.data['message']},
+          ),
+        );
+      } else {
+        return left(Exception(response.statusMessage));
+      }
+    } catch (e) {
+      return left(Exception(e.toString()));
     }
   }
 }

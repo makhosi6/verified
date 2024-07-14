@@ -6,9 +6,11 @@ import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/passport_response_data.dart';
 import 'package:verified/domain/models/promotion.dart';
 import 'package:verified/domain/models/resource_health_status_enum.dart';
+import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/domain/models/transaction_history.dart';
 import 'package:verified/domain/models/upload_response.dart';
 import 'package:verified/domain/models/user_profile.dart';
+import 'package:verified/domain/models/verification_request.dart';
 import 'package:verified/domain/models/wallet.dart';
 
 abstract class IStoreRepository {
@@ -16,7 +18,17 @@ abstract class IStoreRepository {
   Future<ResourceHealthStatus> getHealthStatus();
 
   ///
+  Future<Either<Exception, VerifyComprehensiveResponse>> comprehensiveVerification(
+      {required SearchPerson? person, required String clientId});
+
+  ///
   Future<UploadResponse> uploadFiles(List<MultipartFile> uploads);
+
+  ///
+  Future<Either<GenericApiError, GenericResponse>> makeIdVerificationRequest(VerificationRequest data);
+
+  ///
+  Future<Either<GenericApiError, GenericResponse>> makePassportVerificationRequest(VerificationRequest data);
 
   ///
   Future<Either<GenericApiError, PassportResponseData>> decodePassportData(FormData data);

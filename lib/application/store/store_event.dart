@@ -8,9 +8,20 @@ class StoreEvent with _$StoreEvent {
   const factory StoreEvent.requestHelp(HelpTicket helpRequest) = RequestHelp;
 
   ///
+  const factory StoreEvent.createPersonalDetails(SearchPerson searchPerson) = CreatePersonalDetails;
+  const factory StoreEvent.selectJobsOrService(List<String> serviceOrJob) = SelectJobsOrService;
+  const factory StoreEvent.validateAndSubmit() = ValidateAndSubmit;
+
+  ///
   const factory StoreEvent.uploadFiles(List<MultipartFile> uploads) = UploadFiles;
   const factory StoreEvent.decodePassportData(FormData data) = DecodePassportData;
   const factory StoreEvent.addVerifee(CapturedVerifeeDetails data) = AddVerifee;
+  const factory StoreEvent.createVerifieeDetails(VerifeeRequest verifiee) = CreateVerifieeDetails;
+  const factory StoreEvent.makeIdVerificationRequest() = MakeIdVerificationRequest;
+  const factory StoreEvent.makePassportVerificationRequest() = MakePassportVerificationRequest;
+  const factory StoreEvent.uploadIdImages(List<MultipartFile> files) = UploadIdImages;
+  const factory StoreEvent.uploadSelfieImage(MultipartFile file) = UploadImage;
+  const factory StoreEvent.uploadPassportImage(MultipartFile file) = UploadPassportImage;
 
   ///
   const factory StoreEvent.getUserProfile(String userId) = GetUserProfile;

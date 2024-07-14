@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_beep/flutter_beep.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
@@ -37,12 +35,13 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
   bool _isProcessing = false;
   final textDetector = TextRecognizer();
   String? barcodeText;
+  String? barcodeText2;
   List<String> messages = [];
   String? pdf417BarcodesText;
   String machineReadableCode = '';
   String machineReadableCode2 = '';
   List? facesFound;
-  List<vImageFile> imageFiles = [];
+  List<ImageFile> imageFiles = [];
   Rect? detectedCardRect;
   CameraEventsState? documentScannerState;
 
@@ -72,13 +71,14 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     try {
       final inputImage = getInputImage(image);
       final hasCode39Barcode = await processBarcodeImage(inputImage);
+      final hasCode39Barcode2 = await processGenericBarcodeImage(inputImage);
       final hasCodePdf417Barcode = await processPdf417Image(inputImage);
       final hasFace = await processFaceImage(inputImage);
       final recognizedText = await textDetector.processImage(inputImage);
-      DetectSide? detectedSide = detectSide(recognizedText);
+      final detectedSide = detectSide(recognizedText);
       final hasMrzCode = await processMachineReadableImage(recognizedText);
-
-      var allFalse = !(hasCode39Barcode || hasCodePdf417Barcode || hasFace || hasMrzCode);
+      final hasIdBookText = await idBookTextDetected(recognizedText);
+      final allFalse = !(hasCode39Barcode || hasCodePdf417Barcode || hasFace || hasMrzCode || hasIdBookText);
 
       if (!allFalse) {
         if (widget.documentType == DocumentType.passport) {
@@ -90,7 +90,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
                       ? 'Personal Details Section'
                       : 'Some Landmarks';
           messages.add('$missingPart is missing from the ${widget.documentType.name}');
-        } else {
+        } else if (widget.documentType == DocumentType.id_card) {
           var missingPart = !hasFace
               ? 'Portrait'
               : (!hasCode39Barcode)
@@ -102,39 +102,50 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
                           : 'Some Landmarks';
 
           messages.add(missingPart);
+        } else if (DocumentType.id_book == widget.documentType) {
+          var missingPart = !hasFace
+              ? 'Portrait'
+              : (!hasCode39Barcode)
+                  ? 'The 39 Barcode'
+                  : 'Some Landmarks';
+
+          messages.add(missingPart);
         }
       }
       widget.onMessage(messages);
 
-      debugPrint('$hasCodePdf417Barcode|$hasMrzCode|$hasFace|$hasCode39Barcode|');
+      debugPrint('---->$hasCodePdf417Barcode|$hasMrzCode|$hasFace|$hasCode39Barcode|');
 
       if (detectedSide != null) {
+        /// capture id_card back
         if (hasCode39Barcode &&
             detectedSide == DetectSide.back &&
             hasCodePdf417Barcode &&
             widget.documentType != DocumentType.passport) {
           await captureImage(detectedSide.name);
-          if (imageFiles.length == 2) {
-            // await _cameraController!.stopImageStream();
-          }
         }
+
+        /// capture passport front
         if (hasCode39Barcode &&
             detectedSide == DetectSide.front &&
             hasMrzCode &&
             widget.documentType == DocumentType.passport) {
           await captureImage(detectedSide.name);
-          if (imageFiles.length == 2) {
-            // await _cameraController!.stopImageStream();
-          }
         }
 
+        /// capture id_card front
         if (hasFace && detectedSide == DetectSide.front) {
           await captureImage(detectedSide.name);
-          if (imageFiles.length == 2) {
-            // await _cameraController!.stopImageStream();
-          }
         }
       }
+
+      /// capture id_book front
+        print('MAYBE IT\'S AN ID_BOOK $hasFace| $hasCode39Barcode2 | $hasIdBookText');
+      if (hasFace && (hasCode39Barcode2 || hasCode39Barcode) && hasIdBookText) {
+        await captureImage(DetectSide.front.name);
+      }
+
+      ///
       if (mounted) setState(() {});
     } catch (e) {
       debugPrint('Error processing image: $e');
@@ -204,14 +215,14 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       final barcodeScanner = BarcodeScanner(formats: [BarcodeFormat.all]);
       final barcodes = await barcodeScanner.processImage(inputImage);
       if (barcodes.isNotEmpty) {
-        // setState(() {
-        //   barcodeText = barcodes.first.rawValue;
-        // });
+        setState(() {
+          barcodeText2 = barcodes.first.rawValue;
+        });
         debugPrint('Detected barcode with text: $barcodeText');
 
         return true;
       } else {
-        // barcodeText = null;
+        barcodeText2 = null;
       }
 
       return false;
@@ -289,6 +300,16 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     );
   }
 
+  bool idBookTextDetected(RecognizedText recognizedText) => recognizedText.blocks.any((block) {
+        var value = block.text.contains(RegExp(r'S.A.BURGER/S. A.CITIZEN|S.A.BURGER|I.D.No.|I.D.No|SUID-AFR|FORENAMES|ISSUED BY AUTHORITY OF|THE DIRECTOR-GENERAL'));
+
+        if (value) {
+          setState(() {
+            detectedCardRect = block.boundingBox;
+          });
+        }
+        return value;
+      });
   DetectSide? detectSide(RecognizedText recognizedText) {
     bool isFront = recognizedText.blocks.any((block) {
       debugPrint('BLOCKS: ${block.text}');
@@ -325,12 +346,13 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       debugPrint('Captured $side image: ${image.path}');
       if (mounted && imageFiles.where((i) => i.side == side).isEmpty) {
         messages = [];
-        imageFiles.add(vImageFile(side: side, file: File(image.path)));
+        imageFiles.add(ImageFile(side: side, file: File(image.path)));
 
         FlutterBeep.beep();
       }
       documentScannerState = CameraEventsState(
         idCode39Text: barcodeText,
+        idCode39Text2: barcodeText2,
         idPdf417Text: pdf417BarcodesText,
         passportMRZtext: '',
         imageFiles: imageFiles,
@@ -338,6 +360,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       widget.onStateChanged(documentScannerState);
       // widget.onCapture(File(image.path), DetectSide.values.where((e) => e.name == side).first);
       debugPrint('BARCODE TEXT: $barcodeText \n\n');
+      debugPrint('BARCODE TEXT_2: $barcodeText2 \n\n');
       debugPrint('Pdf417 Barcodes Text: $pdf417BarcodesText \n\n');
       debugPrint('MachineReadableCode: $machineReadableCode \n\n');
       debugPrint('MachineReadableCode2: $machineReadableCode2 \n\n');
@@ -381,6 +404,12 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
                           borderColor: Colors.red,
                           type: widget.documentType,
                         )
+                      else if (widget.documentType == DocumentType.id_book)
+                        CustomOverlay(
+                          aspectRatio: 2 / 3,
+                          borderColor: Colors.orangeAccent,
+                          type: widget.documentType,
+                        )
                       else
                         CustomOverlay(
                           aspectRatio: 2 / 3,
@@ -388,7 +417,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
                           type: widget.documentType,
                         ),
 
-                      if (DocumentType.passport != widget.documentType ? imageFiles.length < 2 : imageFiles.isEmpty)
+                      if ((DocumentType.id_card != widget.documentType) ? imageFiles.length < 2 : imageFiles.isEmpty)
                         Positioned(
                           top: 10,
                           child: Container(
@@ -446,7 +475,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
 
                       ///
 
-                      if (DocumentType.passport != widget.documentType
+                      if ((DocumentType.passport != widget.documentType && DocumentType.id_book != widget.documentType)
                           ? (imageFiles.isNotEmpty && imageFiles.length == 2)
                           : (imageFiles.isNotEmpty && imageFiles.length == 1))
                         AnimatedPositioned(
@@ -459,10 +488,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
                             label: const Row(
                               children: [
                                 Text(' Proceed '),
-                                Icon(
-                                  Icons.arrow_forward_ios_rounded,
-                                  size: 28,
-                                ),
+                                Icon(Icons.arrow_forward_ios_rounded),
                               ],
                             ),
                           ),
@@ -581,28 +607,32 @@ class CameraEventsState {
   final String? idCode39Text;
   final String? idPdf417Text;
   final String? passportMRZtext;
-  final List<vImageFile> imageFiles;
+  final List<ImageFile> imageFiles;
+  final String? idCode39Text2;
 
   const CameraEventsState(
       {required this.idCode39Text,
       required this.idPdf417Text,
       required this.passportMRZtext,
-      required this.imageFiles});
+      required this.imageFiles,
+      required this.idCode39Text2});
 
   CameraEventsState copyWith({
     String? idCode39Text,
+    String? idCode39Text2,
     String? idPdf417Text,
     String? passportMRZtext,
-    List<vImageFile>? imageFiles,
+    List<ImageFile>? imageFiles,
   }) =>
       CameraEventsState(
           idCode39Text: idCode39Text ?? this.idCode39Text,
+          idCode39Text2: idCode39Text2 ?? this.idCode39Text2,
           idPdf417Text: idPdf417Text ?? this.idPdf417Text,
           passportMRZtext: passportMRZtext ?? this.passportMRZtext,
           imageFiles: imageFiles ?? this.imageFiles);
 }
 
-enum DocumentType { id_card, driver_license, passport }
+enum DocumentType { id_card, id_book, passport }
 
 class ImagePreviewCard extends StatefulWidget {
   final Widget child;
@@ -681,11 +711,10 @@ class _ImagePreviewCardState extends State<ImagePreviewCard> {
   }
 }
 
-// ignore: camel_case_types
-class vImageFile {
+class ImageFile {
   /// string version of [DetectSide], i.e, front or back
   final String side;
   final File file;
 
-  vImageFile({required this.side, required this.file});
+  ImageFile({required this.side, required this.file});
 }

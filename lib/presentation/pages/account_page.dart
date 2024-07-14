@@ -35,10 +35,10 @@ import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/text/list_title.dart';
 
+  GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 class AccountPage extends StatelessWidget {
   AccountPage({super.key});
 
-  GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +75,7 @@ class AccountPage extends StatelessWidget {
         ),
       ),
       body: RefreshIndicator(
-        key: refreshIndicatorKey,
+        key: _refreshIndicatorKey,
         onRefresh: () async => await Future.delayed(
           const Duration(seconds: 2),
           // VerifiedAppNativeCalls.restartApp,

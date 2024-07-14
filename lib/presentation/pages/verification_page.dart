@@ -3,10 +3,14 @@ import 'dart:io';
 import 'package:face_camera/face_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_beep/flutter_beep.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/choose_document_type_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
+import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 
 var _smartCameraGlobalKey = GlobalKey<SmartFaceCameraState>();
@@ -28,10 +32,6 @@ class _VerificationPageState extends State<VerificationPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    final args = ModalRoute.of(context)?.settings.arguments as VerificationPageArgs?;
-    final uuid = args?.uuid;
-
     /// safeArea padding
     final tp = MediaQuery.of(context).padding.top;
     final bp = MediaQuery.of(context).padding.bottom;
@@ -133,7 +133,7 @@ class _VerificationPageState extends State<VerificationPage> {
                               setState(() {
                                 _capturedImage = null;
                               });
-                                _smartCameraGlobalKey.currentState?.controller.initialize();
+                              _smartCameraGlobalKey.currentState?.controller.initialize();
                             } catch (e) {
                               print(e);
                             }
@@ -151,13 +151,26 @@ class _VerificationPageState extends State<VerificationPage> {
                     duration: const Duration(milliseconds: 250),
                     child: FloatingActionButton.extended(
                       key: UniqueKey(),
-                      onPressed: () => navigate(context, page: const ChooseDocumentPage(), replaceCurrentPage: true),
+                      onPressed: () {
+                        convertToFormData(_capturedImage).then((fileData) {
+                          if (_capturedImage != null && fileData != null) {
+                            context.read<StoreBloc>().add(
+                                  StoreEvent.uploadSelfieImage(fileData),
+                                );
+                          }
+                        }).catchError((err) {
+                          verifiedErrorLogger(err);
+                        }, test: (error) {
+                          return true;
+                        });
+
+                        navigate(context, page: const ChooseDocumentPage(), replaceCurrentPage: true);
+                      },
                       label: const Row(
                         children: [
                           Text(' Proceed '),
                           Icon(
                             Icons.arrow_forward_ios_rounded,
-                            size: 28,
                           ),
                         ],
                       ),

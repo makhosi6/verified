@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:verified/application/search_request/search_request_bloc.dart';
+import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/services_options_enum.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/confirm_details_page.dart';
@@ -118,8 +118,8 @@ class _SelectServicesPageState extends State<SelectServicesPage> {
                                     
 
                                   ///
-                                  context.read<SearchRequestBloc>().add(
-                                        SearchRequestEvent.selectJobsOrService(
+                                  context.read<StoreBloc>().add(
+                                        StoreEvent.selectJobsOrService(
                                           selectedServicesOrJobs
 
                                               /// make it a unique list

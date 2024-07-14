@@ -1,14 +1,13 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:verified/application/search_request/search_request_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/verifee_request.dart';
 import 'package:verified/globals.dart';
-import 'package:verified/presentation/pages/custom_splash_screen.dart';
+import 'package:verified/helpers/data/countries.dart';
 import 'package:verified/presentation/pages/home_page.dart';
+import 'package:verified/presentation/pages/id_document_scanner_page.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/learn_more_highlighted_btn.dart';
@@ -19,12 +18,18 @@ import 'package:verified/presentation/utils/widget_generator_options.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/inputs/generic_input.dart';
+import 'package:verified/presentation/widgets/popups/successful_action_popup.dart';
 
 final _globalKeyCaptureVerifieeDetailsPageForm = GlobalKey<FormState>(debugLabel: 'capture-verifiee-details-page-key');
 
-class CaptureVerifieeDetailsPage extends StatelessWidget {
+class CaptureVerifieeDetailsPage extends StatefulWidget {
   CaptureVerifieeDetailsPage({super.key});
 
+  @override
+  State<CaptureVerifieeDetailsPage> createState() => _CaptureVerifieeDetailsPageState();
+}
+
+class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage> {
   ///
   var keyboardType = TextInputType.number;
 
@@ -33,19 +38,29 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
 
   ///
   @override
+  void dispose() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    _globalKeyCaptureVerifieeDetailsPageForm.currentState?.dispose();
+    super.dispose();
+  }
+
+  ///
+  @override
   Widget build(BuildContext context) {
+    final documentType = ModalRoute.of(context)?.settings.arguments as DocumentType?;
     return BlocListener<StoreBloc, StoreState>(
       bloc: context.read<StoreBloc>(),
       listener: (context, state) {},
       child: Builder(
         builder: (context) {
-          final image = ModalRoute.of(context)?.settings.arguments as File?;
           //
-          // if (context.watch<StoreBloc>().state.capturedVerifeeDetails == null &&
-          //     context.watch<StoreBloc>().state.decodePassportData == null) {
-          //   // return const CustomSplashScreen();
+          // if (context.watch<StoreBloc>().state.decodePassportDataLoading ||
+          //     (context.watch<StoreBloc>().state.capturedVerifeeDetails == null &&
+          //         context.watch<StoreBloc>().state.decodePassportData == null)) {
+          //   return const CustomSplashScreen();
           // }
           //
+          final capturedVerifeeDetails = context.watch<StoreBloc>().state.capturedVerifeeDetails;
           return WillPopScope(
             onWillPop: () async {
               navigate(context, page: const HomePage(), replaceCurrentPage: true);
@@ -91,7 +106,7 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
                                   Padding(
                                     padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
                                     child: Text(
-                                      context.watch<StoreBloc>().state.capturedVerifeeDetails?.toString() ??
+                                      capturedVerifeeDetails?.toString() ??
                                           'Instantly confirm the legitimacy of personal information with our user-friendly app.',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w400,
@@ -109,15 +124,18 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
                                   ///
                                   ...[
                                     CaptureUserDetailsInputOption(
-                                      hintText: 'Person to be verify',
                                       label: 'Name or Nickname (Optional)',
-                                      initialValue: null,
-                                      autofocus: true,
+                                      hintText: 'Type your name...',
+                                      initialValue:
+                                          '${capturedVerifeeDetails?.names ?? ''}  ${capturedVerifeeDetails?.surname ?? ''}',
+                                      // autofocus: capturedVerifeeDetails?.names == null &&
+                                      //     capturedVerifeeDetails?.surname == null,
+                                      autofocus: false,
                                       inputFormatters: [],
                                       keyboardType: TextInputType.text,
                                       validator: (name) {
                                         if (name == null || name.isEmpty == true) {
-                                          return 'Please provide a name/surname';
+                                          return 'Please provide a name/surname/nickname';
                                         }
                                         if (name.length < 2) {
                                           return 'Name must be at least 2 characters long';
@@ -129,17 +147,26 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
                                       },
                                     ),
                                     CaptureUserDetailsInputOption(
-                                      hintText: 'Type their Id Number',
-                                      initialValue: null,
-                                      label: 'Government-issued ID Number (optional)',
+                                      hintText: 'Type their ID Number(Document Number)',
+                                      initialValue: capturedVerifeeDetails?.identityNumber ??
+                                          capturedVerifeeDetails?.passportNumber,
+                                      label:
+                                          'Govt-issued ${documentType?.name == 'passport' ? 'Passport' : 'ID'} Number (optional)',
                                       inputMask: '000000 0000 000',
                                       autofocus: false,
                                       maxLength: 13,
                                       inputFormatters: [],
                                       keyboardType: TextInputType.number,
                                       validator: (idNumber) {
+                                        if (verifiee.phoneNumber != null && idNumber?.isEmpty == true) {
+                                          return null;
+                                        }
                                         if (idNumber == null || idNumber.isEmpty) {
                                           return 'You have to provide a phone number or a ID number';
+                                        }
+
+                                        if (capturedVerifeeDetails?.documentType == DocumentType.passport.name) {
+                                          return null;
                                         }
                                         return validateIdNumber(idNumber);
                                       },
@@ -160,6 +187,13 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
                                       inputFormatters: [],
                                       keyboardType: TextInputType.number,
                                       validator: (phone) {
+                                        var id = verifiee.idNumber ??
+                                            capturedVerifeeDetails?.identityNumber ??
+                                            capturedVerifeeDetails?.identityNumber2 ??
+                                            capturedVerifeeDetails?.cardNumber;
+                                        if (id != null && phone?.isEmpty == true) {
+                                          return null;
+                                        }
                                         if (phone == null || phone.isEmpty) {
                                           return 'You have to provide a phone number or a ID number';
                                         }
@@ -176,6 +210,35 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
                                       hintText: 'Type their email address',
                                       initialValue: null,
                                       label: 'Email address (Optional)',
+                                      autofocus: false,
+                                      inputFormatters: [],
+                                      keyboardType: TextInputType.emailAddress,
+                                      validator: (_) => null,
+                                      onChangeHandler: (email) {
+                                        verifiee = verifiee.copyWith(email: email);
+                                      },
+                                    ),
+                                    CaptureUserDetailsInputOption(
+                                      hintText: 'Nationality',
+                                      initialValue: capturedVerifeeDetails?.nationality is String
+                                          ? COUNTRIES_ISO_3366_ALPHA_3[capturedVerifeeDetails?.nationality] ??
+                                              COUNTRIES_ISO_3166_ALPHA_2[capturedVerifeeDetails?.nationality]
+                                          : null,
+                                      label: 'Nationality',
+                                      autofocus: false,
+                                      inputFormatters: [],
+                                      keyboardType: TextInputType.emailAddress,
+                                      validator: (_) => null,
+                                      onChangeHandler: (email) {
+                                        verifiee = verifiee.copyWith(email: email);
+                                      },
+                                    ),
+                                    CaptureUserDetailsInputOption(
+                                      hintText: 'Date of Birth',
+                                      initialValue: capturedVerifeeDetails?.dayOfBirth != null
+                                          ? _formatDate(capturedVerifeeDetails?.dayOfBirth)
+                                          : null,
+                                      label: 'Date of Birth',
                                       autofocus: false,
                                       inputFormatters: [],
                                       keyboardType: TextInputType.emailAddress,
@@ -205,6 +268,8 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
                                               initialValue: inputOption.initialValue,
                                               hintText: inputOption.hintText,
                                               label: inputOption.label,
+                                              readOnly: inputOption.label == 'Nationality' ||
+                                                  inputOption.label == 'Date of Birth',
                                               maxLines: inputOption.maxLines,
                                               autofocus: inputOption.autofocus,
                                               keyboardType: inputOption.keyboardType,
@@ -249,15 +314,63 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
                                       key: UniqueKey(),
                                       onTap: () {
                                         if (_globalKeyCaptureVerifieeDetailsPageForm.currentState?.validate() == true) {
-                                          context.read<SearchRequestBloc>().add(
-                                                SearchRequestEvent.createVerifieeDetails(
+                                          context.read<StoreBloc>().add(
+                                                StoreEvent.createVerifieeDetails(
                                                   verifiee,
                                                 ),
                                               );
 
-                                          navigate(context, page: const HomePage(), replaceCurrentPage: true);
+                                          if (documentType == DocumentType.id_card ||
+                                              documentType == DocumentType.id_book) {
+                                            context.read<StoreBloc>().add(const StoreEvent.makeIdVerificationRequest());
+                                          } else if (documentType == DocumentType.passport) {
+                                            context
+                                                .read<StoreBloc>()
+                                                .add(const StoreEvent.makePassportVerificationRequest());
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                              ..clearSnackBars()
+                                              ..showSnackBar(
+                                                SnackBar(
+                                                  showCloseIcon: true,
+                                                  closeIconColor: const Color.fromARGB(255, 254, 226, 226),
+                                                  duration: const Duration(seconds: 10),
+                                                  content: const Text(
+                                                    'Verification Request was not sent',
+                                                    style: TextStyle(
+                                                      color: Color.fromARGB(255, 254, 226, 226),
+                                                    ),
+                                                  ),
+                                                  backgroundColor: errorColor,
+                                                ),
+                                              );
+                                          }
+
+                                          ///  pop-up with a barrier to home-screen or put the call back inside a listener
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => SuccessfulActionModal(
+                                              title: 'Generating build script completed',
+                                              subtitle:
+                                                  "To ignore certain requests from your Nginx logs, you can use the if directive within the http or server block of your Nginx configuration. Here's a basic example to exclude requests to a specific URL (like /healthcheck) from being logged",
+                                              nextAction: () => navigate(
+                                                context,
+                                                page: const HomePage(),
+                                              ),
+                                              showDottedDivider: true,
+                                            ),
+                                          );
                                         } else {
-                                          print('FALSE, ${verifiee.toJson()}');
+                                          ScaffoldMessenger.of(context)
+                                            ..clearSnackBars()
+                                            ..showSnackBar(
+                                              SnackBar(
+                                                content: const Text(
+                                                  'Some fields are not valid.',
+                                                ),
+                                                action: SnackBarAction(label: 'Refresh', onPressed: () {}),
+                                              ),
+                                            );
                                         }
                                       },
                                       label: 'Next',
@@ -288,5 +401,20 @@ class CaptureVerifieeDetailsPage extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+String? _formatDate(String? dayOfBirth) {
+  try {
+    var date = DateTime.tryParse(dayOfBirth ?? '');
+    if (date is DateTime) {
+      return DateFormat('dd/MM/yyyy').format(date);
+    } else if (dayOfBirth != null) {
+      return (dayOfBirth).split(' ').join('/');
+    } else {
+      return null;
+    }
+  } catch (err) {
+    return null;
   }
 }

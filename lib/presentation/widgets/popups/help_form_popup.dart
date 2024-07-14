@@ -72,9 +72,10 @@ class _HelpForm extends StatefulWidget {
   State<_HelpForm> createState() => _HelpFormState();
 }
 
+final _formKey = GlobalKey<FormState>();
+
 class _HelpFormState extends State<_HelpForm> {
   ///
-  final _formKey = GlobalKey<FormState>();
 
   ///
   final List<String> issueTypes = List.unmodifiable(

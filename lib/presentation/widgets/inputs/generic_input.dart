@@ -63,6 +63,11 @@ class GenericInputField extends StatelessWidget {
           ),
           onChanged: onChange,
           validator: validator,
+          // validator: (val) {
+          //   var errorMsg = validator?.call(val);
+          //   if (errorMsg == null) onChange(val ?? ' ');
+          //   return errorMsg;
+          // },
           style: GoogleFonts.dmSans(
             fontSize: 18.0,
             fontStyle: FontStyle.normal,

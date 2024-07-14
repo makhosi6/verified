@@ -9,12 +9,12 @@ import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/captured_verifee_details.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/image.dart';
-import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/id_document_scanner_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
 import 'package:verified/presentation/utils/navigate.dart';
+import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 
@@ -55,7 +55,7 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                 ),
                 leadingWidth: 80.0,
                 leading: VerifiedBackButton(
-                  key: const Key('choose_document_type_page-back-btn'),
+                  key: const Key('choose-document-type-page-back-btn'),
                   onTap: () => navigate(context, page: const HomePage(), replaceCurrentPage: true),
                   isLight: true,
                 ),
@@ -100,7 +100,7 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                     setState(() {
                                       documentScannerState?.copyWith(
                                           imageFiles: documentScannerState?.imageFiles
-                                            ?..add(vImageFile(side: side.name, file: file)));
+                                            ?..add(ImageFile(side: side.name, file: file)));
                                     });
                                   }
                                 },
@@ -116,6 +116,12 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                   try {
                                     // ignore: no_leading_underscores_for_local_identifiers
                                     final _documentScannerState = documentScannerState ?? state;
+                                    void _nextPage() => navigateToNamedRoute(
+                                          ctx,
+                                          routeName: '/captured-details',
+                                          arguments: DocumentType.values[index],
+                                          replaceCurrentPage: true,
+                                        );
 
                                     ///
                                     if (_documentScannerState == null ||
@@ -124,19 +130,6 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                             (documentScannerState?.idPdf417Text ?? documentScannerState?.idCode39Text)
                                                     ?.isEmpty ==
                                                 true)) {
-                                      ScaffoldMessenger.of(ctx)
-                                        ..clearSnackBars()
-                                        ..showSnackBar(
-                                          SnackBar(
-                                            content: const Text(
-                                              'State Changed!!!',
-                                            ),
-                                            backgroundColor: errorColor,
-                                          ),
-                                        );
-
-                                      print(
-                                          'ONE ==> ${_documentScannerState == null} || ${_documentScannerState?.imageFiles.isEmpty == true} || ${(DocumentType.values[index] == DocumentType.id_card && (documentScannerState?.idPdf417Text ?? documentScannerState?.idCode39Text)?.isEmpty == true)}');
                                       return;
                                     }
                                     if (DocumentType.values[index] == DocumentType.passport) {
@@ -146,49 +139,70 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
 
                                       ///
                                       Future.microtask(() async {
-                                        ctx.read<StoreBloc>().add(
-                                              StoreEvent.decodePassportData(
-                                                FormData.fromMap(
-                                                  {
-                                                    // 'files': [
-                                                    //   await MultipartFile.fromFile(
-                                                    //     image.file.absolute.path,
-                                                    //     filename: image.file.path.split('/').last,
-                                                    //   )
-                                                    // ],
-                                                    'data_url':
-                                                        bytesToDataUrl(bytes, getExtension(image.file.absolute.path)),
-                                                  },
-                                                ),
-                                              ),
-                                            );
-                                      });
-                                    }
-
-                                    if (DocumentType.values[index] == DocumentType.id_card) {
-                                      var data = CapturedVerifeeDetails.fromIdString(
+                                        try {
+                                          var fileData = await convertToFormData(image.file);
+                                          if (fileData != null) {
+                                            // ignore: use_build_context_synchronously
+                                            ctx.read<StoreBloc>()
+                                              ..add(StoreEvent.decodePassportData(FormData.fromMap({
+                                                // 'files': [fileData],
+                                                'data_url': bytesToDataUrl(bytes, getExtension(image.file.path))
+                                              })))
+                                              ..add(
+                                                StoreEvent.uploadPassportImage(fileData),
+                                              );
+                                          }
+                                        } catch (e) {
+                                          print(e);
+                                        }
+                                      }).whenComplete(_nextPage);
+                                    } else if (DocumentType.values[index] == DocumentType.id_card || DocumentType.values[index] == DocumentType.id_book) {
+                                      var details = CapturedVerifeeDetails.fromIdString(
                                         _documentScannerState.idPdf417Text ?? '',
-                                      )..identityNumber2 = _documentScannerState.idCode39Text;
+                                      );
 
-                                      ///
-                                      print("SAVE DATA $data");
+                                      if (DocumentType.values[index] == DocumentType.id_card) {
+                                        details.identityNumber2 = _documentScannerState.idCode39Text;
+                                        details.rawInput = _documentScannerState.idPdf417Text;
+                                      } else if (DocumentType.values[index] == DocumentType.id_book) {
+                                        details.identityNumber = _documentScannerState.idCode39Text2;
+                                        details.rawInput = _documentScannerState.idCode39Text2;
+                                      }
 
-                                      ///
-                                      ctx.read<StoreBloc>().add(
-                                            StoreEvent.addVerifee(
-                                              data,
+                                      Future.microtask(() async {
+                                        var filesData = await Future.wait(_documentScannerState.imageFiles
+                                            .map((img) async => (await convertToFormData(img.file)) as MultipartFile)
+                                            .toList());
+
+                                        print(_documentScannerState.imageFiles.length);
+                                        print(_documentScannerState.imageFiles);
+                                        print(filesData);
+                                        print(filesData.map((e) => e.filename));
+                                        print(filesData.length);
+                                        if (filesData.isEmpty && kDebugMode) exit(0);
+                                        // ignore: use_build_context_synchronously
+                                        ctx.read<StoreBloc>()
+                                          ..add(StoreEvent.addVerifee(details))
+                                          ..add(StoreEvent.uploadIdImages(filesData));
+                                      }).whenComplete(_nextPage);
+                                    } else {
+                                      ScaffoldMessenger.of(ctx)
+                                        ..clearSnackBars()
+                                        ..showSnackBar(
+                                          SnackBar(
+                                            showCloseIcon: true,
+                                            duration: const Duration(seconds: 10),
+                                            closeIconColor: const Color.fromARGB(255, 254, 226, 226),
+                                            content: const Text(
+                                              'Invalid document type, please use passport or id book or id card',
+                                              style: TextStyle(
+                                                color: Color.fromARGB(255, 254, 226, 226),
+                                              ),
                                             ),
-                                          );
+                                            backgroundColor: errorColor,
+                                          ),
+                                        );
                                     }
-                                    print('navigateToNamedRoute.....>>>>>>>>>>>');
-
-                                    ///
-                                    navigateToNamedRoute(
-                                      ctx,
-                                      routeName: '/captured-details',
-                                      arguments: null,
-                                      replaceCurrentPage: true,
-                                    );
                                   } catch (error, stackTrace) {
                                     // 31878): Error @ onNext of _choose docs Looking up a deactivated widget's ancestor is unsafe.
                                     debugPrintStack(stackTrace: stackTrace, label: 'Error @ onNext of _choose docs');

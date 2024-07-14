@@ -10,8 +10,35 @@ class StoreState with _$StoreState {
     required bool getHelpHasError,
     required bool getHelpDataLoading,
     required GenericResponse? getHelpData,
+
     ///
     required CapturedVerifeeDetails? capturedVerifeeDetails,
+    required bool isUploadingDocs,
+
+    ///
+    required VerifeeRequest? verifiee,
+    required SearchPerson? searchPerson,
+    required GenericApiError? searchPersonError,
+    required bool searchPersonHasError,
+    required Object? searchPersonData,
+    required bool searchPersonIsLoading,
+
+    ///
+    required UploadResponse? idBackImageUploadResponse,
+    required GenericApiError? idBackImageUploadError,
+
+    ///
+    required UploadResponse? selfieUploadResponse,
+    required GenericApiError? selfieUploadError,
+
+    ///
+    required UploadResponse? passportImageUploadResponse,
+    required GenericApiError? passportImageUploadError,
+
+    ///
+    required GenericApiError? idFrontImageUploadError,
+    required UploadResponse? idFrontImageUploadResponse,
+
     ///
     required GenericApiError? decodePassportDataError,
     required bool decodePassportHasError,
@@ -54,11 +81,26 @@ class StoreState with _$StoreState {
     required bool uploadsHasError,
     required bool uploadsDataLoading,
     required UploadResponse? uploadsData,
-    
   }) = _StoreState;
 
   factory StoreState.initial() => const StoreState(
         resourceHealthStatus: ResourceHealthStatus.unknown,
+
+        ///
+        searchPerson: null,
+        searchPersonError: null,
+        searchPersonHasError: false,
+        searchPersonData: null,
+        searchPersonIsLoading: false,
+        verifiee: null,
+
+        ///
+        passportImageUploadError: null,
+        passportImageUploadResponse: null,
+        idBackImageUploadError: null,
+        idBackImageUploadResponse: null,
+        idFrontImageUploadError: null,
+        idFrontImageUploadResponse: null,
 
         /// on screen using
         getHelpError: null,
@@ -67,12 +109,19 @@ class StoreState with _$StoreState {
         getHelpData: null,
 
         ///
+        selfieUploadError: null,
+        selfieUploadResponse: null,
+
+        ///
         capturedVerifeeDetails: null,
+        isUploadingDocs: false,
+
         ///
         decodePassportDataError: null,
         decodePassportHasError: false,
         decodePassportDataLoading: false,
         decodePassportData: null,
+
         ///
         ticketsError: null,
         ticketsHasError: false,
@@ -111,6 +160,3 @@ class StoreState with _$StoreState {
         uploadsData: null,
       );
 }
-
-
-

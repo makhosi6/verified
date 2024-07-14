@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:verified/application/search_request/search_request_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/services_options_enum.dart';
@@ -28,14 +27,15 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final capturedData = context.watch<SearchRequestBloc>().state.person;
+    final capturedData = context.watch<StoreBloc>().state.searchPerson;
     final Map<String, dynamic> person = (capturedData?.toJson() ?? {})
       ..removeWhere((key, value) => (key == 'selectedServices' || value is List));
     final List<String> product = capturedData?.selectedServices ?? [];
 
-    return BlocListener<SearchRequestBloc, SearchRequestState>(
+    return BlocListener<StoreBloc, StoreState>(
+      bloc: context.read<StoreBloc>(),
         listener: (context, state) {
-          if (state.hasError == true || state.error != null) {
+          if (state.searchPersonHasError == true || state.searchPersonError != null) {
             ///
             ScaffoldMessenger.of(context)
               ..clearSnackBars()
@@ -44,7 +44,7 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                   showCloseIcon: true,
                   closeIconColor: const Color.fromARGB(255, 254, 226, 226),
                   content: Text(
-                    errorToString(state.error),
+                    errorToString(state.searchPersonError),
                     style: const TextStyle(
                       color: Color.fromARGB(255, 254, 226, 226),
                     ),
@@ -264,8 +264,8 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                                     onTap: () async {
                                       /// send
                                       context
-                                          .read<SearchRequestBloc>()
-                                          .add(const SearchRequestEvent.validateAndSubmit());
+                                          .read<StoreBloc>()
+                                          .add(const StoreEvent.validateAndSubmit());
 
                                       await showDialog(
                                         context: context,
@@ -346,7 +346,7 @@ class __DonePopUpState extends State<_DonePopUp> {
   ///
   @override
   Widget build(BuildContext context) {
-    final person = context.watch<SearchRequestBloc>().state.person;
+    final person = context.watch<StoreBloc>().state.searchPerson;
     return SuccessfulActionModal(
       title: 'Action & Done',
       subtitle: 'Your Action of has been successfully processed. Thank you for your top-up! 🎉',

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:verified/application/search_request/search_request_bloc.dart';
+import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/create_account_page.dart';
@@ -115,7 +115,7 @@ class CaptureDetailsPage extends StatelessWidget {
                               keyboardType: TextInputType.text,
                               validator: (name) {
                                 if (name == null || name.isEmpty == true) {
-                                  return 'Please provide a name/surname';
+                                  return 'Please provide a name/surname/nickname';
                                 }
                                 if (name.length < 2) {
                                   return 'Name must be at least 2 characters long';
@@ -278,8 +278,8 @@ class CaptureDetailsPage extends StatelessWidget {
                               key: UniqueKey(),
                               onTap: () {
                                 if (_globalKeyCaptureDetailsPageForm.currentState?.validate() == true) {
-                                  context.read<SearchRequestBloc>().add(
-                                        SearchRequestEvent.createPersonalDetails(
+                                  context.read<StoreBloc>().add(
+                                        StoreEvent.createPersonalDetails(
                                           person,
                                         ),
                                       );

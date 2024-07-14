@@ -15,13 +15,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gallery_asset_picker/gallery_asset_picker.dart';
 import 'package:uuid/validation.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/application/appbase/appbase_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/payments/payments_bloc.dart';
-import 'package:verified/application/search_request/search_request_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
@@ -206,13 +204,6 @@ class RootAppWithBloc extends StatelessWidget {
           )..add(
               const VerifySaEvent.apiHealthCheck(),
             ),
-        ),
-        BlocProvider<SearchRequestBloc>(
-          create: (BuildContext context) => SearchRequestBloc(
-            VerifySaRepository(
-              VerifySaDioClientService.instance,
-            ),
-          ),
         ),
         BlocProvider<StoreBloc>(
           create: (BuildContext context) => StoreBloc(
@@ -505,6 +496,7 @@ class _AppRootState extends State<AppRoot> {
   Widget build(BuildContext context) {
     ///
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
     ///
     return MaterialApp(
       navigatorKey: _navigatorKey,
@@ -550,6 +542,8 @@ class _AppRootState extends State<AppRoot> {
                   state.historyDataLoading ||
                   state.promotionDataLoading ||
                   state.uploadsDataLoading ||
+                  state.isUploadingDocs ||
+                  state.searchPersonIsLoading ||
                   state.ticketsDataLoading ||
                   false;
 
@@ -577,28 +571,18 @@ class _AppRootState extends State<AppRoot> {
                 });
               }
             },
-            child: BlocListener<SearchRequestBloc, SearchRequestState>(
-              listener: (context, searchRequestState) {
-                ///
-                if (searchRequestState.isLoading) {
+            child: BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state.processing) {
                   _showAppLoader(context);
                 } else {
                   _hideAppLoader();
                 }
               },
-              child: BlocListener<AuthBloc, AuthState>(
-                listener: (context, state) {
-                  if (state.processing) {
-                    _showAppLoader(context);
-                  } else {
-                    _hideAppLoader();
-                  }
-                },
-                child: RefreshIndicator(
-                  key: _refreshIndicatorKey,
-                  onRefresh: () => Future.delayed(const Duration(seconds: 3)),
-                  child: const HomePage(),
-                ),
+              child: RefreshIndicator(
+                key: _refreshIndicatorKey,
+                onRefresh: () => Future.delayed(const Duration(seconds: 3)),
+                child: const HomePage(),
               ),
             ),
           );

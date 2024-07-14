@@ -142,36 +142,4 @@ class VerifySaRepository implements IVerifySaRepository {
       return ResourceHealthStatus.bad;
     }
   }
-
-  @override
-  Future<Either<Exception, VerifyComprehensiveResponse>> comprehensiveVerification(
-      {required SearchPerson? person, required String clientId}) async {
-    try {
-      if (person == null) return left(Exception('Empty request Object'));
-      final headers = {
-        'Content-Type': 'multipart/form-data',
-        'Accept': 'application/json',
-      };
-      final response = await _httpClient.post(
-        '/comprehensive_verification?client=$clientId',
-        options: Options(
-          headers: headers,
-        ),
-        data: person.toJson(),
-      );
-      if (httpRequestIsSuccess(response.statusCode)) {
-        // if (response.statusCode == 200) throw Exception('Some made up error.');
-
-        return right(
-          VerifyComprehensiveResponse.fromJson(
-            {'status': response.statusCode, 'data': person.toJson(), 'message': response.data['message']},
-          ),
-        );
-      } else {
-        return left(Exception(response.statusMessage));
-      }
-    } catch (e) {
-      return left(Exception(e.toString()));
-    }
-  }
 }
