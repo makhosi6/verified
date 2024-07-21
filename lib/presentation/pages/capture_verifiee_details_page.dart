@@ -10,6 +10,7 @@ import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/id_document_scanner_page.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/document_type.dart';
 import 'package:verified/presentation/utils/learn_more_highlighted_btn.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/validate_inputs.dart';
@@ -126,10 +127,8 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                     CaptureUserDetailsInputOption(
                                       label: 'Name or Nickname (Optional)',
                                       hintText: 'Type your name...',
-                                      initialValue:
+                                      initialValue: capturedVerifeeDetails?.names  ==null? null:
                                           '${capturedVerifeeDetails?.names ?? ''}  ${capturedVerifeeDetails?.surname ?? ''}',
-                                      // autofocus: capturedVerifeeDetails?.names == null &&
-                                      //     capturedVerifeeDetails?.surname == null,
                                       autofocus: false,
                                       inputFormatters: [],
                                       keyboardType: TextInputType.text,
@@ -229,8 +228,8 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                       inputFormatters: [],
                                       keyboardType: TextInputType.emailAddress,
                                       validator: (_) => null,
-                                      onChangeHandler: (email) {
-                                        verifiee = verifiee.copyWith(email: email);
+                                      onChangeHandler: (val) {
+                                        verifiee = verifiee.copyWith(nationality: val);
                                       },
                                     ),
                                     CaptureUserDetailsInputOption(

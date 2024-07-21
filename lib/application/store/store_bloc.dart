@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:verified/domain/models/captured_verifee_details.dart';
@@ -677,8 +674,44 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           });
           return null;
         },
-        createWallet: (e) {
-          throw UnimplementedError();
+        createWallet: (e) async {
+          emit(state.copyWith(
+            walletError: null,
+            walletHasError: false,
+            walletDataLoading: true,
+          ));
+
+          final response = await _storeRepository.postUserWallet(e.wallet);
+
+          response.fold((error) {
+            emit(state.copyWith(
+              walletError: GenericApiError(
+                error: error.toString(),
+                status: 'error',
+              ),
+              walletHasError: true,
+              walletDataLoading: false,
+            ));
+          }, (data) {
+            emit(state.copyWith(
+              walletError: null,
+              walletHasError: false,
+              walletDataLoading: false,
+              walletData: data,
+            ));
+          });
+          return null;
+        },
+        updateLocalWallet: (e) {
+          var prevWallet = state.walletData;
+          emit(
+            state.copyWith(
+              walletData: prevWallet?.copyWith(
+                balance: (prevWallet.balance ?? 0) + (e.wallet.balance ?? 0),
+              ),
+            ),
+          );
+          return null;
         },
         updateWallet: (e) async {
           emit(state.copyWith(

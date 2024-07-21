@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:uuid/uuid.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/transaction_history.dart';
+import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/globals.dart';
-import 'package:verified/presentation/pages/add_payment_method_page.dart';
 import 'package:verified/presentation/pages/how_it_works_page.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
@@ -57,14 +58,20 @@ class CombinedHistoryList extends StatelessWidget {
                     title: 'Top-Up and get rewarded with a Free Search.',
                     subtitle: 'Reload with ZAR 50 or more and unlock rewards',
                     onTap: () {
-                      final wallet = context.read<StoreBloc>().state.walletData;
+                      var wallet = context.read<StoreBloc>().state.walletData;
+                      final user = context.read<StoreBloc>().state.userProfileData;
 
                       ///
                       if (wallet == null) {
-                        navigate(context, page: const AddPaymentMethodPage());
-                      } else {
-                        showTopUpBottomSheet(context);
+                        // navigate(context, page: const AddPaymentMethodPage());
+                        wallet = Wallet(id: const Uuid().v4(), profileId: user?.id ?? user?.walletId ?? 'unknown');
+                        if (user != null) {
+                          context.read<StoreBloc>()
+                            ..add(StoreEvent.updateUserProfile(user.copyWith(walletId: wallet.id)))
+                            ..add(StoreEvent.createWallet(wallet));
+                        }
                       }
+                      showTopUpBottomSheet(context);
                     },
                   ),
                 ],

@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uuid/uuid.dart';
 import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/globals.dart';
-import 'package:verified/presentation/pages/add_payment_method_page.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/pages/transactions_page.dart';
@@ -45,19 +47,32 @@ class TrioHomeButtons extends StatelessWidget {
             onTap: () {
               // showDialog(
               //   context: context,
-                  //  barrierColor: darkBlurColor,
+              //  barrierColor: darkBlurColor,
               //   builder: (context) => const SuccessfulPaymentModal(),
               // );
 
               //
-              final wallet = context.read<StoreBloc>().state.walletData;
+              var wallet = context.read<StoreBloc>().state.walletData;
+              final user = context.read<StoreBloc>().state.userProfileData;
 
               ///
               if (wallet == null) {
-                navigate(context, page: const AddPaymentMethodPage());
-              } else {
-                showTopUpBottomSheet(context);
+                // navigate(context, page: const AddPaymentMethodPage());
+                wallet = Wallet(id: const Uuid().v4(), profileId: user?.id ?? user?.walletId ?? 'unknown');
+                if (user != null) {
+                  context.read<StoreBloc>()
+                    ..add(
+                      StoreEvent.updateUserProfile(
+                        user.copyWith(walletId: wallet.id),
+                      ),
+                    )
+                    ..add(
+                      StoreEvent.createWallet(wallet),
+                    );
+                }
               }
+              
+              showTopUpBottomSheet(context);
 
               ///
             },

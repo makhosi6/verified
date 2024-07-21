@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:mrz_parser/mrz_parser.dart';
-import 'package:verified/presentation/pages/id_document_scanner_page.dart';
+import 'package:verified/presentation/utils/document_type.dart';
 
 class CapturedVerifeeDetails {
   String? surname;
@@ -40,17 +40,21 @@ class CapturedVerifeeDetails {
       this.spaceFiller});
 
   CapturedVerifeeDetails.fromPassportString(List<String> data) {
-    var results = MRZParser.parse(data);
-    surname = results.surnames;
-    names = results.givenNames;
-    sex = results.sex.name;
-    documentType = DocumentType.passport.name;
-    nationality = results.countryCode;
-    passportNumber = results.documentNumber;
-    dayOfBirth = results.birthDate.toString();
-    countryOfBirth = results.nationalityCountryCode;
-    cardNumber = results.personalNumber;
-    rawInput = data.join('');
+    try {
+      var results = MRZParser.parse(data);
+      surname = results.surnames;
+      names = results.givenNames;
+      sex = results.sex.name;
+      documentType = DocumentType.passport.name;
+      nationality = results.countryCode;
+      passportNumber = results.documentNumber;
+      dayOfBirth = results.birthDate.toString();
+      countryOfBirth = results.nationalityCountryCode;
+      cardNumber = results.personalNumber;
+      rawInput = data.join('');
+    } catch (e) {
+      print(e);
+    }
   }
 
   CapturedVerifeeDetails.fromIdString(String data) {

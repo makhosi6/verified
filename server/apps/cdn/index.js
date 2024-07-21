@@ -58,4 +58,4 @@ app.use('/', express.static(path.join(__dirname, '/root')));
 // Route to handle file upload
 app.post('/api/v1/media/upload', upload.array('files', 4), handleFileUpload);
 /// listen to incoming requests
-app.listen(PORT, () => console.log(`CDN app running @ http://${HOST}:${PORT}`))
+app.listen(PORT, () => console.log(`CDN running @ http://${HOST}:${PORT}`))

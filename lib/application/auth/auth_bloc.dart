@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:uuid/uuid.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
+import 'package:verified/domain/models/verified_web_auth_user.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/auth/repository.dart';
 import 'package:verified/helpers/extensions/user.dart';
@@ -98,6 +100,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
           ///
           LocalUser.setUser(userProfile);
+
+          return null;
         },
         interceptStreamedAuthUser: (e) {
           var user = e.user;
@@ -159,17 +163,141 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               },
             ),
           );
+
+          return null;
         },
         deleteAccount: (e) async {
           emit(state.copyWith(processing: true, error: null, hasError: false));
-          // sign out
-          await _authProviderRepository.signOut();
+
+          ///
+          var currentUser = _storeBloc.state.userProfileData;
+          if ((currentUser?.dataProvider?.contains('byteestudio.com') == true) ||
+              Uuid.isValidUUID(fromString: currentUser?.id ?? currentUser?.profileId ?? '')) {
+            _authProviderRepository.webDeleteAccount(AuthUserDetails(token: '', userId: ''));
+          } else {
+            // sign out
+            await _authProviderRepository.signOut();
+          }
           // clear local data
           await LocalUser.clearUser();
 
           // update the state
           emit(AuthState.initial());
+
           _storeBloc.add(const StoreEvent.clearUser());
+
+          return null;
+        },
+        webDeleteAcccount: (_) {
+          throw UnimplementedError();
+        },
+        webSignIn: (e) async {
+          ///
+          emit(state.copyWith(processing: true, error: null, hasError: false));
+          var storedUser = await _authProviderRepository.storeLoginRequest(e.authUserDetails);
+
+          ///
+          if (storedUser != null) {
+            _storeBloc.add(
+              StoreEvent.createUserProfile(storedUser),
+            );
+
+            ///
+            emit(
+              state.copyWith(
+                processing: false,
+                isLoggedIn: true,
+              ),
+            );
+
+            return;
+          }
+
+          ///
+          final user = await _authProviderRepository.webSignIn(e.authUserDetails);
+
+          ///
+          final userProfile = UserProfile.fromJson({
+            'id': user?.uid,
+            'profileId': user?.uid,
+            'email': user?.email,
+            'actualName': user?.displayName ?? user?.email?.getFullNameFromEmail(),
+            'displayName': user?.displayName ?? user?.email?.extractUsernameFromEmail(),
+            'name': user?.displayName ?? user?.email?.getFullNameFromEmail(),
+            'avatar': user?.photoUrl,
+            'walletId': null,
+            'phone': user?.phoneNumber,
+            'dataProvider': user?.providerData?.map((e) => e.providerId).toString(),
+            'metadata': {
+              'creationTime': (user?.metadata?.creationTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
+              'lastSignInTime': (user?.metadata?.lastSignInTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
+            },
+            'active': true,
+            'softDeleted': false,
+          });
+
+          _storeBloc.add(
+            StoreEvent.createUserProfile(userProfile),
+          );
+
+          ///
+          emit(
+            state.copyWith(
+              processing: false,
+              isLoggedIn: true,
+            ),
+          );
+
+          ///
+          LocalUser.setUser(userProfile);
+
+          return null;
+        },
+        webSignUp: (e) async {
+          ///
+          emit(state.copyWith(processing: true, error: null, hasError: false));
+
+          ///
+          final newUser = await _authProviderRepository.webSignIn(
+            e.authUserDetails,
+          );
+
+          final user = await _authProviderRepository.webSignUp(e.authUserDetails, newUser ?? VerifiedWebUser(uid: e.authUserDetails.userId, refreshToken: e.authUserDetails.token, ));
+
+          ///
+          final userProfile = UserProfile.fromJson({
+            'id': user?.uid,
+            'profileId': user?.uid,
+            'email': user?.email,
+            'actualName': user?.displayName ?? user?.email?.getFullNameFromEmail(),
+            'displayName': user?.displayName ?? user?.email?.extractUsernameFromEmail(),
+            'name': user?.displayName ?? user?.email?.getFullNameFromEmail(),
+            'avatar': user?.photoUrl,
+            'walletId': null,
+            'phone': user?.phoneNumber,
+            'dataProvider': user?.providerData?.map((e) => e.providerId).toString(),
+            'metadata': {
+              'creationTime': (user?.metadata?.creationTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
+              'lastSignInTime': (user?.metadata?.lastSignInTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
+            },
+            'active': true,
+            'softDeleted': false,
+          });
+          _storeBloc.add(
+            StoreEvent.createUserProfile(userProfile),
+          );
+
+          ///
+          emit(
+            state.copyWith(
+              processing: false,
+              isLoggedIn: true,
+            ),
+          );
+
+          ///
+          LocalUser.setUser(userProfile);
+
           return null;
         },
       );

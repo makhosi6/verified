@@ -106,3 +106,8 @@ flutter build web --web-renderer canvaskit
 ### Android trigger deep-link click
 
 - `adb shell am start -a android.intent.action.VIEW  -d "app://byteestudio.com/foo/secure/89b-12d3-a456-426614174000/123e4567-e89b-12d3-a456-426614174000" `
+
+## buddle and merge certs
+- `cd localhost`
+- `cd verified.byteestudio.com`
+- `cat certificate.crt ca_bundle.crt >> merged_certificate.crt`

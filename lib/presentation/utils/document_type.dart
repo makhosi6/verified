@@ -1,0 +1,1 @@
+enum DocumentType { id_card, id_book, passport }

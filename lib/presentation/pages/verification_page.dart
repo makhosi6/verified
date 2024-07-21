@@ -10,6 +10,7 @@ import 'package:verified/presentation/pages/choose_document_type_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
+import 'package:verified/presentation/utils/scanner_guidelines.dart';
 import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 
@@ -139,7 +140,7 @@ class _VerificationPageState extends State<VerificationPage> {
                             }
                           }),
                     ),
-                  ),
+                  ) else const ScanDocsGuidelines(documentType: null) ,
 
                 if (_capturedImage != null)
 

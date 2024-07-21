@@ -19,7 +19,7 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget redirect}) async =>
     showModalBottomSheet(
       context: context,
-      showDragHandle: TargetPlatform.android != defaultTargetPlatform,
+      showDragHandle: true, //TargetPlatform.android != defaultTargetPlatform,
       builder: (context) => BlocListener<StoreBloc, StoreState>(
         listener: (context, state) {
           if (!state.userProfileDataLoading && state.userProfileData != null && state.userProfileData != null) {
@@ -47,12 +47,12 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
             constraints: const BoxConstraints(
               minWidth: 600,
             ),
-            padding: const EdgeInsets.symmetric(vertical: 20),
+            // padding: const EdgeInsets.symmetric(vertical: 20),
             child: Column(
               children: [
                 /// sign in text
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.only(top: 10, bottom: 30),
                   child: Column(
                     children: [
                       const Text(
@@ -128,19 +128,72 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
     );
 
 ///
+
 /// type = "signin" | "signup"
 List<Widget> buttons(BuildContext context, {required String type}) {
   void handler(AuthProvider provider) => context.read<AuthBloc>().add(AuthEvent.signInWithProvider(provider));
+  // void handle2(url) => navigate(
+  //       context,
+  //   page: VerifiedAuthWebView(
+  //     url: url,
+  //     onPageCancelled: () {
+  //       ScaffoldMessenger.of(context)
+  //         ..clearSnackBars()
+  //         ..showSnackBar(
+  //           SnackBar(
+  //             content: const Text(
+  //               'Logged In Cancelled!',
+  //             ),
+  //             backgroundColor: warningColor,
+  //           ),
+  //         );
+  //     },
+  //     onPageSuccess: (data) {
+  //       if (type == 'signin') {
+  //         context.read<AuthBloc>().add(AuthEvent.webSignIn(data));
+  //       } else if (type == 'signup') {
+  //         context.read<AuthBloc>().add(AuthEvent.webSignUp(data));
+  //       }
+  //       Navigator.pop(context);
+  //       ScaffoldMessenger.of(context)
+  //         ..clearSnackBars()
+  //         ..showSnackBar(
+  //           SnackBar(
+  //             content: const Text(
+  //               'Logged In!',
+  //             ),
+  //             backgroundColor: primaryColor,
+  //           ),
+  //         );
+  //     },
+  //     onPageFailed: (_) {
+  //       Navigator.pop(context);
+  //       ScaffoldMessenger.of(context)
+  //         ..clearSnackBars()
+  //         ..showSnackBar(
+  //           SnackBar(
+  //             content: const Text(
+  //               'Logged In Failed!',
+  //             ),
+  //             backgroundColor: errorColor,
+  //           ),
+  //         );
+  //     },
+  //   ),
+  // );
   final label = type == 'signin' ? 'Log In' : 'Sign Up';
-
+  // var loginUrl = '$WEB_AUTH_SERVER/login';
+  // var registerUrl = '$WEB_AUTH_SERVER/register';
   return [
-    AuthButtonsOption(
-      onTapHandler: () => handler(VerifiedAuthProvider.facebook),
-      label: type == 'signin' ? 'Login with an Email' : 'Create an Account',
-      icon: const Image(
-        image: AssetImage('assets/icons/email.png'),
-      ),
-    ),
+    // AuthButtonsOption(
+    //   onTapHandler: () => handle2(
+    //     type == 'signin' ? loginUrl : registerUrl,
+    //   ),
+    //   label: type == 'signin' ? 'Login with an Email' : 'Create an Account',
+    //   icon: const Image(
+    //     image: AssetImage('assets/icons/email.png'),
+    //   ),
+    // ),
     AuthButtonsOption(
       onTapHandler: () => handler(VerifiedAuthProvider.google),
       label: '$label with Google',
@@ -160,6 +213,13 @@ List<Widget> buttons(BuildContext context, {required String type}) {
       label: '$label with Microsoft',
       icon: const Image(
         image: AssetImage('assets/icons/microsoft.png'),
+      ),
+    ),
+    AuthButtonsOption(
+      onTapHandler: () => handler(VerifiedAuthProvider.twitter),
+      label: '$label with Twitter',
+      icon: const Image(
+        image: AssetImage('assets/icons/twitter.png'),
       ),
     ),
   ]
@@ -210,7 +270,7 @@ Future triggerSignUpBottomSheet<bool>({required BuildContext context, required W
         },
         child: SingleChildScrollView(
           child: Container(
-      constraints: const BoxConstraints(
+            constraints: const BoxConstraints(
               minWidth: 600,
             ),
             padding: const EdgeInsets.symmetric(vertical: 20),
@@ -270,7 +330,8 @@ Future triggerSignUpBottomSheet<bool>({required BuildContext context, required W
                                     ..onTap = () {
                                       Navigator.of(context).push(
                                         MaterialPageRoute<void>(
-                                            builder: (BuildContext context) => const TermOfUseWebView(),),
+                                          builder: (BuildContext context) => const TermOfUseWebView(),
+                                        ),
                                       );
                                     },
                                   style: GoogleFonts.ibmPlexSans(

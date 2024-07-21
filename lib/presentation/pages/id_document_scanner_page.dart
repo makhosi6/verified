@@ -7,9 +7,12 @@ import 'package:flutter_beep/flutter_beep.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/document_type.dart';
 import 'package:verified/presentation/utils/navigate.dart';
+import 'package:verified/presentation/utils/scanner_guidelines.dart';
 
 class IDDocumentScanner extends StatefulWidget {
   final DocumentType documentType;
@@ -140,7 +143,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       }
 
       /// capture id_book front
-        print('MAYBE IT\'S AN ID_BOOK $hasFace| $hasCode39Barcode2 | $hasIdBookText');
+      print('MAYBE IT\'S AN ID_BOOK $hasFace| $hasCode39Barcode2 | $hasIdBookText');
       if (hasFace && (hasCode39Barcode2 || hasCode39Barcode) && hasIdBookText) {
         await captureImage(DetectSide.front.name);
       }
@@ -301,7 +304,8 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
   }
 
   bool idBookTextDetected(RecognizedText recognizedText) => recognizedText.blocks.any((block) {
-        var value = block.text.contains(RegExp(r'S.A.BURGER/S. A.CITIZEN|S.A.BURGER|I.D.No.|I.D.No|SUID-AFR|FORENAMES|ISSUED BY AUTHORITY OF|THE DIRECTOR-GENERAL'));
+        var value = block.text.contains(RegExp(
+            r'S.A.BURGER/S. A.CITIZEN|S.A.BURGER|I.D.No.|I.D.No|SUID-AFR|FORENAMES|ISSUED BY AUTHORITY OF|THE DIRECTOR-GENERAL'));
 
         if (value) {
           setState(() {
@@ -407,7 +411,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
                       else if (widget.documentType == DocumentType.id_book)
                         CustomOverlay(
                           aspectRatio: 2 / 3,
-                          borderColor: Colors.orangeAccent,
+                          borderColor: Colors.green,
                           type: widget.documentType,
                         )
                       else
@@ -417,30 +421,11 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
                           type: widget.documentType,
                         ),
 
-                      if ((DocumentType.id_card != widget.documentType) ? imageFiles.length < 2 : imageFiles.isEmpty)
-                        Positioned(
-                          top: 10,
-                          child: Container(
-                            padding: const EdgeInsets.all(2),
-                            color: Colors.yellowAccent.shade700,
-                            child: const Column(
-                              children: [
-                                Text(
-                                  'Position your ID document within the on-screen guidelines.',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                // ...messages
-                                //     .toSet()
-                                //     .map((text) => Text(text))
-                                //     .toList()
-                              ],
-                            ),
-                          ),
-                        ),
+                       ScanDocsGuidelines(documentType: widget.documentType,),
                       if (imageFiles.isNotEmpty)
                         Positioned(
                           top: 20,
-                          right: 20,
+                          right: 10,
                           child: Column(
                             children: imageFiles
                                 .map(
@@ -502,6 +487,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     );
   }
 }
+
 
 enum DetectSide { front, back }
 
@@ -632,7 +618,7 @@ class CameraEventsState {
           imageFiles: imageFiles ?? this.imageFiles);
 }
 
-enum DocumentType { id_card, id_book, passport }
+
 
 class ImagePreviewCard extends StatefulWidget {
   final Widget child;
@@ -718,3 +704,4 @@ class ImageFile {
 
   ImageFile({required this.side, required this.file});
 }
+

@@ -9,7 +9,6 @@ import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
 import 'package:verified/domain/models/form_type.dart';
 import 'package:verified/domain/models/resource_health_status_enum.dart';
 import 'package:verified/globals.dart';
-import 'package:verified/main.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/data_view_item.dart';

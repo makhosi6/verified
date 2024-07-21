@@ -12,6 +12,7 @@ import 'package:verified/helpers/image.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/id_document_scanner_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/document_type.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/select_media.dart';

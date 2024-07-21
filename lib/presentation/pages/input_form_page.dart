@@ -4,12 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uuid/uuid.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
 import 'package:verified/domain/models/enquiry_reason.dart';
 import 'package:verified/domain/models/form_type.dart';
 import 'package:verified/domain/models/user_profile.dart';
+import 'package:verified/domain/models/wallet.dart';
 
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/add_payment_method_page.dart';
@@ -313,12 +315,17 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
           }
 
           ///
-          final wallet = context.read<StoreBloc>().state.walletData;
+          var wallet = context.read<StoreBloc>().state.walletData;
+          final user = context.read<StoreBloc>().state.userProfileData;
 
           if (wallet == null) {
-            navigate(context, page: const AddPaymentMethodPage());
-
-            return;
+            // navigate(context, page: const AddPaymentMethodPage());
+            wallet = Wallet(id: const Uuid().v4(), profileId: user?.id ?? user?.walletId ?? 'unknown');
+            if (user != null) {
+              context.read<StoreBloc>()
+                ..add(StoreEvent.updateUserProfile(user.copyWith(walletId: wallet.id)))
+                ..add(StoreEvent.createWallet(wallet));
+            }
           }
           if (kDebugMode) {
             print(wallet);
@@ -380,7 +387,6 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
       },
     );
   }
-
 }
 
 class InputFormSubmitButton extends StatelessWidget {

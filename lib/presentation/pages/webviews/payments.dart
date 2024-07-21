@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/payments/payments_bloc.dart';
+import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/helpers/currency.dart';
 import 'package:verified/presentation/pages/loading_page.dart';
 import 'package:verified/presentation/pages/webviews/the_webview.dart';
@@ -47,11 +49,26 @@ class PaymentPage extends StatelessWidget {
         /// then go back
         Navigator.of(context).pop();
       },
-      onPageSuccess: () {
+      onPageSuccess: (_) {
         /// go back
         Navigator.of(context).pop();
 
-//and show a success popup
+        /// update local wallet
+        context.read<StoreBloc>()
+          ..add(
+            StoreEvent.updateLocalWallet(
+              Wallet(balance: amount),
+            ),
+          )
+          ..add(
+            StoreEvent.getWallet(
+              context.read<StoreBloc>().state.userProfileData?.walletId ??
+                  context.read<PaymentsBloc>().state.paymentData?.metadata?.walletId ??
+                  'wltR_uid',
+            ),
+          );
+
+        /// and show a success popup
         showDialog(
           context: context,
           barrierColor: darkBlurColor,
@@ -60,7 +77,7 @@ class PaymentPage extends StatelessWidget {
           ),
         );
       },
-      onPageFailed: () {
+      onPageFailed: (_) {
         showDialog(
           context: context,
           builder: (context) => const FailedPaymentModal(),

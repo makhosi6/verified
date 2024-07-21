@@ -344,6 +344,17 @@ class StoreRepository implements IStoreRepository {
         ),
         data: data,
       );
+      if (response.statusCode == 404) {
+        response = await _httpClient.post(
+          '$collection/resource',
+          options: Options(
+            method: 'POST',
+            headers: headers,
+          ),
+          data: data,
+        );
+      }
+
       var statusCode = response.statusCode;
       if (httpRequestIsSuccess(response.statusCode)) {
         return right(
