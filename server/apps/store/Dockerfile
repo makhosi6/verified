@@ -11,6 +11,6 @@ ENV TZ=Africa/Johannesburg
 
 COPY . .
 
-CMD ["ls" , "-la"]
+# CMD ["ls" , "-la"]
 
 CMD ["npm", "run", "store"]
