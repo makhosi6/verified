@@ -77,7 +77,8 @@ server.disable('x-powered-by');
 
 /// routes
 server.post("/api/v1/send-comms", (req,res) => res.status(200));
-server.post("/api/v1/health-check", (req,res) => res.status(200));
+server.post("/api/v1/comprehensive_verification", (req,res) => res.status(200));
+server.get("/api/v1/health-check", (req,res) => res.status(200));
 server.post("/api/v1/help", notifyAdmin);
 server.use("/api/v1/ticket", tickets);
 server.use("/api/v1/history", history);
