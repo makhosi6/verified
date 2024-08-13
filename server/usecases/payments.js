@@ -355,7 +355,7 @@ async function _addToOrSubtractWallet(payload, eventType) {
         body: JSON.stringify(wallet),
     };
     request(options, function (error, response) {
-        if (error) throw new Error(error);
+        if (error) throw new Error(error.toString());
     });
 }
 
