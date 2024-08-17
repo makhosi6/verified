@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:verified/app_config.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
 import 'package:verified/domain/models/form_type.dart';
@@ -44,6 +45,23 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
           hideAppLoader();
         }
         final results = state.contactTracingData?.contactEnquiry?.results;
+
+        if (results?.isNotEmpty == true) {
+          var user = context.read<StoreBloc>().state.userProfileData;
+          var wallet = context.read<StoreBloc>().state.walletData;
+          if (wallet != null) {
+            context.read<StoreBloc>()
+              ..add(
+                StoreEvent.updateLocalWallet(
+                  wallet.copyWith(balance: (wallet.balance ?? 0) - POINTS_PER_TRANSACTION),
+                ),
+              )
+              ..add(
+                StoreEvent.getWallet(user?.walletId ?? ''),
+              );
+          }
+        }
+
         if (kDebugMode) {
           print('STATE \n\n$results\n: $state');
         }
@@ -53,8 +71,7 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               slivers: [
                 AppErrorWarningIndicator(
-                  show: context.watch<VerifySaBloc>().state.resourceHealthStatus == ResourceHealthStatus.bad,
-                  message: 'The DHA service is down! Please try again later.',
+                  key: UniqueKey(),
                 ),
                 SliverAppBar(
                   stretch: true,
@@ -191,6 +208,23 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
         }
 
         Map<String, dynamic>? results = state.verifyIdData?.verification?.toJson();
+
+        if (results?.isNotEmpty == true) {
+          var user = context.read<StoreBloc>().state.userProfileData;
+          var wallet = context.read<StoreBloc>().state.walletData;
+          if (wallet != null) {
+            context.read<StoreBloc>()
+              ..add(
+                StoreEvent.updateLocalWallet(
+                  wallet.copyWith(balance: (wallet.balance ?? 0) - POINTS_PER_TRANSACTION),
+                ),
+              )
+              ..add(
+                StoreEvent.getWallet(user?.walletId ?? ''),
+              );
+          }
+        }
+
         if (kDebugMode) {
           print('STATE \n\n$results\n: $state');
         }
@@ -201,8 +235,7 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               slivers: [
                 AppErrorWarningIndicator(
-                  show: apiHealthStatus == ResourceHealthStatus.bad || apiHealthStatus == ResourceHealthStatus.unknown,
-                  message: 'The DHA service is down! Please try again later.',
+                  key: UniqueKey(),
                 ),
                 SliverAppBar(
                   stretch: true,

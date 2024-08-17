@@ -7,9 +7,9 @@ import 'package:flutter_beep/flutter_beep.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/blinking_animation.dart';
 import 'package:verified/presentation/utils/document_type.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/scanner_guidelines.dart';
@@ -30,7 +30,7 @@ class IDDocumentScanner extends StatefulWidget {
       required this.onStateChanged});
 
   @override
-  _IDDocumentScannerState createState() => _IDDocumentScannerState();
+  createState() => _IDDocumentScannerState();
 }
 
 class _IDDocumentScannerState extends State<IDDocumentScanner> {
@@ -47,6 +47,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
   List<ImageFile> imageFiles = [];
   Rect? detectedCardRect;
   CameraEventsState? documentScannerState;
+  num? brightness;
 
   @override
   void initState() {
@@ -58,7 +59,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     final cameras = await availableCameras();
     final camera = cameras.first;
 
-    _cameraController = CameraController(camera, ResolutionPreset.high);
+    _cameraController = CameraController(camera, ResolutionPreset.high, enableAudio: false);
     await _cameraController!.initialize();
     _cameraController!.setFlashMode(FlashMode.off);
     _cameraController!.startImageStream((CameraImage image) {
@@ -82,7 +83,11 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       final hasMrzCode = await processMachineReadableImage(recognizedText);
       final hasIdBookText = await idBookTextDetected(recognizedText);
       final allFalse = !(hasCode39Barcode || hasCodePdf417Barcode || hasFace || hasMrzCode || hasIdBookText);
+      final _brightness = calculateImageBrightness(image);
+      brightness = _brightness;
 
+      /// reset messages
+      messages = [];
       if (!allFalse) {
         if (widget.documentType == DocumentType.passport) {
           var missingPart = !hasFace
@@ -115,11 +120,14 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
           messages.add(missingPart);
         }
       }
+      if (_brightness < 120) messages.add('poor brightness ($_brightness / 120)');
+
+      messages = messages.toSet().toList();
       widget.onMessage(messages);
 
-      debugPrint('---->$hasCodePdf417Barcode|$hasMrzCode|$hasFace|$hasCode39Barcode|');
+      debugPrint('($brightness)---->$hasCodePdf417Barcode|$hasMrzCode|$hasFace|$hasCode39Barcode|');
 
-      if (detectedSide != null) {
+      if (detectedSide != null && _brightness > 120) {
         /// capture id_card back
         if (hasCode39Barcode &&
             detectedSide == DetectSide.back &&
@@ -143,7 +151,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       }
 
       /// capture id_book front
-      print('MAYBE IT\'S AN ID_BOOK $hasFace| $hasCode39Barcode2 | $hasIdBookText');
+      print('MAYBE IT\'S AN ID_BOOK $hasFace|$hasCode39Barcode|$hasCode39Barcode2|$hasIdBookText|$barcodeText');
       if (hasFace && (hasCode39Barcode2 || hasCode39Barcode) && hasIdBookText) {
         await captureImage(DetectSide.front.name);
       }
@@ -194,16 +202,16 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     try {
       final pdf417BarcodeScanner = BarcodeScanner(formats: [BarcodeFormat.pdf417]);
       final pdf417Barcodes = await pdf417BarcodeScanner.processImage(inputImage);
-      if (pdf417Barcodes.isNotEmpty) {
+      final raw = pdf417Barcodes.map((bc) => bc).whereType<Barcode>();
+      final newData = raw.isNotEmpty ? raw.first.rawValue : null;
+      if (raw.isNotEmpty && newData != null && mounted) {
         setState(() {
-          pdf417BarcodesText = pdf417Barcodes.first.rawValue;
+          pdf417BarcodesText = newData;
         });
         debugPrint('Detected Process Pdf417 Image with text: $pdf417BarcodesText');
 
         return true;
-      } else {
-        pdf417BarcodesText = null;
-      }
+      } 
 
       return false;
     } catch (e) {
@@ -217,15 +225,15 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     try {
       final barcodeScanner = BarcodeScanner(formats: [BarcodeFormat.all]);
       final barcodes = await barcodeScanner.processImage(inputImage);
-      if (barcodes.isNotEmpty) {
+      final raw = barcodes.map((bc) => bc).whereType<Barcode>();
+      final newData = raw.isNotEmpty ? raw.first.rawValue : null;
+      if (raw.isNotEmpty && newData != null && mounted) {
         setState(() {
-          barcodeText2 = barcodes.first.rawValue;
+          barcodeText2 = newData;
         });
-        debugPrint('Detected barcode with text: $barcodeText');
+        debugPrint('(all) Detected barcode with text: $newData');
 
         return true;
-      } else {
-        barcodeText2 = null;
       }
 
       return false;
@@ -240,15 +248,15 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     try {
       final barcodeScanner = BarcodeScanner(formats: [BarcodeFormat.code39]);
       final barcodes = await barcodeScanner.processImage(inputImage);
-      if (barcodes.isNotEmpty) {
+      final raw = barcodes.map((bc) => bc).whereType<Barcode>();
+      final newData = raw.isNotEmpty ? raw.first.rawValue : null;
+      if (raw.isNotEmpty && newData != null && mounted) {
         setState(() {
-          barcodeText = barcodes.first.rawValue;
+          barcodeText = newData;
         });
-        debugPrint('Detected barcode with text: $barcodeText');
+        debugPrint('(code39) Detected barcode with text: $barcodeText');
 
         return true;
-      } else {
-        barcodeText = null;
       }
 
       return false;
@@ -305,7 +313,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
 
   bool idBookTextDetected(RecognizedText recognizedText) => recognizedText.blocks.any((block) {
         var value = block.text.contains(RegExp(
-            r'S.A.BURGER/S. A.CITIZEN|S.A.BURGER|I.D.No.|I.D.No|SUID-AFR|FORENAMES|ISSUED BY AUTHORITY OF|THE DIRECTOR-GENERAL'));
+            r'S.A.BURGER/S.A.CITIZEN|S.A.BURGER|I.D.No.|I.D.No|SUID-AFR|FORENAMES|ISSUED BY AUTHORITY OF|THE DIRECTOR-GENERAL'));
 
         if (value) {
           setState(() {
@@ -355,12 +363,12 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
         FlutterBeep.beep();
       }
       documentScannerState = CameraEventsState(
-        idCode39Text: barcodeText,
-        idCode39Text2: barcodeText2,
-        idPdf417Text: pdf417BarcodesText,
-        passportMRZtext: '',
-        imageFiles: imageFiles,
-      );
+          idCode39Text: barcodeText,
+          idCode39Text2: barcodeText2,
+          idPdf417Text: pdf417BarcodesText,
+          passportMRZtext: '',
+          imageFiles: imageFiles,
+          cameraLightingLevel: brightness);
       widget.onStateChanged(documentScannerState);
       // widget.onCapture(File(image.path), DetectSide.values.where((e) => e.name == side).first);
       debugPrint('BARCODE TEXT: $barcodeText \n\n');
@@ -376,6 +384,15 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     } finally {
       setState(() {});
     }
+  }
+
+  double calculateImageBrightness(CameraImage image) {
+    final bytes = image.planes[0].bytes;
+    int totalBrightness = 0;
+    for (int i = 0; i < bytes.length; i += image.planes[0].bytesPerPixel!) {
+      totalBrightness += bytes[i];
+    }
+    return totalBrightness / bytes.length;
   }
 
   @override
@@ -411,7 +428,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
                       else if (widget.documentType == DocumentType.id_book)
                         CustomOverlay(
                           aspectRatio: 2 / 3,
-                          borderColor: Colors.green,
+                          borderColor: Colors.deepPurpleAccent,
                           type: widget.documentType,
                         )
                       else
@@ -420,8 +437,44 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
                           borderColor: Colors.blue,
                           type: widget.documentType,
                         ),
-
-                       ScanDocsGuidelines(documentType: widget.documentType,),
+                      if (messages.contains('poor brightness'))
+                        BlinkingAnimation(
+                          child: RotatedBox(
+                              quarterTurns: 1,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                  constraints: const BoxConstraints(maxHeight: 50, minHeight: 0),
+                                  margin: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromRGBO(255, 255, 255, 0.874),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.light_mode_outlined,
+                                            color: Colors.amberAccent.shade400,
+                                          ),
+                                          const Text('Poor Lighting Detected!'),
+                                        ],
+                                      ),
+                                      Text('Brightness Level:  ${brightness?.ceil() ?? 0} / 120')
+                                    ],
+                                  ),
+                                ),
+                              )),
+                        ),
+                      ScanDocsGuidelines(
+                        documentType: widget.documentType,
+                      ),
                       if (imageFiles.isNotEmpty)
                         Positioned(
                           top: 20,
@@ -487,7 +540,6 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
     );
   }
 }
-
 
 enum DetectSide { front, back }
 
@@ -595,12 +647,14 @@ class CameraEventsState {
   final String? passportMRZtext;
   final List<ImageFile> imageFiles;
   final String? idCode39Text2;
+  final num? cameraLightingLevel;
 
   const CameraEventsState(
       {required this.idCode39Text,
       required this.idPdf417Text,
       required this.passportMRZtext,
       required this.imageFiles,
+      required this.cameraLightingLevel,
       required this.idCode39Text2});
 
   CameraEventsState copyWith({
@@ -609,16 +663,27 @@ class CameraEventsState {
     String? idPdf417Text,
     String? passportMRZtext,
     List<ImageFile>? imageFiles,
+    num? cameraLightingLevel,
   }) =>
       CameraEventsState(
+          cameraLightingLevel: cameraLightingLevel ?? this.cameraLightingLevel,
           idCode39Text: idCode39Text ?? this.idCode39Text,
           idCode39Text2: idCode39Text2 ?? this.idCode39Text2,
           idPdf417Text: idPdf417Text ?? this.idPdf417Text,
           passportMRZtext: passportMRZtext ?? this.passportMRZtext,
           imageFiles: imageFiles ?? this.imageFiles);
+
+  Map<String, String> toJson() {
+    final Map<String, String> _data = {};
+    _data['cameraLightingLevel'] = '$cameraLightingLevel';
+    _data['idCode39Text'] = '$idCode39Text';
+    _data['idCode39Text2'] = '$idCode39Text2';
+    _data['idPdf417Text'] = '$idPdf417Text';
+    _data['passportMRZtext'] = '$passportMRZtext';
+    _data['imageFiles'] = imageFiles.map((img) => img.file.uri.toString()).join(', ');
+    return _data;
+  }
 }
-
-
 
 class ImagePreviewCard extends StatefulWidget {
   final Widget child;
@@ -705,3 +770,6 @@ class ImageFile {
   ImageFile({required this.side, required this.file});
 }
 
+// Future<bool> isLightingBad(CameraImage image) async {
+//   return false;
+// }

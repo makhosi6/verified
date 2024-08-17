@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:verified/app_config.dart';
 import 'package:verified/domain/models/captured_verifee_details.dart';
 import 'package:verified/domain/models/generic_api_error.dart';
 import 'package:verified/domain/models/generic_response.dart';
@@ -18,6 +19,8 @@ import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/store/repository.dart';
 
+import '../../domain/models/communication_channels.dart';
+
 part 'store_state.dart';
 part 'store_event.dart';
 part 'store_bloc.freezed.dart';
@@ -32,7 +35,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     on<StoreEvent>(
       (event, emit) async => event.map(
         apiHealthCheck: (e) async {
-          final response = await _storeRepository.getUserProfile('sJa6oWBDzW3L4NI81UGneYhXPORG');
+          final response = await _storeRepository.getHealthStatus();
 
           response.fold((error) {
             emit(
@@ -320,6 +323,8 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           return null;
         },
         updateUserProfile: (e) async {
+          if (state.resourceHealthStatus == ResourceHealthStatus.bad) add(const StoreEvent.apiHealthCheck());
+          if (state.resourceHealthStatus == ResourceHealthStatus.bad) return;
           emit(
             state.copyWith(
               userProfileError: null,
@@ -707,7 +712,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           emit(
             state.copyWith(
               walletData: prevWallet?.copyWith(
-                balance: (prevWallet.balance ?? 0) + (e.wallet.balance ?? 0),
+                balance: (e.wallet.balance ?? 0),
               ),
             ),
           );
@@ -863,7 +868,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
           final response = await _storeRepository.comprehensiveVerification(
             person: state.searchPerson,
-            clientId: '',
+            clientId: state.userProfileData?.id ?? 'unknown',
           );
 
           response.fold((error) {
@@ -884,11 +889,29 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 searchPersonError: null,
                 searchPersonData: data,
                 searchPersonIsLoading: false,
+                walletData: state.walletData?.copyWith(
+                  balance: (state.walletData?.balance ?? 0) - POINTS_PER_TRANSACTION,
+                ),
               ),
             );
           });
 
           return;
+        },
+        willSendNotificationAfterVerification: (e) async {
+          emit(
+            state.copyWith(
+              searchPersonIsLoading: true,
+            ),
+          );
+        var data = await _storeRepository.willSendNotificationAfterVerification(e.data);
+          print(data);
+          emit(
+            state.copyWith(
+              searchPersonIsLoading: false,
+            ),
+          );
+          return null;
         },
       ),
     );

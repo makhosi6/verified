@@ -46,6 +46,8 @@ const {
   updateOrPutHook
 } = require("../../middleware/store");
 const { notifyAdmin } = require("../../usecases/admin");
+const { updateCommsForJobs, createJob } = require("../../usecases/jobs");
+const { checkRequestClientId } = require("../../middleware/verifyid");
 ///
 const tickets = jsonServer.router(path.join(__dirname, "db/tickets.json"));
 const history = jsonServer.router(path.join(__dirname, "db/history.json"));
@@ -54,6 +56,7 @@ const archive = jsonServer.router(path.join(__dirname, "db/archive.json"));
 const cache = jsonServer.router(path.join(__dirname, "db/cache.json"));
 const promotion = jsonServer.router(path.join(__dirname, "db/promotion.json"));
 const wallet = jsonServer.router(path.join(__dirname, "db/wallet.json"));
+const jobs = jsonServer.router(path.join(__dirname, "db/jobs.json"));
 
 
 // setup the logger
@@ -76,17 +79,19 @@ server.disable('x-powered-by');
 
 
 /// routes
-server.post("/api/v1/send-comms", (req,res) => res.status(200));
-server.post("/api/v1/comprehensive_verification", (req,res) => res.status(200));
-server.get("/api/v1/health-check", (req,res) => res.status(200));
+server.post("/api/v1/verification/resource", (req, res)=> res.send({"status": "OK"},),);
+server.post("/api/v1/send-comms", updateCommsForJobs);
+server.post("/api/v1/comprehensive_verification", checkRequestClientId, createJob);
+server.get("/api/v1/health-check", (req, res)=> res.send({"status": "OK"},),);
 server.post("/api/v1/help", notifyAdmin);
 server.use("/api/v1/ticket", tickets);
 server.use("/api/v1/history", history);
 server.use("/api/v1/profile", lastLoginHook, profile);
 server.use("/api/v1/promotion", promotion);
 server.use("/api/v1/wallet", wallet);
+server.use("/api/v1/jobs", noDeleteOperation, jobs);
 server.use("/api/v1/cache", noDeleteOperation, cache);
-server.use("/api/v1/archive",noDeleteOperation, archive);
+server.use("/api/v1/archive", noDeleteOperation, archive);
 
 /// listen 
 server.listen(PORT, () => {

@@ -9,6 +9,7 @@ import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/choose_document_type_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/blinking_animation.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/scanner_guidelines.dart';
 import 'package:verified/presentation/utils/select_media.dart';
@@ -25,6 +26,8 @@ class VerificationPage extends StatefulWidget {
 
 class _VerificationPageState extends State<VerificationPage> {
   File? _capturedImage;
+  bool hasPoorLighting = false;
+  num brightnessLevel = 0;
 
   @override
   void initState() {
@@ -33,6 +36,9 @@ class _VerificationPageState extends State<VerificationPage> {
 
   @override
   Widget build(BuildContext context) {
+    ///
+    final verificationArgs = ModalRoute.of(context)?.settings.arguments as VerificationPageArgs?;
+
     /// safeArea padding
     final tp = MediaQuery.of(context).padding.top;
     final bp = MediaQuery.of(context).padding.bottom;
@@ -76,7 +82,18 @@ class _VerificationPageState extends State<VerificationPage> {
                       });
                     }
                   },
-                  messageBuilder: (context, face) {
+                  messageBuilder: (context, face, lighting, brLevel) {
+                    ///
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      setState(() {
+                        hasPoorLighting = lighting ?? false;
+                        brightnessLevel = brLevel;
+                      });
+                    });
+                    if (lighting == true) {
+                      return _message('Lighting is too dim to capture images');
+                    }
+
                     ///
                     if (face == null) {
                       return _message('Place your face in the camera');
@@ -114,6 +131,8 @@ class _VerificationPageState extends State<VerificationPage> {
                       ),
                     ),
                   ),
+
+                ///
                 if (_capturedImage != null)
                   Positioned(
                     top: 30,
@@ -135,23 +154,58 @@ class _VerificationPageState extends State<VerificationPage> {
                                 _capturedImage = null;
                               });
                               _smartCameraGlobalKey.currentState?.controller.initialize();
-                            } catch (e) {
-                              print(e);
+                            } catch (err, stackTrace) {
+                              debugPrintStack(stackTrace: stackTrace, label: err.toString());
                             }
                           }),
                     ),
-                  ) else const ScanDocsGuidelines(documentType: null) ,
+                  )
+                else
+                  const ScanDocsGuidelines(documentType: null),
 
+                ///
+                if (hasPoorLighting && _capturedImage == null && brightnessLevel < 120)
+                  BlinkingAnimation(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        constraints: const BoxConstraints(maxHeight: 50, minHeight: 0),
+                        margin: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(255, 255, 255, 0.874),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.light_mode_outlined,
+                                  color: Colors.amberAccent.shade400,
+                                ),
+                                const Text('Poor Lighting Detected!'),
+                              ],
+                            ),
+                            Text('Brightness Level:  ${brightnessLevel.ceil()} / 120')
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                ///
                 if (_capturedImage != null)
-
-                  ///
-                  AnimatedPositioned(
+                Positioned(
                     bottom: 20,
                     right: 20,
-                    curve: Curves.elasticInOut,
-                    duration: const Duration(milliseconds: 250),
+                    // curve: Curves.elasticInOut,
+                    // duration: const Duration(milliseconds: 250),
                     child: FloatingActionButton.extended(
-                      key: UniqueKey(),
                       onPressed: () {
                         convertToFormData(_capturedImage).then((fileData) {
                           if (_capturedImage != null && fileData != null) {
@@ -161,11 +215,15 @@ class _VerificationPageState extends State<VerificationPage> {
                           }
                         }).catchError((err) {
                           verifiedErrorLogger(err);
-                        }, test: (error) {
+                        }, test: (_) {
                           return true;
                         });
 
-                        navigate(context, page: const ChooseDocumentPage(), replaceCurrentPage: true);
+                        navigate(
+                          context,
+                          page: ChooseDocumentPage(verificationArgs: verificationArgs),
+                          replaceCurrentPage: true,
+                        );
                       },
                       label: const Row(
                         children: [

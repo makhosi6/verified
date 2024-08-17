@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+
 class SearchPerson {
   SearchPerson({
     this.name,
@@ -17,6 +19,11 @@ class SearchPerson {
     email = json['email'];
     description = json['description'];
     selectedServices = json['selectedServices'];
+  }
+
+  final String _instanceId = const Uuid().v4();
+  String get instanceId {
+    return _instanceId;
   }
 
   String? name;
@@ -55,6 +62,8 @@ class SearchPerson {
     map['email'] = email;
     map['description'] = description;
     map['selectedServices'] = selectedServices;
+    map['instanceId'] = instanceId;
+    print('PERSON: $map');
     return map;
   }
 }

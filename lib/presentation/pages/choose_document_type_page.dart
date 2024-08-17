@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -11,6 +10,7 @@ import 'package:verified/globals.dart';
 import 'package:verified/helpers/image.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/id_document_scanner_page.dart';
+import 'package:verified/presentation/pages/verification_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/document_type.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
@@ -20,7 +20,8 @@ import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 
 class ChooseDocumentPage extends StatefulWidget {
-  const ChooseDocumentPage({super.key});
+  final VerificationPageArgs? verificationArgs;
+  const ChooseDocumentPage({super.key, this.verificationArgs});
 
   @override
   State<ChooseDocumentPage> createState() => _ChooseDocumentPageState();
@@ -105,7 +106,7 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                     });
                                   }
                                 },
-                                onMessage: (List<String> msgs) {},
+                                onMessage: (_) {},
                                 onStateChanged: (CameraEventsState? state) {
                                   if (mounted) {
                                     setState(() {
@@ -120,7 +121,10 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                     void _nextPage() => navigateToNamedRoute(
                                           ctx,
                                           routeName: '/captured-details',
-                                          arguments: DocumentType.values[index],
+                                          arguments: {
+                                            "docType": DocumentType.values[index],
+                                            'jobUuid': widget.verificationArgs?.uuid
+                                          },
                                           replaceCurrentPage: true,
                                         );
 
@@ -150,6 +154,14 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                                 'data_url': bytesToDataUrl(bytes, getExtension(image.file.path))
                                               })))
                                               ..add(
+                                                StoreEvent.addVerifee(
+                                                  CapturedVerifeeDetails(
+                                                    jobUuid: widget.verificationArgs?.uuid,
+                                                    cameraState: (documentScannerState ?? state)?.toJson(),
+                                                  ),
+                                                ),
+                                              )
+                                              ..add(
                                                 StoreEvent.uploadPassportImage(fileData),
                                               );
                                           }
@@ -157,17 +169,20 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                           print(e);
                                         }
                                       }).whenComplete(_nextPage);
-                                    } else if (DocumentType.values[index] == DocumentType.id_card || DocumentType.values[index] == DocumentType.id_book) {
+                                    } else if (DocumentType.values[index] == DocumentType.id_card ||
+                                        DocumentType.values[index] == DocumentType.id_book) {
                                       var details = CapturedVerifeeDetails.fromIdString(
                                         _documentScannerState.idPdf417Text ?? '',
                                       );
-
+                                      details.cameraState = (documentScannerState ?? state)?.toJson();
                                       if (DocumentType.values[index] == DocumentType.id_card) {
                                         details.identityNumber2 = _documentScannerState.idCode39Text;
                                         details.rawInput = _documentScannerState.idPdf417Text;
+                                        details.jobUuid = widget.verificationArgs?.uuid;
                                       } else if (DocumentType.values[index] == DocumentType.id_book) {
                                         details.identityNumber = _documentScannerState.idCode39Text2;
                                         details.rawInput = _documentScannerState.idCode39Text2;
+                                        details.jobUuid = widget.verificationArgs?.uuid;
                                       }
 
                                       Future.microtask(() async {

@@ -16,6 +16,7 @@ class PaymentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final wallet = context.watch<StoreBloc>().state.walletData;
     final url = context.watch<PaymentsBloc>().state.paymentData?.redirectUrl ?? paymentUrl;
     final amount = context.watch<PaymentsBloc>().state.paymentData?.amount ?? 0;
     final currency = context.watch<PaymentsBloc>().state.paymentData?.currency ?? 'R';
@@ -57,7 +58,7 @@ class PaymentPage extends StatelessWidget {
         context.read<StoreBloc>()
           ..add(
             StoreEvent.updateLocalWallet(
-              Wallet(balance: amount),
+              Wallet(balance: (wallet?.balance) ?? 0 + amount),
             ),
           )
           ..add(

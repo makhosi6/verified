@@ -212,7 +212,7 @@ function handlePaymentEvents(req, res) {
         sendNotification(paymentInformation.payload, eventTypes["refund.succeeded"]);
     } else {
         // Unknown payment event
-       logger.error("Unknown payment event: " + paymentInformation?.type)
+        logger.error("Unknown payment event: " + paymentInformation?.type)
     }
 
     // Record transaction and send response

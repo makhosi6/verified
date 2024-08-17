@@ -10,7 +10,6 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/inputs/generic_input.dart';
 
 final _globalKeyFormPage = GlobalKey<FormState>(debugLabel: 'input-verification-url-page-form-key');
-
 class InputVerificationURL extends StatefulWidget {
   const InputVerificationURL({super.key});
 

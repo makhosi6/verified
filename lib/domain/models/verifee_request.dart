@@ -1,5 +1,6 @@
 class VerifeeRequest {
   VerifeeRequest({
+    this.jobUuid,
     this.image,
     this.preferredName,
     this.phoneNumber,
@@ -10,6 +11,7 @@ class VerifeeRequest {
   });
 
   VerifeeRequest.fromJson(dynamic json) {
+    jobUuid = json['jobUuid'];
     image = json['image'];
     preferredName = json['preferredName'];
     phoneNumber = json['phoneNumber'];
@@ -18,6 +20,7 @@ class VerifeeRequest {
     idNumber = json['idNumber'];
     nationality = json['nationality'];
   }
+  String? jobUuid;
   String? image;
   String? preferredName;
   String? idNumber;
@@ -26,6 +29,7 @@ class VerifeeRequest {
   String? description;
   String? nationality;
   VerifeeRequest copyWith({
+    String? jobUuid,
     String? image,
     String? preferredName,
     String? phoneNumber,
@@ -35,6 +39,7 @@ class VerifeeRequest {
     String? nationality,
   }) =>
       VerifeeRequest(
+        jobUuid: jobUuid ?? this.jobUuid,
         image: image ?? this.image,
         preferredName: preferredName ?? this.preferredName,
         email: email ?? this.email,
@@ -45,6 +50,7 @@ class VerifeeRequest {
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
+    map['jobUuid'] = jobUuid;
     map['image'] = image;
     map['preferredName'] = preferredName;
     map['email'] = email;

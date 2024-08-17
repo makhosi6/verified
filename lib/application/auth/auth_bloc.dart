@@ -23,7 +23,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             authStateChanges: _authProviderRepository.authStateChanges().asBroadcastStream()
               ..listen((user) {
                 try {
-                  print(user.toString());
+                  print('DID BROADCAST USER' + user.toString());
                   if (user != null && _storeBloc.state.userProfileData == null) {
                     ///
 

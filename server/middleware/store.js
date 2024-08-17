@@ -51,6 +51,8 @@ const addIdentifiers = (req, res, next) => {
     METHOD === "POST" &&
     !req.url.includes("cache/resource") &&
     !req.url.includes("profile/resource") &&
+    !req.url.includes("jobs/resource") &&
+    !req.url.includes("comprehensive_verification") &&
     !req.url.includes("wallet/resource")
   ) {
     req.body.id = uuidv4();
@@ -192,7 +194,7 @@ async function updateOrPutHook(req, res, next) {
     const host =
       (process.env.NODE_ENV === "production"
         ? `store_service`
-        : `${process.env.HOST}`) + `:${process.env.PORT}`;
+        : `${HOST}`) + `:${PORT}`;
     const url = (
       req.originalUrl ||
       req.pathname ||
@@ -208,6 +210,7 @@ async function updateOrPutHook(req, res, next) {
 
     const data = await response.json();
 
+    console.log({data, url, isSystemCall, METHOD});
     // Merge the fetched data with the original request body
     // This allows the PUT request to include additional data from the service
     req.body = {

@@ -40,7 +40,7 @@ const {
 } = require("../../middleware/universal");
 const {
     verifyIdHook,
-    getRequestClientId,
+    checkRequestClientId,
     deductCreditsAfterTransaction
 } = require("../../middleware/verifyid");
 
@@ -74,7 +74,7 @@ server.use(security);
 server.use(authorization);
 server.use(authenticate);
 server.use(verifyIdHook);
-server.use(getRequestClientId);
+server.use(checkRequestClientId);
 server.disable('x-powered-by');
 
 server.get("/api/v1/health-check", handleGetCreditsReq);

@@ -87,8 +87,6 @@ class HomePageContents extends StatelessWidget {
           slivers: <Widget>[
              const AppErrorWarningIndicator(
               key: Key('homepage_app_error_warning_indicator'),
-              type: IndicatorType.warning,
-              message: 'Your phone date/time is inaccurate!',
             ),
             SliverAppBar(
               stretch: true,

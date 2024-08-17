@@ -204,13 +204,14 @@ class _SearchOptionsPageContent extends StatelessWidget {
                             key: UniqueKey(),
                             onTap: () {
                               final user = context.read<StoreBloc>().state.userProfileData;
-                              final selectedPage = CaptureDetailsPage();
                               if (user == null) {
-                                triggerAuthBottomSheet(context: context, redirect: selectedPage);
+                                triggerAuthBottomSheet(context: context, redirect: CaptureDetailsPage());
+
+                                return;
                               } else {
                                 navigate(
                                   context,
-                                  page: selectedPage,
+                                  page: CaptureDetailsPage(),
                                 );
                               }
                             },

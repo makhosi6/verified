@@ -154,7 +154,7 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                     color: darkerPrimaryColor,
                     child: BottomSheet(
                         onClosing: () {},
-                        showDragHandle: TargetPlatform.android != defaultTargetPlatform,
+                        showDragHandle: true,
                         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 300.0),
                         animationController: BottomSheet.createAnimationController(this),
                         enableDrag: false,

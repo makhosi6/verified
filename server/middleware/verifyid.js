@@ -7,9 +7,9 @@ const verifyIdHook = (req, res, next) => {
  * @param {Object} res 
  * @param {Function} next 
  */
-const getRequestClientId = (req, res, next) => {
+const checkRequestClientId = (req, res, next) => {
   const { client: clientId } = req.query;
-
+console.log({clientId });
   if (clientId) {
     next();
   } else {
@@ -18,4 +18,4 @@ const getRequestClientId = (req, res, next) => {
   }
 };
 
-module.exports = { verifyIdHook, getRequestClientId };
+module.exports = { verifyIdHook, checkRequestClientId };

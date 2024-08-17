@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:verified/presentation/utils/app_info.dart';
@@ -8,7 +9,7 @@ part 'appbase_event.dart';
 part 'appbase_bloc.freezed.dart';
 
 class AppbaseBloc extends Bloc<AppbaseEvent, AppbaseState> {
-  AppbaseBloc(this._appbaseRepository) : super(AppbaseState.initial()) {
+  AppbaseBloc(this._appBaseRepository) : super(AppbaseState.initial()) {
     on<AppbaseEvent>(
       (event, emit) => event.map(
         healthCheck: (_) {
@@ -18,6 +19,7 @@ class AppbaseBloc extends Bloc<AppbaseEvent, AppbaseState> {
           final app = await getVerifiedPackageInfo();
           emit(
             state.copyWith(
+
               appInfo: app,
             ),
           );
@@ -26,6 +28,7 @@ class AppbaseBloc extends Bloc<AppbaseEvent, AppbaseState> {
         },
         getDeviceInfo: (_) async {
           final device = await getCurrentDeviceInfo();
+          debugPrint(_appBaseRepository.hashCode.toString());
           emit(
             state.copyWith(
               deviceInfo: device,
@@ -38,5 +41,5 @@ class AppbaseBloc extends Bloc<AppbaseEvent, AppbaseState> {
     );
   }
 
-  final Object _appbaseRepository;
+  final Object _appBaseRepository;
 }

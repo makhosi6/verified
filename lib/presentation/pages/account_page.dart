@@ -16,6 +16,7 @@ import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/native_scripts/main.dart';
 import 'package:verified/presentation/pages/app_signature_page.dart';
+import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/loading_page.dart';
 import 'package:verified/presentation/pages/webviews/privacy_clause.dart';
 import 'package:verified/presentation/utils/data_view_item.dart';
@@ -35,13 +36,17 @@ import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/text/list_title.dart';
 
-  GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+
+
 class AccountPage extends StatelessWidget {
   AccountPage({super.key});
 
 
+
   @override
   Widget build(BuildContext context) {
+    GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+    GlobalKey<RefreshIndicatorState>(debugLabel: 'acc-page-refresh-token-key');
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Container(
@@ -75,7 +80,7 @@ class AccountPage extends StatelessWidget {
         ),
       ),
       body: RefreshIndicator(
-        key: _refreshIndicatorKey,
+        key: refreshIndicatorKey,
         onRefresh: () async => await Future.delayed(
           const Duration(seconds: 2),
           // VerifiedAppNativeCalls.restartApp,
@@ -278,9 +283,9 @@ class AccountPageContent extends StatelessWidget {
                                                   context.read<AuthBloc>().add(const AuthEvent.signOut());
                                                   context.read<StoreBloc>().add(const StoreEvent.clearUser());
 
-                                                  Navigator.of(context)
-                                                    ..pop()
-                                                    ..initState();
+                                                  // Navigator.of(context)
+                                                    // ..pop();
+                                                    // ..initState();
 
                                                   Future.delayed(const Duration(milliseconds: 700),
                                                       () => VerifiedAppNativeCalls.restartApp());
@@ -414,7 +419,11 @@ class AccountPageContent extends StatelessWidget {
                                                             ),
                                                           )
                                                         : accountSettings[index]['text'] == 'Alerts And Notifications'
-                                                            ? [const _NotificationsSettings(key: Key('notifications-settings'),)]
+                                                            ? [
+                                                                const _NotificationsSettings(
+                                                                  key: Key('notifications-settings'),
+                                                                )
+                                                              ]
                                                             : [
                                                                 const Text(' '),
                                                               ],
@@ -536,7 +545,7 @@ class _ProfileName extends StatelessWidget {
   UserProfile? user;
   _ProfileName({Key? key, required this.user}) : super(key: key);
 
-  late String placeholderAvatar = 'https://robohash.org/${user?.displayName?.substring(1,2)}.png';
+  late String placeholderAvatar = 'https://robohash.org/${user?.displayName?.substring(1, 2)}.png';
   @override
   Widget build(BuildContext context) {
     var windowWidth = MediaQuery.of(context).size.width;
@@ -774,7 +783,7 @@ Map<String, String> getAppInfo(BuildContext context) {
         ? 'https://www.apple.com/app-store/12454534636'
         : (TargetPlatform.android == defaultTargetPlatform)
             ? 'https://play.google.com/store/apps/details?id=com.byteestudio.verified'
-            : 'https://verified.byteestudio.com'
+            : 'http://192.168.0.134'
   };
 }
 

@@ -1,14 +1,23 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:verified/presentation/theme.dart';
 
-class AppErrorWarningIndicator extends StatelessWidget {
-  final IndicatorType type;
-  final bool show;
-  final String message;
-   const AppErrorWarningIndicator( 
-      {super.key, this.show = false, this.type = IndicatorType.error, this.message = 'No Internet Connection'});
+class AppErrorWarningIndicator extends StatefulWidget {
+  const AppErrorWarningIndicator({super.key});
+
+
+
+
+
+  @override
+  State<AppErrorWarningIndicator> createState() => _AppErrorWarningIndicatorState();
+}
+
+class _AppErrorWarningIndicatorState extends State<AppErrorWarningIndicator> {
+
+  final IndicatorType type = IndicatorType.error;
+  final bool show = false;
+  final String message = 'No Internet Connection';
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +25,7 @@ class AppErrorWarningIndicator extends StatelessWidget {
       child: (!show)
           ? const SizedBox.shrink()
           : Container(
-              color: type == IndicatorType.error ? Colors.redAccent[700]! : Colors.amber[400],
+              color: type == IndicatorType.error ? errorColor : Colors.amber[400],
               // margin: const EdgeInsets.only(bottom: 20),
               child: Column(
                 children: [

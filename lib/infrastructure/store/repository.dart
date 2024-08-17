@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
@@ -6,6 +7,7 @@ import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/domain/interfaces/i_store_repository.dart';
+import 'package:verified/domain/models/communication_channels.dart';
 import 'package:verified/domain/models/generic_api_error.dart';
 import 'package:verified/domain/models/generic_response.dart';
 import 'package:verified/domain/models/help_ticket.dart';
@@ -53,6 +55,7 @@ class StoreRepository implements IStoreRepository {
       );
 
       var statusCode = response.statusCode;
+
       if (httpRequestIsSuccess(response.statusCode)) {
         var data = PassportResponseData.fromJson(response.data);
         if (data.error is String || data.message != 'successful') {
@@ -413,7 +416,7 @@ class StoreRepository implements IStoreRepository {
   }
 
   @override
-  Future<ResourceHealthStatus> getHealthStatus() async {
+  Future<Either<GenericApiError, GenericResponse>> getHealthStatus() async {
     try {
       var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
       var response = await _httpClient.get(
@@ -425,11 +428,21 @@ class StoreRepository implements IStoreRepository {
       );
 
       if (httpRequestIsSuccess(response.statusCode)) {
-        return ResourceHealthStatus.good;
+        return right(GenericResponse(status: 'OK', code: response.statusCode));
       }
-      return ResourceHealthStatus.bad;
+      return left(
+        GenericApiError(
+          status: 'unknown',
+          error: 'Error Occurred',
+        ),
+      );
     } catch (e) {
-      return ResourceHealthStatus.bad;
+      return left(
+        GenericApiError(
+          status: 'unknown',
+          error: 'Error Occurred',
+        ),
+      );
     }
   }
 
@@ -495,23 +508,25 @@ class StoreRepository implements IStoreRepository {
       {required SearchPerson? person, required String clientId}) async {
     try {
       if (person == null) return left(Exception('Empty request Object'));
-      final headers = {
-        'Content-Type': 'multipart/form-data',
-        'Accept': 'application/json',
+      var headers = {
+        'x-nonce': await generateNonce(),
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $storeApiKey',
       };
+
       final response = await _httpClient.post(
         '/comprehensive_verification?client=$clientId',
         options: Options(
           headers: headers,
         ),
-        data: person.toJson(),
+        data: json.encode(person.toJson()..addAll({'id': person.instanceId})),
       );
       if (httpRequestIsSuccess(response.statusCode)) {
         // if (response.statusCode == 200) throw Exception('Some made up error.');
 
         return right(
           VerifyComprehensiveResponse.fromJson(
-            {'status': response.statusCode, 'data': person.toJson(), 'message': response.data['message']},
+            {'status': response.statusCode, 'data': response.data, 'message': response.data['message']},
           ),
         );
       } else {
@@ -519,6 +534,30 @@ class StoreRepository implements IStoreRepository {
       }
     } catch (e) {
       return left(Exception(e.toString()));
+    }
+  }
+
+  @override
+  Future<GenericResponse?> willSendNotificationAfterVerification(CommsChannels data) async {
+    try {
+      if (data.instanceId == '' || data.instanceId.isEmpty) return null;
+      // final headers = {
+      //   'Content-Type': 'application/json',
+      //   'Accept': 'application/json',
+      // };
+      final response = await _httpClient.post(
+        '/send-comms',
+        options: Options(
+            // headers: headers,
+            ),
+        data: data.toJson(),
+      );
+      if (httpRequestIsSuccess(response.statusCode)) {
+        return GenericResponse(status: 'success', code: response.statusCode);
+      }
+      return null;
+    } catch (e) {
+      return null;
     }
   }
 }

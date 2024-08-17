@@ -7,7 +7,6 @@ import 'package:verified/domain/models/verifee_request.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/data/countries.dart';
 import 'package:verified/presentation/pages/home_page.dart';
-import 'package:verified/presentation/pages/id_document_scanner_page.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/document_type.dart';
@@ -21,8 +20,6 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/inputs/generic_input.dart';
 import 'package:verified/presentation/widgets/popups/successful_action_popup.dart';
 
-final _globalKeyCaptureVerifieeDetailsPageForm = GlobalKey<FormState>(debugLabel: 'capture-verifiee-details-page-key');
-
 class CaptureVerifieeDetailsPage extends StatefulWidget {
   CaptureVerifieeDetailsPage({super.key});
 
@@ -32,10 +29,14 @@ class CaptureVerifieeDetailsPage extends StatefulWidget {
 
 class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage> {
   ///
+  final _globalKeyCaptureVerifieeDetailsPageForm =
+      GlobalKey<FormState>(debugLabel: 'capture-verifiee-details-page-key');
+
+  ///
   var keyboardType = TextInputType.number;
 
   ///
-  var verifiee = VerifeeRequest();
+  var verifiee = VerifeeRequest(jobUuid: '');
 
   ///
   @override
@@ -48,7 +49,8 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
   ///
   @override
   Widget build(BuildContext context) {
-    final documentType = ModalRoute.of(context)?.settings.arguments as DocumentType?;
+    final documentType = (ModalRoute.of(context)?.settings.arguments as Map)['docType'] as DocumentType?;
+    final jobUuid = (ModalRoute.of(context)?.settings.arguments as Map)['jobUuid'] as String?;
     return BlocListener<StoreBloc, StoreState>(
       bloc: context.read<StoreBloc>(),
       listener: (context, state) {},
@@ -124,27 +126,28 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
 
                                   ///
                                   ...[
-                                    CaptureUserDetailsInputOption(
-                                      label: 'Name or Nickname (Optional)',
-                                      hintText: 'Type your name...',
-                                      initialValue: capturedVerifeeDetails?.names  ==null? null:
-                                          '${capturedVerifeeDetails?.names ?? ''}  ${capturedVerifeeDetails?.surname ?? ''}',
-                                      autofocus: false,
-                                      inputFormatters: [],
-                                      keyboardType: TextInputType.text,
-                                      validator: (name) {
-                                        if (name == null || name.isEmpty == true) {
-                                          return 'Please provide a name/surname/nickname';
-                                        }
-                                        if (name.length < 2) {
-                                          return 'Name must be at least 2 characters long';
-                                        }
-                                        return null;
-                                      },
-                                      onChangeHandler: (name) {
-                                        verifiee = verifiee.copyWith(preferredName: name);
-                                      },
-                                    ),
+                                    // CaptureUserDetailsInputOption(
+                                    //   label: 'Name or Nickname (Optional)',
+                                    //   hintText: 'Type your name...',
+                                    //   initialValue: capturedVerifeeDetails?.names == null
+                                    //       ? null
+                                    //       : '${capturedVerifeeDetails?.names ?? ''}  ${capturedVerifeeDetails?.surname ?? ''}',
+                                    //   autofocus: false,
+                                    //   inputFormatters: [],
+                                    //   keyboardType: TextInputType.text,
+                                    //   validator: (name) {
+                                    //     if (name == null || name.isEmpty == true) {
+                                    //       return 'Please provide a name/surname/nickname';
+                                    //     }
+                                    //     if (name.length < 2) {
+                                    //       return 'Name must be at least 2 characters long';
+                                    //     }
+                                    //     return null;
+                                    //   },
+                                    //   onChangeHandler: (name) {
+                                    //     verifiee = verifiee.copyWith(preferredName: name);
+                                    //   },
+                                    // ),
                                     CaptureUserDetailsInputOption(
                                       hintText: 'Type their ID Number(Document Number)',
                                       initialValue: capturedVerifeeDetails?.identityNumber ??
@@ -315,7 +318,7 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                         if (_globalKeyCaptureVerifieeDetailsPageForm.currentState?.validate() == true) {
                                           context.read<StoreBloc>().add(
                                                 StoreEvent.createVerifieeDetails(
-                                                  verifiee,
+                                                  verifiee.copyWith(jobUuid: jobUuid),
                                                 ),
                                               );
 

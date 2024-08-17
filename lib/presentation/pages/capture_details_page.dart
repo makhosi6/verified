@@ -17,8 +17,6 @@ import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/inputs/generic_input.dart';
 
-final _globalKeyCaptureDetailsPageForm = GlobalKey<FormState>(debugLabel: 'captured-details-page-key');
-
 class CaptureDetailsPage extends StatelessWidget {
   CaptureDetailsPage({super.key});
 
@@ -31,7 +29,10 @@ class CaptureDetailsPage extends StatelessWidget {
   ///
   @override
   Widget build(BuildContext context) {
-    //
+    ///
+       final globalKeyCaptureDetailsPageForm =
+      GlobalKey<FormState>(debugLabel: '[$hashCode]captured-details-page-key');
+    ///
     return Scaffold(
       key: const Key('captured-details-page'),
       body: Center(
@@ -83,7 +84,7 @@ class CaptureDetailsPage extends StatelessWidget {
                     constraints: appConstraints,
                     padding: EdgeInsets.only(bottom: primaryPadding.bottom * 3, top: primaryPadding.top * 3),
                     child: Form(
-                      key: _globalKeyCaptureDetailsPageForm,
+                      key: globalKeyCaptureDetailsPageForm,
                       child: Column(
                         key: const Key('captured-details-field-inputs'),
                         children: [
@@ -126,53 +127,53 @@ class CaptureDetailsPage extends StatelessWidget {
                                 person = person.copyWith(name: name);
                               },
                             ),
-                            CaptureUserDetailsInputOption(
-                              hintText: 'Type their Id Number',
-                              initialValue: null,
-                              label: 'Government-issued ID Number (optional)',
-                              inputMask: '000000 0000 000',
-                              autofocus: false,
-                              maxLength: 13,
-                              inputFormatters: [],
-                              keyboardType: TextInputType.number,
-                              validator: (idNumber) {
-                                /// if phone is define the Id is optional
-                                if ((person.phoneNumber != null && person.phoneNumber?.isNotEmpty == true) &&
-                                    (idNumber == null || idNumber.isEmpty)) {
-                                  return null;
-                                }
+                            // CaptureUserDetailsInputOption(
+                            //   hintText: 'Type their Id Number',
+                            //   initialValue: null,
+                            //   label: 'Government-issued ID Number (optional)',
+                            //   inputMask: '000000 0000 000',
+                            //   autofocus: false,
+                            //   maxLength: 13,
+                            //   inputFormatters: [],
+                            //   keyboardType: TextInputType.number,
+                            //   validator: (idNumber) {
+                            //     /// if phone is define the Id is optional
+                            //     if ((person.phoneNumber != null && person.phoneNumber?.isNotEmpty == true) &&
+                            //         (idNumber == null || idNumber.isEmpty)) {
+                            //       return null;
+                            //     }
 
-                                if (idNumber == null || idNumber.isEmpty) {
-                                  return 'You have to provide a phone number or a ID number';
-                                }
-                                return validateIdNumber(idNumber);
-                              },
-                              onChangeHandler: (idNumber) {
-                                person = person.copyWith(idNumber: idNumber);
+                            //     if (idNumber == null || idNumber.isEmpty) {
+                            //       return 'You have to provide a phone number or a ID number';
+                            //     }
+                            //     return validateIdNumber(idNumber);
+                            //   },
+                            //   onChangeHandler: (idNumber) {
+                            //     person = person.copyWith(idNumber: idNumber);
 
-                                /// and validate the form
-                                _globalKeyCaptureDetailsPageForm.currentState?.validate();
-                              },
-                            ),
-                            CaptureUserDetailsInputOption(
-                              hintText: '00000000000',
-                              initialValue: null,
-                              label: 'Bank Account Number (optional)',
-                              inputMask: '00000000000',
-                              autofocus: false,
-                              maxLength: null,
-                              inputFormatters: [],
-                              keyboardType: TextInputType.number,
-                              validator: (accNumber) {
-                                if ((accNumber != null && accNumber.isNotEmpty) && accNumber.length < 10) {
-                                  return 'Acc Number must be at least 10 characters long';
-                                }
-                                return null;
-                              },
-                              onChangeHandler: (bankAccountNumber) {
-                                person = person.copyWith(bankAccountNumber: bankAccountNumber);
-                              },
-                            ),
+                            //     /// and validate the form
+                            //     globalKeyCaptureDetailsPageForm.currentState?.validate();
+                            //   },
+                            // ),
+                            // CaptureUserDetailsInputOption(
+                            //   hintText: '00000000000',
+                            //   initialValue: null,
+                            //   label: 'Bank Account Number (optional)',
+                            //   inputMask: '00000000000',
+                            //   autofocus: false,
+                            //   maxLength: null,
+                            //   inputFormatters: [],
+                            //   keyboardType: TextInputType.number,
+                            //   validator: (accNumber) {
+                            //     if ((accNumber != null && accNumber.isNotEmpty) && accNumber.length < 10) {
+                            //       return 'Acc Number must be at least 10 characters long';
+                            //     }
+                            //     return null;
+                            //   },
+                            //   onChangeHandler: (bankAccountNumber) {
+                            //     person = person.copyWith(bankAccountNumber: bankAccountNumber);
+                            //   },
+                            // ),
                             CaptureUserDetailsInputOption(
                               hintText: '000 000 0000',
                               initialValue: null,
@@ -198,7 +199,7 @@ class CaptureDetailsPage extends StatelessWidget {
                                 person = person.copyWith(phoneNumber: phoneNumber);
 
                                 /// and validate the form
-                                _globalKeyCaptureDetailsPageForm.currentState?.validate();
+                                globalKeyCaptureDetailsPageForm.currentState?.validate();
                               },
                             ),
                             CaptureUserDetailsInputOption(
@@ -277,7 +278,7 @@ class CaptureDetailsPage extends StatelessWidget {
                             child: BaseButton(
                               key: UniqueKey(),
                               onTap: () {
-                                if (_globalKeyCaptureDetailsPageForm.currentState?.validate() == true) {
+                                if (globalKeyCaptureDetailsPageForm.currentState?.validate() == true) {
                                   context.read<StoreBloc>().add(
                                         StoreEvent.createPersonalDetails(
                                           person,

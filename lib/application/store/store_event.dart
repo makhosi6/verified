@@ -11,6 +11,7 @@ class StoreEvent with _$StoreEvent {
   const factory StoreEvent.createPersonalDetails(SearchPerson searchPerson) = CreatePersonalDetails;
   const factory StoreEvent.selectJobsOrService(List<String> serviceOrJob) = SelectJobsOrService;
   const factory StoreEvent.validateAndSubmit() = ValidateAndSubmit;
+  const factory StoreEvent.willSendNotificationAfterVerification(CommsChannels data) = WillSendNotificationAfterVerification;
 
   ///
   const factory StoreEvent.uploadFiles(List<MultipartFile> uploads) = UploadFiles;

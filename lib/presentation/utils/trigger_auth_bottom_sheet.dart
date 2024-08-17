@@ -21,11 +21,13 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
       context: context,
       showDragHandle: true, //TargetPlatform.android != defaultTargetPlatform,
       builder: (context) => BlocListener<StoreBloc, StoreState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (!state.userProfileDataLoading && state.userProfileData != null && state.userProfileData != null) {
             ///
-            Navigator.of(context).pop();
-
+            //     Navigator.of(context).pop();
+            //  await Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
+            //       builder: (BuildContext context) => CreateAccountPage(),
+            //     ));
             ///
             ScaffoldMessenger.of(context)
               ..clearSnackBars()
@@ -39,7 +41,7 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
               );
 
             ///
-            navigate(context, page: redirect);
+            navigate(context, page: redirect, replaceCurrentPage: true);
           }
         },
         child: SingleChildScrollView(
@@ -120,6 +122,9 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
 
                 ///buttons
                 ...buttons(context, type: 'signin'),
+                const SizedBox(
+                  height: 30,
+                )
               ],
             ),
           ),
@@ -247,12 +252,17 @@ Future triggerSignUpBottomSheet<bool>({required BuildContext context, required W
       context: context,
       showDragHandle: TargetPlatform.android != defaultTargetPlatform,
       builder: (context) => BlocListener<StoreBloc, StoreState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (!state.userProfileDataLoading && state.userProfileData != null && state.userProfileData != null) {
             ///
             Navigator.of(context).pop();
 
+            // await Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
+            //   builder: (BuildContext context) => CreateAccountPage(),
+            // ),);
+
             ///
+            // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context)
               ..clearSnackBars()
               ..showSnackBar(
@@ -265,7 +275,8 @@ Future triggerSignUpBottomSheet<bool>({required BuildContext context, required W
               );
 
             ///
-            navigate(context, page: redirect);
+            // ignore: use_build_context_synchronously
+            navigate(context, page: redirect, replaceCurrentPage: true);
           }
         },
         child: SingleChildScrollView(
@@ -350,6 +361,9 @@ Future triggerSignUpBottomSheet<bool>({required BuildContext context, required W
 
                 ///buttons
                 ...buttons(context, type: 'signup'),
+                const SizedBox(
+                  height: 30,
+                )
               ],
             ),
           ),

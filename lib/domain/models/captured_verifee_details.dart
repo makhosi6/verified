@@ -20,6 +20,8 @@ class CapturedVerifeeDetails {
   String? cardNumber;
   String? rawInput;
   String? spaceFiller;
+  String? jobUuid;
+  Map<String, String>? cameraState;
 
   CapturedVerifeeDetails(
       {this.surname,
@@ -37,6 +39,8 @@ class CapturedVerifeeDetails {
       this.securityNumber,
       this.cardNumber,
       this.rawInput,
+      this.jobUuid,
+      this.cameraState,
       this.spaceFiller});
 
   CapturedVerifeeDetails.fromPassportString(List<String> data) {
@@ -100,6 +104,8 @@ class CapturedVerifeeDetails {
       cardNumber = json['cardNumber'];
       rawInput = json['rawInput'];
       spaceFiller = json['spaceFiller'];
+      jobUuid = json['jobUuid'];
+      cameraState = json['cameraState'];
     } catch (e) {
       print(e);
     }
@@ -125,6 +131,8 @@ class CapturedVerifeeDetails {
     _data['securityNumber'] = securityNumber;
     _data['cardNumber'] = cardNumber;
     _data['rawInput'] = rawInput;
+    _data['jobUuid'] = jobUuid;
+    _data['cameraState'] = cameraState;
     _data['spaceFiller'] = spaceFiller;
     return _data;
   }

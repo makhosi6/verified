@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:verified/domain/models/communication_channels.dart';
 import 'package:verified/domain/models/generic_api_error.dart';
 import 'package:verified/domain/models/generic_response.dart';
 import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/passport_response_data.dart';
 import 'package:verified/domain/models/promotion.dart';
-import 'package:verified/domain/models/resource_health_status_enum.dart';
 import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/domain/models/transaction_history.dart';
 import 'package:verified/domain/models/upload_response.dart';
@@ -15,7 +15,7 @@ import 'package:verified/domain/models/wallet.dart';
 
 abstract class IStoreRepository {
   /// Get HEaLTH StaTUS
-  Future<ResourceHealthStatus> getHealthStatus();
+    Future<Either<GenericApiError, GenericResponse>> getHealthStatus();
 
   ///
   Future<Either<Exception, VerifyComprehensiveResponse>> comprehensiveVerification(
@@ -23,7 +23,8 @@ abstract class IStoreRepository {
 
   ///
   Future<UploadResponse> uploadFiles(List<MultipartFile> uploads);
-
+///
+  Future<GenericResponse?> willSendNotificationAfterVerification(CommsChannels data);
   ///
   Future<Either<GenericApiError, GenericResponse>> makeIdVerificationRequest(VerificationRequest data);
 

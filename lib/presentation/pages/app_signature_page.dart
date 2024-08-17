@@ -6,80 +6,19 @@ class AppSignaturePage extends StatelessWidget {
   const AppSignaturePage({super.key});
 
   final _markDownData = '''[
-  {
-    "relation": [
-      "delegate_permission/common.get_login_creds",
-      "delegate_permission/common.handle_all_urls",
-      "delegate_permission/common.use_as_origin"
-    ],
-    "target": {
-      "namespace": "web",
-      "site": "https://twitter.com"
+    {
+      "relation": [
+        "delegate_permission/common.handle_all_urls"
+      ],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.byteestudio.verified",
+        "sha256_cert_fingerprints": [
+          "CD:A1:23:E0:1A:5C:7A:19:21:B6:24:BC:25:75:7E:4C:E9:DB:4A:90:35:15:DF:17:ED:93:78:58:16:E7:69:59"
+        ]
+      }
     }
-  },
-  {
-    "relation": [
-      "delegate_permission/common.get_login_creds",
-      "delegate_permission/common.handle_all_urls",
-      "delegate_permission/common.use_as_origin"
-    ],
-    "target": {
-      "namespace": "web",
-      "site": "https://x.com"
-    }
-  },
-  {
-    "relation": [
-      "delegate_permission/common.get_login_creds",
-      "delegate_permission/common.use_as_origin"
-    ],
-    "target": {
-      "namespace": "web",
-      "site": "https://twitter.com"
-    }
-  },
-  {
-    "relation": [
-      "delegate_permission/common.get_login_creds",
-      "delegate_permission/common.use_as_origin"
-    ],
-    "target": {
-      "namespace": "web",
-      "site": "https://x.com"
-    }
-  },
-  {
-    "relation": [
-      "delegate_permission/common.get_login_creds",
-      "delegate_permission/common.handle_all_urls",
-      "delegate_permission/common.use_as_origin"
-    ],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.twitter.android",
-      "sha256_cert_fingerprints": [
-        "0F:D9:A0:CF:B0:7B:65:95:09:97:B4:EA:EB:DC:53:93:13:92:39:1A:A4:06:53:8A:3B:04:07:3B:C2:CE:2F:E9",
-        "F9:07:E3:BB:21:D6:31:9C:CA:34:07:80:CC:63:B5:15:3A:92:97:1F:85:D3:8A:48:82:E6:A5:7A:41:AC:33:84",
-        "99:22:6e:ed:9b:9e:ee:14:6c:b1:61:49:2b:cf:91:a5:4d:97:ff:04:54:32:8d:93:b8:64:f3:1f:6c:8d:d7:0a"
-      ]
-    }
-  },
-  {
-    "relation": [
-      "delegate_permission/common.get_login_creds",
-      "delegate_permission/common.handle_all_urls",
-      "delegate_permission/common.use_as_origin"
-    ],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.twitter.android.lite",
-      "sha256_cert_fingerprints": [
-        "AF:E0:2B:08:E2:3F:6B:D4:09:02:5B:52:3E:BB:3F:46:3A:D4:BC:16:99:9B:9E:8D:C2:D8:C3:9C:4E:C2:2F:25",
-        "C2:79:5F:83:9A:07:3E:8E:10:47:F8:CB:22:BE:E0:D8:A0:7C:39:C6:1F:1F:48:10:40:A8:8A:44:9E:6B:EB:A5"
-      ]
-    }
-  }
-]''';
+  ]''';
 
   @override
   Widget build(BuildContext context) {

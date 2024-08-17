@@ -4,7 +4,8 @@ import 'package:verified/presentation/pages/webviews/the_webview.dart';
 
 class VerifiedAuthWebView extends StatefulWidget {
   final void Function(AuthUserDetails data)? onPageSuccess;
-  final OnFinishCallback? onPageFailed;
+  final Function? onPageFailed;
+  // final OnFinishCallback? onPageFailed;
   final Function? onPageCancelled;
   final String url;
 

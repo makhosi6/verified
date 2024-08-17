@@ -94,7 +94,7 @@ function sendWhatsappMessage(data) {
     request(options, function (error, response) {
       if (error) {
         sendWhatsappSend(data);
-        throw new Error(error);
+        logger.warn(error.toString(), error)
       }
     });
   } catch (error) {

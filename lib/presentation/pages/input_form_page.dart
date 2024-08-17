@@ -284,10 +284,10 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
     ];
   }
 
-  Widget submitButton(BuildContext context, UserProfile? user) {
+  Widget submitButton(BuildContext context, UserProfile? user)  {
     return InputFormSubmitButton(
       pageButtonName: stackIndex == 0 ? 'Next' : 'Submit',
-      nextHandler: () {
+      nextHandler: () async {
         ///
         if (stackIndex == 0 && mounted) {
           ///
@@ -332,7 +332,7 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
             print('============');
           }
           if ((wallet.balance ?? 0) < POINTS_PER_TRANSACTION) {
-            showTopUpBottomSheet(context);
+           await showTopUpBottomSheet(context);
 
             return;
           }
