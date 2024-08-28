@@ -15,11 +15,11 @@ const Queue = require('../../packages/queue')
 const queue = new Queue({ results: [], autostart: true, timeout: 30000 });
 queue.addEventListener('success', e => {
   console.log('job finished processing:', JSON.stringify(e, null, 2))
-  console.log('The result is:', e.toString())
+  console.log('The result is:', JSON.stringify(e, null, 2))
 })
 queue.addEventListener('error', e => {
   console.log('job finished processing with an error:', JSON.stringify(e, null, 2))
-  console.log('The result is:', e.toString())
+  console.log('The result is:', JSON.stringify(e, null, 2))
 })
 queue.start(err => {
   if (err) console.error("Queue Error", err)

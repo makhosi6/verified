@@ -486,6 +486,8 @@ class _AppRootState extends State<AppRoot> {
 
     /// show loader option 2
     _refreshIndicatorKey.currentState?.show();
+
+    ///
     Future.delayed(
       const Duration(seconds: 2),
       () => _displaySnackBarAndNavigate(context, value: snackBarValue ?? SnackbarValue.unknown),
@@ -552,15 +554,17 @@ class _AppRootState extends State<AppRoot> {
               } else {
                 _hideAppLoader();
               }
+
               final hasUser = state.userProfileData != null;
               final hasToken = token != null;
               final isNewToken = state.userProfileData?.notificationToken != token;
+
               if (hasUser && isNewToken && hasToken) {
                 Future.delayed(const Duration(seconds: 5), () {
                   try {
 
                     print('UPDATE Its A NEW TOKEN, $isNewToken | $hasToken | $hasUser | $token');
-                    print('was_token ${state.userProfileData?.notificationToken}' );
+                    print('was_token ${state.userProfileData?.notificationToken}');
                     context.read<StoreBloc>().add(
                           StoreEvent.updateUserProfile(
                             state.userProfileData!.copyWith(

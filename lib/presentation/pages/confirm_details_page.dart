@@ -274,7 +274,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                                       final user = context.read<StoreBloc>().state.userProfileData;
 
                                       if (wallet == null) {
-                          
                                         wallet = Wallet(
                                             id: const Uuid().v4(), profileId: user?.id ?? user?.walletId ?? 'unknown');
                                         if (user != null) {
@@ -294,7 +293,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                                       }
 
                                       /// send
-
                                       context.read<StoreBloc>().add(const StoreEvent.validateAndSubmit());
 
                                       await showDialog(
@@ -386,10 +384,18 @@ class __DonePopUpState extends State<_DonePopUp> {
             CommsChannels(sms: sms, email: email, instanceId: person?.instanceId ?? '')));
 
         ///
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const HomePage()),
-          (_) => false,
-        );
+        Navigator.of(context)
+          ..pop()
+          ..pop()
+          ..pop()
+          ..pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const HomePage()),
+            (_) => false,
+          ).catchError((err) {
+            print('Error : $err');
+          }, test: (_) {
+            return true;
+          });
       },
       showDottedDivider: false,
       children: [

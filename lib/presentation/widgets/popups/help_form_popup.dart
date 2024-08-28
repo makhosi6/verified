@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
@@ -17,7 +16,7 @@ import 'package:verified/presentation/widgets/popups/default_popup.dart';
 
 final _helpFormGlobalKey = GlobalKey<_HelpFormState>(debugLabel: 'help-form-key');
 
-Future showHelpPopUpForm(BuildContext context) async => await showDialog(
+Future showHelpPopUpForm(BuildContext context, {String? title}) async => await showDialog(
     context: context,
     barrierColor: darkBlurColor,
     builder: (context) {
@@ -32,10 +31,10 @@ Future showHelpPopUpForm(BuildContext context) async => await showDialog(
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(
+              SizedBox(
                 child: Text(
-                  'Report an issue',
-                  style: TextStyle(fontSize: 24.0),
+                  title ?? 'Report an issue',
+                  style: const TextStyle(fontSize: 24.0),
                 ),
               ),
               ActionButton(
@@ -311,7 +310,7 @@ class _HelpFormState extends State<_HelpForm> {
                           final helpRequest = HelpTicket(
                             id: const Uuid().v4(),
                             profileId: user?.id,
-                            timestamp: DateTime.now().millisecondsSinceEpoch,
+                            timestamp: DateTime.now().millisecondsSinceEpoch ~/ 1000,
                             type: selectedIssueType,
                             isResolved: false,
                             comment: Comment(title: 'Issue report', body: _bodyTextController.text),

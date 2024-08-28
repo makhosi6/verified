@@ -90,8 +90,8 @@ class AuthRepository implements IAuthRepository {
           isEmailVerified: response.data['email_verified_at'] != null,
           isAnonymous: false,
           metadata: UserMetadata(
-            DateTime.tryParse(response.data['created_at'])?.millisecondsSinceEpoch,
-            DateTime.now().millisecondsSinceEpoch,
+           (DateTime.tryParse(response.data['created_at'])?.millisecondsSinceEpoch ?? 0 ) ~/ 1000 ,
+            DateTime.now().millisecondsSinceEpoch ~/ 1000,
           ),
           phoneNumber: null,
           photoUrl: 'https://robohash.org/${(response.data['id'].replaceRange(0, 2, "P_"))?.toLowerCase()}.png',
@@ -131,8 +131,8 @@ class AuthRepository implements IAuthRepository {
           isEmailVerified: response.data['email_verified_at'] != null,
           isAnonymous: false,
           metadata: UserMetadata(
-            DateTime.tryParse(response.data['created_at'])?.millisecondsSinceEpoch,
-            DateTime.now().millisecondsSinceEpoch,
+            (DateTime.tryParse(response.data['created_at'])?.millisecondsSinceEpoch ?? 0 ) ~/ 1000 ,
+            DateTime.now().millisecondsSinceEpoch ~/ 1000,
           ),
           phoneNumber: null,
           photoUrl: 'https://robohash.org/${(response.data['id'].replaceRange(0, 2, "P_"))?.toLowerCase()}.png',

@@ -91,7 +91,7 @@ void onLogInAsTestUser(BuildContext context) {
                               profileId: testUserProfile.id,
                               type: 'test_user_logged',
                               preferredCommunicationChannel: 'email',
-                              timestamp: DateTime.now().millisecondsSinceEpoch,
+                              timestamp: DateTime.now().millisecondsSinceEpoch ~/ 1000,
                               isResolved: false,
                               comment: Comment(
                                 title: 'New Device Login by Test User at ${DateTime.now().toIso8601String()}',

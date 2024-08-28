@@ -23,6 +23,7 @@ class CombinedHistoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var state = context.watch<StoreBloc>().state;
     var learnMoreBanner = ListItemBanner(
       type: BannerType.promotion,
       bgColor: neutralGrey,
@@ -33,13 +34,11 @@ class CombinedHistoryList extends StatelessWidget {
       buttonText: 'Learn More',
       onTap: () => navigate(context, page: const HowItWorksPage()),
     );
-
     return Container(
       width: MediaQuery.of(context).size.width - 12,
       constraints: appConstraints,
-      child: BlocBuilder<StoreBloc, StoreState>(
-        bloc: context.watch<StoreBloc>(),
-        builder: (context, state) {
+      child: Builder(
+        builder: (context) {
           /// IF TRANSACTION == 0, SHOW A PROMOTION
           if (state.historyData.isEmpty && limit == null) {
             return Padding(

@@ -19,7 +19,9 @@ class TransactionListItem extends StatelessWidget {
     final type = data.type, subtype = data.subtype;
     final isType2 = ((data.details?.query?.length) ?? 0) > 10;
 
-    if (type == 'credit' || subtype == 'credit') {
+    if ((data.categoryId ?? '').contains('pending') ) {
+        leading = pendingLeadingIcon;
+    } else if (type == 'credit' || subtype == 'credit') {
       leading = topUpLeadingIcon;
     } else if (type == 'promo' || subtype == 'promo') {
       leading = freeCreditIcon;
@@ -78,6 +80,7 @@ class TransactionListItem extends StatelessWidget {
                           color: neutralDarkGrey,
                         ),
                         overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                       ),
                     )
                   : const SizedBox.shrink(),
@@ -94,7 +97,7 @@ class TransactionListItem extends StatelessWidget {
             ],
           ),
           // trailing: (type == 'promo' || type == 'topup') || (subtype == 'promo' || subtype == 'topup')
-          trailing: (type == 'promo') || (subtype == 'promo')
+          trailing: (type == 'promo') || (subtype == 'promo') || (data.categoryId != null && data.categoryId != '')
               ? Container(
                   padding: const EdgeInsets.all(4.0),
                   decoration: BoxDecoration(
@@ -102,11 +105,15 @@ class TransactionListItem extends StatelessWidget {
                     color: primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
+                  constraints: const BoxConstraints(maxWidth: 50, maxHeight: 40),
                   child: Text(
-                    (type == 'promo' || subtype == 'promo')
-                        ? 'Promo'
-                        : 'Info', // ((type == 'topup' || subtype == 'topup') ? 'Refund' : 'Info'),
+                    (data.categoryId != null && data.categoryId != '')
+                        ? '${data.categoryId}'
+                        : (type == 'promo' || subtype == 'promo')
+                            ? 'Promo'
+                            : 'Info', // ((type == 'topup' || subtype == 'topup') ? 'Refund' : 'Info'),
                     style: GoogleFonts.dmSans(color: primaryColor),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 )
               : null,
@@ -151,7 +158,13 @@ var topUpLeadingIcon = _LeadingIcon(
   decoratorIconBgColor: primaryColor,
   bgColor: darkerPrimaryColor,
 );
-
+var pendingLeadingIcon = _LeadingIcon(
+  key: UniqueKey(),
+  icon:  Icons.rotate_right_rounded,
+  withDecorator: false,
+  decoratorIconBgColor: primaryColor,
+  bgColor: primaryColor,
+);
 var spendLeadingIcon = _LeadingIcon(
   key: UniqueKey(),
   discountIndictor: false,

@@ -212,7 +212,7 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
                             Padding(
                               padding: const EdgeInsets.fromLTRB(0, 40, 0, 30),
                               child: LearnMoreHighlightedButton(
-                                text: 'Please type and click send to verify the details.',
+                                text: 'Need help? Visit our Help page for support!',
                                 onTap: () => navigate(
                                   context,
                                   page: const LearnMorePage(),

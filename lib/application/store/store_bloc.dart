@@ -5,6 +5,7 @@ import 'package:verified/app_config.dart';
 import 'package:verified/domain/models/captured_verifee_details.dart';
 import 'package:verified/domain/models/generic_api_error.dart';
 import 'package:verified/domain/models/generic_response.dart';
+import 'package:verified/domain/models/generic_status_enum.dart';
 import 'package:verified/domain/models/passport_response_data.dart';
 import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/promotion.dart';
@@ -453,7 +454,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                   ticketsError: null,
                   ticketsHasError: false,
                   ticketsDataLoading: false,
-                  ticketsData: state.ticketsData..add(data)),
+                  ticketsData: [...state.ticketsData, data]),
             );
           });
 
@@ -539,7 +540,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           emit(state.copyWith(
             historyError: null,
             historyHasError: false,
-            historyDataLoading: true,
+            // historyDataLoading: true,
           ));
 
           final response = await _storeRepository.postUserTransaction(e.transaction);
@@ -551,15 +552,17 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 status: 'error',
               ),
               historyHasError: true,
-              historyDataLoading: false,
+              // historyDataLoading: false,
             ));
           }, (data) {
-            emit(state.copyWith(
-              historyError: null,
-              historyHasError: false,
-              historyDataLoading: false,
-              historyData: state.historyData..add(data),
-            ));
+            emit(
+              state.copyWith(
+                historyError: null,
+                historyHasError: false,
+                // historyDataLoading: false,
+                historyData: [...state.historyData, data],
+              ),
+            );
           });
           return null;
         },
@@ -870,9 +873,10 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             person: state.searchPerson,
             clientId: state.userProfileData?.id ?? 'unknown',
           );
-
+          var status = Status.unknown;
           response.fold((error) {
             print('ERROR:  ${error.toString()}');
+            status = Status.failed;
             emit(
               state.copyWith(
                 searchPersonError: GenericApiError(error: error.toString(), status: 'unknown'),
@@ -883,6 +887,8 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             );
           }, (data) {
             print('RESPONSE:  ${data.toJson()}');
+            status = Status.success_pending;
+
             emit(
               state.copyWith(
                 searchPersonHasError: false,
@@ -896,21 +902,35 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             );
           });
 
+          add(
+            StoreEvent.createHistory(
+              TransactionHistory(
+                profileId: state.userProfileData?.id,
+                amount: POINTS_PER_TRANSACTION,
+                isoCurrencyCode: 'ZAR',
+                categoryId: status.value,
+                timestamp: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+                details: Details(
+                    id: state.searchPerson?.instanceId,
+                    query:
+                        '${state.searchPerson?.idNumber ?? state.searchPerson?.phoneNumber ?? state.searchPerson?.name ?? state.searchPerson?.email}'
+                            .replaceAll('  ', ' ')),
+                description:
+                    'Verification process pending (${state.searchPerson?.idNumber ?? state.searchPerson?.phoneNumber ?? state.searchPerson?.name ?? state.searchPerson?.email})'
+                        .replaceAll('  ', ' '),
+                subtype: 'spend',
+                type: 'debit',
+                transactionReferenceNumber: state.searchPerson?.name ?? state.searchPerson?.instanceId,
+                transactionId: state.searchPerson?.instanceId,
+              ),
+            ),
+          );
+
           return;
         },
         willSendNotificationAfterVerification: (e) async {
-          emit(
-            state.copyWith(
-              searchPersonIsLoading: true,
-            ),
-          );
-        var data = await _storeRepository.willSendNotificationAfterVerification(e.data);
-          print(data);
-          emit(
-            state.copyWith(
-              searchPersonIsLoading: false,
-            ),
-          );
+          var data = await _storeRepository.willSendNotificationAfterVerification(e.data);
+          print('willSendNotificationAfterVerification  => $data');
           return null;
         },
       ),

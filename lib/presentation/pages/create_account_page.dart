@@ -115,7 +115,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                               CaptureUserDetailsInputOption(
                                 hintText: '000 000 0000',
                                 initialValue: null,
-                                label: 'Phone Number (Optional)',
+                                label: 'Phone Number',
                                 inputMask: '000 000 0000',
                                 maxLength: 10,
                                 autofocus: false,
@@ -127,7 +127,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                               // CaptureUserDetailsInputOption(
                               //   hintText: 'City/Town/Suburb',
                               //   initialValue: null,
-                              //   label: 'Name of your city (Optional)',
+                              //   label: 'Name of your city',
                               //   inputMask: null,
                               //   autofocus: false,
                               //   inputFormatters: [],

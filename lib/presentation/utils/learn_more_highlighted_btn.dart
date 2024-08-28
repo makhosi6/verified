@@ -35,7 +35,7 @@ class LearnMoreHighlightedButton extends StatelessWidget {
                 style: TextStyle(
                   color: darkerPrimaryColor,
                   fontWeight: FontWeight.w400,
-                  fontSize: 12.0,
+                  fontSize: 14.0,
                 ),
                 textAlign: TextAlign.left,
                 overflow: TextOverflow.ellipsis,

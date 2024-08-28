@@ -1,8 +1,12 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
+import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
+import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verified/presentation/widgets/popups/help_form_popup.dart';
 
 class LearnMorePage extends StatefulWidget {
   const LearnMorePage({super.key});
@@ -64,6 +68,7 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                 surfaceTintColor: Colors.transparent,
                 stretchTriggerOffset: 280.0,
                 expandedHeight: 280.0,
+                centerTitle: false,
                 title: const Text(
                   'Learn More',
                   style: TextStyle(
@@ -146,6 +151,27 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                   key: const Key('learn-more-page-back-btn'),
                   onTap: Navigator.of(context).pop,
                 ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: BaseButton(
+                      key: UniqueKey(),
+                      onTap: () async => await showHelpPopUpForm(context, title: 'Submit Help Ticket'),
+                      height: 49.0,
+                      label: 'Get Help',
+                      color: Colors.white,
+                      bgColor: darkerPrimaryColor,
+                      borderColor: const Color.fromARGB(70, 237, 237, 237),
+                      iconBgColor: const Color.fromARGB(70, 237, 237, 237),
+                      buttonIcon: const Icon(
+                        Icons.support_outlined,
+                        color: Colors.white,
+                      ),
+                      buttonSize: ButtonSize.small,
+                      hasBorderLining: true,
+                    ),
+                  )
+                ],
               ),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
@@ -229,6 +255,7 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                                               tilePadding: const EdgeInsets.all(0.0),
                                               backgroundColor: Colors.grey[100],
                                               collapsedBackgroundColor: Colors.transparent,
+                                              childrenPadding: EdgeInsets.only(bottom: primaryPadding.vertical / 2),
                                               initiallyExpanded: index == 0,
                                               title: Text(
                                                 question,
@@ -241,10 +268,34 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                                                 textAlign: TextAlign.start,
                                               ),
                                               children: [
-                                                Text(
-                                                  answer,
+                                                RichText(
+                                                  textAlign: TextAlign.start,
+                                                  text: TextSpan(
+                                                    children: [
+                                                      TextSpan(
+                                                          text: answer,
+                                                          style: DefaultTextStyle.of(context).style.copyWith()),
+                                                      const TextSpan(
+                                                        text: '  ',
+                                                      ),
+                                                      TextSpan(
+                                                        text: '  learn more',
+                                                        recognizer: TapGestureRecognizer()
+                                                          ..onTap = () => navigate(
+                                                                context,
+                                                                page: DetailedTutorialPage(
+                                                                  key: ValueKey(question),
+                                                                ),
+                                                              ),
+                                                        style: TextStyle(
+                                                          fontWeight: FontWeight.w600,
+                                                          decoration: TextDecoration.underline,
+                                                          color: primaryColor,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                                const Text('')
                                               ],
                                             );
                                           },
@@ -286,7 +337,7 @@ class ListOfHelpTipsTopics extends StatelessWidget {
           child: Container(
             width: 160,
             height: 100,
-            margin: EdgeInsets.only(right: primaryPadding.right / 2),
+            margin: EdgeInsets.only(right: primaryPadding.right),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.white70),
               borderRadius: BorderRadius.circular(20),
@@ -458,3 +509,115 @@ var xyz = {
     'Finding Additional Information and Resources'
   ]
 };
+
+class DetailedTutorialPage extends StatefulWidget {
+  const DetailedTutorialPage({super.key});
+
+  @override
+  State<DetailedTutorialPage> createState() => _DetailedTutorialPageState();
+}
+
+class _DetailedTutorialPageState extends State<DetailedTutorialPage> {
+  bool folded = false;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          // SliverAppBar for a header image and title
+          SliverAppBar(
+            onStretchTrigger: () async {
+              setState(() {
+                folded = !folded;
+              });
+            },
+            stretchTriggerOffset: 50,
+            expandedHeight: 250.0,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsets.all(0),
+              title: Container(
+                width: MediaQuery.of(context).size.width,
+                // height: 60,
+                padding: primaryPadding,
+                decoration: BoxDecoration(
+                  color: darkBlurColor,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(16.0),
+                    bottomRight: Radius.circular(16.0),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width - (100 + (primaryPadding.horizontal * 2)),
+                      child: Text(
+                        'Introduction Flutter $folded Google’s UI toolkit, offers a powerful scrolling system that enables developers',
+                        // style: const TextStyle(fontSize: 18),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    TextButton(
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(EdgeInsets.zero),
+                          maximumSize: MaterialStateProperty.all(
+                            const Size(100, 40),
+                          )),
+                      onPressed: () {},
+                      child: Image.asset('assets/icons/youtube.png'),
+                    )
+                  ],
+                ),
+              ),
+              background: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(16.0),
+                    bottomRight: Radius.circular(16.0),
+                  ),
+                ),
+                clipBehavior: Clip.hardEdge,
+                child: Image.network(
+                  'https://images.unsplash.com/photo-1719937206255-cc337bccfc7d',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              expandedTitleScale: 1,
+            ),
+            leadingWidth: 80.0,
+            leading: VerifiedBackButton(
+              key: const Key('acc-page-back-btn'),
+              isLight: true,
+              onTap: Navigator.of(context).pop,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: const Text(
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
+              ),
+            ),
+          ),
+          // SliverList for the blog content
+          SliverList(
+            delegate: SliverChildListDelegate(
+              List.generate(
+                100,
+                (index) => Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Text(
+                    '$index - Introduction Flutter, Google’s UI toolkit, offers a powerful scrolling system that enables developers to create dynamic and responsive mobile applications. A key component of this system is slivers. In this article, we’ll dive deep into slivers, exploring their types, use cases, and how they differ from traditional UI components. What Are Slivers? In Flutter, slivers are building blocks for creating intricate scrollable layouts. Unlike standard widgets, slivers are highly flexible and can adapt to the user’s scrolling behavior. They are particularly useful for building complex scrolling views with custom headers, parallax effects, and interactive app bars.',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

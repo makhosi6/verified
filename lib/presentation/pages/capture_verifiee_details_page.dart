@@ -127,7 +127,7 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                   ///
                                   ...[
                                     // CaptureUserDetailsInputOption(
-                                    //   label: 'Name or Nickname (Optional)',
+                                    //   label: 'Name or Nickname',
                                     //   hintText: 'Type your name...',
                                     //   initialValue: capturedVerifeeDetails?.names == null
                                     //       ? null
@@ -182,7 +182,7 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                     CaptureUserDetailsInputOption(
                                       hintText: '000 000 0000',
                                       initialValue: null,
-                                      label: 'Phone Number (Optional)',
+                                      label: 'Phone Number',
                                       inputMask: '000 000 0000',
                                       maxLength: 10,
                                       autofocus: false,
@@ -211,7 +211,7 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                     CaptureUserDetailsInputOption(
                                       hintText: 'Type their email address',
                                       initialValue: null,
-                                      label: 'Email address (Optional)',
+                                      label: 'Email address',
                                       autofocus: false,
                                       inputFormatters: [],
                                       keyboardType: TextInputType.emailAddress,
@@ -301,7 +301,7 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                   Padding(
                                     padding: const EdgeInsets.fromLTRB(0, 40, 0, 30),
                                     child: LearnMoreHighlightedButton(
-                                      text: 'Please type and click send to verify the details.',
+                                      text: 'Need help? Visit our Help page for support!',
                                       onTap: () => navigate(
                                         context,
                                         page: const LearnMorePage(),

@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gallery_asset_picker/gallery_asset_picker.dart';
 import 'package:intl/intl.dart';
+
 import 'package:verified/app_config.dart';
 import 'package:verified/application/appbase/appbase_bloc.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
@@ -16,30 +18,27 @@ import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/native_scripts/main.dart';
 import 'package:verified/presentation/pages/app_signature_page.dart';
-import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/loading_page.dart';
-import 'package:verified/presentation/pages/webviews/privacy_clause.dart';
-import 'package:verified/presentation/utils/data_view_item.dart';
-import 'package:verified/presentation/utils/select_media.dart';
-import 'package:verified/presentation/utils/url_loader.dart';
-import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
+import 'package:verified/presentation/pages/webviews/privacy_clause.dart';
 import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/data_view_item.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
-import 'package:verified/presentation/widgets/popups/default_popup.dart';
-import 'package:verified/presentation/widgets/popups/help_form_popup.dart';
 import 'package:verified/presentation/utils/navigate.dart';
+import 'package:verified/presentation/utils/select_media.dart';
+import 'package:verified/presentation/utils/url_loader.dart';
 import 'package:verified/presentation/widgets/bank_card/base_card.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
+import 'package:verified/presentation/widgets/history/combined_history_list.dart';
+import 'package:verified/presentation/widgets/popups/default_popup.dart';
+import 'package:verified/presentation/widgets/popups/help_form_popup.dart';
 import 'package:verified/presentation/widgets/text/list_title.dart';
 
-
-
 class AccountPage extends StatelessWidget {
-  AccountPage({super.key});
+  const AccountPage({super.key});
 
 
 
@@ -518,7 +517,7 @@ var accountSettings = [
   {'type': 'expandable', 'text': 'title'},
   {'type': 'expandable', 'text': 'Personal', 'icon': Icons.person_2_outlined},
   {'type': 'expandable', 'text': 'History', 'icon': Icons.history_rounded},
-  {'type': 'button', 'text': 'Help', 'icon': Icons.info_outline},
+  {'type': 'button', 'text': 'Help', 'icon': Icons.support_outlined},
   {
     'type': 'expandable',
     'text': 'App Information',
@@ -543,7 +542,10 @@ var accountSettings = [
 
 class _ProfileName extends StatelessWidget {
   UserProfile? user;
-  _ProfileName({Key? key, required this.user}) : super(key: key);
+  _ProfileName({
+    Key? key,
+    this.user,
+  }) : super(key: key);
 
   late String placeholderAvatar = 'https://robohash.org/${user?.displayName?.substring(1, 2)}.png';
   @override

@@ -1,8 +1,8 @@
 enum ServiceOptionsEnum {
+  
   identity_verification('Identity Verification (Default)'),
-  qualifications_verification('Qualifications Verification'),
-  criminal_verification('Criminal Record Checks'),
-  credit_check_verification('Credit History Check'),
+  facial_verification('Biometrics/Facial Verification'),
+  document_verification('Document Verification'),
   all('All');
 
   const ServiceOptionsEnum(this.value);
