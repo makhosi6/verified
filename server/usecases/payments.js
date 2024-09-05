@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require("uuid");
+const { uniqueIdentifier } = require("../packages/uuid");
 const { generateNonce } = require("../nonce.source");
 const request = require('request')
 const express = require('express')
@@ -371,7 +371,7 @@ async function handleYocoPayment(req, res) {
 
         const headers = new Headers();
         headers.append("Content-Type", "application/json");
-        headers.append("Idempotency-Key", uuidv4());
+        headers.append("Idempotency-Key", uniqueIdentifier());
         headers.append("Authorization", `Bearer ${PAYMENTS_TOKEN}`);
 
         ///

@@ -1,8 +1,10 @@
-const { v4: uuidv4 } = require("uuid");
+const { uniqueIdentifier } = require("../packages/uuid");
 const { generateNonce } = require("../nonce.source");
 const request = require("request");
 const { archiveRecord } = require("../usecases/store");
 const logger = require("../packages/logger");
+const Queue = require('../packages/queue');
+const { delay } = require("../utils/delay");
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
@@ -15,7 +17,7 @@ const analytics = (req, res, next) => {
   const sessionId = "";
   const caller = req.headers["x-caller"];
 
-  logger.warn(`${time}`, {caller, route : req.method + ' ' + req.url})
+  logger.warn(`${time}`, { caller, route: req.method + ' ' + req.url })
 
   next();
 };
@@ -104,9 +106,50 @@ function noDeleteOperation(req, res, next) {
   }
 }
 
+async function postOperationOnly(req, res, next) {
+  if (req.method == 'POST') {
+    next();
+    return;
+  }
+  else {
+    res.status(405).json({
+      status: 'error',
+      message: 'Method Not Allowed',
+      data: null
+    });
+  }
+
+}
+
+
+/**
+ * 
+ * @param {Queue} queue 
+ * @returns {import("express").RequestParamHandler}
+ */
+function triggerVerificationAsyncTasks(queue) {
+  return function (req, res, next) {
+    const instanceId = req?.body.verifeeRequest.jobUuid || req?.body.verifeeRequest.jobUuid;
+    ///create a task queue
+    queue.push(() => delay(10000, async function () {
+      await delay()
+      // send push to user
+
+
+      // send email to client
+
+
+      console.log('Will process the ', instanceId, ' job')
+
+    }));
+    next();
+  }
+}
 async function archiveOnDelete(req, res, next) {
   try {
     const METHOD = req.method.toUpperCase();
+    const { client: clientId } = req.query;
+    const clientEnv = req?.headers["x-client-env"];
     if (METHOD == "DELETE") {
       const headers = {
         /// add a nonce and TOKEN for security/auth
@@ -140,7 +183,11 @@ async function archiveOnDelete(req, res, next) {
       const type = urlArr[urlArr.length - 3];
 
       await archiveRecord({
-        id: uuidv4(),
+        id: uniqueIdentifier(),
+        url,
+        originalUrl: req.originalUrl,
+        clientId,
+        clientEnv,
         type,
         record: data,
       });
@@ -153,12 +200,17 @@ async function archiveOnDelete(req, res, next) {
   }
 }
 
+
+
+
 module.exports = {
   archiveOnDelete,
   noDeleteOperation,
+  postOperationOnly,
   addWallet,
   analytics,
   security,
   authenticate,
   authorization,
+  triggerVerificationAsyncTasks
 };

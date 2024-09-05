@@ -11,7 +11,7 @@ class VerifySaDioClientService {
       baseUrl: '$baseUrl/verify-id/api/v1/',
       headers: {
         'Authorization': 'Bearer $verifySaApiKey',
-        'x-client-env': 'test',
+      'x-client-env': curentUserEnv,
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
@@ -59,10 +59,10 @@ class StoreDioClientService {
   static Dio instance = Dio(
     BaseOptions(
       // baseUrl: '$baseUrl/store/api/v1/',
-      baseUrl: 'http://192.168.0.132:5400/api/v1/',
+      baseUrl: 'http://10.0.1.213:5400/api/v1/',
       headers: {
         'Authorization': 'Bearer $storeApiKey',
-        'x-client': '',
+         'x-client-env': curentUserEnv,
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
@@ -113,6 +113,7 @@ class PaymentsDioClientService {
       headers: {
         'Authorization': 'Bearer $storeApiKey',
         'x-client': '',
+            'x-client-env': curentUserEnv,
         // 'x-nonce': 'MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2',
         'Accept': 'application/json',
         'Content-Type': 'application/json'

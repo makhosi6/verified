@@ -15,12 +15,16 @@ class TransactionListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget leading;
+    _LeadingIcon leading;
     final type = data.type, subtype = data.subtype;
     final isType2 = ((data.details?.query?.length) ?? 0) > 10;
 
-    if ((data.categoryId ?? '').contains('pending') ) {
-        leading = pendingLeadingIcon;
+    if ((data.categoryId ?? '').contains('failed')) {
+      leading = failedLeadingIcon;
+    } else if ((data.categoryId ?? '').contains('done')) {
+      leading = doneLeadingIcon;
+    } else if ((data.categoryId ?? '').contains('pending')) {
+      leading = pendingLeadingIcon;
     } else if (type == 'credit' || subtype == 'credit') {
       leading = topUpLeadingIcon;
     } else if (type == 'promo' || subtype == 'promo') {
@@ -32,7 +36,6 @@ class TransactionListItem extends StatelessWidget {
     } else {
       leading = leadingIcon;
     }
-
     return SizedBox(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -101,8 +104,8 @@ class TransactionListItem extends StatelessWidget {
               ? Container(
                   padding: const EdgeInsets.all(4.0),
                   decoration: BoxDecoration(
-                    border: Border.all(color: primaryColor, width: 0.5),
-                    color: primaryColor.withOpacity(0.1),
+                    border: Border.all(color: leading.bgColor, width: 0.5),
+                    color: leading.bgColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   constraints: const BoxConstraints(maxWidth: 50, maxHeight: 40),
@@ -112,7 +115,7 @@ class TransactionListItem extends StatelessWidget {
                         : (type == 'promo' || subtype == 'promo')
                             ? 'Promo'
                             : 'Info', // ((type == 'topup' || subtype == 'topup') ? 'Refund' : 'Info'),
-                    style: GoogleFonts.dmSans(color: primaryColor),
+                    style: GoogleFonts.dmSans(color: leading.bgColor),
                     overflow: TextOverflow.ellipsis,
                   ),
                 )
@@ -160,10 +163,24 @@ var topUpLeadingIcon = _LeadingIcon(
 );
 var pendingLeadingIcon = _LeadingIcon(
   key: UniqueKey(),
-  icon:  Icons.rotate_right_rounded,
+  icon: Icons.rotate_right_rounded,
+  withDecorator: false,
+  decoratorIconBgColor: neutralYellow,
+  bgColor: neutralYellow,
+);
+var doneLeadingIcon = _LeadingIcon(
+  key: UniqueKey(),
+  icon: Icons.donut_large_sharp,
   withDecorator: false,
   decoratorIconBgColor: primaryColor,
   bgColor: primaryColor,
+);
+var failedLeadingIcon = _LeadingIcon(
+  key: UniqueKey(),
+  icon: Icons.do_disturb_outlined,
+  withDecorator: false,
+  decoratorIconBgColor: primaryColor,
+  bgColor: errorColor,
 );
 var spendLeadingIcon = _LeadingIcon(
   key: UniqueKey(),

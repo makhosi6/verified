@@ -109,10 +109,10 @@ void main() async {
   if (kDebugMode) {
     if (defaultTargetPlatform == TargetPlatform.android) {
       var device = await getCurrentDeviceInfo();
-      final host = (device['isPhysicalDevice'] == true) ? '192.168.0.132' : 'localhost';
+      final host = (device['isPhysicalDevice'] == true) ? '10.0.1.213' : 'localhost';
       await FirebaseAuth.instance.useAuthEmulator(host, 9099);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      await FirebaseAuth.instance.useAuthEmulator('0.0.0.0', 9099);
+      await FirebaseAuth.instance.useAuthEmulator('10.0.1.213', 9099);
     }
   }
 

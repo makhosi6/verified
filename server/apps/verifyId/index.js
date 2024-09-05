@@ -68,7 +68,7 @@ server.use(cors());
 server.use(express.json());
 server.use(express.urlencoded({
     extended: true
-}));
+},),);
 server.use(analytics);
 server.use(security);
 server.use(authorization);

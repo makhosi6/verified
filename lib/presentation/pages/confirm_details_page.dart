@@ -287,9 +287,8 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                                         print('============');
                                       }
                                       if ((wallet.balance ?? 0) < POINTS_PER_TRANSACTION) {
-                                        await showTopUpBottomSheet(context);
+                                        return await showTopUpBottomSheet(context);
 
-                                        return;
                                       }
 
                                       /// send

@@ -13,7 +13,6 @@ import 'package:verified/domain/models/generic_response.dart';
 import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/passport_response_data.dart';
 import 'package:verified/domain/models/promotion.dart';
-import 'package:verified/domain/models/resource_health_status_enum.dart';
 import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/domain/models/transaction_history.dart';
 import 'package:verified/domain/models/upload_response.dart';
@@ -451,6 +450,7 @@ class StoreRepository implements IStoreRepository {
     try {
       final headers = {
         'Authorization': 'Bearer $storeApiKey',
+        
         'Content-Type': 'multipart/form-data',
       };
       final data = FormData.fromMap({

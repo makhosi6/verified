@@ -7,6 +7,7 @@ import 'package:flutter_beep/flutter_beep.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:verified/helpers/image.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/blinking_animation.dart';
@@ -680,7 +681,7 @@ class CameraEventsState {
     _data['idCode39Text2'] = '$idCode39Text2';
     _data['idPdf417Text'] = '$idPdf417Text';
     _data['passportMRZtext'] = '$passportMRZtext';
-    _data['imageFiles'] = imageFiles.map((img) => img.file.uri.toString()).join(', ');
+    _data['imageFiles'] = imageFiles.map((img) =>  bytesToDataUrl(img.file.readAsBytesSync(), getExtension(img.file.path))).join(', ');
     return _data;
   }
 }

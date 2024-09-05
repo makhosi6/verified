@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require("uuid");
+const { uniqueIdentifier } = require("../packages/uuid");
 const { generateNonce } = require("../nonce.source");
 const { addWallet } = require("./universal");
 const request = require("request");
@@ -55,7 +55,10 @@ const addIdentifiers = (req, res, next) => {
     !req.url.includes("comprehensive_verification") &&
     !req.url.includes("wallet/resource")
   ) {
-    req.body.id = uuidv4();
+    req.body.id = uniqueIdentifier();
+  }else {
+    console.log("addIdentifiers skip!!!");
+    
   }
   next();
 };
@@ -84,7 +87,7 @@ const lastLoginHook = (req, res, next) => {
  * @param {NextFunction} next
  */
 const onCreateAccountOrLoginHook = async (req, res, next) => {
-  const walletId = uuidv4();
+  const walletId = uniqueIdentifier();
   const method = req.method.toUpperCase();
 
   /// also create a wallet on account creation
@@ -263,6 +266,8 @@ async function updateWalletLastTopUp({ id, amount }) {
     });
   }
 }
+
+
 
 // export all functions
 module.exports = {

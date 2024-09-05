@@ -36,6 +36,8 @@ const {
   security,
   noDeleteOperation,
   archiveOnDelete,
+  postOperationOnly,
+  triggerVerificationAsyncTasks,
 } = require("../../middleware/universal");
 
 const {
@@ -46,7 +48,7 @@ const {
   updateOrPutHook
 } = require("../../middleware/store");
 const { notifyAdmin } = require("../../usecases/admin");
-const { updateCommsForJobs, createJob } = require("../../usecases/jobs");
+const { updateCommsForJobs, handleCreateJob , handleVerificationRequest} = require("../../usecases/jobs");
 const { checkRequestClientId } = require("../../middleware/verifyid");
 ///
 const tickets = jsonServer.router(path.join(__dirname, "db/tickets.json"));
@@ -77,12 +79,11 @@ server.use(archiveOnDelete);
 server.use(updateOrPutHook);
 server.disable('x-powered-by');
 
-
 /// routes
-server.post("/api/v1/verification/resource", (req, res)=> res.send({"status": "OK"},),);
+server.post("/api/v1/verification/resource", triggerVerificationAsyncTasks(global?.queue || queue), handleVerificationRequest);
 server.post("/api/v1/send-comms", updateCommsForJobs);
-server.post("/api/v1/comprehensive_verification", checkRequestClientId, createJob);
-server.get("/api/v1/health-check", (req, res)=> res.send({"status": "OK"},),);
+server.post("/api/v1/comprehensive_verification", checkRequestClientId, handleCreateJob);
+server.get("/api/v1/health-check", (req, res) => res.send({"status": "OK"},),);
 server.post("/api/v1/help", notifyAdmin);
 server.use("/api/v1/ticket", tickets);
 server.use("/api/v1/history", history);

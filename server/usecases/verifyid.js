@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require("uuid");
+const { uniqueIdentifier } = require("../packages/uuid");
 const { generateNonce } = require("../nonce.source");
 const { getUserProfile, getWallet, cache3rdPartResponse } = require("./store");
 const fetch = (...args) =>
@@ -126,7 +126,7 @@ const _transactionDescription = (query) => {
  */
 async function recordBurnCreditsTransaction(transaction) {
   try {
-    console.log("Hit the store API and save the burn transaction... ", transaction);
+    console.log("Hit the store API and save the burn credits... ", transaction);
     const headers = new Headers();
     headers.append("x-nonce", generateNonce());
     headers.append("Content-Type", "application/json");
@@ -263,8 +263,8 @@ async function handleGetCreditsReq(req, res) {
     const randomNumber = Math.floor(Math.random() * 1000);
 
     //if it's a test env simulate an error or return test/fake data
-    if (clientEnv === "test") {
-      if (randomNumber > 100) res.status(500).send({ error: "" });
+    if (clientEnv === "test") { 
+      if (randomNumber > 100) res.status(500).send({ error: 'chaos monkey' });
       else res.send(fakeCreditResData);
 
       return;
@@ -337,14 +337,14 @@ const deductCreditsAfterTransaction = async (query, clientId) => {
       categoryId: null,
       timestamp: Math.floor(Date.now() / 1000),
       details: {
-        id: uuidv4(),
+        id: uniqueIdentifier(),
         query,
       },
       description: _transactionDescription(query),
       subtype: "spend",
       type: null,
-      transactionReferenceNumber: uuidv4(),
-      transactionId: uuidv4(),
+      transactionReferenceNumber: uniqueIdentifier(),
+      transactionId: uniqueIdentifier(),
     });
 
     // log a transaction

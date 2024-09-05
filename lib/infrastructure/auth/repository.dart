@@ -112,7 +112,7 @@ class AuthRepository implements IAuthRepository {
   @override
   Future<VerifiedWebUser?> webSignUp(AuthUserDetails data, VerifiedWebUser user) async {
     try {
-      var headers = {'Authorization': 'Bearer ${data.token}'};
+      var headers = {'Authorization': 'Bearer ${data.token}', 'x-client-env': curentUserEnv,};
       var dio = Dio();
       var response = await dio.put(
         'profile/resource/${data.userId}',
