@@ -16,15 +16,26 @@ const PORT = process.env.PORT || process.env.PORT || 5400;
 const HOST = process.env.HOST || "0.0.0.0";
 
 const analytics = (req, res, next) => {
-  const IP = "";
+  const IP = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const time = Math.floor(Date.now() / 1000);
-  const sessionId = "";
-  const caller = req.headers["x-caller"];
+  const sessionId = req.headers['x-session-id'] || 'unknown';
+  const caller = req.headers["x-caller"] || 'unknown';
+  const userAgent = req.headers['user-agent'];
+  const referrer = req.headers['referer'] || req.headers['referrer'] || 'none';
 
-  logger.warn(`${time}`, { caller, route: req.method + ' ' + req.url })
+  logger.warn(`${time}`, {
+    ip: IP,
+    caller: caller,
+    sessionId: sessionId,
+    route: req.method + ' ' + req.url,
+    userAgent: userAgent,
+    referrer: referrer,
+    time: new Date(time * 1000).toISOString()
+  });
 
   next();
 };
+
 
 const security = (req, res, next) => {
 
