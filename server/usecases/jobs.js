@@ -120,7 +120,7 @@ async function _createJob(data) {
  */
 async function handleVerificationRequest(req, res) {
     try {
-        const instanceId = req?.body.verifeeRequest.jobUuid || req?.body.verifeeRequest.jobUuid;
+        const instanceId = req?.body.candidateRequest.jobUuid || req?.body.candidateRequest.jobUuid;
         const updatedData = _updateJob(instanceId, req?.body);
         res.send({ message: "success", status: 'OK', data: updatedData, });
     } catch (error) {

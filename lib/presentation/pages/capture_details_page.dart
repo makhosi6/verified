@@ -30,8 +30,8 @@ class CaptureDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ///
-       final globalKeyCaptureDetailsPageForm =
-      GlobalKey<FormState>(debugLabel: '[$hashCode]captured-details-page-key');
+    final globalKeyCaptureDetailsPageForm = GlobalKey<FormState>(debugLabel: '[$hashCode]captured-details-page-key');
+
     ///
     return Scaffold(
       key: const Key('captured-details-page'),
@@ -49,7 +49,7 @@ class CaptureDetailsPage extends StatelessWidget {
               flexibleSpace: AppBar(
                 centerTitle: false,
                 automaticallyImplyLeading: true,
-                title: const Text('Search'),
+                title: const Text('Verified'),
               ),
               leadingWidth: 80.0,
               leading: VerifiedBackButton(
@@ -64,7 +64,7 @@ class CaptureDetailsPage extends StatelessWidget {
                     key: UniqueKey(),
                     onTap: () => navigate(context, page: CreateAccountPage()),
                     height: 49.0,
-                    label: 'Bulk Upload',
+                    label: 'Bulk Verify',
                     borderColor: primaryColor,
                     iconBgColor: litePrimaryColor,
                     buttonIcon: const Image(
@@ -91,7 +91,7 @@ class CaptureDetailsPage extends StatelessWidget {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
                             child: Text(
-                              'Instantly confirm the legitimacy of personal information with our user-friendly app.',
+                              'Get full confidence with a detailed identity verification. This thorough check covers everything, giving you extra assurance.',
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 color: neutralDarkGrey,
@@ -108,7 +108,7 @@ class CaptureDetailsPage extends StatelessWidget {
                           ///
                           ...[
                             CaptureUserDetailsInputOption(
-                              hintText: 'Person to be verified',
+                              hintText: 'Name of the Candidate',
                               label: 'Name or Nickname',
                               initialValue: null,
                               autofocus: true,
@@ -127,53 +127,6 @@ class CaptureDetailsPage extends StatelessWidget {
                                 person = person.copyWith(name: name);
                               },
                             ),
-                            // CaptureUserDetailsInputOption(
-                            //   hintText: 'Type their Id Number',
-                            //   initialValue: null,
-                            //   label: 'Government-issued ID Number (optional)',
-                            //   inputMask: '000000 0000 000',
-                            //   autofocus: false,
-                            //   maxLength: 13,
-                            //   inputFormatters: [],
-                            //   keyboardType: TextInputType.number,
-                            //   validator: (idNumber) {
-                            //     /// if phone is define the Id is optional
-                            //     if ((person.phoneNumber != null && person.phoneNumber?.isNotEmpty == true) &&
-                            //         (idNumber == null || idNumber.isEmpty)) {
-                            //       return null;
-                            //     }
-
-                            //     if (idNumber == null || idNumber.isEmpty) {
-                            //       return 'You have to provide a phone number or a ID number';
-                            //     }
-                            //     return validateIdNumber(idNumber);
-                            //   },
-                            //   onChangeHandler: (idNumber) {
-                            //     person = person.copyWith(idNumber: idNumber);
-
-                            //     /// and validate the form
-                            //     globalKeyCaptureDetailsPageForm.currentState?.validate();
-                            //   },
-                            // ),
-                            // CaptureUserDetailsInputOption(
-                            //   hintText: '00000000000',
-                            //   initialValue: null,
-                            //   label: 'Bank Account Number (optional)',
-                            //   inputMask: '00000000000',
-                            //   autofocus: false,
-                            //   maxLength: null,
-                            //   inputFormatters: [],
-                            //   keyboardType: TextInputType.number,
-                            //   validator: (accNumber) {
-                            //     if ((accNumber != null && accNumber.isNotEmpty) && accNumber.length < 10) {
-                            //       return 'Acc Number must be at least 10 characters long';
-                            //     }
-                            //     return null;
-                            //   },
-                            //   onChangeHandler: (bankAccountNumber) {
-                            //     person = person.copyWith(bankAccountNumber: bankAccountNumber);
-                            //   },
-                            // ),
                             CaptureUserDetailsInputOption(
                               hintText: '000 000 0000',
                               initialValue: null,

@@ -17,8 +17,8 @@ class StoreEvent with _$StoreEvent {
   ///
   const factory StoreEvent.uploadFiles(List<MultipartFile> uploads) = UploadFiles;
   const factory StoreEvent.decodePassportData(FormData data) = DecodePassportData;
-  const factory StoreEvent.addVerifee(CapturedVerifeeDetails data) = AddVerifee;
-  const factory StoreEvent.createVerifieeDetails(VerifeeRequest verifiee) = CreateVerifieeDetails;
+  const factory StoreEvent.addCandidate(CapturedCandidateDetails data) = AddCandidate;
+  const factory StoreEvent.createCandidateDetails(CandidateRequest candidate) = CreateCandidateDetails;
   const factory StoreEvent.makeIdVerificationRequest() = MakeIdVerificationRequest;
   const factory StoreEvent.makePassportVerificationRequest() = MakePassportVerificationRequest;
   const factory StoreEvent.uploadIdImages(List<MultipartFile> files) = UploadIdImages;

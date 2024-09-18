@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
-import 'package:verified/domain/models/captured_verifee_details.dart';
+import 'package:verified/domain/models/captured_candidate_details.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/image.dart';
 import 'package:verified/presentation/pages/home_page.dart';
@@ -154,8 +154,8 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                                 'data_url': bytesToDataUrl(bytes, getExtension(image.file.path))
                                               })))
                                               ..add(
-                                                StoreEvent.addVerifee(
-                                                  CapturedVerifeeDetails(
+                                                StoreEvent.addCandidate(
+                                                  CapturedCandidateDetails(
                                                     jobUuid: widget.verificationArgs?.uuid,
                                                     cameraState: (documentScannerState ?? state)?.toJson(),
                                                   ),
@@ -171,7 +171,7 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                       }).whenComplete(_nextPage);
                                     } else if (DocumentType.values[index] == DocumentType.id_card ||
                                         DocumentType.values[index] == DocumentType.id_book) {
-                                      var details = CapturedVerifeeDetails.fromIdString(
+                                      var details = CapturedCandidateDetails.fromIdString(
                                         _documentScannerState.idPdf417Text ?? '',
                                       );
                                       details.cameraState = (documentScannerState ?? state)?.toJson();
@@ -198,7 +198,7 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                         // if (filesData.isEmpty && kDebugMode) exit(0);
                                         // ignore: use_build_context_synchronously
                                         ctx.read<StoreBloc>()
-                                          ..add(StoreEvent.addVerifee(details))
+                                          ..add(StoreEvent.addCandidate(details))
                                           ..add(StoreEvent.uploadIdImages(filesData));
                                       }).whenComplete(_nextPage);
                                     } else {

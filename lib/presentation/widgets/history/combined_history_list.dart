@@ -54,7 +54,7 @@ class CombinedHistoryList extends StatelessWidget {
                     bgColor: neutralGrey,
                     leadingIcon: Icons.rocket_launch_outlined,
                     leadingBgColor: primaryColor,
-                    title: 'Top-Up and get rewarded with a Free Search.',
+                    title: 'Top-Up and get rewarded with a Free Detailed Verification.',
                     subtitle: 'Reload with ZAR 50 or more and unlock rewards',
                     onTap: () {
                       var wallet = context.read<StoreBloc>().state.walletData;

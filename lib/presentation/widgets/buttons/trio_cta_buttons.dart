@@ -33,7 +33,7 @@ class TrioHomeButtons extends StatelessWidget {
                 builder: (BuildContext context) => const SearchOptionsPage(),
               ),
             ),
-            text: 'Search',
+            text: 'Verify',
             iconWidget: const Image(
               height: 23.0,
               image: AssetImage(

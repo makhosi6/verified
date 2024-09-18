@@ -8,7 +8,6 @@ import 'package:verified/app_config.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
 import 'package:verified/domain/models/form_type.dart';
-import 'package:verified/domain/models/resource_health_status_enum.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/theme.dart';
@@ -80,7 +79,7 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
                   stretchTriggerOffset: 250.0,
                   expandedHeight: 250.0,
                   title: const Text(
-                    'Search',
+                    'Verify',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20.0,
@@ -244,7 +243,7 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
                   stretchTriggerOffset: 250.0,
                   expandedHeight: 250.0,
                   title: const Text(
-                    'Search',
+                    'Verify',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20.0,

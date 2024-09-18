@@ -12,7 +12,6 @@ import 'package:verified/domain/models/enquiry_reason.dart';
 import 'package:verified/domain/models/form_type.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/wallet.dart';
-
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
@@ -110,7 +109,7 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
         builder: (context, state) => Padding(
           padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
           child: Text(
-            'Please type a phone/id number and click send to verify.',
+            'Quickly verify your candidate with phone number or ID number, and get immediate confirmation. Perfect for fast, efficient verifications, saving you time and effort.',
             style: TextStyle(
               fontWeight: FontWeight.w400,
               color: neutralDarkGrey,
@@ -160,13 +159,6 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
                               VerifiedTextInputFormatter(mask: inputMask)
                             ],
                             validator: (value) {
-                              if (kDebugMode) {
-                                print('====>><<====');
-                                print(value);
-                                print(value.runtimeType);
-                                print(idOrPhoneNumber != null);
-                                print(idOrPhoneNumber?.isNotEmpty == true);
-                              }
                               if ((idOrPhoneNumber != null && idOrPhoneNumber?.isNotEmpty == true) &&
                                   (value == null || value.isEmpty)) {
                                 return null;

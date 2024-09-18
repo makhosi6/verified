@@ -1,5 +1,5 @@
-class VerifeeRequest {
-  VerifeeRequest({
+class CandidateRequest {
+  CandidateRequest({
     this.jobUuid,
     this.image,
     this.preferredName,
@@ -10,7 +10,7 @@ class VerifeeRequest {
     this.nationality,
   });
 
-  VerifeeRequest.fromJson(dynamic json) {
+  CandidateRequest.fromJson(dynamic json) {
     jobUuid = json['jobUuid'];
     image = json['image'];
     preferredName = json['preferredName'];
@@ -28,7 +28,7 @@ class VerifeeRequest {
   String? email;
   String? description;
   String? nationality;
-  VerifeeRequest copyWith({
+  CandidateRequest copyWith({
     String? jobUuid,
     String? image,
     String? preferredName,
@@ -38,7 +38,7 @@ class VerifeeRequest {
     String? idNumber,
     String? nationality,
   }) =>
-      VerifeeRequest(
+      CandidateRequest(
         jobUuid: jobUuid ?? this.jobUuid,
         image: image ?? this.image,
         preferredName: preferredName ?? this.preferredName,

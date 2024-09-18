@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/globals.dart';
-import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/capture_details_page.dart';
 import 'package:verified/presentation/pages/input_form_page.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';

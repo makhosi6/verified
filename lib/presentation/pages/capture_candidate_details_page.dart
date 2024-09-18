@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:verified/application/store/store_bloc.dart';
-import 'package:verified/domain/models/verifee_request.dart';
+import 'package:verified/domain/models/candidate_request.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/data/countries.dart';
 import 'package:verified/presentation/pages/home_page.dart';
@@ -20,29 +20,29 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/inputs/generic_input.dart';
 import 'package:verified/presentation/widgets/popups/successful_action_popup.dart';
 
-class CaptureVerifieeDetailsPage extends StatefulWidget {
-  CaptureVerifieeDetailsPage({super.key});
+class CaptureCandidateDetailsPage extends StatefulWidget {
+  const CaptureCandidateDetailsPage({super.key});
 
   @override
-  State<CaptureVerifieeDetailsPage> createState() => _CaptureVerifieeDetailsPageState();
+  State<CaptureCandidateDetailsPage> createState() => _CaptureCandidateDetailsPageState();
 }
 
-class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage> {
+class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPage> {
   ///
-  final _globalKeyCaptureVerifieeDetailsPageForm =
-      GlobalKey<FormState>(debugLabel: 'capture-verifiee-details-page-key');
+  final _globalKeyCaptureCandidateDetailsPageForm =
+      GlobalKey<FormState>(debugLabel: 'capture-candidate-details-page-key');
 
   ///
   var keyboardType = TextInputType.number;
 
   ///
-  var verifiee = VerifeeRequest(jobUuid: '');
+  var candidate = CandidateRequest(jobUuid: '');
 
   ///
   @override
   void dispose() {
     FocusManager.instance.primaryFocus?.unfocus();
-    _globalKeyCaptureVerifieeDetailsPageForm.currentState?.dispose();
+    _globalKeyCaptureCandidateDetailsPageForm.currentState?.dispose();
     super.dispose();
   }
 
@@ -58,19 +58,19 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
         builder: (context) {
           //
           // if (context.watch<StoreBloc>().state.decodePassportDataLoading ||
-          //     (context.watch<StoreBloc>().state.capturedVerifeeDetails == null &&
+          //     (context.watch<StoreBloc>().state.capturedCandidateDetails == null &&
           //         context.watch<StoreBloc>().state.decodePassportData == null)) {
           //   return const CustomSplashScreen();
           // }
           //
-          final capturedVerifeeDetails = context.watch<StoreBloc>().state.capturedVerifeeDetails;
+          final capturedCandidateDetails = context.watch<StoreBloc>().state.capturedCandidateDetails;
           return WillPopScope(
             onWillPop: () async {
               navigate(context, page: const HomePage(), replaceCurrentPage: true);
               return false;
             },
             child: Scaffold(
-              key: const Key('capture-verifiee-details-page'),
+              key: const Key('capture-candidate-details-page'),
               body: Center(
                 child: CustomScrollView(
                   physics: const BouncingScrollPhysics(),
@@ -89,7 +89,7 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                       ),
                       leadingWidth: 80.0,
                       leading: VerifiedBackButton(
-                        key: const Key('capture-verifiee-details-page-back-btn'),
+                        key: const Key('capture-candidate-details-page-back-btn'),
                         onTap: () => navigate(context, page: const HomePage(), replaceCurrentPage: true),
                         isLight: true,
                       ),
@@ -102,15 +102,16 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                             constraints: appConstraints,
                             padding: EdgeInsets.only(bottom: primaryPadding.bottom * 3, top: primaryPadding.top * 3),
                             child: Form(
-                              key: _globalKeyCaptureVerifieeDetailsPageForm,
+                              key: _globalKeyCaptureCandidateDetailsPageForm,
                               child: Column(
-                                key: const Key('capture-verifiee-details-field-inputs'),
+                                key: const Key('capture-candidate-details-field-inputs'),
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
                                     child: Text(
-                                      // capturedVerifeeDetails?.toString() ??
-                                          'Instantly confirm the legitimacy of personal information with our user-friendly app.',
+                  
+
+                                      'Fill in the required fields and follow any additional instructions for a successful verification.',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w400,
                                         color: neutralDarkGrey,
@@ -126,32 +127,10 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
 
                                   ///
                                   ...[
-                                    // CaptureUserDetailsInputOption(
-                                    //   label: 'Name or Nickname',
-                                    //   hintText: 'Type your name...',
-                                    //   initialValue: capturedVerifeeDetails?.names == null
-                                    //       ? null
-                                    //       : '${capturedVerifeeDetails?.names ?? ''}  ${capturedVerifeeDetails?.surname ?? ''}',
-                                    //   autofocus: false,
-                                    //   inputFormatters: [],
-                                    //   keyboardType: TextInputType.text,
-                                    //   validator: (name) {
-                                    //     if (name == null || name.isEmpty == true) {
-                                    //       return 'Please provide a name/surname/nickname';
-                                    //     }
-                                    //     if (name.length < 2) {
-                                    //       return 'Name must be at least 2 characters long';
-                                    //     }
-                                    //     return null;
-                                    //   },
-                                    //   onChangeHandler: (name) {
-                                    //     verifiee = verifiee.copyWith(preferredName: name);
-                                    //   },
-                                    // ),
                                     CaptureUserDetailsInputOption(
                                       hintText: 'Type their ID Number(Document Number)',
-                                      initialValue: capturedVerifeeDetails?.identityNumber ??
-                                          capturedVerifeeDetails?.passportNumber,
+                                      initialValue: capturedCandidateDetails?.identityNumber ??
+                                          capturedCandidateDetails?.passportNumber,
                                       label:
                                           'Govt-issued ${documentType?.name == 'passport' ? 'Passport' : 'ID'} Number (optional)',
                                       inputMask: '000000 0000 000',
@@ -160,23 +139,23 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                       inputFormatters: [],
                                       keyboardType: TextInputType.number,
                                       validator: (idNumber) {
-                                        if (verifiee.phoneNumber != null && idNumber?.isEmpty == true) {
+                                        if (candidate.phoneNumber != null && idNumber?.isEmpty == true) {
                                           return null;
                                         }
                                         if (idNumber == null || idNumber.isEmpty) {
                                           return 'You have to provide a phone number or a ID number';
                                         }
 
-                                        if (capturedVerifeeDetails?.documentType == DocumentType.passport.name) {
+                                        if (capturedCandidateDetails?.documentType == DocumentType.passport.name) {
                                           return null;
                                         }
                                         return validateIdNumber(idNumber);
                                       },
                                       onChangeHandler: (idNumber) {
-                                        verifiee = verifiee.copyWith(idNumber: idNumber);
+                                        candidate = candidate.copyWith(idNumber: idNumber);
 
                                         /// and validate the form
-                                        _globalKeyCaptureVerifieeDetailsPageForm.currentState?.validate();
+                                        _globalKeyCaptureCandidateDetailsPageForm.currentState?.validate();
                                       },
                                     ),
                                     CaptureUserDetailsInputOption(
@@ -189,10 +168,10 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                       inputFormatters: [],
                                       keyboardType: TextInputType.number,
                                       validator: (phone) {
-                                        var id = verifiee.idNumber ??
-                                            capturedVerifeeDetails?.identityNumber ??
-                                            capturedVerifeeDetails?.identityNumber2 ??
-                                            capturedVerifeeDetails?.cardNumber;
+                                        var id = candidate.idNumber ??
+                                            capturedCandidateDetails?.identityNumber ??
+                                            capturedCandidateDetails?.identityNumber2 ??
+                                            capturedCandidateDetails?.cardNumber;
                                         if (id != null && phone?.isEmpty == true) {
                                           return null;
                                         }
@@ -202,10 +181,10 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                         return validateMobile(phone);
                                       },
                                       onChangeHandler: (phoneNumber) {
-                                        verifiee = verifiee.copyWith(phoneNumber: phoneNumber);
+                                        candidate = candidate.copyWith(phoneNumber: phoneNumber);
 
                                         /// and validate the form
-                                        _globalKeyCaptureVerifieeDetailsPageForm.currentState?.validate();
+                                        _globalKeyCaptureCandidateDetailsPageForm.currentState?.validate();
                                       },
                                     ),
                                     CaptureUserDetailsInputOption(
@@ -217,14 +196,14 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                       keyboardType: TextInputType.emailAddress,
                                       validator: (_) => null,
                                       onChangeHandler: (email) {
-                                        verifiee = verifiee.copyWith(email: email);
+                                        candidate = candidate.copyWith(email: email);
                                       },
                                     ),
                                     CaptureUserDetailsInputOption(
                                       hintText: 'Nationality',
-                                      initialValue: capturedVerifeeDetails?.nationality is String
-                                          ? COUNTRIES_ISO_3366_ALPHA_3[capturedVerifeeDetails?.nationality] ??
-                                              COUNTRIES_ISO_3166_ALPHA_2[capturedVerifeeDetails?.nationality]
+                                      initialValue: capturedCandidateDetails?.nationality is String
+                                          ? COUNTRIES_ISO_3366_ALPHA_3[capturedCandidateDetails?.nationality] ??
+                                              COUNTRIES_ISO_3166_ALPHA_2[capturedCandidateDetails?.nationality]
                                           : null,
                                       label: 'Nationality',
                                       autofocus: false,
@@ -232,13 +211,13 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                       keyboardType: TextInputType.emailAddress,
                                       validator: (_) => null,
                                       onChangeHandler: (val) {
-                                        verifiee = verifiee.copyWith(nationality: val);
+                                        candidate = candidate.copyWith(nationality: val);
                                       },
                                     ),
                                     CaptureUserDetailsInputOption(
                                       hintText: 'Date of Birth',
-                                      initialValue: capturedVerifeeDetails?.dayOfBirth != null
-                                          ? _formatDate(capturedVerifeeDetails?.dayOfBirth)
+                                      initialValue: capturedCandidateDetails?.dayOfBirth != null
+                                          ? _formatDate(capturedCandidateDetails?.dayOfBirth)
                                           : null,
                                       label: 'Date of Birth',
                                       autofocus: false,
@@ -246,7 +225,7 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                       keyboardType: TextInputType.emailAddress,
                                       validator: (_) => null,
                                       onChangeHandler: (email) {
-                                        verifiee = verifiee.copyWith(email: email);
+                                        candidate = candidate.copyWith(email: email);
                                       },
                                     ),
                                     CaptureUserDetailsInputOption(
@@ -259,7 +238,7 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                       keyboardType: TextInputType.text,
                                       validator: (_) => null,
                                       onChangeHandler: (notes) {
-                                        verifiee = verifiee.copyWith(description: notes);
+                                        candidate = candidate.copyWith(description: notes);
                                       },
                                     ),
                                   ]
@@ -315,10 +294,10 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                     child: BaseButton(
                                       key: UniqueKey(),
                                       onTap: () {
-                                        if (_globalKeyCaptureVerifieeDetailsPageForm.currentState?.validate() == true) {
+                                        if (_globalKeyCaptureCandidateDetailsPageForm.currentState?.validate() == true) {
                                           context.read<StoreBloc>().add(
-                                                StoreEvent.createVerifieeDetails(
-                                                  verifiee.copyWith(jobUuid: jobUuid),
+                                                StoreEvent.createCandidateDetails(
+                                                  candidate.copyWith(jobUuid: jobUuid, ),
                                                 ),
                                               );
 

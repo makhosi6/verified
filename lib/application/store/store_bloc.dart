@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:uuid/uuid.dart';
 import 'package:verified/app_config.dart';
-import 'package:verified/domain/models/captured_verifee_details.dart';
+import 'package:verified/domain/models/captured_candidate_details.dart';
 import 'package:verified/domain/models/device.dart';
 import 'package:verified/domain/models/generic_api_error.dart';
 import 'package:verified/domain/models/generic_response.dart';
@@ -18,7 +18,7 @@ import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/domain/models/transaction_history.dart';
 import 'package:verified/domain/models/upload_response.dart';
 import 'package:verified/domain/models/user_profile.dart';
-import 'package:verified/domain/models/verifee_request.dart';
+import 'package:verified/domain/models/candidate_request.dart';
 import 'package:verified/domain/models/verification_request.dart';
 import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
@@ -129,10 +129,10 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
         },
 
         ///
-        addVerifee: (e) async {
+        addCandidate: (e) async {
           emit(
             state.copyWith(
-              capturedVerifeeDetails: e.data,
+              capturedCandidateDetails: e.data,
             ),
           );
           return null;
@@ -142,8 +142,8 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
         makeIdVerificationRequest: (e) async {
           final response = await _storeRepository.makeIdVerificationRequest(
             VerificationRequest(
-              verifeeRequest: state.verifiee,
-              capturedVerifeeDetails: state.capturedVerifeeDetails,
+              candidateRequest: state.candidate,
+              capturedCandidateDetails: state.capturedCandidateDetails,
               backUploadedDocFiles: state.idBackImageUploadResponse,
               frontUploadedDocFiles: state.idFrontImageUploadResponse,
               uploadedSelfieImg: state.selfieUploadResponse,
@@ -155,8 +155,8 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
         makePassportVerificationRequest: (e) async {
           final response = await _storeRepository.makePassportVerificationRequest(
             VerificationRequest(
-              verifeeRequest: state.verifiee,
-              capturedVerifeeDetails: state.capturedVerifeeDetails,
+              candidateRequest: state.candidate,
+              capturedCandidateDetails: state.capturedCandidateDetails,
               frontUploadedDocFiles: state.passportImageUploadResponse,
               uploadedSelfieImg: state.selfieUploadResponse,
             ),
@@ -194,7 +194,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 decodePassportDataError: null,
                 decodePassportData: res,
                 decodePassportDataLoading: false,
-                capturedVerifeeDetails: CapturedVerifeeDetails.fromPassportString(
+                capturedCandidateDetails: CapturedCandidateDetails.fromPassportString(
                   res.data ?? [],
                 ),
               ),
@@ -204,10 +204,10 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
         },
 
         ///
-        createVerifieeDetails: (e) {
-          print(e.verifiee.toString());
+        createCandidateDetails: (e) {
+          print(e.candidate.toString());
 
-          emit(state.copyWith(verifiee: e.verifiee));
+          emit(state.copyWith(candidate: e.candidate));
           return;
         },
 

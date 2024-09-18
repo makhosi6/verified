@@ -32,7 +32,7 @@ handleKycVerification({
         "idNumber": null,
         "nationality": null
     },
-    "capturedVerifeeDetails": {
+    "capturedCandidateDetails": {
         "surname": "NDONDO",
         "names": "MAKHOSANDILE PRINCE",
         "sex": "M",

@@ -15,11 +15,11 @@ class StoreState with _$StoreState {
     required GenericResponse? getHelpData,
 
     ///
-    required CapturedVerifeeDetails? capturedVerifeeDetails,
+    required CapturedCandidateDetails? capturedCandidateDetails,
     required bool isUploadingDocs,
 
     ///
-    required VerifeeRequest? verifiee,
+    required CandidateRequest? candidate,
     required SearchPerson? searchPerson,
     required GenericApiError? searchPersonError,
     required bool searchPersonHasError,
@@ -98,7 +98,7 @@ class StoreState with _$StoreState {
         searchPersonHasError: false,
         searchPersonData: null,
         searchPersonIsLoading: false,
-        verifiee: null,
+        candidate: null,
 
         ///
         passportImageUploadError: null,
@@ -119,7 +119,7 @@ class StoreState with _$StoreState {
         selfieUploadResponse: null,
 
         ///
-        capturedVerifeeDetails: null,
+        capturedCandidateDetails: null,
         isUploadingDocs: false,
 
         ///

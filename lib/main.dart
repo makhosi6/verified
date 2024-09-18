@@ -31,7 +31,7 @@ import 'package:verified/infrastructure/auth/repository.dart';
 import 'package:verified/infrastructure/payments/repository.dart';
 import 'package:verified/infrastructure/store/repository.dart';
 import 'package:verified/infrastructure/verifysa/repository.dart';
-import 'package:verified/presentation/pages/capture_verifiee_details_page.dart';
+import 'package:verified/presentation/pages/capture_candidate_details_page.dart';
 import 'package:verified/presentation/pages/custom_splash_screen.dart';
 import 'package:verified/presentation/pages/error_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
@@ -511,7 +511,7 @@ class _AppRootState extends State<AppRoot> {
         '/secure': (context) => VerificationPage(
               key: UniqueKey(),
             ),
-        '/captured-details': (context) => CaptureVerifieeDetailsPage(
+        '/captured-details': (context) => CaptureCandidateDetailsPage(
               key: UniqueKey(),
             ),
         '/captured-details-info': (context) => VerificationInfoPage(

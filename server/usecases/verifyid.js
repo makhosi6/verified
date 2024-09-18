@@ -9,7 +9,7 @@ const logger = require("../packages/logger");
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const VERIFYID_3RD_PARTY_TOKEN =
-  process.env.VERIFYID_3RD_PARTY_TOKEN || "$2y$10$R3YR3lJXdaxpiqoeLS68VuWk9LagBxR0z3MJjw";
+  process.env.VERIFYID_3RD_PARTY_TOKEN || "3rd_party_token";
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "5400";
 const ADMIN_EMAIL = process.env.VERIFIED_ADMIN_EMAIL || 'admin@byteestudio.com'
@@ -376,42 +376,42 @@ const deductCreditsAfterTransaction = async (query, clientId) => {
  * @property {Object} comms - Communication preferences.
  * @property {boolean} comms.email - Indicates if email communication is enabled.
  * @property {boolean} comms.sms - Indicates if SMS communication is enabled.
- * @property {Object} verifeeRequest - Details related to the verifee request.
- * @property {string} verifeeRequest.jobUuid - A unique job UUID.
- * @property {?string} verifeeRequest.image - The image associated with the request (can be null).
- * @property {?string} verifeeRequest.preferredName - The preferred name (can be null).
- * @property {string} verifeeRequest.email - The email related to the verifee request.
- * @property {string} verifeeRequest.phoneNumber - The phone number related to the verifee request.
- * @property {?string} verifeeRequest.description - A description for the verifee request (can be null).
- * @property {?string} verifeeRequest.idNumber - The ID number for the verifee request.
- * @property {?string} verifeeRequest.nationality - The nationality for the verifee request.
- * @property {Object} capturedVerifeeDetails - The captured details of the verifee.
- * @property {?string} capturedVerifeeDetails.surname - The surname of the verifee.
- * @property {?string} capturedVerifeeDetails.names - The names of the verifee.
- * @property {?string} capturedVerifeeDetails.sex - The sex of the verifee.
- * @property {?string} capturedVerifeeDetails.documentType - The document type of the verifee.
- * @property {?string} capturedVerifeeDetails.nationality - The nationality of the verifee.
- * @property {?string} capturedVerifeeDetails.identityNumber - The identity number of the verifee.
- * @property {?string} capturedVerifeeDetails.identityNumber2 - A second identity number (if applicable).
- * @property {?string} capturedVerifeeDetails.passportNumber - The passport number of the verifee.
- * @property {?string} capturedVerifeeDetails.dayOfBirth - The day of birth of the verifee.
- * @property {?string} capturedVerifeeDetails.countryOfBirth - The country of birth of the verifee.
- * @property {?string} capturedVerifeeDetails.status - The status of the verifee's details.
- * @property {?string} capturedVerifeeDetails.dateOfIssue - The date the document was issued.
- * @property {?string} capturedVerifeeDetails.securityNumber - The security number of the document.
- * @property {?string} capturedVerifeeDetails.cardNumber - The card number of the document.
- * @property {?string} capturedVerifeeDetails.rawInput - Raw input related to the verifee details.
- * @property {string} capturedVerifeeDetails.jobUuid - A unique job UUID for the captured verifee details.
- * @property {Object} capturedVerifeeDetails.cameraState - The state of the camera during verification.
- * @property {string} capturedVerifeeDetails.cameraState.cameraLightingLevel - The camera lighting level.
- * @property {?string} capturedVerifeeDetails.cameraState.idCode39Text - The Code 39 ID text (if any).
- * @property {?string} capturedVerifeeDetails.cameraState.idCode39Text2 - A second Code 39 ID text (if any).
- * @property {?string} capturedVerifeeDetails.cameraState.idPdf417Text - The PDF417 text (if any).
- * @property {string} capturedVerifeeDetails.cameraState.passportMRZtext - The passport MRZ text.
- * @property {Array} capturedVerifeeDetails.cameraState.imageFiles - Captures image file.
- * @property {string} capturedVerifeeDetails.cameraState.imageFiles.file
- * @property {string} capturedVerifeeDetails.cameraState.imageFiles.side 
- * @property {?string} capturedVerifeeDetails.spaceFiller - Additional filler data (if any).
+ * @property {Object} candidateRequest - Details related to the candidate request.
+ * @property {string} candidateRequest.jobUuid - A unique job UUID.
+ * @property {?string} candidateRequest.image - The image associated with the request (can be null).
+ * @property {?string} candidateRequest.preferredName - The preferred name (can be null).
+ * @property {string} candidateRequest.email - The email related to the candidate request.
+ * @property {string} candidateRequest.phoneNumber - The phone number related to the candidate request.
+ * @property {?string} candidateRequest.description - A description for the candidate request (can be null).
+ * @property {?string} candidateRequest.idNumber - The ID number for the candidate request.
+ * @property {?string} candidateRequest.nationality - The nationality for the candidate request.
+ * @property {Object} capturedCandidateDetails - The captured details of the candidate.
+ * @property {?string} capturedCandidateDetails.surname - The surname of the candidate.
+ * @property {?string} capturedCandidateDetails.names - The names of the candidate.
+ * @property {?string} capturedCandidateDetails.sex - The sex of the candidate.
+ * @property {?string} capturedCandidateDetails.documentType - The document type of the candidate.
+ * @property {?string} capturedCandidateDetails.nationality - The nationality of the candidate.
+ * @property {?string} capturedCandidateDetails.identityNumber - The identity number of the candidate.
+ * @property {?string} capturedCandidateDetails.identityNumber2 - A second identity number (if applicable).
+ * @property {?string} capturedCandidateDetails.passportNumber - The passport number of the candidate.
+ * @property {?string} capturedCandidateDetails.dayOfBirth - The day of birth of the candidate.
+ * @property {?string} capturedCandidateDetails.countryOfBirth - The country of birth of the candidate.
+ * @property {?string} capturedCandidateDetails.status - The status of the candidate's details.
+ * @property {?string} capturedCandidateDetails.dateOfIssue - The date the document was issued.
+ * @property {?string} capturedCandidateDetails.securityNumber - The security number of the document.
+ * @property {?string} capturedCandidateDetails.cardNumber - The card number of the document.
+ * @property {?string} capturedCandidateDetails.rawInput - Raw input related to the verifee details.
+ * @property {string} capturedCandidateDetails.jobUuid - A unique job UUID for the captured verifee details.
+ * @property {Object} capturedCandidateDetails.cameraState - The state of the camera during verification.
+ * @property {string} capturedCandidateDetails.cameraState.cameraLightingLevel - The camera lighting level.
+ * @property {?string} capturedCandidateDetails.cameraState.idCode39Text - The Code 39 ID text (if any).
+ * @property {?string} capturedCandidateDetails.cameraState.idCode39Text2 - A second Code 39 ID text (if any).
+ * @property {?string} capturedCandidateDetails.cameraState.idPdf417Text - The PDF417 text (if any).
+ * @property {string} capturedCandidateDetails.cameraState.passportMRZtext - The passport MRZ text.
+ * @property {Array} capturedCandidateDetails.cameraState.imageFiles - Captures image file.
+ * @property {string} capturedCandidateDetails.cameraState.imageFiles.file
+ * @property {string} capturedCandidateDetails.cameraState.imageFiles.side 
+ * @property {?string} capturedCandidateDetails.spaceFiller - Additional filler data (if any).
  * @property {Object} uploadedSelfieImg - The uploaded selfie image.
  * @property {string} uploadedSelfieImg.message - A message regarding the uploaded selfie image.
  * @property {?Array} uploadedSelfieImg.files - The uploaded selfie file (if any).
@@ -435,25 +435,25 @@ async function handleKycVerification(data) {
     if (data.uploadedSelfieImg.message.toLocaleLowerCase().includes('no file')) {
 
     }
-    if (data.frontUploadedDocFiles === null && data.capturedVerifeeDetails.cameraState.imageFiles.length > 0) {
+    if (data.frontUploadedDocFiles === null && data.capturedCandidateDetails.cameraState.imageFiles.length > 0) {
 
     }
 
-    if ((data.backUploadedDocFiles === null && data.capturedVerifeeDetails.documentType === 'id_card') && data.imageFiles.length > 0) {
+    if ((data.backUploadedDocFiles === null && data.capturedCandidateDetails.documentType === 'id_card') && data.imageFiles.length > 0) {
 
     }
 
-    const id_card_front = data.capturedVerifeeDetails.cameraState.imageFiles.find(img => img.side === 'front').file
-    const id_card_back = data.capturedVerifeeDetails.cameraState.imageFiles.find(img => img.side === 'back').file
-    const passport = (data.capturedVerifeeDetails.documentType === 'passport') ? getImageAsBase64(CDN + data.frontUploadedDocFiles.files.find(file => file.filename.includes('front_')).filename) : null
+    const id_card_front = data.capturedCandidateDetails.cameraState.imageFiles.find(img => img.side === 'front').file
+    const id_card_back = data.capturedCandidateDetails.cameraState.imageFiles.find(img => img.side === 'back').file
+    const passport = (data.capturedCandidateDetails.documentType === 'passport') ? getImageAsBase64(CDN + data.frontUploadedDocFiles.files.find(file => file.filename.includes('front_')).filename) : null
     console.log({ id_card_back, id_card_front, passport });
 
     const headers = new Headers();
     headers.append("Content-Type", "multipart/form-data");
     headers.append("Accept", "application/json");
     const formdata = new FormData();
-    formdata.append("api_key", '$2y$10$R3YR3lJXdaxpiqoeLS68VuWk9LagBxR0z3MJjw');
-    formdata.append("identity_document_type", data.capturedVerifeeDetails.documentType);
+    formdata.append("api_key", VERIFYID_3RD_PARTY_TOKEN);
+    formdata.append("identity_document_type", data.capturedCandidateDetails.documentType);
     formdata.append("selfie_photo", getImageAsBase64(CDN + data.uploadedSelfieImg.files[0].filename));
     formdata.append("id_card_front", getImageAsBase64(CDN + data.frontUploadedDocFiles.files.find(file => file.filename.includes('front_')).filename) || id_card_front);
     formdata.append("id_card_back", getImageAsBase64(CDN + data.backUploadedDocFiles.files.find(file => file.filename.includes('back_')).filename) || id_card_back);
@@ -476,7 +476,7 @@ async function handleKycVerification(data) {
     const output = await response.json()
 
     global.queue.push(() =>
-      cache3rdPartResponse({ id: data.capturedVerifeeDetails.identityNumber || data.capturedVerifeeDetails.identityNumber2, data: output })
+      cache3rdPartResponse({ id: data.capturedCandidateDetails.identityNumber || data.capturedCandidateDetails.identityNumber2, data: output })
     );
 
     if (output.liveness || output.liveness === 'Invalid Request!') {
@@ -493,7 +493,7 @@ async function handleKycVerification(data) {
     if (output) {
       /// and email admin
       const email = sendHelpEmailNotifications({
-        name: `Query for ${data.capturedVerifeeDetails.identityNumber || data.capturedVerifeeDetails.identityNumber2} - (Verified)`,
+        name: `Query for ${data.capturedCandidateDetails.identityNumber || data.capturedCandidateDetails.identityNumber2} - (Verified)`,
         email: ADMIN_EMAIL,
         message: `Notification of New Transaction (${data.instanceId})`,
       });

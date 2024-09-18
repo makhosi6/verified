@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:mrz_parser/mrz_parser.dart';
 import 'package:verified/presentation/utils/document_type.dart';
 
-class CapturedVerifeeDetails {
+class CapturedCandidateDetails {
   String? surname;
   String? names;
   String? sex;
@@ -23,7 +23,7 @@ class CapturedVerifeeDetails {
   String? jobUuid;
   Map<String, dynamic>? cameraState;
 
-  CapturedVerifeeDetails(
+  CapturedCandidateDetails(
       {this.surname,
       this.names,
       this.sex,
@@ -43,7 +43,7 @@ class CapturedVerifeeDetails {
       this.cameraState,
       this.spaceFiller});
 
-  CapturedVerifeeDetails.fromPassportString(List<String> data) {
+  CapturedCandidateDetails.fromPassportString(List<String> data) {
     try {
       var results = MRZParser.parse(data);
       surname = results.surnames;
@@ -61,7 +61,7 @@ class CapturedVerifeeDetails {
     }
   }
 
-  CapturedVerifeeDetails.fromIdString(String data) {
+  CapturedCandidateDetails.fromIdString(String data) {
     try {
       List<String> parts = data.split('|');
       print(parts.length);
@@ -86,7 +86,7 @@ class CapturedVerifeeDetails {
     }
   }
 
-  CapturedVerifeeDetails.fromJson(Map<String, dynamic> json) {
+  CapturedCandidateDetails.fromJson(Map<String, dynamic> json) {
     try {
       surname = json['surname'];
       names = json['names'];

@@ -29,7 +29,7 @@ class TransactionPage extends StatelessWidget {
         child: BaseButton(
           key: UniqueKey(),
           onTap: () {},
-          label: 'Search',
+          label: 'Verify',
           color: Colors.white,
           iconBgColor: neutralYellow,
           bgColor: neutralYellow,

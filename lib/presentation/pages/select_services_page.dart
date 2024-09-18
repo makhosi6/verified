@@ -39,7 +39,7 @@ class _SelectServicesPageState extends State<SelectServicesPage> {
               expandedHeight: 90.0,
               flexibleSpace: AppBar(
                 automaticallyImplyLeading: true,
-                title: const Text('Search'),
+                title: const Text('Verify'),
               ),
               leadingWidth: 80.0,
               leading: VerifiedBackButton(

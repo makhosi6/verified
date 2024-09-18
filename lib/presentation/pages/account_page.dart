@@ -69,7 +69,7 @@ class AccountPage extends StatelessWidget {
               builder: (BuildContext context) => const SearchOptionsPage(),
             ),
           ),
-          label: 'Search',
+          label: 'Verify',
           color: Colors.white,
           iconBgColor: neutralYellow,
           bgColor: neutralYellow,
