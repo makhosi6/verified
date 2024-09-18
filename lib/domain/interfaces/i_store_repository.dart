@@ -15,7 +15,10 @@ import 'package:verified/domain/models/wallet.dart';
 
 abstract class IStoreRepository {
   /// Get HEaLTH StaTUS
-    Future<Either<GenericApiError, GenericResponse>> getHealthStatus();
+  Future<Either<GenericApiError, GenericResponse>> getHealthStatus();
+
+  ///
+  void setUserAndVariables({required String phone, required String user, required String env});
 
   ///
   Future<Either<Exception, VerifyComprehensiveResponse>> comprehensiveVerification(
@@ -23,8 +26,10 @@ abstract class IStoreRepository {
 
   ///
   Future<UploadResponse> uploadFiles(List<MultipartFile> uploads);
-///
+
+  ///
   Future<GenericResponse?> willSendNotificationAfterVerification(CommsChannels data);
+
   ///
   Future<Either<GenericApiError, GenericResponse>> makeIdVerificationRequest(VerificationRequest data);
 
@@ -82,6 +87,9 @@ abstract class IStoreRepository {
   /// POST
   Future<Either<GenericApiError, UserProfile>> postUserProfile(
     UserProfile user,
+  );
+  Future<Either<GenericApiError, GenericApiError>> postDeviceData(
+    Map<String, dynamic> device,
   );
   Future<Either<GenericApiError, TransactionHistory>> postUserTransaction(TransactionHistory transaction);
   Future<Either<GenericApiError, Promotion>> postUserPromotions(

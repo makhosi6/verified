@@ -109,7 +109,7 @@ class _CaptureVerifieeDetailsPageState extends State<CaptureVerifieeDetailsPage>
                                   Padding(
                                     padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
                                     child: Text(
-                                      capturedVerifeeDetails?.toString() ??
+                                      // capturedVerifeeDetails?.toString() ??
                                           'Instantly confirm the legitimacy of personal information with our user-friendly app.',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w400,

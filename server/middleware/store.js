@@ -53,12 +53,12 @@ const addIdentifiers = (req, res, next) => {
     !req.url.includes("profile/resource") &&
     !req.url.includes("jobs/resource") &&
     !req.url.includes("comprehensive_verification") &&
-    !req.url.includes("wallet/resource")
+    !req.url.includes("wallet/resource") &&
+    !req.url.includes("devices/resource")
   ) {
     req.body.id = uniqueIdentifier();
   }else {
     console.log("addIdentifiers skip!!!");
-    
   }
   next();
 };

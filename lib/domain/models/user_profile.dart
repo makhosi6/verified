@@ -1,3 +1,5 @@
+import 'package:verified/domain/models/device.dart';
+
 class UserProfile {
   UserProfile({
     this.actualName,
@@ -16,6 +18,9 @@ class UserProfile {
     this.walletId,
     this.historyId,
     this.lastLoginAt,
+    this.devices,
+    this.currentSui,
+    this.env,
     this.accountCreatedAt,
   });
 
@@ -23,6 +28,9 @@ class UserProfile {
     'actualName': 'Hello',
     'active': true,
     'dataProvider': null,
+    'devices': [],
+    'currentSui': '',
+    'env': '',
     'metadata': null,
     'avatar': 'https://robohash.org/avatar.png',
     'softDeleted': null,
@@ -58,6 +66,9 @@ class UserProfile {
     historyId = json['historyId'];
     lastLoginAt = json['last_login_at'];
     accountCreatedAt = json['account_created_at'];
+    devices = json['devices'];
+    currentSui = json['currentSui'];
+    env = json['env'];
   }
   String? actualName;
   bool? active;
@@ -76,6 +87,10 @@ class UserProfile {
   String? historyId;
   num? lastLoginAt;
   num? accountCreatedAt;
+  List<Device>? devices;
+  String? currentSui;
+  String? env;
+
   UserProfile copyWith({
     String? actualName,
     bool? active,
@@ -94,6 +109,9 @@ class UserProfile {
     String? historyId,
     num? lastLoginAt,
     num? accountCreatedAt,
+    List<Device>? devices,
+    String? currentSui,
+    String? env,
   }) =>
       UserProfile(
         actualName: actualName ?? this.actualName,
@@ -113,7 +131,11 @@ class UserProfile {
         historyId: historyId ?? this.historyId,
         lastLoginAt: lastLoginAt ?? this.lastLoginAt,
         accountCreatedAt: accountCreatedAt ?? this.accountCreatedAt,
+        devices: devices ?? this.devices,
+        currentSui: currentSui ?? this.currentSui,
+        env: this.env,
       );
+
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['actualName'] = actualName;
@@ -133,6 +155,60 @@ class UserProfile {
     map['historyId'] = historyId;
     map['last_login_at'] = lastLoginAt;
     map['account_created_at'] = accountCreatedAt;
+    map['devices'] = devices;
+    map['currentSui'] = currentSui;
+    map['env'] = env;
     return map;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is UserProfile &&
+        other.actualName == actualName &&
+        other.active == active &&
+        other.avatar == avatar &&
+        other.dataProvider == dataProvider &&
+        other.metadata == metadata &&
+        other.softDeleted == softDeleted &&
+        other.displayName == displayName &&
+        other.email == email &&
+        other.id == id &&
+        other.name == name &&
+        other.phone == phone &&
+        other.profileId == profileId &&
+        other.notificationToken == notificationToken &&
+        other.walletId == walletId &&
+        other.historyId == historyId &&
+        other.lastLoginAt == lastLoginAt &&
+        // other.devices == devices &&
+        other.currentSui == currentSui &&
+        other.env == env &&
+        other.accountCreatedAt == accountCreatedAt;
+  }
+
+  @override
+  int get hashCode {
+    return actualName.hashCode ^
+        active.hashCode ^
+        avatar.hashCode ^
+        dataProvider.hashCode ^
+        metadata.hashCode ^
+        softDeleted.hashCode ^
+        displayName.hashCode ^
+        email.hashCode ^
+        id.hashCode ^
+        name.hashCode ^
+        phone.hashCode ^
+        profileId.hashCode ^
+        notificationToken.hashCode ^
+        walletId.hashCode ^
+        historyId.hashCode ^
+        lastLoginAt.hashCode ^
+        // devices.hashCode ^
+        currentSui.hashCode ^
+        env.hashCode ^
+        accountCreatedAt.hashCode;
   }
 }

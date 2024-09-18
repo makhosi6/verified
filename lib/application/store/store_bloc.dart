@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:uuid/uuid.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/domain/models/captured_verifee_details.dart';
+import 'package:verified/domain/models/device.dart';
 import 'package:verified/domain/models/generic_api_error.dart';
 import 'package:verified/domain/models/generic_response.dart';
 import 'package:verified/domain/models/generic_status_enum.dart';
@@ -19,8 +23,8 @@ import 'package:verified/domain/models/verification_request.dart';
 import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/store/repository.dart';
-
-import '../../domain/models/communication_channels.dart';
+import 'package:verified/presentation/utils/device_info.dart';
+import 'package:verified/domain/models/communication_channels.dart';
 
 part 'store_state.dart';
 part 'store_event.dart';
@@ -29,9 +33,20 @@ part 'store_bloc.freezed.dart';
 class StoreBloc extends Bloc<StoreEvent, StoreState> {
   StoreBloc(this._storeRepository) : super(StoreState.initial()) {
     /// add stored user on boot
-    // Future.microtask(() async {
-    //   add(StoreEvent.addUser(await LocalUser.getUser()));
-    // });
+    Future.microtask(() async {
+      var device = await getCurrentDevice();
+      var user = await LocalUser.getUser();
+
+      ///
+      _storeRepository.setUserAndVariables(
+        phone: device?.uuid ?? '',
+        user: user?.id ?? '',
+        env: user?.env ?? '',
+      );
+
+      ///
+      // add(StoreEvent.addUser(await LocalUser.getUser()));
+    });
 
     on<StoreEvent>(
       (event, emit) async => event.map(
@@ -129,7 +144,8 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             VerificationRequest(
               verifeeRequest: state.verifiee,
               capturedVerifeeDetails: state.capturedVerifeeDetails,
-              uploadedDocFiles: state.idBackImageUploadResponse ?? state.idFrontImageUploadResponse,
+              backUploadedDocFiles: state.idBackImageUploadResponse,
+              frontUploadedDocFiles: state.idFrontImageUploadResponse,
               uploadedSelfieImg: state.selfieUploadResponse,
             ),
           );
@@ -141,7 +157,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             VerificationRequest(
               verifeeRequest: state.verifiee,
               capturedVerifeeDetails: state.capturedVerifeeDetails,
-              uploadedDocFiles: state.passportImageUploadResponse,
+              frontUploadedDocFiles: state.passportImageUploadResponse,
               uploadedSelfieImg: state.selfieUploadResponse,
             ),
           );
@@ -315,7 +331,15 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
             add(StoreEvent.getAllHistory(data.profileId ?? data.id ?? ''));
             add(StoreEvent.getWallet(data.walletId ?? ''));
+            add(const StoreEvent.addDeviceData());
             LocalUser.setUser(data);
+
+            ///
+            _storeRepository.setUserAndVariables(
+              phone: state.device?.name ?? '',
+              user: data.id ?? '',
+              env: data.env ?? '',
+            );
 
             ///
             print("DO WE HAVE A WALLET ID:  ${data.walletId ?? 'NO_NO'}, USER_ID: ${data.profileId}");
@@ -326,11 +350,14 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
         updateUserProfile: (e) async {
           if (state.resourceHealthStatus == ResourceHealthStatus.bad) add(const StoreEvent.apiHealthCheck());
           if (state.resourceHealthStatus == ResourceHealthStatus.bad) return;
+          if (state.userProfileData == e.user) return;
+
           emit(
             state.copyWith(
               userProfileError: null,
               userProfileHasError: false,
               userProfileDataLoading: true,
+              userProfileData: e.user,
             ),
           );
 
@@ -347,7 +374,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 userProfileDataLoading: false,
               ),
             );
-          }, (data) {
+          }, (data) async {
             emit(
               state.copyWith(
                 userProfileError: null,
@@ -356,6 +383,15 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
                 userProfileData: data,
               ),
             );
+            getCurrentDevice().then((device) {
+              ///
+              _storeRepository.setUserAndVariables(
+                phone: device?.name ?? '',
+                user: data.id ?? '',
+                env: data.env ?? '',
+              );
+            });
+            LocalUser.setUser(data);
           });
 
           return null;
@@ -905,8 +941,9 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           add(
             StoreEvent.createHistory(
               TransactionHistory(
+                id: const Uuid().v4(),
                 profileId: state.userProfileData?.id,
-                amount: POINTS_PER_TRANSACTION,
+                amount: 0,
                 isoCurrencyCode: 'ZAR',
                 categoryId: status.value,
                 timestamp: DateTime.now().millisecondsSinceEpoch ~/ 1000,
@@ -931,6 +968,14 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
         willSendNotificationAfterVerification: (e) async {
           var data = await _storeRepository.willSendNotificationAfterVerification(e.data);
           print('willSendNotificationAfterVerification  => $data');
+          return null;
+        },
+        addDeviceData: (_) async {
+          var device = await getCurrentDevice();
+
+          _storeRepository.postDeviceData(await getCurrentDeviceInfo());
+
+          emit(state.copyWith(device: device));
           return null;
         },
       ),

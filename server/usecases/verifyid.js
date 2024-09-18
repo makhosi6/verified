@@ -1,12 +1,20 @@
 const { uniqueIdentifier } = require("../packages/uuid");
 const { generateNonce } = require("../nonce.source");
 const { getUserProfile, getWallet, cache3rdPartResponse } = require("./store");
+const { sendHelpEmailNotifications } = require("./notifications");
+const { getAll, updateItem } = require("./db_operations");
+const jsonServer = require("json-server");
+const path = require('node:path');
+const logger = require("../packages/logger");
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const VERIFYID_3RD_PARTY_TOKEN =
-  process.env.VERIFYID_3RD_PARTY_TOKEN || "VERIFYID_3RD_PARTY_TOKEN";
+  process.env.VERIFYID_3RD_PARTY_TOKEN || "$2y$10$R3YR3lJXdaxpiqoeLS68VuWk9LagBxR0z3MJjw";
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "5400";
+const ADMIN_EMAIL = process.env.VERIFIED_ADMIN_EMAIL || 'admin@byteestudio.com'
+const CDN = process.env.CDN_BASE_URL || 'http://192.168.0.132:4334/static/';
+const { getImageAsBase64 } = require('.././utils/image')
 
 const fakeContactResData = {
   status: "Success",
@@ -263,7 +271,7 @@ async function handleGetCreditsReq(req, res) {
     const randomNumber = Math.floor(Math.random() * 1000);
 
     //if it's a test env simulate an error or return test/fake data
-    if (clientEnv === "test") { 
+    if (clientEnv === "test") {
       if (randomNumber > 100) res.status(500).send({ error: 'chaos monkey' });
       else res.send(fakeCreditResData);
 
@@ -352,9 +360,170 @@ const deductCreditsAfterTransaction = async (query, clientId) => {
     console.error("deductCreditsAfterTransaction", error);
   }
 };
+/**
+ * @typedef {Object} KycVerificationData
+ * @property {string} name - The name of the individual.
+ * @property {?string} idNumber - The ID number of the individual (can be null).
+ * @property {string} phoneNumber - The phone number of the individual.
+ * @property {?string} bankAccountNumber - The bank account number (can be null).
+ * @property {string} email - The email of the individual.
+ * @property {?string} description - A description (can be null).
+ * @property {string[]} selectedServices - The services selected by the individual.
+ * @property {string} instanceId - A unique instance ID.
+ * @property {string} id - A unique ID.
+ * @property {number} updatedAt - The timestamp when the object was last updated.
+ * @property {number} createdAt - The timestamp when the object was created.
+ * @property {Object} comms - Communication preferences.
+ * @property {boolean} comms.email - Indicates if email communication is enabled.
+ * @property {boolean} comms.sms - Indicates if SMS communication is enabled.
+ * @property {Object} verifeeRequest - Details related to the verifee request.
+ * @property {string} verifeeRequest.jobUuid - A unique job UUID.
+ * @property {?string} verifeeRequest.image - The image associated with the request (can be null).
+ * @property {?string} verifeeRequest.preferredName - The preferred name (can be null).
+ * @property {string} verifeeRequest.email - The email related to the verifee request.
+ * @property {string} verifeeRequest.phoneNumber - The phone number related to the verifee request.
+ * @property {?string} verifeeRequest.description - A description for the verifee request (can be null).
+ * @property {?string} verifeeRequest.idNumber - The ID number for the verifee request.
+ * @property {?string} verifeeRequest.nationality - The nationality for the verifee request.
+ * @property {Object} capturedVerifeeDetails - The captured details of the verifee.
+ * @property {?string} capturedVerifeeDetails.surname - The surname of the verifee.
+ * @property {?string} capturedVerifeeDetails.names - The names of the verifee.
+ * @property {?string} capturedVerifeeDetails.sex - The sex of the verifee.
+ * @property {?string} capturedVerifeeDetails.documentType - The document type of the verifee.
+ * @property {?string} capturedVerifeeDetails.nationality - The nationality of the verifee.
+ * @property {?string} capturedVerifeeDetails.identityNumber - The identity number of the verifee.
+ * @property {?string} capturedVerifeeDetails.identityNumber2 - A second identity number (if applicable).
+ * @property {?string} capturedVerifeeDetails.passportNumber - The passport number of the verifee.
+ * @property {?string} capturedVerifeeDetails.dayOfBirth - The day of birth of the verifee.
+ * @property {?string} capturedVerifeeDetails.countryOfBirth - The country of birth of the verifee.
+ * @property {?string} capturedVerifeeDetails.status - The status of the verifee's details.
+ * @property {?string} capturedVerifeeDetails.dateOfIssue - The date the document was issued.
+ * @property {?string} capturedVerifeeDetails.securityNumber - The security number of the document.
+ * @property {?string} capturedVerifeeDetails.cardNumber - The card number of the document.
+ * @property {?string} capturedVerifeeDetails.rawInput - Raw input related to the verifee details.
+ * @property {string} capturedVerifeeDetails.jobUuid - A unique job UUID for the captured verifee details.
+ * @property {Object} capturedVerifeeDetails.cameraState - The state of the camera during verification.
+ * @property {string} capturedVerifeeDetails.cameraState.cameraLightingLevel - The camera lighting level.
+ * @property {?string} capturedVerifeeDetails.cameraState.idCode39Text - The Code 39 ID text (if any).
+ * @property {?string} capturedVerifeeDetails.cameraState.idCode39Text2 - A second Code 39 ID text (if any).
+ * @property {?string} capturedVerifeeDetails.cameraState.idPdf417Text - The PDF417 text (if any).
+ * @property {string} capturedVerifeeDetails.cameraState.passportMRZtext - The passport MRZ text.
+ * @property {Array} capturedVerifeeDetails.cameraState.imageFiles - Captures image file.
+ * @property {string} capturedVerifeeDetails.cameraState.imageFiles.file
+ * @property {string} capturedVerifeeDetails.cameraState.imageFiles.side 
+ * @property {?string} capturedVerifeeDetails.spaceFiller - Additional filler data (if any).
+ * @property {Object} uploadedSelfieImg - The uploaded selfie image.
+ * @property {string} uploadedSelfieImg.message - A message regarding the uploaded selfie image.
+ * @property {?Array} uploadedSelfieImg.files - The uploaded selfie file (if any).
+ * @property {Object} frontUploadedDocFiles - The uploaded selfie image.
+ * @property {string} frontUploadedDocFiles.message - A message regarding the uploaded selfie image.
+ * @property {?Array} frontUploadedDocFiles.files - The uploaded selfie file (if any).
+ * @property {Object} backUploadedDocFiles - The uploaded selfie image.
+ * @property {string} backUploadedDocFiles.message - A message regarding the uploaded selfie image.
+ * @property {?Array} backUploadedDocFiles.files - The uploaded selfie file (if any).
+ * @property {Array} uploadedSelfieImg.files - A list of uploaded selfie files.
+ */
+/**
+ * 
+ * @param {KycVerificationData} data 
+ */
+async function handleKycVerification(data) {
+  try {
+    if (data.id === null || data.id === '') {
+
+    }
+    if (data.uploadedSelfieImg.message.toLocaleLowerCase().includes('no file')) {
+
+    }
+    if (data.frontUploadedDocFiles === null && data.capturedVerifeeDetails.cameraState.imageFiles.length > 0) {
+
+    }
+
+    if ((data.backUploadedDocFiles === null && data.capturedVerifeeDetails.documentType === 'id_card') && data.imageFiles.length > 0) {
+
+    }
+
+    const id_card_front = data.capturedVerifeeDetails.cameraState.imageFiles.find(img => img.side === 'front').file
+    const id_card_back = data.capturedVerifeeDetails.cameraState.imageFiles.find(img => img.side === 'back').file
+    const passport = (data.capturedVerifeeDetails.documentType === 'passport') ? getImageAsBase64(CDN + data.frontUploadedDocFiles.files.find(file => file.filename.includes('front_')).filename) : null
+    console.log({ id_card_back, id_card_front, passport });
+
+    const headers = new Headers();
+    headers.append("Content-Type", "multipart/form-data");
+    headers.append("Accept", "application/json");
+    const formdata = new FormData();
+    formdata.append("api_key", '$2y$10$R3YR3lJXdaxpiqoeLS68VuWk9LagBxR0z3MJjw');
+    formdata.append("identity_document_type", data.capturedVerifeeDetails.documentType);
+    formdata.append("selfie_photo", getImageAsBase64(CDN + data.uploadedSelfieImg.files[0].filename));
+    formdata.append("id_card_front", getImageAsBase64(CDN + data.frontUploadedDocFiles.files.find(file => file.filename.includes('front_')).filename) || id_card_front);
+    formdata.append("id_card_back", getImageAsBase64(CDN + data.backUploadedDocFiles.files.find(file => file.filename.includes('back_')).filename) || id_card_back);
+    formdata.append("driver_license_front", null);
+    formdata.append("driver_license_back", null);
+    formdata.append("passport", passport);
+
+    console.log({ token: VERIFYID_3RD_PARTY_TOKEN, id_card_back, id_card_front, passport });
+
+
+    const options = {
+      method: "POST",
+      headers: headers,
+      body: formdata,
+      redirect: "follow"
+    };
+
+    const response = await fetch(`https://www.verifyid.co.za/webservice/kyc-verification`, options)
+
+    const output = await response.json()
+
+    global.queue.push(() =>
+      cache3rdPartResponse({ id: data.capturedVerifeeDetails.identityNumber || data.capturedVerifeeDetails.identityNumber2, data: output })
+    );
+
+    if (output.liveness || output.liveness === 'Invalid Request!') {
+      /// update first transaction
+      const transactionRouter = jsonServer.router(path.resolve("../apps/store/db/history.json"))
+      const transaction1 = getAll(transactionRouter).find(item => item.transactionId === data.instanceId)
+
+      if (transaction1) updateItem(transactionRouter, transaction1.id, { ...transaction1, "description": `Liveness test failed (${transaction1.details.query})`, "categoryId": "failed", })
+
+      return;
+    }
+    console.log({ output, url: response.url });
+
+    if (output) {
+      /// and email admin
+      const email = sendHelpEmailNotifications({
+        name: `Query for ${data.capturedVerifeeDetails.identityNumber || data.capturedVerifeeDetails.identityNumber2} - (Verified)`,
+        email: ADMIN_EMAIL,
+        message: `Notification of New Transaction (${data.instanceId})`,
+      });
+      /// update first transaction
+      const transactionRouter = jsonServer.router(path.resolve("../apps/store/db/history.json"))
+      const transaction1 = getAll(transactionRouter).find(item => item.transactionId === data.instanceId)
+
+      if (transaction1) updateItem(transactionRouter, transaction1.id, { ...transaction1, "description": `Verification process complete (${transaction1.details.query})`, "categoryId": "done", })
+      /// create second transaction
+      deductCreditsAfterTransaction(transaction1.details.query, transaction1.profileId)
+      
+    }
+
+    return data;
+  } catch (error) {
+    ///
+    logger.error(error.toString(), error);
+
+    /// update first transaction
+    const transactionRouter = jsonServer.router(path.resolve("../apps/store/db/history.json"))
+    const transaction1 = getAll(transactionRouter).find(item => item.transactionId === data.instanceId)
+
+    if (transaction1) updateItem(transactionRouter, transaction1.id, { ...transaction1, "description": `Verification process failed (${transaction1.details.query})`, "categoryId": "failed", })
+
+  }
+}
 
 module.exports = {
   handleContactEnquiry,
   handleSaidVerification,
   handleGetCreditsReq,
+  handleKycVerification
 };

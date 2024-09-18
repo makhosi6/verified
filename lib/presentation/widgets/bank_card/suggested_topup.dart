@@ -215,6 +215,7 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                               metadata: PaymentMetadata(
                                 walletId: wallet?.id ?? user.walletId,
                                 payerId: user.id,
+                                env: user.env,
                               ),
                             ),
                           ),

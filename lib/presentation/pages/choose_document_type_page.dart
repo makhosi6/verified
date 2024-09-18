@@ -187,7 +187,7 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
 
                                       Future.microtask(() async {
                                         var filesData = await Future.wait(_documentScannerState.imageFiles
-                                            .map((img) async => (await convertToFormData(img.file)) as MultipartFile)
+                                            .map((img) async => ((await convertToFormData(img.file, side: img.side)) as MultipartFile))
                                             .toList());
 
                                         print(_documentScannerState.imageFiles.length);
@@ -195,7 +195,7 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                         print(filesData);
                                         print(filesData.map((e) => e.filename));
                                         print(filesData.length);
-                                        if (filesData.isEmpty && kDebugMode) exit(0);
+                                        // if (filesData.isEmpty && kDebugMode) exit(0);
                                         // ignore: use_build_context_synchronously
                                         ctx.read<StoreBloc>()
                                           ..add(StoreEvent.addVerifee(details))

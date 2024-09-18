@@ -8,6 +8,7 @@ const fetch = (...args) => import('node-fetch').then(({
 const { getWallet, getUserProfile } = require("./store");
 const { sendEmailNotifications, sendPushNotifications, sendSuccessfulPaymentEmailNotifications, sendSuccessfulRefundEmailNotifications } = require("./notifications");
 const logger = require("../packages/logger");
+const { createItem } = require("./db_operations");
 const PAYMENTS_TOKEN =
     process.env.PAYMENTS_TOKEN || "sk_test_1d9ae04aBLnrM8nfaf14ba5ac783";
 const HOST = process.env.HOST || "0.0.0.0";
@@ -340,23 +341,8 @@ async function _addToOrSubtractWallet(payload, eventType) {
         lastDepositAt: (eventType == eventTypes["payment.succeeded"]) ? Math.floor(Date.now() / 1000) : savedWallet.lastDepositAt,
 
     };
-    const host =
-        (process.env.NODE_ENV === "production" ? `store_service` : `${HOST}`) +
-        ':5400';
-    let options = {
-        method: "PUT",
-        url: `http://${host}/api/v1/wallet/resource/${payload?.metadata?.walletId ?? ""
-            }`,
-        headers: {
-            "x-nonce": generateNonce(),
-            "Content-Type": "application/json",
-            Authorization: "Bearer TOKEN",
-        },
-        body: JSON.stringify(wallet),
-    };
-    request(options, function (error, response) {
-        if (error) throw new Error(error.toString());
-    });
+    const _router = jsonServer.router(path.resolve("../apps/store/db/wallet.json"))
+    const data = createItem(_router, wallet)
 }
 
 /**

@@ -1,6 +1,7 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:verified/domain/models/device.dart';
 
 Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
   return <String, dynamic>{
@@ -34,6 +35,9 @@ Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
   };
 }
 
+Device _readAndroidDevice(AndroidDeviceInfo build) =>
+    Device(uuid: '${build.id}_${build.serialNumber}', name: build.model, brand: build.manufacturer);
+
 Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo data) {
   return <String, dynamic>{
     'name': data.name,
@@ -42,6 +46,7 @@ Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo data) {
     'model': data.model,
     'localizedModel': data.localizedModel,
     'identifierForVendor': data.identifierForVendor,
+    'id': data.identifierForVendor,
     'isPhysicalDevice': data.isPhysicalDevice,
     'utsname.sysname': data.utsname.sysname,
     'utsname.nodename': data.utsname.nodename,
@@ -50,6 +55,8 @@ Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo data) {
     'utsname.machine': data.utsname.machine,
   };
 }
+
+Device _readIosDevice(IosDeviceInfo data) => Device(uuid: data.identifierForVendor, name: data.name, brand: 'apple');
 
 Future<Map<String, dynamic>> getCurrentDeviceInfo() async {
   try {
@@ -61,5 +68,18 @@ Future<Map<String, dynamic>> getCurrentDeviceInfo() async {
     };
   } catch (e) {
     return {'name': 'unknown'};
+  }
+}
+
+Future<Device?> getCurrentDevice() async {
+  try {
+    final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    return switch (defaultTargetPlatform) {
+      TargetPlatform.android => _readAndroidDevice(await deviceInfoPlugin.androidInfo),
+      TargetPlatform.iOS => _readIosDevice(await deviceInfoPlugin.iosInfo),
+      _ => null
+    };
+  } catch (e) {
+    return null;
   }
 }

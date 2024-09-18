@@ -21,7 +21,7 @@ class CapturedVerifeeDetails {
   String? rawInput;
   String? spaceFiller;
   String? jobUuid;
-  Map<String, String>? cameraState;
+  Map<String, dynamic>? cameraState;
 
   CapturedVerifeeDetails(
       {this.surname,

@@ -11,7 +11,6 @@ class VerifySaDioClientService {
       baseUrl: '$baseUrl/verify-id/api/v1/',
       headers: {
         'Authorization': 'Bearer $verifySaApiKey',
-      'x-client-env': curentUserEnv,
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
@@ -36,6 +35,7 @@ class VerifySaDioClientService {
   /// If you want to reject the request with a error message,
   /// you can reject with a `DioException` using `handler.reject(dioError)`.
   static onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    print(options.headers);
     return handler.next(options);
   }
 
@@ -59,10 +59,9 @@ class StoreDioClientService {
   static Dio instance = Dio(
     BaseOptions(
       // baseUrl: '$baseUrl/store/api/v1/',
-      baseUrl: 'http://10.0.1.213:5400/api/v1/',
+      baseUrl: 'http://192.168.0.132:5400/api/v1/',
       headers: {
         'Authorization': 'Bearer $storeApiKey',
-         'x-client-env': curentUserEnv,
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
@@ -87,6 +86,7 @@ class StoreDioClientService {
   /// If you want to reject the request with a error message,
   /// you can reject with a `DioException` using `handler.reject(dioError)`.
   static onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    print(options.headers);
     return handler.next(options);
   }
 
@@ -112,8 +112,6 @@ class PaymentsDioClientService {
       baseUrl: '$baseUrl/payments/api/v1/',
       headers: {
         'Authorization': 'Bearer $storeApiKey',
-        'x-client': '',
-            'x-client-env': curentUserEnv,
         // 'x-nonce': 'MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2',
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -139,6 +137,7 @@ class PaymentsDioClientService {
   /// If you want to reject the request with a error message,
   /// you can reject with a `DioException` using `handler.reject(dioError)`.
   static onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    print(options.headers);
     return handler.next(options);
   }
 
@@ -165,3 +164,7 @@ bool httpRequestIsSuccess(int? status) => switch (status) {
       304 => true,
       _ => false,
     };
+
+
+
+/// sui - secondary unique-identifier for the  client 

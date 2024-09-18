@@ -1,5 +1,6 @@
 class PaymentMetadata {
   PaymentMetadata({
+    this.env,
     this.checkoutId,
     this.paymentFacilitator,
     this.payerId,
@@ -9,6 +10,7 @@ class PaymentMetadata {
   });
 
   PaymentMetadata.fromJson(dynamic json) {
+    env = json['env'];
     checkoutId = json['checkoutId'];
     paymentFacilitator = json['paymentFacilitator'];
     payerId = json['payerId'];
@@ -16,6 +18,7 @@ class PaymentMetadata {
     amount = json['amount'];
     transactionId = json['transactionId'];
   }
+  String? env;
   String? checkoutId;
   String? paymentFacilitator;
   String? payerId;
@@ -23,6 +26,7 @@ class PaymentMetadata {
   String? amount;
   String? transactionId;
   PaymentMetadata copyWith({
+    String? env,
     String? checkoutId,
     String? paymentFacilitator,
     String? payerId,
@@ -31,6 +35,7 @@ class PaymentMetadata {
     String? transactionId,
   }) =>
       PaymentMetadata(
+        env: env ?? this.env,
         checkoutId: checkoutId ?? this.checkoutId,
         paymentFacilitator: paymentFacilitator ?? this.paymentFacilitator,
         payerId: payerId ?? this.payerId,
@@ -40,6 +45,7 @@ class PaymentMetadata {
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
+    map['env'] = env;
     map['checkoutId'] = checkoutId;
     map['paymentFacilitator'] = paymentFacilitator;
     map['payerId'] = payerId;

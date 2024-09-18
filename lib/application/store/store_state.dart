@@ -6,6 +6,9 @@ class StoreState with _$StoreState {
     required ResourceHealthStatus resourceHealthStatus,
 
     ///
+    required Device? device,
+
+    ///
     required GenericApiError? getHelpError,
     required bool getHelpHasError,
     required bool getHelpDataLoading,
@@ -85,6 +88,9 @@ class StoreState with _$StoreState {
 
   factory StoreState.initial() => const StoreState(
         resourceHealthStatus: ResourceHealthStatus.unknown,
+
+        ///
+        device: null,
 
         ///
         searchPerson: null,

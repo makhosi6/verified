@@ -8,10 +8,37 @@ const PORT = process.env.PORT || "9092";
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
+/**
+ * Represents a service complaint.
+ *
+ * @typedef {Object} ServiceComplaint
+ * @property {string} id - The unique identifier of the service complaint.
+ * @property {string} profileId - The profile ID associated with the complaint.
+ * @property {number} timestamp - The timestamp when the complaint was made.
+ * @property {boolean} isResolved - Indicates whether the complaint is resolved or not.
+ * @property {string} type - The type of the complaint.
+ * @property {Array<Object>} uploads - Array containing upload information related to the complaint.
+ * @property {string} uploads.filename - The filename of the uploaded file.
+ * @property {number} uploads.size - The size of the uploaded file.
+ * @property {string} uploads.mimetype - The mimetype of the uploaded file.
+ * @property {Object} comment - The comment associated with the complaint.
+ * @property {string} comment.title - The title of the comment.
+ * @property {string} comment.body - The body of the comment.
+ * @property {Object|null} comment.upload - Information about an optional upload associated with the comment.
+ * @property {string} preferredCommunicationChannel - The preferred communication channel for the complaint.
+ * @property {Array<Object>} responses - Array containing responses to the complaint.
+ * @property {number} updatedAt - The timestamp when the complaint was last updated.
+ * @property {number} createdAt - The timestamp when the complaint was created.
+ */
+/**
+ *
+ * @param {ServiceComplaint} data
+ */
+
 /// https://github.com/jlcvp/fcm-node
 /**
  * Represents a payment event object.
- * @typedef {Object} Notification
+ * @typedef {Object} PushNotification
  * @property {string | null} token - fmc token.
  * @property {string | null} email - user email.
  * @property {string} title - The title of the FB notification.
@@ -19,7 +46,7 @@ const fetch = (...args) =>
  */
 /**
  *
- * @param {Notification} notification
+ * @param {PushNotification} notification
  */
 function sendPushNotifications({ token, title, body }) {
   const message = {
@@ -43,8 +70,16 @@ function sendPushNotifications({ token, title, body }) {
   });
 }
 /**
- * send a email to admin/ help ticket
- * @param {Object} helpRequest
+ *
+ * @typedef {Object} HelpRequest
+ * @property {string} name - The name of the individual.
+ * @property {string} email - The email of the individual.
+ * @property {string} message - The message containing details or text.
+ * 
+ */
+
+/**
+ * @param {HelpRequest} helpRequest
  */
 function sendHelpEmailNotifications(helpRequest) {
   try {
@@ -74,7 +109,10 @@ function sendHelpEmailNotifications(helpRequest) {
     console.log(error);
   }
 }
-
+/**
+ * 
+ * @param {ServiceComplaint} data 
+ */
 function sendWhatsappMessage(data) {
   try {
     const host =
@@ -104,18 +142,18 @@ function sendWhatsappMessage(data) {
 
 /**
  * send a successful refund message
- * @param {Object} helpRequest
+ * @param {HelpRequest} helpRequest
  */
 function sendSuccessfulRefundEmailNotifications(helpRequest) { }
 /**
  * send a thanks for payment email
- * @param {Object} helpRequest
+ * @param {HelpRequest} helpRequest
  */
 function sendSuccessfulPaymentEmailNotifications(helpRequest) { }
 
 /**
  *
- * @param {object} helpRequest
+ * @param {ServiceComplaint} helpRequest
  */
 function sendWhatsappSend(helpRequest) {
   try {
@@ -125,7 +163,7 @@ function sendWhatsappSend(helpRequest) {
 
     const options = {
       method: "POST",
-      headers: headers,
+      headers,
       body: JSON.stringify(helpRequest),
     };
     const host =

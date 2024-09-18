@@ -38,6 +38,7 @@ const {
   archiveOnDelete,
   postOperationOnly,
   triggerVerificationAsyncTasks,
+  beforePostOperation,
 } = require("../../middleware/universal");
 
 const {
@@ -59,6 +60,7 @@ const cache = jsonServer.router(path.join(__dirname, "db/cache.json"));
 const promotion = jsonServer.router(path.join(__dirname, "db/promotion.json"));
 const wallet = jsonServer.router(path.join(__dirname, "db/wallet.json"));
 const jobs = jsonServer.router(path.join(__dirname, "db/jobs.json"));
+const devices = jsonServer.router(path.join(__dirname, "db/devices.json"));
 
 
 // setup the logger
@@ -93,6 +95,7 @@ server.use("/api/v1/wallet", wallet);
 server.use("/api/v1/jobs", noDeleteOperation, jobs);
 server.use("/api/v1/cache", noDeleteOperation, cache);
 server.use("/api/v1/archive", noDeleteOperation, archive);
+server.use("/api/v1/devices", [noDeleteOperation, beforePostOperation], devices);
 
 /// listen 
 server.listen(PORT, () => {

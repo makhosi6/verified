@@ -22,6 +22,7 @@ import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/payments/payments_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
+import 'package:verified/domain/models/device.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/firebase_options.dart';
 import 'package:verified/helpers/logger.dart';
@@ -109,10 +110,10 @@ void main() async {
   if (kDebugMode) {
     if (defaultTargetPlatform == TargetPlatform.android) {
       var device = await getCurrentDeviceInfo();
-      final host = (device['isPhysicalDevice'] == true) ? '10.0.1.213' : 'localhost';
+      final host = (device['isPhysicalDevice'] == true) ? '192.168.0.132' : 'localhost';
       await FirebaseAuth.instance.useAuthEmulator(host, 9099);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      await FirebaseAuth.instance.useAuthEmulator('10.0.1.213', 9099);
+      await FirebaseAuth.instance.useAuthEmulator('192.168.0.132', 9099);
     }
   }
 
@@ -339,7 +340,7 @@ class _AppRootState extends State<AppRoot> {
   }
 
   _setFMCToken(fcmToken) {
-    if (mounted) {
+    if (mounted && (token != fcmToken)) {
       print('\n\nFMC TOKEN 2: $fcmToken\n\n');
       setState(() {
         token = fcmToken;
@@ -560,20 +561,23 @@ class _AppRootState extends State<AppRoot> {
               final isNewToken = state.userProfileData?.notificationToken != token;
 
               if (hasUser && isNewToken && hasToken) {
-                Future.delayed(const Duration(seconds: 5), () {
+                Future.delayed(const Duration(seconds: 10), () async {
                   try {
-
                     print('UPDATE Its A NEW TOKEN, $isNewToken | $hasToken | $hasUser | $token');
                     print('was_token ${state.userProfileData?.notificationToken}');
+                    var _currentDevice = await getCurrentDevice();
+                    // ignore: use_build_context_synchronously
                     context.read<StoreBloc>().add(
                           StoreEvent.updateUserProfile(
                             state.userProfileData!.copyWith(
+                              devices: [_currentDevice ?? Device()],
+                              currentSui: _currentDevice?.uuid,
                               notificationToken: token,
                             ),
                           ),
                         );
                   } catch (e) {
-                    debugPrint('Error while trying to add a token,  $e');
+                    debugPrint('Error while trying to add a token && device,  $e');
                   }
                 });
               }

@@ -212,7 +212,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
         debugPrint('Detected Process Pdf417 Image with text: $pdf417BarcodesText');
 
         return true;
-      } 
+      }
 
       return false;
     } catch (e) {
@@ -360,16 +360,17 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       if (mounted && imageFiles.where((i) => i.side == side).isEmpty) {
         messages = [];
         imageFiles.add(ImageFile(side: side, file: File(image.path)));
-
         FlutterBeep.beep();
       }
       documentScannerState = CameraEventsState(
-          idCode39Text: barcodeText,
-          idCode39Text2: barcodeText2,
-          idPdf417Text: pdf417BarcodesText,
-          passportMRZtext: '',
-          imageFiles: imageFiles,
-          cameraLightingLevel: brightness);
+        idCode39Text: barcodeText,
+        idCode39Text2: barcodeText2,
+        idPdf417Text: pdf417BarcodesText,
+        passportMRZtext: '',
+        imageFiles: imageFiles,
+        cameraLightingLevel: brightness,
+      );
+
       widget.onStateChanged(documentScannerState);
       // widget.onCapture(File(image.path), DetectSide.values.where((e) => e.name == side).first);
       debugPrint('BARCODE TEXT: $barcodeText \n\n');
@@ -672,17 +673,19 @@ class CameraEventsState {
           idCode39Text2: idCode39Text2 ?? this.idCode39Text2,
           idPdf417Text: idPdf417Text ?? this.idPdf417Text,
           passportMRZtext: passportMRZtext ?? this.passportMRZtext,
-          imageFiles: imageFiles ?? this.imageFiles);
+          imageFiles: imageFiles ?? this.imageFiles,);
 
-  Map<String, String> toJson() {
-    final Map<String, String> _data = {};
-    _data['cameraLightingLevel'] = '$cameraLightingLevel';
-    _data['idCode39Text'] = '$idCode39Text';
-    _data['idCode39Text2'] = '$idCode39Text2';
-    _data['idPdf417Text'] = '$idPdf417Text';
-    _data['passportMRZtext'] = '$passportMRZtext';
-    _data['imageFiles'] = imageFiles.map((img) =>  bytesToDataUrl(img.file.readAsBytesSync(), getExtension(img.file.path))).join(', ');
-    return _data;
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['cameraLightingLevel'] = '$cameraLightingLevel';
+    data['idCode39Text'] = '$idCode39Text';
+    data['idCode39Text2'] = '$idCode39Text2';
+    data['idPdf417Text'] = '$idPdf417Text';
+    data['passportMRZtext'] = '$passportMRZtext';
+    data['imageFiles'] = imageFiles.map((img) {
+      return {'file': bytesToDataUrl(img.file.readAsBytesSync(), getExtension(img.file.path)), 'side': img.side};
+    }).toList();
+    return data;
   }
 }
 
@@ -769,6 +772,15 @@ class ImageFile {
   final File file;
 
   ImageFile({required this.side, required this.file});
+
+  @override
+  String toString() {
+    return '{side:$side, file: $file}';
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'side': side, 'file': file};
+  }
 }
 
 // Future<bool> isLightingBad(CameraImage image) async {

@@ -14,7 +14,6 @@ import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/wallet.dart';
 
 import 'package:verified/globals.dart';
-import 'package:verified/presentation/pages/add_payment_method_page.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';

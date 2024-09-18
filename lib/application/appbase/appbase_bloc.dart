@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:verified/domain/models/device.dart';
 import 'package:verified/presentation/utils/app_info.dart';
 import 'package:verified/presentation/utils/device_info.dart';
 
@@ -26,9 +27,18 @@ class AppbaseBloc extends Bloc<AppbaseEvent, AppbaseState> {
 
           return null;
         },
+        getDevice: (_) async {
+          final device = await getCurrentDevice();
+          emit(
+            state.copyWith(
+              device: device,
+            ),
+          );
+
+          return null;
+        },
         getDeviceInfo: (_) async {
           final device = await getCurrentDeviceInfo();
-          debugPrint(_appBaseRepository.hashCode.toString());
           emit(
             state.copyWith(
               deviceInfo: device,

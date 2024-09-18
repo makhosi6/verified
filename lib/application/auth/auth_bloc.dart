@@ -23,7 +23,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             authStateChanges: _authProviderRepository.authStateChanges().asBroadcastStream()
               ..listen((user) {
                 try {
-                  print('DID BROADCAST USER' + user.toString());
+                  print('DID BROADCAST USER  -  $user');
                   if (user != null && _storeBloc.state.userProfileData == null) {
                     ///
 
@@ -77,6 +77,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 user?.photoURL ?? 'https://robohash.org/${(user?.uid.replaceRange(0, 2, "P_"))?.toLowerCase()}.png',
             // 'walletId': 'logged-in-user-wallet',
             'walletId': null,
+            'env': 'prod',
+            
+            'currentSui': null,
             'phone': user?.phoneNumber,
             'dataProvider': user?.providerData.map((e) => e.providerId).toString(),
             'metadata': {
@@ -124,6 +127,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                   'creationTime': (user?.metadata.creationTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
                   'lastSignInTime': (user?.metadata.lastSignInTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
                 },
+                'env': 'prod',
+                'currentSui': null,
                 'walletId': null,
                 'active': true,
                 'softDeleted': false,
@@ -158,6 +163,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                   'creationTime': (user?.metadata.creationTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
                   'lastSignInTime': (user?.metadata.lastSignInTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
                 },
+                'env': 'prod',
+                
+                'currentSui': null,
                 'active': true,
                 'softDeleted': false,
               },
@@ -232,6 +240,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               'creationTime': (user?.metadata?.creationTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
               'lastSignInTime': (user?.metadata?.lastSignInTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
             },
+            'env': 'prod',
+            
+            'currentSui': null,
             'active': true,
             'softDeleted': false,
           });
@@ -262,7 +273,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             e.authUserDetails,
           );
 
-          final user = await _authProviderRepository.webSignUp(e.authUserDetails, newUser ?? VerifiedWebUser(uid: e.authUserDetails.userId, refreshToken: e.authUserDetails.token, ));
+          final user = await _authProviderRepository.webSignUp(
+              e.authUserDetails,
+              newUser ??
+                  VerifiedWebUser(
+                    uid: e.authUserDetails.userId,
+                    refreshToken: e.authUserDetails.token,
+                  ));
 
           ///
           final userProfile = UserProfile.fromJson({
@@ -280,6 +297,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               'creationTime': (user?.metadata?.creationTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
               'lastSignInTime': (user?.metadata?.lastSignInTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
             },
+            'env': 'prod',
+            
+            'currentSui': null,
             'active': true,
             'softDeleted': false,
           });

@@ -1,4 +1,5 @@
 const { generateNonce } = require("../nonce.source");
+const { getOne } = require("./db_operations");
 const fetch = (...args) =>
     import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
@@ -14,7 +15,7 @@ async function updateCommsForJobs(req, res) {
         headers.append("Content-Type", "application/json");
         headers.append("Authorization", "Bearer TOKEN");
         headers.append("x-caller", 'updateCommsForJobs')
-        const oldData = await _getJobs(uuid);
+        const oldData = await getOne('jobs', uuid);
         const raw = JSON.stringify({ ...oldData, comms: { email, sms } });
 
         const requestOptions = {
@@ -37,36 +38,6 @@ async function updateCommsForJobs(req, res) {
 }
 /**
  * 
- * @param {string} id
- * @returns {object?}
- */
-async function _getJobs(id) {
-    try {
-        const headers = new Headers();
-        headers.append("x-nonce", generateNonce());
-        headers.append("Content-Type", "application/json");
-        headers.append("Authorization", "Bearer TOKEN");
-        headers.append("x-caller", '_getJob')
-
-        const requestOptions = {
-            method: "GET",
-            headers: headers,
-            redirect: "follow"
-        };
-
-        const response = await fetch(`${baseUrl}/jobs/resource/${id}?role=system`, requestOptions);
-
-        const data = await response.json();
-
-        return data;
-    } catch (error) {
-        console.log(error);
-
-        return null;
-    }
-}
-/**
- * 
  * @param {*} req 
  * @param {*} res 
  * @returns 
@@ -77,7 +48,7 @@ async function handleCreateJob(req, res) {
         const instanceId = data?.person?.instanceId || data?.instanceId
         data.id = instanceId;
 
-        const existingJob = await _getJobs(instanceId || data?.id)
+        const existingJob = getOne('jobs', instanceId || data?.id)
         console.log({ existingJob, data });
         if (existingJob != null && typeof existingJob === 'object' && Object.keys(existingJob).length > 0) {
             delete data.updatedAt;
@@ -106,7 +77,7 @@ async function _updateJob(id, data) {
         headers.append("Authorization", "Bearer TOKEN");
         headers.append("x-caller", '_updateJob')
         ///
-        let storedData = await _getJobs(id);
+        let storedData = getOne('jobs', id);
         const jobExists = storedData != null && typeof storedData === 'object' && Object.keys(storedData).length > 0
         const method = jobExists ? 'PUT' : 'POST'
         if (!jobExists) storedData = {};

@@ -5,17 +5,19 @@ import 'package:verified/domain/models/verifee_request.dart';
 class VerificationRequest {
   final VerifeeRequest? verifeeRequest;
   final CapturedVerifeeDetails? capturedVerifeeDetails;
-  final UploadResponse? uploadedDocFiles;
+  final UploadResponse? backUploadedDocFiles;
+  final UploadResponse? frontUploadedDocFiles;
   final UploadResponse? uploadedSelfieImg;
 
-  VerificationRequest({this.verifeeRequest, this.capturedVerifeeDetails, this.uploadedDocFiles, this.uploadedSelfieImg});
+  VerificationRequest({this.verifeeRequest, this.capturedVerifeeDetails, this.backUploadedDocFiles, this.frontUploadedDocFiles, this.uploadedSelfieImg});
 
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'verifeeRequest': verifeeRequest?.toJson(),
       'capturedVerifeeDetails': capturedVerifeeDetails?.toJson(),
-      'uploadedDocFiles': uploadedDocFiles?.toJson(),
+      'backUploadedDocFiles': backUploadedDocFiles?.toJson(),
+      'frontUploadedDocFiles': frontUploadedDocFiles?.toJson(),
       'uploadedSelfieImg': uploadedSelfieImg?.toJson(),
     };
   }

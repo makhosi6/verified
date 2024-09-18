@@ -111,3 +111,14 @@ flutter build web --web-renderer canvaskit
 - `cd localhost`
 - `cd verified.byteestudio.com`
 - `cat certificate.crt ca_bundle.crt >> merged_certificate.crt`
+
+
+
+### check-out
+- https://regulaforensics.com
+- https://usesmileid.com
+- https://regulaforensics.com
+- https://verifyid.co.za
+- https://dha.gov.za
+- https://www.mie.co.za
+- https://connect.iidentifii.com/

@@ -1,10 +1,14 @@
 const { uniqueIdentifier } = require("../packages/uuid");
 const { generateNonce } = require("../nonce.source");
+const jsonServer = require("json-server");
 const request = require("request");
+const path = require("node:path");
 const { archiveRecord } = require("../usecases/store");
 const logger = require("../packages/logger");
 const Queue = require('../packages/queue');
 const { delay } = require("../utils/delay");
+const { getOne, createItem } = require("../usecases/db_operations");
+const { handleKycVerification } = require("../usecases/verifyid");
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
@@ -23,6 +27,12 @@ const analytics = (req, res, next) => {
 };
 
 const security = (req, res, next) => {
+
+  /// check if headers are defined
+  /// and check if they are no the block list
+  next();
+};
+const beforePostOperation = (req, res, next) => {
   next();
 };
 const authenticate = (req, res, next) => {
@@ -66,27 +76,10 @@ const authorization = (req, res, next) => {
  *
  */
 function addWallet(wallet) {
-  let headers = new Headers();
-  headers.append("x-nonce", generateNonce());
-  headers.append('x-caller', "addWallet");
-  headers.append("Content-Type", "application/json");
-  headers.append("Authorization", "Bearer TOKEN");
+  const data = createItem('wallet', wallet)
+  console.log(JSON.stringify({ data }, null, 2),)
 
-  const body = JSON.stringify(wallet);
-
-  const host =
-    (process.env.NODE_ENV === "production" ? `store_service` : `${HOST}`) +
-    ":5400";
-  fetch(`http://${host}/api/v1/wallet/resource`, {
-    method: "POST",
-    headers,
-    body,
-  })
-    .then((response) => response.text())
-    .then((result) =>
-      console.log(JSON.stringify({ ADDED_WALLET: result }, null, 2))
-    )
-    .catch((error) => console.log("error", error));
+  return data;
 }
 /**
  * Operation not allowed
@@ -132,12 +125,12 @@ function triggerVerificationAsyncTasks(queue) {
     const instanceId = req?.body.verifeeRequest.jobUuid || req?.body.verifeeRequest.jobUuid;
     ///create a task queue
     queue.push(() => delay(10000, async function () {
-      await delay()
+
       // send push to user
+      const job = getOne('jobs', instanceId)
 
-
+      await handleKycVerification(job)
       // send email to client
-
 
       console.log('Will process the ', instanceId, ' job')
 
@@ -200,9 +193,6 @@ async function archiveOnDelete(req, res, next) {
   }
 }
 
-
-
-
 module.exports = {
   archiveOnDelete,
   noDeleteOperation,
@@ -212,5 +202,6 @@ module.exports = {
   security,
   authenticate,
   authorization,
+  beforePostOperation,
   triggerVerificationAsyncTasks
 };

@@ -1,7 +1,10 @@
 const request = require("request");
+const path = require("path");
+const jsonServer = require("json-server");
 const {
   generateNonce
 } = require("../nonce.source");
+const { getOne } = require("./db_operations");
 const fetch = (...args) =>
   import("node-fetch").then(({
     default: fetch
@@ -15,28 +18,9 @@ const PORT = process.env.PORT || "5400";
  */
 async function getWallet(id) {
   try {
-    const header = new Headers();
-    header.append("x-caller", 'getWallet');
-    header.append(
-      "x-nonce",
-      "MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2"
-    );
-    header.append("Authorization", "Bearer TOKEN");
-    const host =
-      (process.env.NODE_ENV === "production" ? `store_service` : `${HOST}`) +
-      `:5400`;
-    var requestOptions = {
-      method: "GET",
-      headers: header,
-    };
-
-    const response = await fetch(
-      `http://${host}/api/v1/wallet/resource/${id}`,
-      requestOptions
-    );
-
-    const data = await response.json();
-
+    if (!id) throw new Error(`Invalid Id (${id})`);
+    const _router = jsonServer.router(path.resolve("../apps/store/db/wallet.json"))
+    const data = getOne(_router, id)
     return data;
   } catch (error) {
     console.log(error);
@@ -56,30 +40,10 @@ async function getUserProfile(id) {
     //
     if (!id) throw new Error(`Invalid Id (${id})`);
 
-    const header = new Headers();
-    header.append("x-caller", 'getUserProfile')
-    header.append(
-      "x-nonce",
-      "MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2", 
-     
-    );
-    header.append("Authorization", "Bearer TOKEN");
-    const host =
-      (process.env.NODE_ENV === "production" ? `store_service` : `${HOST}`) +
-      `:5400`;
-    var requestOptions = {
-      method: "GET",
-      headers: header,
-    };
+    const _router = jsonServer.router(path.resolve("../apps/store/db/profile.json"))
+    const user = getOne(_router, id)
 
-    const response = await fetch(
-      `http://${host}/api/v1/profile/resource/${id}?role=system`,
-      requestOptions
-    );
-
-    const data = await response.json();
-
-    return data;
+    return user;
   } catch (error) {
     console.log(error);
 
@@ -91,26 +55,9 @@ async function getUserProfile(id) {
 
 async function archiveRecord(record) {
   try {
-    const headers = new Headers();
-    headers.append("x-nonce", generateNonce());
-    headers.append("Content-Type", "application/json");
-    headers.append("x-caller", 'archiveRecord');
-    headers.append("Authorization", "Bearer TOKEN");
+    const _router = jsonServer.router(path.resolve("../apps/store/db/archive.json"))
+    const data = createItem(_router, record)
 
-    const requestOptions = {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(record),
-    };
-    const host =
-      (process.env.NODE_ENV === "production" ? `store_service` : `${HOST}`) +
-      `:5400`;
-    const response = await fetch(
-      `http://${host}/api/v1/archive/resource/`,
-      requestOptions
-    );
-
-    const data = await response.json();
     console.log("DID ARCHIVE RECORD @ ", record?.type);
     console.table(data);
   } catch (error) {
@@ -120,29 +67,10 @@ async function archiveRecord(record) {
 
 async function cache3rdPartResponse(data) {
   try {
-    const headers = new Headers();
-    headers.append("x-nonce", generateNonce());
-    headers.append("x-caller", 'cache3rdPartResponse');
-    headers.append("Content-Type", "application/json");
-    archiveRecord
-    headers.append("Authorization", "Bearer TOKEN");
-
-    const requestOptions = {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(data),
-    };
-    const host =
-      (process.env.NODE_ENV === "production" ? `store_service` : `${HOST}`) +
-      `:5400`;
-    const response = await fetch(
-      `http://${host}/api/v1/cache/resource/`,
-      requestOptions
-    );
-
-    const data = await response.json();
-    console.log("DID CACHE RECORD @ ", data?.id);
-    console.table(data);
+    const _router = jsonServer.router(path.resolve("../apps/store/db/cache.json"))
+    const cached = createItem(_router, data)
+    console.log("DID CACHE RECORD @ ", cached?.id);
+    console.table(cached);
   } catch (error) {
     console.log(error);
   }

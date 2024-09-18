@@ -1,5 +1,6 @@
 {
     "java.configuration.updateBuildConfiguration": "interactive",
     "editor.minimap.maxColumn": 200,
-    "dart.lineLength": 120
+    "dart.lineLength": 120,
+    "cmake.sourceDirectory": "/Users/makhosi/Desktop/projects/flutter_apps/verify_sa/server/node_modules/nan"
 }

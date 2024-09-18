@@ -11,7 +11,8 @@ class StoreEvent with _$StoreEvent {
   const factory StoreEvent.createPersonalDetails(SearchPerson searchPerson) = CreatePersonalDetails;
   const factory StoreEvent.selectJobsOrService(List<String> serviceOrJob) = SelectJobsOrService;
   const factory StoreEvent.validateAndSubmit() = ValidateAndSubmit;
-  const factory StoreEvent.willSendNotificationAfterVerification(CommsChannels data) = WillSendNotificationAfterVerification;
+  const factory StoreEvent.willSendNotificationAfterVerification(CommsChannels data) =
+      WillSendNotificationAfterVerification;
 
   ///
   const factory StoreEvent.uploadFiles(List<MultipartFile> uploads) = UploadFiles;
@@ -23,6 +24,9 @@ class StoreEvent with _$StoreEvent {
   const factory StoreEvent.uploadIdImages(List<MultipartFile> files) = UploadIdImages;
   const factory StoreEvent.uploadSelfieImage(MultipartFile file) = UploadImage;
   const factory StoreEvent.uploadPassportImage(MultipartFile file) = UploadPassportImage;
+
+  ///
+  const factory StoreEvent.addDeviceData() = AddDeviceData;
 
   ///
   const factory StoreEvent.getUserProfile(String userId) = GetUserProfile;

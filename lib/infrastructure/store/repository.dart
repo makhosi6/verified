@@ -25,6 +25,9 @@ import 'package:verified/services/dio.dart';
 
 class StoreRepository implements IStoreRepository {
   final Dio _httpClient;
+  String _phone = '-';
+  String _user = '-';
+  String _env = '-';
 
   StoreRepository(this._httpClient) {
     (_httpClient.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (HttpClient dioClient) => dioClient
@@ -40,8 +43,12 @@ class StoreRepository implements IStoreRepository {
   Future<Either<GenericApiError, PassportResponseData>> decodePassportData(FormData data) async {
     try {
       final headers = {
+        'x-nonce': await generateNonce(),
         'Authorization': 'Bearer $storeApiKey',
         'Content-Type': 'multipart/form-data',
+        'x-client': _user,
+        'x-client-sui': _phone,
+        'x-client-env': _env,
       };
 
       final response = await _httpClient.request(
@@ -117,7 +124,13 @@ class StoreRepository implements IStoreRepository {
 
   Future<Either<GenericApiError, GenericResponse>> _genericDeleteRequest(String collection, String id) async {
     try {
-      var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
+      var headers = {
+        'x-nonce': await generateNonce(),
+        'Authorization': 'Bearer $storeApiKey',
+        'x-client': _user,
+        'x-client-sui': _phone,
+        'x-client-env': _env,
+      };
 
       var response = await _httpClient.delete(
         '$collection/resource/$id',
@@ -175,6 +188,7 @@ class StoreRepository implements IStoreRepository {
   //       resourceId: null,
   //       userId: userId,
   //     );
+
   @override
   Future<Either<GenericApiError, dynamic>> getAllTickets(String userId) async =>
       await _genericGetAllRequest<HelpTicket>(
@@ -185,10 +199,15 @@ class StoreRepository implements IStoreRepository {
       await _genericGetAllRequest<TransactionHistory>(
           collection: 'history', resourceId: null, userId: userId, transform: TransactionHistory.fromJson);
 
-  Future<Either<GenericApiError, T>> _genericGetRequest<T>(
-      String collection, String resourceId, T Function(dynamic json) transform) async {
+  Future<Either<GenericApiError, T>> _genericGetRequest<T>(String collection, String resourceId, T Function(dynamic json) transform) async {
     try {
-      var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
+      var headers = {
+        'x-nonce': await generateNonce(),
+        'Authorization': 'Bearer $storeApiKey',
+        'x-client': _user,
+        'x-client-sui': _phone,
+        'x-client-env': _env,
+      };
       var response = await _httpClient.get(
         '$collection/resource/$resourceId',
         options: Options(
@@ -225,13 +244,19 @@ class StoreRepository implements IStoreRepository {
       required String? userId,
       required T Function(dynamic json) transform}) async {
     try {
-      var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
+      var headers = {
+        'x-nonce': await generateNonce(),
+        'Authorization': 'Bearer $storeApiKey',
+        'x-client': _user,
+        'x-client-sui': _phone,
+        'x-client-env': _env,
+      };
       var response = await _httpClient.get('$collection/resource/${resourceId ?? ""}',
           options: Options(
             method: 'GET',
             headers: headers,
           ),
-          queryParameters: (userId == null) ? null : {'profileId': userId});
+          queryParameters: (userId == null) ? null : {'profileId': userId , '': ''});
 
       if (httpRequestIsSuccess(response.statusCode)) {
         return right(
@@ -254,8 +279,8 @@ class StoreRepository implements IStoreRepository {
   }
 
   @override
-  Future<Either<GenericApiError, UserProfile>> postUserProfile(UserProfile user) async =>
-      await _genericPostRequest<UserProfile>('profile', user.toJson(), UserProfile.fromJson);
+  Future<Either<GenericApiError, UserProfile>> postUserProfile(UserProfile _user) async =>
+      await _genericPostRequest<UserProfile>('profile', _user.toJson(), UserProfile.fromJson);
 
   @override
   Future<Either<GenericApiError, Promotion>> postUserPromotions(Promotion promotion) async =>
@@ -279,7 +304,10 @@ class StoreRepository implements IStoreRepository {
       var headers = {
         'x-nonce': await generateNonce(),
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $storeApiKey'
+        'Authorization': 'Bearer $storeApiKey',
+        'x-client': _user,
+        'x-client-sui': _phone,
+        'x-client-env': _env,
       };
       var response = await _httpClient.post(
         '$collection/resource',
@@ -311,8 +339,8 @@ class StoreRepository implements IStoreRepository {
   }
 
   @override
-  Future<Either<GenericApiError, UserProfile>> putUserProfile(UserProfile user) async =>
-      await _genericPutRequest<UserProfile>('profile', user.toJson(), UserProfile.fromJson);
+  Future<Either<GenericApiError, UserProfile>> putUserProfile(UserProfile _user) async =>
+      await _genericPutRequest<UserProfile>('profile', _user.toJson(), UserProfile.fromJson);
 
   @override
   Future<Either<GenericApiError, Promotion>> putUserPromotions(Promotion promotion) async =>
@@ -336,7 +364,10 @@ class StoreRepository implements IStoreRepository {
       var headers = {
         'x-nonce': await generateNonce(),
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $storeApiKey'
+        'Authorization': 'Bearer $storeApiKey',
+        'x-client': _user,
+        'x-client-sui': _phone,
+        'x-client-env': _env,
       };
       var response = await _httpClient.put(
         '$collection/resource/${data['id']}',
@@ -384,7 +415,10 @@ class StoreRepository implements IStoreRepository {
       var headers = {
         'x-nonce': await generateNonce(),
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $storeApiKey'
+        'Authorization': 'Bearer $storeApiKey',
+        'x-client': _user,
+        'x-client-sui': _phone,
+        'x-client-env': _env,
       };
 
       var response = await _httpClient.post(
@@ -417,7 +451,13 @@ class StoreRepository implements IStoreRepository {
   @override
   Future<Either<GenericApiError, GenericResponse>> getHealthStatus() async {
     try {
-      var headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
+      var headers = {
+        'x-nonce': await generateNonce(),
+        'Authorization': 'Bearer $storeApiKey',
+        'x-client': _user,
+        'x-client-sui': _phone,
+        'x-client-env': _env,
+      };
       var response = await _httpClient.get(
         'health-check',
         options: Options(
@@ -449,8 +489,11 @@ class StoreRepository implements IStoreRepository {
   Future<UploadResponse> uploadFiles(uploads) async {
     try {
       final headers = {
+        'x-nonce': await generateNonce(),
         'Authorization': 'Bearer $storeApiKey',
-        
+        'x-client': _user,
+        'x-client-sui': _phone,
+        'x-client-env': _env,
         'Content-Type': 'multipart/form-data',
       };
       final data = FormData.fromMap({
@@ -512,6 +555,9 @@ class StoreRepository implements IStoreRepository {
         'x-nonce': await generateNonce(),
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $storeApiKey',
+        'x-client': clientId,
+        'x-client-sui': _phone,
+        'x-client-env': _env,
       };
 
       final response = await _httpClient.post(
@@ -541,15 +587,17 @@ class StoreRepository implements IStoreRepository {
   Future<GenericResponse?> willSendNotificationAfterVerification(CommsChannels data) async {
     try {
       if (data.instanceId == '' || data.instanceId.isEmpty) return null;
-      // final headers = {
-      //   'Content-Type': 'application/json',
-      //   'Accept': 'application/json',
-      // };
+      final headers = {
+        'x-nonce': await generateNonce(),
+        'x-client': _user,
+        'x-client-sui': _phone,
+        'x-client-env': _env,
+      };
       final response = await _httpClient.post(
         '/send-comms',
         options: Options(
-            // headers: headers,
-            ),
+          headers: headers,
+        ),
         data: data.toJson(),
       );
       if (httpRequestIsSuccess(response.statusCode)) {
@@ -559,5 +607,18 @@ class StoreRepository implements IStoreRepository {
     } catch (e) {
       return null;
     }
+  }
+
+  @override
+  Future<Either<GenericApiError, GenericApiError>> postDeviceData(Map<String, dynamic> device) =>
+      _genericPostRequest('devices', device, (_) => _);
+
+  @override
+  void setUserAndVariables({required String phone, required String user, required String env}) {
+    _phone = phone;
+    _user = user;
+    _env = env;
+
+    print('SET VARIABLES:::  $phone as $_phone  | $user  | $env');
   }
 }
