@@ -1,4 +1,5 @@
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:verified/helpers/logger.dart';
 
 Future<Map<String, dynamic>> getVerifiedPackageInfo() async {
   try {
@@ -11,8 +12,8 @@ Future<Map<String, dynamic>> getVerifiedPackageInfo() async {
       'version': packageInfo.version,
       'buildNumber': packageInfo.buildNumber,
     };
-  } catch (e) {
-    print(e);
+  } catch (error, stackTrace) {
+    verifiedErrorLogger(error, stackTrace);
 
     return {
       'appName': 'Unknown',

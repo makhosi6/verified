@@ -11,6 +11,7 @@ import 'package:verified/domain/models/services_options_enum.dart';
 import 'package:verified/domain/models/wallet.dart';
 
 import 'package:verified/globals.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/theme.dart';
@@ -283,8 +284,8 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                                         }
                                       }
                                       if (kDebugMode) {
-                                        print(wallet);
-                                        print('============');
+                                        verifiedLogger(wallet);
+                                        verifiedLogger('============');
                                       }
                                       if ((wallet.balance ?? 0) < POINTS_PER_TRANSACTION) {
                                         return await showTopUpBottomSheet(context);
@@ -390,8 +391,8 @@ class __DonePopUpState extends State<_DonePopUp> {
           ..pushAndRemoveUntil(
             MaterialPageRoute(builder: (_) => const HomePage()),
             (_) => false,
-          ).catchError((err) {
-            print('Error : $err');
+          ).catchError((error) {
+           verifiedErrorLogger(error, StackTrace.current);
           }, test: (_) {
             return true;
           });

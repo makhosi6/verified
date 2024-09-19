@@ -8,6 +8,7 @@ import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:verified/helpers/image.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/blinking_animation.dart';
@@ -152,15 +153,15 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       }
 
       /// capture id_book front
-      print('MAYBE IT\'S AN ID_BOOK $hasFace|$hasCode39Barcode|$hasCode39Barcode2|$hasIdBookText|$barcodeText');
+      verifiedLogger('MAYBE IT\'S AN ID_BOOK $hasFace|$hasCode39Barcode|$hasCode39Barcode2|$hasIdBookText|$barcodeText');
       if (hasFace && (hasCode39Barcode2 || hasCode39Barcode) && hasIdBookText) {
         await captureImage(DetectSide.front.name);
       }
 
       ///
       if (mounted) setState(() {});
-    } catch (e) {
-      debugPrint('Error processing image: $e');
+    } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
     } finally {
       _isProcessing = false;
 
@@ -193,8 +194,8 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
           }
 
           return hasMRZIdentifiers;
-        } catch (e) {
-          debugPrint('Error processing image: $e');
+        } catch (error, stackTrace) {
+            verifiedErrorLogger(error, stackTrace);
           return false;
         }
       });
@@ -215,8 +216,8 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       }
 
       return false;
-    } catch (e) {
-      debugPrint('Error processing image: $e');
+    } catch (error, stackTrace) {
+        verifiedErrorLogger(error, stackTrace);
 
       return false;
     }
@@ -238,8 +239,8 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       }
 
       return false;
-    } catch (e) {
-      debugPrint('Error processing image: $e');
+    } catch (error, stackTrace) {
+        verifiedErrorLogger(error, stackTrace);
 
       return false;
     }
@@ -261,8 +262,8 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       }
 
       return false;
-    } catch (e) {
-      debugPrint('Error processing image: $e');
+    } catch (error, stackTrace) {
+        verifiedErrorLogger(error, stackTrace);
 
       return false;
     }
@@ -284,8 +285,8 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
 
         return false;
       }
-    } catch (e) {
-      debugPrint('Error processing image: $e');
+    } catch (error, stackTrace) {
+        verifiedErrorLogger(error, stackTrace);
 
       return false;
     }
@@ -381,8 +382,8 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       debugPrint('MachineReadableCode3: ${machineReadableCode.split(' ').toSet().join('|')} \n\n');
       debugPrint('MachineReadableCode4: ${split3(machineReadableCode2).toSet().join('|')} \n\n');
       debugPrint('documentScannerState: ${documentScannerState?.imageFiles.length} \n\n');
-    } catch (e) {
-      print(e);
+    } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
     } finally {
       setState(() {});
     }
@@ -668,12 +669,13 @@ class CameraEventsState {
     num? cameraLightingLevel,
   }) =>
       CameraEventsState(
-          cameraLightingLevel: cameraLightingLevel ?? this.cameraLightingLevel,
-          idCode39Text: idCode39Text ?? this.idCode39Text,
-          idCode39Text2: idCode39Text2 ?? this.idCode39Text2,
-          idPdf417Text: idPdf417Text ?? this.idPdf417Text,
-          passportMRZtext: passportMRZtext ?? this.passportMRZtext,
-          imageFiles: imageFiles ?? this.imageFiles,);
+        cameraLightingLevel: cameraLightingLevel ?? this.cameraLightingLevel,
+        idCode39Text: idCode39Text ?? this.idCode39Text,
+        idCode39Text2: idCode39Text2 ?? this.idCode39Text2,
+        idPdf417Text: idPdf417Text ?? this.idPdf417Text,
+        passportMRZtext: passportMRZtext ?? this.passportMRZtext,
+        imageFiles: imageFiles ?? this.imageFiles,
+      );
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};

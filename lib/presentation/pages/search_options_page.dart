@@ -45,7 +45,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
             expandedHeight: 90.0,
             flexibleSpace: AppBar(
               automaticallyImplyLeading: false,
-              title: const Text('Verification'),
+              title: const Text('Verify'),
             ),
             leadingWidth: 80.0,
             leading: VerifiedBackButton(
@@ -58,7 +58,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                 listener: (context, state) {
                   // if (state.isLoggedIn) {
                   //   Navigator.of(context).pop();
-                  //   print('===========EXIT===============');
+                  //   verifiedLogger('===========EXIT===============');
                   //   exit(0);
                   //   // navigate(context, page: const SearchResultsPage(type: f,));
                   // }

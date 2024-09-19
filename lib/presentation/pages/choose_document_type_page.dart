@@ -8,6 +8,7 @@ import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/captured_candidate_details.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/image.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/id_document_scanner_page.dart';
 import 'package:verified/presentation/pages/verification_page.dart';
@@ -165,8 +166,8 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                                 StoreEvent.uploadPassportImage(fileData),
                                               );
                                           }
-                                        } catch (e) {
-                                          print(e);
+                                        } catch (error, stackTrace) {
+                                          verifiedErrorLogger(error, stackTrace);
                                         }
                                       }).whenComplete(_nextPage);
                                     } else if (DocumentType.values[index] == DocumentType.id_card ||
@@ -187,14 +188,15 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
 
                                       Future.microtask(() async {
                                         var filesData = await Future.wait(_documentScannerState.imageFiles
-                                            .map((img) async => ((await convertToFormData(img.file, side: img.side)) as MultipartFile))
+                                            .map((img) async =>
+                                                ((await convertToFormData(img.file, side: img.side)) as MultipartFile))
                                             .toList());
 
-                                        print(_documentScannerState.imageFiles.length);
-                                        print(_documentScannerState.imageFiles);
-                                        print(filesData);
-                                        print(filesData.map((e) => e.filename));
-                                        print(filesData.length);
+                                        verifiedLogger(_documentScannerState.imageFiles.length);
+                                        verifiedLogger(_documentScannerState.imageFiles);
+                                        verifiedLogger(filesData);
+                                        verifiedLogger(filesData.map((e) => e.filename));
+                                        verifiedLogger(filesData.length);
                                         // if (filesData.isEmpty && kDebugMode) exit(0);
                                         // ignore: use_build_context_synchronously
                                         ctx.read<StoreBloc>()
@@ -222,7 +224,7 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                   } catch (error, stackTrace) {
                                     // 31878): Error @ onNext of _choose docs Looking up a deactivated widget's ancestor is unsafe.
                                     debugPrintStack(stackTrace: stackTrace, label: 'Error @ onNext of _choose docs');
-
+                                    verifiedErrorLogger(error, stackTrace);
                                     if (kDebugMode) exit(0);
                                   }
                                 },

@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_asset_picker/gallery_asset_picker.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/domain/models/help_ticket.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/theme.dart';
 
 dynamic selectMediaConfig() => GalleryAssetPicker.initialize(GalleryConfig(
@@ -63,8 +64,8 @@ Future<File> compressForProfilePicture(File imageFile) async {
     await compressedFile.writeAsBytes(compressedImageData);
 
     return compressedFile;
-  } catch (e) {
-    debugPrint('\n\ncompressForProfilePicture Error: $e');
+  } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
 
     return imageFile;
   }
@@ -79,16 +80,16 @@ bool checkTotalFileSizeIsWithLimits(List<Upload> files) {
   for (var file in files) {
     final fileSize = file.size?.toInt() ?? 0;
     totalSize += fileSize;
-    print('  - File: ${file.filename}, Size: ${formatSize(fileSize)}');
+    verifiedLogger('  - File: ${file.filename}, Size: ${formatSize(fileSize)}');
     if (totalSize > MAX_FILE_SIZE_ALLOWED) {
-      print('  - Total size exceeds limit (${formatSize(totalSize)}/${formatSize(MAX_FILE_SIZE_ALLOWED)}})');
-      print('>>>> File size exceeds limit! ');
+      verifiedLogger('  - Total size exceeds limit (${formatSize(totalSize)}/${formatSize(MAX_FILE_SIZE_ALLOWED)}})');
+      verifiedLogger('>>>> File size exceeds limit! ');
       return false;
     }
   }
 
-  print('All files fit within the allowed size (${formatSize(totalSize)}/${formatSize(MAX_FILE_SIZE_ALLOWED)}).');
-  print('>>>> File size is within limit.');
+  verifiedLogger('All files fit within the allowed size (${formatSize(totalSize)}/${formatSize(MAX_FILE_SIZE_ALLOWED)}).');
+  verifiedLogger('>>>> File size is within limit.');
   return true;
 }
 

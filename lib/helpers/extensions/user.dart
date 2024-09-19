@@ -1,3 +1,5 @@
+import 'package:verified/helpers/logger.dart';
+
 extension EmailFunctions on String {
   String? getFullNameFromEmail() {
     String? username = _extractNamesFromEmail();
@@ -20,8 +22,14 @@ extension EmailFunctions on String {
   }
 
   String removeNumbersAndSpecialChars(String text) {
-    return text.replaceAll(RegExp(r'[0-9_]'), ' ').replaceAll('-', ' ').replaceAll('.', ' ').replaceAll('_', ' ').trim();
+    return text
+        .replaceAll(RegExp(r'[0-9_]'), ' ')
+        .replaceAll('-', ' ')
+        .replaceAll('.', ' ')
+        .replaceAll('_', ' ')
+        .trim();
   }
+
   String? extractUsernameFromEmail() {
     List<String> parts = split('@');
     if (parts.length == 2) {
@@ -30,9 +38,6 @@ extension EmailFunctions on String {
     return null;
   }
 }
-
-
-
 
 extension StringExtension on String {
   String? capitalize() {
@@ -43,14 +48,17 @@ extension StringExtension on String {
     final isTwoOrMoreWords = asArr.length > 1;
 
     if (isTwoOrMoreWords) {
-      return asArr.map((str) {
-        try {
-          return str[0].toUpperCase() + str.substring(1).toLowerCase();
-        } catch (e) {
-          print(str);
-          return str;
-        }
-      }).join(' ').trim();
+      return asArr
+          .map((str) {
+            try {
+              return str[0].toUpperCase() + str.substring(1).toLowerCase();
+            } catch (error, stackTrace) {
+              verifiedErrorLogger(error, stackTrace);
+              return str;
+            }
+          })
+          .join(' ')
+          .trim();
     }
 
     return this[0].toUpperCase() + substring(1).toLowerCase();

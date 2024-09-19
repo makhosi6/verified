@@ -14,8 +14,8 @@ class LocalUser {
         'local_user',
         '',
       );
-    } catch (e) {
-      verifiedErrorLogger(e);
+    } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
     }
   }
 
@@ -26,8 +26,8 @@ class LocalUser {
         'local_user',
         json.encode(user.toJson()),
       );
-    } catch (e) {
-      verifiedErrorLogger(e);
+    } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
     }
   }
 
@@ -35,11 +35,12 @@ class LocalUser {
     try {
       final pref = await _localStore;
       String? user = pref.getString('local_user');
-      print("GET STORED USER ${pref.getString('local_user')}");
-      if (user == null) return null;
+      verifiedLogger("GET STORED USER ${pref.getString('local_user')}");
+      if (user == null || user.isEmpty || user.trim() == '') return null;
+      verifiedLogger('USER AS STRING:  $user');
       return UserProfile.fromJson(json.decode(user));
-    } catch (e) {
-      verifiedErrorLogger(e);
+    } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
       return null;
     }
   }

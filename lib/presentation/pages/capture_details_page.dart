@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/create_account_page.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/pages/select_services_page.dart';
@@ -240,7 +241,7 @@ class CaptureDetailsPage extends StatelessWidget {
 
                                   navigate(context, page: const SelectServicesPage());
                                 } else {
-                                  print('FALSE, ${person.toJson()}');
+                                  verifiedLogger('FALSE, ${person.toJson()}');
                                 }
                               },
                               label: 'Next',

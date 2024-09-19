@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/store/store_bloc.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/input_verification_url.dart';
@@ -133,8 +134,8 @@ class HomePageContents extends StatelessWidget {
                         // ignore: use_build_context_synchronously
                         navigate(context, page: page);
                       }
-                    } catch (e) {
-                      if (kDebugMode) print('\n\n=============================\n $e');
+                    } catch (error, stackTrace) {
+                     verifiedErrorLogger(error, stackTrace);
                     }
                   },
                   icon: Icons.person_2_outlined,

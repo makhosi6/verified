@@ -9,7 +9,7 @@ const path = require("node:path");
  */
 function getAll(router) {
     if (typeof router === 'string')
-        router = jsonServer.router(path.resolve(`../apps/store/db/${router}.json`))
+        router = jsonServer.router(path.resolve(`../../server/apps/store/db/${router}.json`))
     return router.db.get('resource').value();
 }
 
@@ -21,7 +21,7 @@ function getAll(router) {
  */
 function getOne(router, id) {
     if (typeof router === 'string')
-        router = jsonServer.router(path.resolve(`../apps/store/db/${router}.json`))
+        router = jsonServer.router(path.resolve(`../../server/apps/store/db/${router}.json`))
     return router.db.get('resource').find({ id }).value() || null; // Find the item by ID
 }
 
@@ -34,7 +34,7 @@ function getOne(router, id) {
  */
 function createItem(router, newItem) {
     if (typeof router === 'string')
-        router = jsonServer.router(path.resolve(`../apps/store/db/${router}.json`))
+        router = jsonServer.router(path.resolve(`../../server/apps/store/db/${router}.json`))
     router.db.get('resource').push(newItem).write();
     return newItem;
 }
@@ -49,7 +49,7 @@ function createItem(router, newItem) {
  */
 function updateItem(router, id, updatedItem) {
     if (typeof router === 'string')
-        router = jsonServer.router(path.resolve(`../apps/store/db/${router}.json`))
+        router = jsonServer.router(path.resolve(`../../server/apps/store/db/${router}.json`))
     const item = router.db.get('resource').find({ id });
     if (item.value()) {
         item.assign(updatedItem).write();
@@ -67,7 +67,7 @@ function updateItem(router, id, updatedItem) {
  */
 function deleteItem(router, id) {
     if (typeof router === 'string')
-        router = jsonServer.router(path.resolve(`../apps/store/db/${router}.json`))
+        router = jsonServer.router(path.resolve(`../../server/apps/store/db/${router}.json`))
     const deleted = router.db.get('resource').remove({ id }).write();
     return deleted.length > 0;
 }

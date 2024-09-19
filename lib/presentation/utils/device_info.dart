@@ -2,6 +2,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:verified/domain/models/device.dart';
+import 'package:verified/helpers/logger.dart';
 
 Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
   return <String, dynamic>{
@@ -66,7 +67,8 @@ Future<Map<String, dynamic>> getCurrentDeviceInfo() async {
       TargetPlatform.iOS => _readIosDeviceInfo(await deviceInfoPlugin.iosInfo),
       _ => {'name': 'Web'}
     };
-  } catch (e) {
+  } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
     return {'name': 'unknown'};
   }
 }
@@ -79,7 +81,8 @@ Future<Device?> getCurrentDevice() async {
       TargetPlatform.iOS => _readIosDevice(await deviceInfoPlugin.iosInfo),
       _ => null
     };
-  } catch (e) {
+  } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
     return null;
   }
 }

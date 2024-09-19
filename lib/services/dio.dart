@@ -3,6 +3,7 @@
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:verified/app_config.dart';
+import 'package:verified/helpers/logger.dart';
 
 class VerifySaDioClientService {
   /// instance of dio (singleton)
@@ -35,7 +36,7 @@ class VerifySaDioClientService {
   /// If you want to reject the request with a error message,
   /// you can reject with a `DioException` using `handler.reject(dioError)`.
   static onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print(options.headers);
+    verifiedLogger(options.headers);
     return handler.next(options);
   }
 
@@ -86,7 +87,7 @@ class StoreDioClientService {
   /// If you want to reject the request with a error message,
   /// you can reject with a `DioException` using `handler.reject(dioError)`.
   static onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print(options.headers);
+    verifiedLogger(options.headers);
     return handler.next(options);
   }
 
@@ -137,7 +138,7 @@ class PaymentsDioClientService {
   /// If you want to reject the request with a error message,
   /// you can reject with a `DioException` using `handler.reject(dioError)`.
   static onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print(options.headers);
+    verifiedLogger(options.headers);
     return handler.next(options);
   }
 

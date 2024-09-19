@@ -41,11 +41,12 @@ class PaymentsRepository implements IPaymentsRepository {
           ),
         );
       }
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return left(
         GenericApiError(
           status: 'unknown',
-          error: e.toString(),
+          error: error.toString(),
         ),
       );
     }
@@ -69,11 +70,12 @@ class PaymentsRepository implements IPaymentsRepository {
           ),
         );
       }
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return left(
         GenericApiError(
           status: 'unknown',
-          error: e.toString(),
+          error: error.toString(),
         ),
       );
     }

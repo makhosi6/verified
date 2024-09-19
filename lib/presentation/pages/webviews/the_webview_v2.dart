@@ -1,7 +1,7 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:verified/domain/models/verified_web_auth_user.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'package:verified/helpers/app_info.dart';
@@ -80,34 +80,33 @@ class _TheWebViewState extends State<TheWebView> {
 
             if (!url.contains('192.168.0.134:9000')) {
               ///
-              if (url == 'http://192.168.0.134/success') widget.onPageSuccess?.call(null);
-              if (url == 'https://192.168.0.134/cancelled') widget.onPageCancelled?.call();
-              if (url == 'https://192.168.0.134/failed') widget.onPageFailed?.call(null);
+              if (url.contains('success')) widget.onPageSuccess?.call(null);
+              if (url.contains('cancelled')) widget.onPageCancelled?.call();
+              if (url.contains('failed')) widget.onPageFailed?.call(null);
 
               //
               return NavigationDecision.prevent;
             }
-            print('\n\n\n\n\n=========================================');
-            print(Uri.parse(url).queryParameters);
-            print(url);
-            print('=========================================\n\n\n\n\n');
+            verifiedLogger('\n\n\n\n\n=========================================');
+            verifiedLogger(Uri.parse(url).queryParameters);
+            verifiedLogger(url);
+            verifiedLogger('=========================================\n\n\n\n\n');
             if (url.contains('192.168.0.134:9000')) {
               var uri = Uri.parse(url);
 
               ///
-
               var userId = uri.queryParameters['user_id'] ?? uri.queryParameters['userId'];
               var token = uri.queryParameters['key'] ?? uri.queryParameters['token'];
               // !(url.contains('login') || url.contains('register')) ||
               if (url.contains('user/profile')) {
                 widget.onPageSuccess?.call(AuthUserDetails(token: token, userId: userId));
 
-                print('SUCCESS: ${url.toString()}');
+                verifiedLogger('SUCCESS: ${url.toString()}');
                 //
                 return NavigationDecision.prevent;
               }
             }
-            print('FAILER: ${url.toString()}');
+            verifiedLogger('FAILER: ${url.toString()}');
             return NavigationDecision.navigate;
           },
         ),

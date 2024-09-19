@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_beep/flutter_beep.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:verified/helpers/logger.dart';
 
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
@@ -94,7 +95,7 @@ class _CameraViewState extends State<CameraView> {
     } else {
       _customPaint = null;
     }
-// print("${faces.length} ENOUGH FACES ${isFaceCloseEnough}");
+// verifiedLogger("${faces.length} ENOUGH FACES ${isFaceCloseEnough}");
     if (mounted) {
       setState(() {});
     }
@@ -110,7 +111,7 @@ class _CameraViewState extends State<CameraView> {
 
   void _processCameraImage(CameraImage image) {
     final inputImage = _inputImageFromCameraImage(image);
-    print('WILLMPROCEED: $inputImage');
+    verifiedLogger('WILL_PROCESS_CAMERA_IMAGE: $inputImage');
     if (inputImage == null) return;
 
     _processImage(inputImage);
@@ -133,7 +134,7 @@ class _CameraViewState extends State<CameraView> {
     // in both platforms `rotation` and `camera.lensDirection` can be used to compensate `x` and `y` coordinates on a canvas: https://github.com/flutter-ml/google_ml_kit_flutter/blob/master/packages/example/lib/vision_detector_views/painters/coordinates_translator.dart
     final camera = _cameras.where((c) => c.lensDirection == _cameraLensDirection).first;
     final sensorOrientation = camera.sensorOrientation;
-    // print(
+    // verifiedLogger(
     //     'lensDirection: ${camera.lensDirection}, sensorOrientation: $sensorOrientation, ${_controller?.value.deviceOrientation} ${_controller?.value.lockedCaptureOrientation} ${_controller?.value.isCaptureOrientationLocked}');
     InputImageRotation? rotation;
     if (Platform.isIOS) {
@@ -149,10 +150,10 @@ class _CameraViewState extends State<CameraView> {
         rotationCompensation = (sensorOrientation - rotationCompensation + 360) % 360;
       }
       rotation = InputImageRotationValue.fromRawValue(rotationCompensation);
-      // print('rotationCompensation: $rotationCompensation');
+      // verifiedLogger('rotationCompensation: $rotationCompensation');
     }
     if (rotation == null) return null;
-    // print('final rotation: $rotation');
+    // verifiedLogger('final rotation: $rotation');
 
     // get image format
     final format = InputImageFormatValue.fromRawValue(image.format.raw);
@@ -339,7 +340,7 @@ class _CameraViewState extends State<CameraView> {
             Flexible(
               child: BaseButton(
                 key: UniqueKey(),
-                onTap: () => print(_capturedImage),
+                onTap: () => verifiedLogger(_capturedImage),
                 label: 'Done ${_capturedImage == null ? ' (Disabled) ' : ''}',
                 buttonIcon: const Icon(Icons.done),
                 buttonSize: ButtonSize.small,

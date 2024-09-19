@@ -334,8 +334,8 @@ class AccountPageContent extends StatelessWidget {
                                                 if (accountSettings[index]['text'] == 'Help') {
                                                   await showHelpPopUpForm(context);
                                                 }
-                                              } catch (e) {
-                                                verifiedErrorLogger(e);
+                                              } catch (error, stackTrace) {
+                                                verifiedErrorLogger(error, stackTrace);
                                                 if (accountSettings[index]['text'] != 'Delete Account' &&
                                                     accountSettings[index]['text'] != 'Logout') {
                                                   ScaffoldMessenger.of(context)
@@ -598,11 +598,11 @@ class _ProfileName extends StatelessWidget {
                         ).then((images) async {
                           // Early exit if no images are picked or if the user object is null.
                           if (images.isEmpty || user == null) {
-                            print('No images selected or user is null');
+                            verifiedLogger('No images selected or user is null');
                             return null;
                           }
 
-                          print('IMAGES: ${images.length}');
+                          verifiedLogger('IMAGES: ${images.length}');
 
                           // Convert the picked images to a list of FormData objects.
                           final files = await Future.wait(images.map((f) async {
@@ -638,10 +638,10 @@ class _ProfileName extends StatelessWidget {
                                   ),
                                 );
                           } else {
-                            print('No files uploaded');
+                            verifiedLogger('No files uploaded');
                           }
-                        }).catchError((err) {
-                          print('Error at profile picture update: $err');
+                        }).catchError((error) {
+                            verifiedErrorLogger(error, StackTrace.current);
                         }, test: (_) {
                           return true;
                         });
@@ -723,8 +723,8 @@ Widget accountPageListItems(BuildContext context, {required String key, required
             onPressed: () {
               try {
                 launchInAppWebPage(value);
-              } catch (e) {
-                print(e);
+              } catch (error, stackTrace) {
+                verifiedErrorLogger(error, stackTrace);
                 ScaffoldMessenger.of(context)
                   ..clearSnackBars()
                   ..showSnackBar(

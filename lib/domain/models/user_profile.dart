@@ -28,7 +28,7 @@ class UserProfile {
     'actualName': 'Hello',
     'active': true,
     'dataProvider': null,
-    'devices': [],
+    // 'devices': [],
     'currentSui': '',
     'env': '',
     'metadata': null,
@@ -66,7 +66,7 @@ class UserProfile {
     historyId = json['historyId'];
     lastLoginAt = json['last_login_at'];
     accountCreatedAt = json['account_created_at'];
-    devices = json['devices'];
+    // devices = json['devices'];
     currentSui = json['currentSui'];
     env = json['env'];
   }
@@ -155,7 +155,7 @@ class UserProfile {
     map['historyId'] = historyId;
     map['last_login_at'] = lastLoginAt;
     map['account_created_at'] = accountCreatedAt;
-    map['devices'] = devices;
+    map['devices'] = devices?.map((d) => d.toJson()).toList();
     map['currentSui'] = currentSui;
     map['env'] = env;
     return map;

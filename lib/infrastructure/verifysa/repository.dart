@@ -52,8 +52,9 @@ class VerifySaRepository implements IVerifySaRepository {
       } else {
         return left(Exception(response.statusMessage));
       }
-    } catch (e) {
-      return left(Exception(e.toString()));
+    } catch (error, stackTrace) { 
+      verifiedErrorLogger(error, stackTrace);
+      return left(Exception(error.toString()));
     }
   }
 
@@ -82,8 +83,9 @@ class VerifySaRepository implements IVerifySaRepository {
       } else {
         return left(Exception(response.statusMessage));
       }
-    } catch (e) {
-      return left(Exception(e.toString()));
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
+      return left(Exception(error.toString()));
     }
   }
 
@@ -116,8 +118,9 @@ class VerifySaRepository implements IVerifySaRepository {
       } else {
         return left(Exception(response.statusMessage));
       }
-    } catch (e) {
-      return left(Exception(e.toString()));
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
+      return left(Exception(error.toString()));
     }
   }
 
@@ -137,7 +140,8 @@ class VerifySaRepository implements IVerifySaRepository {
         return ResourceHealthStatus.good;
       }
       return ResourceHealthStatus.bad;
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return ResourceHealthStatus.bad;
     }
   }

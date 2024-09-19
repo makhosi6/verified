@@ -175,8 +175,7 @@ void main() async {
 
     ///
   }, (error, stack) {
-    verifiedErrorLogger(error);
-    print(stack);
+    verifiedErrorLogger(error, stack);
 
     /// fb crush
   });
@@ -280,14 +279,14 @@ class _AppRootState extends State<AppRoot> {
   @override
   void didChangeDependencies() {
     //log changing deps
-    print('=========================+++++++didChangeDependencies+++++++======================');
+    verifiedLogger('=========================+++++++didChangeDependencies+++++++======================');
 
     super.didChangeDependencies();
   }
 
   @override
   void didUpdateWidget(covariant AppRoot oldWidget) {
-    print('=========================+++++++didUpdateWidget+++++++======================');
+    verifiedLogger('=========================+++++++didUpdateWidget+++++++======================');
 
     super.didUpdateWidget(oldWidget);
   }
@@ -299,14 +298,14 @@ class _AppRootState extends State<AppRoot> {
     // Handle links
     _linkSubscription = _appLinks.uriLinkStream.listen(_openAppLink);
     _appScheme?.getInitScheme().then((value) {
-      print('APP SCHEME VALUE:  $value ||  Init  ${value?.dataString}');
+      verifiedLogger('APP SCHEME VALUE:  $value ||  Init  ${value?.dataString}');
       if (value != null) {
         var uri = Uri.parse(value.dataString ?? '${value.host}/{$value.path}');
         _openAppLink(uri);
       }
     });
     _appScheme?.registerSchemeListener().listen((value) {
-      print('APP SCHEME VALUE2:  $value ||  Init  ${value?.dataString}');
+      verifiedLogger('APP SCHEME VALUE2:  $value ||  Init  ${value?.dataString}');
       var uri = Uri.parse(value?.dataString ?? '${value?.host}/{$value.path}');
       _openAppLink(uri);
     });
@@ -314,7 +313,7 @@ class _AppRootState extends State<AppRoot> {
 
   void _openAppLink(Uri uri) {
     var urlSegments = uri.toString().split('/').where((segment) => UuidValidation.isValidUUID(fromString: segment));
-    print('A VALID UUID SEGMENT: $urlSegments');
+    verifiedLogger('A VALID UUID SEGMENT: $urlSegments');
     if (mounted) {
       setState(() {
         uriUuidFragment = urlSegments.isNotEmpty ? urlSegments.first : null;
@@ -327,7 +326,7 @@ class _AppRootState extends State<AppRoot> {
                     : SnackbarValue.unknown;
       });
 
-      print('Set Snackbar State: $uriUuidFragment  |  $snackBarValue');
+      verifiedLogger('Set Snackbar State: $uriUuidFragment  |  $snackBarValue');
       //
 
       Future.delayed(
@@ -341,7 +340,7 @@ class _AppRootState extends State<AppRoot> {
 
   _setFMCToken(fcmToken) {
     if (mounted && (token != fcmToken)) {
-      print('\n\nFMC TOKEN 2: $fcmToken\n\n');
+      verifiedLogger('\n\nFMC TOKEN 2: $fcmToken\n\n');
       setState(() {
         token = fcmToken;
       });
@@ -356,7 +355,7 @@ class _AppRootState extends State<AppRoot> {
       final user = await LocalUser.getUser();
       debugPrint('???? ==> $mounted  && $uriUuidFragment && $snackBarValue');
       if (mounted && (uriUuidFragment != null || snackBarValue != null)) {
-        print('RESET THE SNACKBAR STATE');
+        verifiedLogger('RESET THE SNACKBAR STATE');
         setState(() {
           uriUuidFragment = null;
           snackBarValue = null;
@@ -423,11 +422,11 @@ class _AppRootState extends State<AppRoot> {
           }
         default:
           {
-            print('Unknown Value($value) at displaySnackbar');
+            verifiedLogger('Unknown Value($value) at displaySnackbar');
           }
       }
-    } catch (e) {
-      print('_displaySnackBarAndNavigate Error: $e');
+    } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
     }
   }
 
@@ -466,14 +465,14 @@ class _AppRootState extends State<AppRoot> {
   }
 
   void _hideAppLoader() {
-    print('HIDE LOADER...');
+    verifiedLogger('HIDE LOADER...');
 
     /// hide loader option 1
     Loader.hide();
   }
 
   void _showAppLoader(BuildContext context) {
-    print('SHOW LOADER...');
+    verifiedLogger('SHOW LOADER...');
 
     /// show loader option 1
     Loader.show(
@@ -563,8 +562,8 @@ class _AppRootState extends State<AppRoot> {
               if (hasUser && isNewToken && hasToken) {
                 Future.delayed(const Duration(seconds: 10), () async {
                   try {
-                    print('UPDATE Its A NEW TOKEN, $isNewToken | $hasToken | $hasUser | $token');
-                    print('was_token ${state.userProfileData?.notificationToken}');
+                    verifiedLogger('UPDATE Its A NEW TOKEN, $isNewToken | $hasToken | $hasUser | $token');
+                    verifiedLogger('was_token ${state.userProfileData?.notificationToken}');
                     var _currentDevice = await getCurrentDevice();
                     // ignore: use_build_context_synchronously
                     context.read<StoreBloc>().add(
@@ -576,8 +575,8 @@ class _AppRootState extends State<AppRoot> {
                             ),
                           ),
                         );
-                  } catch (e) {
-                    debugPrint('Error while trying to add a token && device,  $e');
+                  } catch (error, stackTrace) {
+                    verifiedErrorLogger(error, stackTrace);
                   }
                 });
               }

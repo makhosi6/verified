@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/auth_providers.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
 import 'package:verified/presentation/theme.dart';
@@ -321,8 +322,8 @@ Future triggerSignUpBottomSheet<bool>({required BuildContext context, required W
                                       try {
                                         Navigator.of(context).pop();
                                         await triggerAuthBottomSheet(context: context, redirect: AccountPage());
-                                      } catch (e) {
-                                        print(e.toString());
+                                      } catch (error, stackTrace) {
+                                        verifiedErrorLogger(error, stackTrace);
                                       }
                                     },
                                   style: GoogleFonts.ibmPlexSans(

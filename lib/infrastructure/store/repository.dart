@@ -83,8 +83,7 @@ class StoreRepository implements IStoreRepository {
         );
       }
     } on DioException catch (error, stackTrace) {
-      debugPrintStack(stackTrace: stackTrace, label: error.toString());
-      print('DioException ============>>> ');
+      verifiedErrorLogger(error, stackTrace);
       return left(
         GenericApiError(
           error: 'Error Occurred',
@@ -92,7 +91,7 @@ class StoreRepository implements IStoreRepository {
         ),
       );
     } catch (error, stackTrace) {
-      debugPrintStack(stackTrace: stackTrace, label: error.toString());
+       verifiedErrorLogger(error, stackTrace);
       return left(
         GenericApiError(
           status: 'unknown',
@@ -150,11 +149,12 @@ class StoreRepository implements IStoreRepository {
           ),
         );
       }
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return left(
         GenericApiError(
           status: 'unknown',
-          error: e.toString(),
+          error: error.toString(),
         ),
       );
     }
@@ -199,7 +199,8 @@ class StoreRepository implements IStoreRepository {
       await _genericGetAllRequest<TransactionHistory>(
           collection: 'history', resourceId: null, userId: userId, transform: TransactionHistory.fromJson);
 
-  Future<Either<GenericApiError, T>> _genericGetRequest<T>(String collection, String resourceId, T Function(dynamic json) transform) async {
+  Future<Either<GenericApiError, T>> _genericGetRequest<T>(
+      String collection, String resourceId, T Function(dynamic json) transform) async {
     try {
       var headers = {
         'x-nonce': await generateNonce(),
@@ -228,7 +229,8 @@ class StoreRepository implements IStoreRepository {
           error: 'Error Occurred',
         ),
       );
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return left(
         GenericApiError(
           status: 'unknown',
@@ -256,7 +258,7 @@ class StoreRepository implements IStoreRepository {
             method: 'GET',
             headers: headers,
           ),
-          queryParameters: (userId == null) ? null : {'profileId': userId , '': ''});
+          queryParameters: (userId == null) ? null : {'profileId': userId, '': ''});
 
       if (httpRequestIsSuccess(response.statusCode)) {
         return right(
@@ -269,11 +271,11 @@ class StoreRepository implements IStoreRepository {
           error: 'Error Occurred',
         ),
       );
-    } catch (e) {
-      debugPrint(e.toString());
+    } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
       return left(GenericApiError(
         status: 'unknown',
-        error: e.toString(),
+        error: error.toString(),
       ));
     }
   }
@@ -328,11 +330,12 @@ class StoreRepository implements IStoreRepository {
       }
     } on DioException {
       return (await _genericGetRequest<T>('profile', data['id'], transform));
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return left(
         GenericApiError(
           status: 'unknown',
-          error: e.toString(),
+          error: error.toString(),
         ),
       );
     }
@@ -399,11 +402,12 @@ class StoreRepository implements IStoreRepository {
           status: '$statusCode',
         ));
       }
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return left(
         GenericApiError(
           status: 'unknown',
-          error: e.toString(),
+          error: error.toString(),
         ),
       );
     }
@@ -438,7 +442,8 @@ class StoreRepository implements IStoreRepository {
           error: 'Error Occurred',
         ));
       }
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return left(
         GenericApiError(
           status: 'unknown',
@@ -475,7 +480,8 @@ class StoreRepository implements IStoreRepository {
           error: 'Error Occurred',
         ),
       );
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return left(
         GenericApiError(
           status: 'unknown',
@@ -522,14 +528,14 @@ class StoreRepository implements IStoreRepository {
       if (httpRequestIsSuccess(response.statusCode)) {
         return UploadResponse.fromJson(response.data);
       } else {
-        print(response.statusMessage);
+        verifiedLogger(response.statusMessage);
         return UploadResponse(
           files: [],
           message: 'No file uploaded',
         );
       }
-    } catch (e) {
-      print(e);
+    } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
 
       return UploadResponse(
         files: [],
@@ -578,8 +584,9 @@ class StoreRepository implements IStoreRepository {
       } else {
         return left(Exception(response.statusMessage));
       }
-    } catch (e) {
-      return left(Exception(e.toString()));
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
+      return left(Exception(error.toString()));
     }
   }
 
@@ -604,7 +611,8 @@ class StoreRepository implements IStoreRepository {
         return GenericResponse(status: 'success', code: response.statusCode);
       }
       return null;
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return null;
     }
   }
@@ -619,6 +627,6 @@ class StoreRepository implements IStoreRepository {
     _user = user;
     _env = env;
 
-    print('SET VARIABLES:::  $phone as $_phone  | $user  | $env');
+    verifiedLogger('SET VARIABLES:::  $phone as $_phone  | $user  | $env');
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:verified/firebase_options.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/theme.dart';
 
 /// https://firebase.flutter.dev/docs/messaging/usage/
@@ -33,7 +34,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   if (kDebugMode) {
-    print('A Background message just showed up :  ${message.messageId}');
+    verifiedLogger('A Background message just showed up :  ${message.messageId}');
   }
 
   ///
@@ -62,7 +63,7 @@ Future<void> requestPermissions() async {
 @pragma('vm:entry-point')
 void onMsgOpen(RemoteMessage message) {
   if (kDebugMode) {
-    print('A new message open, app event was published');
+    verifiedLogger('A new message open, app event was published');
   }
   RemoteNotification? notification = message.notification;
   AndroidNotification? android = message.notification?.android;
@@ -96,7 +97,7 @@ void onMsgOpen(RemoteMessage message) {
 ///
 @pragma('vm:entry-point')
 void onMsg(RemoteMessage message) {
-  if (kDebugMode) print(message);
+  if (kDebugMode) verifiedLogger(message);
   RemoteNotification? notification = message.notification;
   AndroidNotification? android = message.notification?.android;
   if (notification != null && android != null) {
@@ -160,12 +161,12 @@ void showMsgOnBackground(RemoteMessage message) {
 ///
 @pragma('vm:entry-point')
 void setToken(String? token) async {
-  print('FCM Token: $token');
+  verifiedLogger('FCM Token: $token');
 }
 
 @pragma('vm:entry-point')
 onDidReceive(NotificationResponse notificationResponse) async {
-  print(
+  verifiedLogger(
       'FB Notification payload on onDidReceiveNotificationResponse/onDidReceiveBackgroundNotificationResponse: $notificationResponse');
 }
 
@@ -185,7 +186,7 @@ class ReceivedNotification {
 
 ///
 void localMsg(CustomMessage message) {
-  if (kDebugMode) print(message);
+  if (kDebugMode) verifiedLogger(message);
   flutterLocalNotificationsPlugin.show(
     message.hashCode,
     message.title,

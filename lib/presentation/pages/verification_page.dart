@@ -154,8 +154,8 @@ class _VerificationPageState extends State<VerificationPage> {
                                 _capturedImage = null;
                               });
                               _smartCameraGlobalKey.currentState?.controller.initialize();
-                            } catch (err, stackTrace) {
-                              debugPrintStack(stackTrace: stackTrace, label: err.toString());
+                            } catch (error, stackTrace) {
+                              verifiedErrorLogger(error, stackTrace);
                             }
                           }),
                     ),
@@ -200,7 +200,7 @@ class _VerificationPageState extends State<VerificationPage> {
 
                 ///
                 if (_capturedImage != null)
-                Positioned(
+                  Positioned(
                     bottom: 20,
                     right: 20,
                     // curve: Curves.elasticInOut,
@@ -213,8 +213,8 @@ class _VerificationPageState extends State<VerificationPage> {
                                   StoreEvent.uploadSelfieImage(fileData),
                                 );
                           }
-                        }).catchError((err) {
-                          verifiedErrorLogger(err);
+                        }).catchError((error) {
+                          verifiedErrorLogger(error, StackTrace.current);
                         }, test: (_) {
                           return true;
                         });

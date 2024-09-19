@@ -1,4 +1,5 @@
 import 'package:uuid/uuid.dart';
+import 'package:verified/helpers/logger.dart';
 
 class SearchPerson {
   SearchPerson({
@@ -63,7 +64,7 @@ class SearchPerson {
     map['description'] = description;
     map['selectedServices'] = selectedServices;
     map['instanceId'] = instanceId;
-    print('PERSON: $map');
+    verifiedLogger('PERSON: $map');
     return map;
   }
 }

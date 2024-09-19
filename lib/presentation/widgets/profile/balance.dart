@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/currency.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/theme.dart';
 
 class Balance extends StatelessWidget {
@@ -14,9 +15,9 @@ class Balance extends StatelessWidget {
     var wallet = context.watch<StoreBloc>().state.walletData;
     var user = context.watch<StoreBloc>().state.userProfileData;
 
-    print('WALLET: $wallet\n\n');
+    verifiedLogger('WALLET: ${wallet?.toJson()}\n\n');
 
-    print('\n\nUSER$user\n');
+    verifiedLogger('\n\nUSER${user?.toJson()}\n');
     return Container(
       padding: const EdgeInsets.only(
         bottom: 10.0,

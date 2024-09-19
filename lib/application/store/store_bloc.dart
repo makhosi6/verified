@@ -21,6 +21,7 @@ import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/candidate_request.dart';
 import 'package:verified/domain/models/verification_request.dart';
 import 'package:verified/domain/models/wallet.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/store/repository.dart';
 import 'package:verified/presentation/utils/device_info.dart';
@@ -205,7 +206,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
         ///
         createCandidateDetails: (e) {
-          print(e.candidate.toString());
+          verifiedLogger(e.candidate.toString());
 
           emit(state.copyWith(candidate: e.candidate));
           return;
@@ -342,7 +343,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             );
 
             ///
-            print("DO WE HAVE A WALLET ID:  ${data.walletId ?? 'NO_NO'}, USER_ID: ${data.profileId}");
+            verifiedLogger("DO WE HAVE A WALLET ID:  ${data.walletId ?? 'NO_NO'}, USER_ID: ${data.profileId}");
           });
 
           return null;
@@ -911,7 +912,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           );
           var status = Status.unknown;
           response.fold((error) {
-            print('ERROR:  ${error.toString()}');
+            verifiedErrorLogger(error, StackTrace.current);
             status = Status.failed;
             emit(
               state.copyWith(
@@ -922,7 +923,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               ),
             );
           }, (data) {
-            print('RESPONSE:  ${data.toJson()}');
+            verifiedLogger('RESPONSE:  ${data.toJson()}');
             status = Status.success_pending;
 
             emit(
@@ -967,7 +968,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
         },
         willSendNotificationAfterVerification: (e) async {
           var data = await _storeRepository.willSendNotificationAfterVerification(e.data);
-          print('willSendNotificationAfterVerification  => $data');
+          verifiedLogger('willSendNotificationAfterVerification  => $data');
           return null;
         },
         addDeviceData: (_) async {

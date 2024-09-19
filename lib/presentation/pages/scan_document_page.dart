@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mrz_scanner/flutter_mrz_scanner.dart';
+import 'package:verified/helpers/logger.dart';
 
 class ScanDocumentPage extends StatefulWidget {
   const ScanDocumentPage({super.key});
@@ -64,7 +65,7 @@ class _ScanDocumentPageState extends State<ScanDocumentPage> {
                 ],
               )));
     };
-    controller.onError = (error) => print(error);
+    controller.onError = (error) => verifiedErrorLogger(error, StackTrace.current);
 
     controller.startPreview();
   }

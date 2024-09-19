@@ -8,6 +8,7 @@ import 'package:uuid/uuid.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/help_ticket.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
@@ -235,7 +236,7 @@ class _HelpFormState extends State<_HelpForm> {
                           maxCount: MAX_FILES_UPLOAD,
                           requestType: RequestType.all,
                         ).then((files) async {
-                          print('MEDIA: ${files.length}');
+                          verifiedLogger('MEDIA: ${files.length}');
 
                           ///
                           return await Future.wait(files.map((f) async => await convertToFormData(await f.file)));
@@ -251,16 +252,15 @@ class _HelpFormState extends State<_HelpForm> {
                           }
 
                           context.read<StoreBloc>().add(StoreEvent.uploadFiles(selectedMedia));
-                        }).catchError((err) {
-                          print('Error at help images upload: $err');
+                        }).catchError((error) {
+                       verifiedErrorLogger(error, StackTrace.current);
                         }, test: (_) {
                           return true;
                         });
 
                         ///
-                      } catch (e) {
-                        print(e);
-                        print('media picker error');
+                      } catch (error, stackTrace) {
+                        verifiedErrorLogger(error, stackTrace);
                       }
                     },
                     label: 'Uploads (Optional) ${selectedMedia.isEmpty ? '' : "(${selectedMedia.length})"}',

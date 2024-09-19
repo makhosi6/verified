@@ -13,6 +13,7 @@ import 'package:verified/domain/models/form_type.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
@@ -319,8 +320,8 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
             }
           }
           if (kDebugMode) {
-            print(wallet);
-            print('============');
+            verifiedLogger(wallet);
+            verifiedLogger('============');
           }
           if ((wallet.balance ?? 0) < POINTS_PER_TRANSACTION) {
            await showTopUpBottomSheet(context);

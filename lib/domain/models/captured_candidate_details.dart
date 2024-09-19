@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:mrz_parser/mrz_parser.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/utils/document_type.dart';
 
 class CapturedCandidateDetails {
@@ -56,17 +57,17 @@ class CapturedCandidateDetails {
       countryOfBirth = results.nationalityCountryCode;
       cardNumber = results.personalNumber;
       rawInput = data.join('');
-    } catch (e) {
-      print(e);
+    } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
     }
   }
 
   CapturedCandidateDetails.fromIdString(String data) {
     try {
       List<String> parts = data.split('|');
-      print(parts.length);
-      print(parts.join('\n\n'));
-      print(parts.toString());
+      verifiedLogger(parts.length);
+      verifiedLogger(parts.join('\n\n'));
+      verifiedLogger(parts.toString());
       surname = parts[0];
       names = parts[1];
       sex = parts[2];
@@ -81,8 +82,8 @@ class CapturedCandidateDetails {
       cardNumber = parts[10];
       rawInput = data;
       spaceFiller = parts[11];
-    } catch (e) {
-      print(e);
+    } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
     }
   }
 
@@ -106,8 +107,8 @@ class CapturedCandidateDetails {
       spaceFiller = json['spaceFiller'];
       jobUuid = json['jobUuid'];
       cameraState = json['cameraState'];
-    } catch (e) {
-      print(e);
+    } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
     }
   }
 

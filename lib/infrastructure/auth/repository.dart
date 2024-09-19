@@ -4,6 +4,7 @@ import 'package:verified/app_config.dart';
 import 'package:verified/domain/interfaces/i_auth_repository.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/verified_web_auth_user.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/helpers/security/nonce.dart';
 import 'package:verified/services/dio.dart';
 
@@ -64,7 +65,8 @@ class AuthRepository implements IAuthRepository {
       }
 
       return null;
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return null;
     }
   }
@@ -104,7 +106,8 @@ class AuthRepository implements IAuthRepository {
       } else {
         return null;
       }
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return null;
     }
   }
@@ -145,7 +148,8 @@ class AuthRepository implements IAuthRepository {
       } else {
         return null;
       }
-    } catch (e) {
+    } catch (error, stackTrace) {
+       verifiedErrorLogger(error, stackTrace);
       return null;
     }
   }

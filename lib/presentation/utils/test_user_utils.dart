@@ -6,6 +6,7 @@ import 'package:verified/app_config.dart';
 import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/app_info.dart';
 import 'package:verified/presentation/utils/device_info.dart';
@@ -38,8 +39,8 @@ void onLogInAsTestUser(BuildContext context) {
           await Future.delayed(const Duration(milliseconds: 500));
           Vibration.vibrate();
         }
-      } catch (e) {
-        print(e);
+      } catch (error, stackTrace) {
+        verifiedErrorLogger(error, stackTrace);
       }
     });
 
@@ -74,7 +75,19 @@ void onLogInAsTestUser(BuildContext context) {
                   obscureText: true,
                   validator: (code) {
                     if (code == ADMIN_CODE) {
-                      final testUserProfile = UserProfile.fromJson(testUser);
+                      final id = const Uuid().v4();
+                      final hashCode = context.hashCode;
+                      final testUserProfile = UserProfile.fromJson({
+                        ...testUser,
+                        'actualName': 'Test User ($hashCode)',
+                        'displayName': 'Test User ($hashCode)',
+                        'email': 'test-user.$hashCode@gmail.com',
+                        'name': 'Test User ($hashCode)',
+                        "id": id,
+                        "profileId": id,
+                        // "devices": [device],
+                        "env": "test",
+                      });
 
                       ///clear current user
                       context.read<AuthBloc>().add(const AuthEvent.signOut());
@@ -140,7 +153,7 @@ void onLogInAsTestUser(BuildContext context) {
     );
 
     ///
-  } catch (e) {
-    print(e);
+  } catch (error, stackTrace) {
+    verifiedErrorLogger(error, stackTrace);
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_polygon/flutter_polygon.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/dotted_line.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
@@ -278,9 +279,8 @@ Path createParticlePath(Size size) {
     path ??= drawStar(size);
 
     return path;
-  } catch (e) {
-    print(e);
-
+  } catch (error, stackTrace) {
+      verifiedErrorLogger(error, stackTrace);
     return drawStar(size);
   }
 }

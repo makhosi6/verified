@@ -10,6 +10,7 @@ import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/payment_checkout_request.dart';
 import 'package:verified/domain/models/payment_metadata.dart';
 import 'package:verified/domain/models/user_profile.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/webviews/payments.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
@@ -90,8 +91,8 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                     onChanged: () {
                       try {
                         Form.of(primaryFocus!.context ?? context).save();
-                      } catch (e) {
-                        print(e);
+                      } catch (error, stackTrace) {
+                        verifiedErrorLogger(error, stackTrace);
                       }
                     },
                     child: TextFormField(
@@ -153,8 +154,8 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                           }
 
                           return null;
-                        } catch (e) {
-                          print(e);
+                        } catch (error, stackTrace) {
+                          verifiedErrorLogger(error, stackTrace);
                           return null;
                         }
                       },

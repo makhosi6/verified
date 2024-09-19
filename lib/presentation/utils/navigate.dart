@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/theme.dart';
 
 void navigate(BuildContext context, {required Widget page, bool replaceCurrentPage = false}) {
   try {
-    print('Will navigate to $page');
+    verifiedLogger('Will navigate to $page');
     final navigator = replaceCurrentPage ? Navigator.of(context).pushReplacement : Navigator.of(context).push;
     navigator(
       MaterialPageRoute<void>(
         builder: (BuildContext context) => page,
       ),
     );
-  } catch (e) {
-    print(e);
+  } catch (error, stackTrace) {
+    verifiedErrorLogger(error, stackTrace);
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
       ..showSnackBar(
@@ -29,10 +30,10 @@ void navigateToNamedRoute(BuildContext context,  { Object? arguments, String rou
   bool isRouteOnTop = ModalRoute.of(context)?.settings.name == routeName;
 
   if (!isRouteOnTop) {
-    print('Will navigate to $routeName');
+    verifiedLogger('Will navigate to $routeName');
     final navigator = replaceCurrentPage ? Navigator.popAndPushNamed : Navigator.pushNamed;
     navigator(context, routeName,arguments: arguments);
   } else {
-    print('$routeName IS already the top item');
+    verifiedLogger('$routeName IS already the top item');
   }
 }

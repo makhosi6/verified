@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/verified_web_auth_user.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/auth/repository.dart';
 import 'package:verified/helpers/extensions/user.dart';
@@ -23,14 +24,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             authStateChanges: _authProviderRepository.authStateChanges().asBroadcastStream()
               ..listen((user) {
                 try {
-                  print('DID BROADCAST USER  -  $user');
+                  verifiedLogger('DID BROADCAST USER  -  $user');
                   if (user != null && _storeBloc.state.userProfileData == null) {
                     ///
 
                     add(AuthEvent.interceptStreamedAuthUser(user));
                   }
-                } catch (e) {
-                  debugPrint(e.toString());
+                } catch (error, stackTrace) {
+                  verifiedErrorLogger(error, stackTrace);
                 }
               }),
           ),
@@ -62,9 +63,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
           final user = userCredential.user;
 
-          print(user.toString());
-          print("======>>>>>>>>========");
-          print(userCredential.toString());
+          verifiedLogger(user.toString());
+          verifiedLogger("======>>>>>>>>========");
+          verifiedLogger(userCredential.toString());
 
           final userProfile = UserProfile.fromJson({
             'id': user?.uid,

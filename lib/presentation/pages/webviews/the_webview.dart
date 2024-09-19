@@ -77,9 +77,9 @@ class _TheWebViewState extends State<TheWebView> {
             String url = request.url;
             if (url.contains('192.168.0.134')) {
               ///
-              if (url == 'http://192.168.0.134/success') widget.onPageSuccess?.call();
-              if (url == 'http://192.168.0.134/cancelled') widget.onPageCancelled?.call();
-              if (url == 'http://192.168.0.134/failed') widget.onPageFailed?.call();
+              if (url.contains('success')) widget.onPageSuccess?.call();
+              if (url.contains('cancelled')) widget.onPageCancelled?.call();
+              if (url.contains('failed')) widget.onPageFailed?.call();
 
               //
               return NavigationDecision.prevent;

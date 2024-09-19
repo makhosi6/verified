@@ -9,6 +9,7 @@ import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/application/verify_sa/verify_sa_bloc.dart';
 import 'package:verified/domain/models/form_type.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/data_view_item.dart';
@@ -62,7 +63,7 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
         }
 
         if (kDebugMode) {
-          print('STATE \n\n$results\n: $state');
+          verifiedLogger('STATE \n\n$results\n: $state');
         }
         return Center(
           child: SizedBox(
@@ -225,7 +226,7 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
         }
 
         if (kDebugMode) {
-          print('STATE \n\n$results\n: $state');
+          verifiedLogger('STATE \n\n$results\n: $state');
         }
         final apiHealthStatus = context.read<StoreBloc>().state.resourceHealthStatus;
         return Center(
