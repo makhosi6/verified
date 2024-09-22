@@ -52,6 +52,7 @@ dependencies:
   gallery_asset_picker: 
     git:
       url: https://github.com/makhosi6/gallery_asset_picker.git
+      ref: ed56d6bc3749e4f0ce576e61e533f2a973a5ec62
   fluttertoast: ^8.2.4
   package_info_plus: ^8.0.2
   firebase_messaging: ^14.7.10

@@ -127,3 +127,8 @@ local.properties
 **/*nonce.source.js
 **/raw.dart
 **/*.base64
+
+/flutter
+/flutter_*
+
+
