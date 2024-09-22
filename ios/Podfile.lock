@@ -359,7 +359,7 @@ SPEC CHECKSUMS:
   FirebaseCoreInternal: 43c1788eaeee9d1b97caaa751af567ce11010d00
   FirebaseInstallations: 390ea1d10a4d02b20c965cbfd527ee9b3b412acb
   FirebaseMessaging: 9bc34a98d2e0237e1b121915120d4d48ddcf301e
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_beep: 54fb393b22dfa0f0e4573c81b1c74dd71c4e5af8
   flutter_image_compress_common: ec1d45c362c9d30a3f6a0426c297f47c52007e3e
   flutter_js: 95929d4e146e8ceb1c8e1889d8c2065c5d840076
@@ -377,7 +377,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
   GoogleUtilitiesComponents: 679b2c881db3b615a2777504623df6122dd20afe
   GTMSessionFetcher: 8000756fc1c19d2e5697b90311f7832d2e33f6cd
-  integration_test: 13825b8a9334a850581300559b8839134b124670
+  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   MLImage: 1824212150da33ef225fbd3dc49f184cf611046c
