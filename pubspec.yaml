@@ -39,8 +39,8 @@ dependencies:
   percent_indicator: ^4.2.3
   shared_preferences: ^2.2.1
   intl: ^0.18.1
-  firebase_auth: ^5.3.0
-  firebase_core: ^3.5.0
+  firebase_auth: ^4.10.0
+  firebase_core: ^2.16.0
   firebase_auth_platform_interface: 
 
   flutter_overlay_loader: ^2.0.0
@@ -54,7 +54,7 @@ dependencies:
       url: https://github.com/makhosi6/gallery_asset_picker.git
   fluttertoast: ^8.2.4
   package_info_plus: ^8.0.2
-  firebase_messaging: ^15.1.2
+  firebase_messaging: ^14.7.10
   flutter_local_notifications: ^17.2.3
   rxdart: ^0.28.0
   flutter_native_splash: ^2.3.7
@@ -96,6 +96,7 @@ dev_dependencies:
 
 dependency_overrides:
       win32: ^5.5.4
+      archive: ^3.6.1
 
 flutter:
   fonts:
