@@ -771,34 +771,34 @@ packages:
     dependency: "direct main"
     description:
       name: google_mlkit_barcode_scanning
-      sha256: "1df232be24ae9cb93443d2786681efab71b5964c8c476f6072d8b4d61aa03ecc"
+      sha256: f1a2a39cf1730b9a5e2784a07efa1ca5bfdfdde6aa00b193b3f8cd1953c638ec
       url: "https://pub.dev"
     source: hosted
-    version: "0.12.1"
+    version: "0.12.0"
   google_mlkit_commons:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: google_mlkit_commons
-      sha256: "9990a65f407a3ef6bae646bf10143faa93fec126683771465bc6c0b43fb0e6e9"
+      sha256: "474bfa4ca2e59bb2ac5c83497d3d726756569792787c1f39d038fe424bbf83eb"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.1"
+    version: "0.7.0"
   google_mlkit_face_detection:
     dependency: "direct main"
     description:
       name: google_mlkit_face_detection
-      sha256: "0aeab4f39204f7a235ed4cccedfe7e61401b43f4ef139a868c01fa29fdc225ab"
+      sha256: "5b597061cafe4dfa70f66adddadd19381eb88bd3312b074528c62b246392304b"
       url: "https://pub.dev"
     source: hosted
-    version: "0.11.1"
+    version: "0.11.0"
   google_mlkit_text_recognition:
     dependency: "direct main"
     description:
       name: google_mlkit_text_recognition
-      sha256: "179349417066fa2c275d7a6ed6cbceeb7fa265d73aacdb2d732f1a2991face0a"
+      sha256: "89c848329355f165ff17ca8645cab5998770e9e25e431fe6dd8261ed9cf7bdc4"
       url: "https://pub.dev"
     source: hosted
-    version: "0.13.1"
+    version: "0.13.0"
   graphs:
     dependency: transitive
     description:
