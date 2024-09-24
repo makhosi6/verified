@@ -409,9 +409,11 @@ packages:
   face_camera:
     dependency: "direct main"
     description:
-      path: "../face_camera"
-      relative: true
-    source: path
+      path: "."
+      ref: c2c50247f584d34d67db37342231acc3438c1008
+      resolved-ref: c2c50247f584d34d67db37342231acc3438c1008
+      url: "https://github.com/makhosi6/face_camera.git"
+    source: git
     version: "0.1.1"
   fake_async:
     dependency: transitive
@@ -485,6 +487,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.18.1"
+  firebase_crashlytics:
+    dependency: "direct main"
+    description:
+      name: firebase_crashlytics
+      sha256: "9897c01efaa950d2f6da8317d12452749a74dc45f33b46390a14cfe28067f271"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.5.7"
+  firebase_crashlytics_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_crashlytics_platform_interface
+      sha256: "16a71e08fbf6e00382816e1b13397898c29a54fa0ad969c2c2a3b82a704877f0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.6.35"
   firebase_messaging:
     dependency: "direct main"
     description:

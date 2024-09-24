@@ -6,6 +6,7 @@ import 'package:app_links/app_links.dart';
 import 'package:appscheme/appscheme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -60,6 +61,14 @@ void main() async {
     // name: (kIsWeb || defaultTargetPlatform == TargetPlatform.iOS) ? null : 'firebasePrimaryInstance',
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  var device = await getCurrentDeviceInfo();
+
+  /// Force disable Crashlytics in dev environment
+  if (kDebugMode) await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+  FirebaseCrashlytics.instance.setUserIdentifier(device['id']);
+
+  /// Pass all uncaught errors from the framework to Crashlytics.
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
   ///
   NotificationAppLaunchDetails? notificationAppLaunchDetails =
@@ -109,7 +118,6 @@ void main() async {
   ///
   if (kDebugMode) {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      var device = await getCurrentDeviceInfo();
       final host = (device['isPhysicalDevice'] == true) ? '192.168.0.132' : 'localhost';
       await FirebaseAuth.instance.useAuthEmulator(host, 9099);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
@@ -152,8 +160,14 @@ void main() async {
 
     /// Fallback page onError
     ErrorWidget.builder = (details) {
-      //
+      ///
       verifiedErrorLogger(details);
+      FirebaseCrashlytics.instance.recordError(
+        details.exception,
+        details.stack,
+        reason: details.summary.toDescription(),
+        fatal: true,
+      );
 
       ///
       return MaterialApp(
@@ -174,8 +188,14 @@ void main() async {
     );
 
     ///
-  }, (error, stack) {
-    verifiedErrorLogger(error, stack);
+  }, (error, stackTrace) async {
+    verifiedErrorLogger(error, stackTrace);
+    await FirebaseCrashlytics.instance.recordError(
+      error,
+      stackTrace,
+      reason: error.toString(),
+      fatal: true,
+    );
 
     /// fb crush
   });

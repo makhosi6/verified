@@ -42,7 +42,6 @@ dependencies:
   firebase_auth: ^4.10.0
   firebase_core: ^2.16.0
   firebase_auth_platform_interface: 
-
   flutter_overlay_loader: ^2.0.0
   http: ^1.1.0
   restart_app: ^1.2.1
@@ -74,15 +73,15 @@ dependencies:
   camera: ^0.10.5+9
   flutter_beep: ^1.0.0
   face_camera:
-    path: ../face_camera
-  # face_camera:
-  #   git:
-  #     url: https://github.com/makhosi6/face_camera.git
+    git:
+      url: https://github.com/makhosi6/face_camera.git
+      ref: c2c50247f584d34d67db37342231acc3438c1008
   flutter_mrz_scanner: ^2.1.0
   google_mlkit_face_detection: 0.11.0
   google_mlkit_barcode_scanning: 0.12.0
   google_mlkit_text_recognition: 0.13.0
   mrz_parser: ^2.0.0
+  firebase_crashlytics: ^3.5.7
 
 
 dev_dependencies:
