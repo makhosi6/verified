@@ -16,21 +16,27 @@ const PORT = process.env.PORT || process.env.PORT || 5400;
 const HOST = process.env.HOST || "0.0.0.0";
 
 const analytics = (req, res, next) => {
-  const IP = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  const time = Math.floor(Date.now() / 1000);
-  const sessionId = req.headers['x-session-id'] || 'unknown';
-  const caller = req.headers["x-caller"] || 'unknown';
-  const userAgent = req.headers['user-agent'];
-  const referrer = req.headers['referer'] || req.headers['referrer'] || 'none';
+  const { headers, params, query , connection} = req;
+  const ip = req.ip || headers['x-forwarded-for'] || connection.remoteAddress;
+  const timestamp = Math.floor(Date.now() / 1000);
+  const time = new Date(timestamp * 1000).toISOString();
+  const sessionId = headers['x-session-id'] || 'unknown';
+  const caller = headers["x-caller"] || 'unknown';
+  const userAgent = headers['user-agent'];
+  const referrer = headers['referer'] || headers['referrer'] || 'none';
 
   logger.warn(`${time}`, {
-    ip: IP,
-    caller: caller,
-    sessionId: sessionId,
+    ip,
+    caller,
+    sessionId,
     route: req.method + ' ' + req.url,
-    userAgent: userAgent,
-    referrer: referrer,
-    time: new Date(time * 1000).toISOString()
+    userAgent,
+    referrer,
+    timestamp,
+    time,
+    headers,
+    query,
+    params
   });
 
   next();
@@ -133,7 +139,7 @@ async function postOperationOnly(req, res, next) {
  */
 function triggerVerificationAsyncTasks(queue) {
   return function (req, res, next) {
-    const instanceId = req?.body.verifeeRequest.jobUuid || req?.body.verifeeRequest.jobUuid;
+    const instanceId = req?.body.candidateRequest?.jobUuid || req?.body.candidateRequest?.jobUuid;
     ///create a task queue
     queue.push(() => delay(10000, async function () {
 

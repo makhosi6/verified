@@ -22,7 +22,7 @@ handleKycVerification({
         "email": true,
         "sms": true
     },
-    "verifeeRequest": {
+    "candidateRequest": {
         "jobUuid": "a55c2dfc-92f8-4e68-878e-954792a51ae4",
         "image": null,
         "preferredName": null,

@@ -400,8 +400,8 @@ const deductCreditsAfterTransaction = async (query, clientId) => {
  * @property {?string} capturedCandidateDetails.dateOfIssue - The date the document was issued.
  * @property {?string} capturedCandidateDetails.securityNumber - The security number of the document.
  * @property {?string} capturedCandidateDetails.cardNumber - The card number of the document.
- * @property {?string} capturedCandidateDetails.rawInput - Raw input related to the verifee details.
- * @property {string} capturedCandidateDetails.jobUuid - A unique job UUID for the captured verifee details.
+ * @property {?string} capturedCandidateDetails.rawInput - Raw input related to the candidate details.
+ * @property {string} capturedCandidateDetails.jobUuid - A unique job UUID for the captured candidate details.
  * @property {Object} capturedCandidateDetails.cameraState - The state of the camera during verification.
  * @property {string} capturedCandidateDetails.cameraState.cameraLightingLevel - The camera lighting level.
  * @property {?string} capturedCandidateDetails.cameraState.idCode39Text - The Code 39 ID text (if any).
@@ -429,7 +429,7 @@ const deductCreditsAfterTransaction = async (query, clientId) => {
  */
 async function handleKycVerification(data) {
   try {
-    if (data.id === null || data.id === '') {
+    if (data?.id === null || data?.id === '') {
 
     }
     if (data.uploadedSelfieImg.message.toLocaleLowerCase().includes('no file')) {
@@ -443,9 +443,9 @@ async function handleKycVerification(data) {
 
     }
 
-    const id_card_front = data.capturedCandidateDetails.cameraState.imageFiles.find(img => img.side === 'front').file
-    const id_card_back = data.capturedCandidateDetails.cameraState.imageFiles.find(img => img.side === 'back').file
-    const passport = (data.capturedCandidateDetails.documentType === 'passport') ? getImageAsBase64(CDN + data.frontUploadedDocFiles.files.find(file => file.filename.includes('front_')).filename) : null
+    const id_card_front = data.capturedCandidateDetails.cameraState.imageFiles.find(img => img.side === 'front')?.file
+    const id_card_back = data.capturedCandidateDetails.cameraState.imageFiles.find(img => img.side === 'back')?.file
+    const passport = (data.capturedCandidateDetails.documentType === 'passport') ? getImageAsBase64(CDN + data.frontUploadedDocFiles.files.find(file => file.filename.includes('front_'))?.filename) : null
     console.log({ id_card_back, id_card_front, passport });
 
     const headers = new Headers();
@@ -454,9 +454,9 @@ async function handleKycVerification(data) {
     const formdata = new FormData();
     formdata.append("api_key", VERIFYID_3RD_PARTY_TOKEN);
     formdata.append("identity_document_type", data.capturedCandidateDetails.documentType);
-    formdata.append("selfie_photo", getImageAsBase64(CDN + data.uploadedSelfieImg.files[0].filename));
-    formdata.append("id_card_front", getImageAsBase64(CDN + data.frontUploadedDocFiles.files.find(file => file.filename.includes('front_')).filename) || id_card_front);
-    formdata.append("id_card_back", getImageAsBase64(CDN + data.backUploadedDocFiles.files.find(file => file.filename.includes('back_')).filename) || id_card_back);
+    formdata.append("selfie_photo", getImageAsBase64(CDN + data.uploadedSelfieImg.files[0]?.filename));
+    formdata.append("id_card_front", getImageAsBase64(CDN + data.frontUploadedDocFiles.files.find(file => file.filename.includes('front_'))?.filename) || id_card_front);
+    formdata.append("id_card_back", getImageAsBase64(CDN + data.backUploadedDocFiles.files.find(file => file.filename.includes('back_'))?.filename) || id_card_back);
     formdata.append("driver_license_front", null);
     formdata.append("driver_license_back", null);
     formdata.append("passport", passport);
@@ -471,6 +471,8 @@ async function handleKycVerification(data) {
       redirect: "follow"
     };
 
+   if(data) throw new Error('KILL TASK/JOB.')
+
     const response = await fetch(`https://www.verifyid.co.za/webservice/kyc-verification`, options)
 
     const output = await response.json()
@@ -481,10 +483,10 @@ async function handleKycVerification(data) {
 
     if (output.liveness || output.liveness === 'Invalid Request!') {
       /// update first transaction
-      const transactionRouter = jsonServer.router(path.resolve("../apps/store/db/history.json"))
-      const transaction1 = getAll(transactionRouter).find(item => item.transactionId === data.instanceId)
+      const transactionRouter = jsonServer.router(path.join( "apps" , "store/db/history.json"))
+      const transaction1 = getAll(transactionRouter).find(item => item?.transactionId === data?.instanceId)
 
-      if (transaction1) updateItem(transactionRouter, transaction1.id, { ...transaction1, "description": `Liveness test failed (${transaction1.details.query})`, "categoryId": "failed", })
+      if (transaction1) updateItem(transactionRouter, transaction1?.id, { ...transaction1, "description": `Liveness test failed (${transaction1.details.query})`, "categoryId": "failed", })
 
       return;
     }
@@ -498,10 +500,10 @@ async function handleKycVerification(data) {
         message: `Notification of New Transaction (${data.instanceId})`,
       });
       /// update first transaction
-      const transactionRouter = jsonServer.router(path.resolve("../apps/store/db/history.json"))
-      const transaction1 = getAll(transactionRouter).find(item => item.transactionId === data.instanceId)
+      const transactionRouter = jsonServer.router(path.join( "apps" , "store/db/history.json"))
+      const transaction1 = getAll(transactionRouter).find(item => item?.transactionId === data?.instanceId)
 
-      if (transaction1) updateItem(transactionRouter, transaction1.id, { ...transaction1, "description": `Verification process complete (${transaction1.details.query})`, "categoryId": "done", })
+      if (transaction1) updateItem(transactionRouter, transaction1?.id, { ...transaction1, "description": `Verification process complete (${transaction1.details.query})`, "categoryId": "done", })
       /// create second transaction
       deductCreditsAfterTransaction(transaction1.details.query, transaction1.profileId)
       
@@ -513,10 +515,10 @@ async function handleKycVerification(data) {
     logger.error(error.toString(), error);
 
     /// update first transaction
-    const transactionRouter = jsonServer.router(path.resolve("../apps/store/db/history.json"))
-    const transaction1 = getAll(transactionRouter).find(item => item.transactionId === data.instanceId)
+    const transactionRouter = jsonServer.router(path.join( "apps" , "store/db/history.json"))
+    const transaction1 = getAll(transactionRouter).find(item => item?.transactionId === data?.instanceId)
 
-    if (transaction1) updateItem(transactionRouter, transaction1.id, { ...transaction1, "description": `Verification process failed (${transaction1.details.query})`, "categoryId": "failed", })
+    if (transaction1) updateItem(transactionRouter, transaction1?.id, { ...transaction1, "description": `Verification process failed (${transaction1.details.query})`, "categoryId": "failed", })
 
   }
 }

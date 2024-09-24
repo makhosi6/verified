@@ -28,12 +28,12 @@ class _ScanDocsGuidelinesState extends State<ScanDocsGuidelines> {
   @override
   Widget build(BuildContext context) {
     var windowSize = MediaQuery.of(context).size.width;
-    List<String>? guidelines = _guidelines[widget.documentType?.name ?? 'general']?.whereType<String>().toList() ?? [];
+    List<String>? guidelines = _guidelines[widget.documentType?.name ?? 'general']?.whereType<String>().toList() ?? _guidelines['general']?.whereType<String>().toList() ?? [];
 
     if (!_isOpen) {
       return Positioned(
         top: widget.documentType == null ? 40 : 20,
-        left: widget.documentType != null ? 20: null,
+        left: widget.documentType != null ? 20 : null,
         right: widget.documentType == null ? 20 : null,
         child: Hero(
           tag: 'read_guidelines_btn1',
@@ -52,9 +52,9 @@ class _ScanDocsGuidelinesState extends State<ScanDocsGuidelines> {
     }
 
     return AnimatedPositioned(
-        top: widget.documentType == null ? 40 : 20,
-        left: widget.documentType != null ? 10: null,
-        right: widget.documentType == null ? 0 : null,
+      top: widget.documentType == null ? 40 : 20,
+      left: widget.documentType != null ? 10 : null,
+      right: widget.documentType == null ? 0 : null,
       width: _isOpen
           ? (((windowSize > appConstraints.constrainWidth()) ? appConstraints.constrainWidth() : windowSize) - 10)
           : 0,
@@ -110,8 +110,8 @@ class _ScanDocsGuidelinesState extends State<ScanDocsGuidelines> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: OutlinedButton(
                         onPressed: toggle,
-                        style: ButtonStyle(side: MaterialStateProperty.all(BorderSide(color: primaryColor))),
-                        child: const Text('Okay')),
+                        style: ButtonStyle(side: WidgetStateProperty.all(BorderSide(color: primaryColor))),
+                        child: const Text('Close')),
                   )
                 ],
               ),
@@ -129,22 +129,24 @@ const _guidelines = {
     'Ensure the card is correctly aligned and clear.',
     'Scan both the front and back sides.',
     'If you need to retry, touch and hold the image preview (top-right).',
+    'Good lighting and a bright/white background are REQUIRED for it to work.'
   ],
   'id_book': [
     'Position the two main pages of your ID book within the guidelines.',
     'Align the pages from left to right (page 1 to page 2).',
     'Ensure both pages are clear and correctly positioned.',
     'If you need to retry, touch and hold the image preview (top-right).',
+    'Good lighting and a bright/white background are REQUIRED for it to work.'
   ],
   'passport': [
     "Place your passport's main/front page within the guidelines.",
     'Ensure the page is clear and properly aligned.',
     'If you need to retry, touch and hold the image preview (top-right).',
+    'Good lighting and a bright/white background are REQUIRED for it to work.'
   ],
   'general': [
     'Position your face within the on-screen guidelines.',
     'Ensure all images are clear.',
+    'Good lighting and a bright/white background are REQUIRED for it to work.'
   ]
 };
-
-

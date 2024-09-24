@@ -130,7 +130,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                       child: RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(
-                          style: TextStyle(
+                          style: GoogleFonts.dmSans(
                             fontWeight: FontWeight.w400,
                             color: neutralDarkGrey,
                             fontSize: 14.0,

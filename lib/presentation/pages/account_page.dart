@@ -470,7 +470,7 @@ class __NotificationsSettingsState extends State<_NotificationsSettings> {
           title: const Text(
             'Email Notifications',
           ),
-          subtitle: const Text('important notification like payment receipts,a nd refund notification are mandatory'),
+          subtitle: const Text('important notification like payment receipts, and refund notification are mandatory'),
           value: email,
           onChanged: (bool? value) {
             if (mounted) {

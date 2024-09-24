@@ -88,7 +88,7 @@ abstract class IStoreRepository {
   Future<Either<GenericApiError, UserProfile>> postUserProfile(
     UserProfile user,
   );
-  Future<Either<GenericApiError, GenericApiError>> postDeviceData(
+  Future<Either<GenericApiError, GenericResponse>> postDeviceData(
     Map<String, dynamic> device,
   );
   Future<Either<GenericApiError, TransactionHistory>> postUserTransaction(TransactionHistory transaction);

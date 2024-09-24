@@ -9,7 +9,7 @@ const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "5400";
 
 function _logTicket(body) {
-  const _router = jsonServer.router(path.resolve("../apps/store/db/tickets.json"))
+  const _router = jsonServer.router(path.join( "apps" , "store/db/tickets.json"))
   createItem(_router, body)
 }
 

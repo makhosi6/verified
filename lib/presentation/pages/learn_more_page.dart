@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
 import 'package:verified/presentation/utils/navigate.dart';
@@ -17,7 +16,7 @@ class LearnMorePage extends StatefulWidget {
 
 class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateMixin {
   ///
-  Map<String, String> content = helpQuestionContent.values.first;
+  List<TutorialData> content = helpQuestionContent[0] ?? helpQuestionContent.values.first;
   int topicIndex = 0;
 
   ///
@@ -233,6 +232,7 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                                                 fontSize: 16.0,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
+                                              maxLines: 3,
                                             ),
                                           ),
                                         ],
@@ -247,11 +247,13 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                                           shrinkWrap: true,
                                           itemCount: content.length,
                                           itemBuilder: (context, index) {
-                                            var question = content.keys.toList()[index];
-                                            var answer = content.values.toList()[index];
+                                            final tutorial = content[index];
+                                            var question = tutorial.question;
+                                            var answer = tutorial.answer;
+                                            var detailedAnswer = tutorial.detailedAnswer;
 
                                             return ExpansionTile(
-                                              key: Key('expansion_tile_${question.hashCode}'),
+                                              key: Key('expansion_tile_${tutorial.hashCode}'),
                                               tilePadding: const EdgeInsets.all(0.0),
                                               backgroundColor: Colors.grey[100],
                                               collapsedBackgroundColor: Colors.transparent,
@@ -273,29 +275,44 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
                                                   text: TextSpan(
                                                     children: [
                                                       TextSpan(
-                                                          text: answer,
-                                                          style: DefaultTextStyle.of(context).style.copyWith()),
+                                                        text: answer,
+                                                        style: DefaultTextStyle.of(context).style,
+                                                      ),
                                                       const TextSpan(
                                                         text: '  ',
-                                                      ),
-                                                      TextSpan(
-                                                        text: '  learn more',
-                                                        recognizer: TapGestureRecognizer()
-                                                          ..onTap = () => navigate(
-                                                                context,
-                                                                page: DetailedTutorialPage(
-                                                                  key: ValueKey(question),
-                                                                ),
-                                                              ),
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.w600,
-                                                          decoration: TextDecoration.underline,
-                                                          color: primaryColor,
-                                                        ),
                                                       ),
                                                     ],
                                                   ),
                                                 ),
+                                                InkWell(
+                                                  onTap: () => navigate(
+                                                    context,
+                                                    page: DetailedTutorialPage(
+                                                      key: ValueKey('detailed_tutorial_page_${tutorial.hashCode}'),
+                                                      question: question,
+                                                      answer: detailedAnswer,
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(top: 8),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          'Learn More',
+                                                          style: GoogleFonts.dmSans(color: primaryColor),
+                                                        ),
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                                          child: Icon(
+                                                            Icons.arrow_forward_ios_rounded,
+                                                            color: primaryColor,
+                                                            size: 14.0,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
                                               ],
                                             );
                                           },
@@ -360,7 +377,7 @@ class ListOfHelpTipsTopics extends StatelessWidget {
   }
 }
 
-const helpQuestionContent = {
+final Map<int, List<TutorialData>> helpQuestionContent = {
   /// Getting Started
   0: gettingStarted,
 
@@ -374,95 +391,667 @@ const helpQuestionContent = {
   3: faqs,
 };
 
-const searchAndVerification = {
-  'How can I search for specific information within the app?':
-      "You can use the search bar located at the top of the app interface to enter keywords related to the information you're looking for.",
-  'What types of documents can I verify using VerifyID Plus?':
-      "VerifyID Plus supports verification of various government-issued documents such as driver's licenses, passports, ID cards, and more.",
-  'Is there a way to track the status of my verification process?':
-      "Yes, you can track the status of your verification process in the app's dashboard, which provides real-time updates on the progress.",
-  'Can I verify my identity using multiple documents?':
-      'Yes, you can verify your identity using multiple documents if required for certain verification purposes.',
-  'Are there any tips for ensuring a successful verification process?':
-      'Make sure to provide clear and legible images of your documents, ensure all information matches the provided details, and follow any additional instructions provided during the process.',
-  'How long does it typically take for verification results to be processed?':
-      'Verification results are usually processed within a few minutes to a few hours, depending on the complexity of the verification process and any additional checks required.',
-  'Is there a limit to the number of verification attempts I can make?':
-      'There may be a limit to the number of verification attempts within a specific time frame to prevent misuse or abuse of the system.',
-  'What should I do if my verification attempt fails?':
-      'If your verification attempt fails, you may be provided with instructions on how to rectify the issue or given the option to retry the verification process.',
-  'Are there any additional verification steps for accessing certain features or services within the app?':
-      'Yes, some features or services within the app may require additional verification steps to ensure security and compliance with regulations.',
-  'How does VerifyID Plus ensure the accuracy and reliability of verification results?':
-      'VerifyID Plus uses advanced algorithms and verification techniques, combined with access to government databases, to ensure the accuracy and reliability of verification results.'
-};
-const accountManagement = {
-  'How do I create an account on VerifyID Plus?':
-      'You can create an account by downloading the VerifyID Plus app from the App Store or Google Play Store and following the prompts to sign up.',
-  "Can I change my account information after it's been set up?":
-      'Yes, you can typically change your account information such as email address, password, and personal details within the app settings.',
-  'Is there a way to reset my password if I forget it?':
-      "Yes, you can reset your password by selecting the 'Forgot Password' option on the login screen and following the instructions to reset your password.",
-  'How can I update my personal details within the app?':
-      'You can update your personal details by accessing the account settings within the app and selecting the option to edit your profile.',
-  'Are there any security measures in place to protect my account?':
-      'Yes, VerifyID Plus employs various security measures such as encryption, multi-factor authentication, and regular security audits to protect user accounts.',
-  'Can I link multiple devices to my VerifyID Plus account?':
-      'Yes, you can typically use your VerifyID Plus account on multiple devices by logging in with the same credentials.',
-  'What should I do if I suspect unauthorized access to my account?':
-      'If you suspect unauthorized access to your account, you should immediately change your password and contact VerifyID Plus customer support for assistance.',
-  'Is there an option to deactivate or delete my account?':
-      'Yes, you can usually deactivate or delete your account by accessing the account settings within the app and following the instructions provided.',
-  'How can I switch between different accounts if I have more than one?':
-      'You can switch between different accounts by logging out of the current account and logging in with the credentials of the other account.',
-  'Are there any account-related notifications or alerts I should be aware of?':
-      'Yes, VerifyID Plus may send notifications or alerts regarding account activity, verification status updates, and important announcements related to the app.'
-};
-const gettingStarted = {
-  'What are the initial steps I need to take after downloading the VerifyID Plus app?':
-      "After downloading the VerifyID Plus app, you'll need to create an account, complete the setup process, and initiate the identity verification process.",
-  'How do I initiate the identity verification process?':
-      'You can initiate the identity verification process by logging into your account and following the prompts to upload the required documents for verification.',
-  'Can I preview the verification requirements before starting the process?':
-      'Yes, you can usually preview the verification requirements within the app before starting the process to ensure you have all the necessary documents and information.',
-  'Is there a tutorial or guide available to help me get started with the app?':
-      'Yes, VerifyID Plus may provide a tutorial or guide within the app to help you get started and navigate the verification process.',
-  'Are there any prerequisites for using VerifyID Plus, such as having specific documents ready?':
-      "Yes, you'll typically need to have government-issued identification documents such as a driver's license, passport, or ID card ready for the verification process.",
-  'What platforms or devices are compatible with VerifyID Plus?':
-      'VerifyID Plus is usually compatible with both iOS and Android devices, and you can download the app from the App Store or Google Play Store.',
-  'Can I use VerifyID Plus offline, or do I need an internet connection?':
-      "You'll typically need an internet connection to use VerifyID Plus as it requires access to online databases for identity verification.",
-  'How do I access customer support if I need assistance during the setup process?':
-      'You can usually access customer support within the app by navigating to the help or support section and contacting customer support through email, chat, or phone.',
-  'Are there any special features or tips for new users to maximize their experience with VerifyID Plus?':
-      'Yes, VerifyID Plus may provide tips or recommendations for new users to help them navigate the app and complete the verification process successfully.',
-  'What are some common mistakes to avoid when getting started with VerifyID Plus?':
-      'Some common mistakes to avoid when getting started with VerifyID Plus include providing incomplete or inaccurate information, uploading unclear or illegible documents, and not following the instructions provided during the verification process.'
-};
+final gettingStarted = [
+  TutorialData(
+    question: 'How do I get started with the Verified App?',
+    answer: 'Download the app from your app store, create an account, and follow the onboarding instructions.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+          style: GoogleFonts.ibmPlexSans(
+            color: Colors.black87,
+            fontSize: 16.0,
+            height: 1.6,
+          ),
+          children: const [
+            TextSpan(text: 'Getting started with the Verified App:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(text: '1. '),
+            TextSpan(text: 'Download the App: Find the Verified App in the App Store or Google Play and install it.\n'),
+            TextSpan(text: '2. '),
+            TextSpan(text: 'Create an Account: Open the app and sign up using your email and a password.\n'),
+            TextSpan(text: '3. '),
+            TextSpan(
+                text:
+                    'Follow Onboarding Instructions: Complete the onboarding process to set up your profile and preferences.\n'),
+          ]),
+    ),
+  ),
+  TutorialData(
+    question: 'What should I do after creating my account?',
+    answer: 'After creating your account, verify your email and complete your profile setup.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'After creating your account:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(
+              text: 'Verify Your Email: Check your inbox for a confirmation email and click the link to verify.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(
+              text:
+                  'Complete Profile Setup: Enter additional details in your profile settings to enhance your verification experience.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'How do I navigate the app?',
+    answer: 'Use the bottom navigation bar to access key sections of the app easily.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'Navigating the app is simple:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Home: View your dashboard for recent activities and updates.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Verification: Access the verification section to upload documents and check statuses.\n'),
+          TextSpan(text: '3. '),
+          TextSpan(text: 'Profile: Manage your account settings and personal information in the profile section.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'What features should I explore first?',
+    answer: 'Start with the document upload feature and familiarize yourself with the verification process.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'Features to explore first:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Document Upload: Try uploading a document to see how the verification process works.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(
+              text:
+                  'Notifications: Check notifications to stay updated on your verification statuses and other alerts.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Are there any tutorials available?',
+    answer: 'Yes, the app provides built-in tutorials to guide you through various features.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(
+              text: 'Yes, you can find tutorials within the app:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Access Help Section: Go to the help section for step-by-step guides on using the app.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(
+              text:
+                  'Watch Video Tutorials: Some features may have accompanying video tutorials for better understanding.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'What should I do if I encounter any issues?',
+    answer: 'If you face any issues, contact customer support through the app for assistance.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'If you encounter any issues:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Use the Support Feature: Navigate to the support section within the app.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Contact Customer Support: Fill out the form with details of your issue and submit.\n'),
+        ],
+      ),
+    ),
+  ),
+];
 
-const faqs = {
-  'What is VerifyID Plus, and how does it work?':
-      'VerifyID Plus is a secure identity verification app that uses advanced algorithms and access to government databases to verify the authenticity of user identities.',
-  'Is VerifyID Plus free to use, or are there any subscription fees?':
-      'VerifyID Plus may offer both free and paid versions of the app, with additional features or services available through subscription plans.',
-  'How does VerifyID Plus ensure the security and privacy of user data?':
-      'VerifyID Plus employs various security measures such as encryption, multi-factor authentication, and regular security audits to protect user data and privacy.',
-  'What types of documents can be verified using VerifyID Plus?':
-      "VerifyID Plus supports verification of various government-issued documents such as driver's licenses, passports, ID cards, and more.",
-  'How accurate is the verification process in identifying fraudulent documents?':
-      'The verification process used by VerifyID Plus is typically highly accurate in identifying fraudulent documents, thanks to advanced algorithms and access to government databases.',
-  'Can VerifyID Plus be used for both personal and business purposes?':
-      'Yes, VerifyID Plus can usually be used for both personal and business purposes, with tailored solutions available for businesses.',
-  'Are there any restrictions on who can use VerifyID Plus?':
-      'VerifyID Plus may have certain age or residency requirements for users, depending on local regulations and policies.',
-  'What are the benefits of using VerifyID Plus compared to traditional identity verification methods?':
-      'The benefits of using VerifyID Plus include faster verification times, increased accuracy, enhanced security measures, and greater convenience compared to traditional identity verification methods.',
-  'How can I provide feedback or suggestions for improving VerifyID Plus?':
-      'You can typically provide feedback or suggestions for improving VerifyID Plus within the app by accessing the feedback or support section and submitting your comments.',
-  'Where can I find more information about VerifyID Plus, such as user reviews or testimonials?':
-      'You can usually find more information about VerifyID Plus, including user reviews, testimonials, and press releases, on the official website, app stores, and social media channels.'
-};
+final searchAndVerification = [
+  TutorialData(
+    question: 'How can I search for specific information within the app?',
+    answer:
+        'Use the search bar at the top of the app to find specific documents or verifications quickly and efficiently.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'To search for specific information:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(
+              text:
+                  'Use the Search Bar: Located at the top of the screen, enter keywords related to the info you are looking for.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Filters: Apply filters to narrow down your results by document type or date.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'What types of documents can I verify using the Verified App?',
+    answer:
+        'You can verify various government-issued documents, such as passports, driver\'s licenses, and national IDs.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(
+              text: 'The Verified App supports various government-issued documents:\n',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '- Driver\'s licenses\n'),
+          TextSpan(text: '- Passports\n'),
+          TextSpan(text: '- ID cards\n'),
+          TextSpan(text: '- Birth certificates\n'),
+          TextSpan(text: 'Check the documentation for any region-specific verifications supported.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Is there a way to track the status of my verification process?',
+    answer: 'Yes, the dashboard provides real-time updates on your verification\'s status and progress.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'Yes, tracking is available:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Dashboard: The status of your verifications is visible in the dashboard.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Notifications: You\'ll receive updates through notifications as the process progresses.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Can I verify my identity using multiple documents?',
+    answer: 'Yes, you may upload multiple documents if required for the verification process.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(
+              text: 'Yes, multiple documents are supported for some verifications:\n',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(
+              text:
+                  'Add More Documents: When uploading, select "Add another document" to include multiple IDs, passports, or other forms of identification.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Are there any tips for ensuring a successful verification process?',
+    answer: 'Ensure documents are clear, complete, and match the personal information you provided.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'Ensure documents are clear, complete, and match the personal information you provided.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'How long does it typically take for verification results to be processed?',
+    answer: 'Most verifications are processed within minutes to a few hours, depending on complexity.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(
+              text: 'The processing time depends on the complexity:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '- Quick Verifications: These usually take a few minutes.\n'),
+          TextSpan(
+              text:
+                  '- Comprehensive Verifications: These can take from a few hours to a full day, depending on the number of documents and checks required.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Is there a limit to the number of verification attempts I can make?',
+    answer: 'There may be limits on the number of verification attempts within a specific time to prevent misuse.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(
+              text:
+                  'There may be limits on the number of verification attempts within a specific time to prevent misuse.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'What should I do if my verification attempt fails?',
+    answer: 'If a verification attempt fails, you\'ll be given instructions to retry or resolve the issue.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(
+              text: 'If a verification attempt fails, you\'ll be given instructions to retry or resolve the issue.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Are there additional verification steps for certain features?',
+    answer: 'Yes, some features require additional verification for security and compliance purposes.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'Yes, some features require additional verification for security and compliance purposes.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'How does the Verified App ensure accuracy and reliability?',
+    answer: 'The Verified App uses advanced technology and access to government databases to deliver accurate results.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(
+              text:
+                  'The Verified App uses advanced technology and access to government databases to deliver accurate results.\n'),
+        ],
+      ),
+    ),
+  ),
+];
+
+final accountManagement = [
+  TutorialData(
+    question: 'How do I create an account on the Verified App?',
+    answer: 'Download the app, follow the prompts to sign up, and you\'re all set to begin verification.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'To create an account:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Download the App: Install the Verified App from the App Store or Google Play.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Sign Up: Open the app and enter your email, phone number, and a password to register.\n'),
+          TextSpan(text: '3. '),
+          TextSpan(
+              text:
+                  'Verify Your Email: Check your inbox for a confirmation email and click on the verification link.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Can I change my account information after it\'s set up?',
+    answer: 'Yes, you can update your account details such as email and password in the app\'s settings.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'Yes, you can update your account info:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Go to Settings: Navigate to the "Account Settings" section.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Edit Details: Update your email, phone number, or personal details as needed.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Is there a way to reset my password if I forget it?',
+    answer: 'Yes, click \'Forgot Password\' on the login screen and follow the instructions.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'If you forgot your password:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Click Forgot Password: On the login screen, click "Forgot Password".\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Follow the Instructions: Enter your email to receive a password reset link.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'How can I update my personal details within the app?',
+    answer: 'Go to account settings and select \'Edit Profile\' to update your personal information.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'To update your personal information:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Go to Profile Settings: Open the settings menu and select "Profile".\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Make Changes: Edit your personal details and save.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Are there any privacy settings I can adjust?',
+    answer: 'Yes, you can manage your privacy settings under the account settings section.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'Yes, manage your privacy settings:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Navigate to Privacy Settings: Access the "Privacy" section in the settings.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Adjust Preferences: Change who can view your information or notifications.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'How do I delete my account?',
+    answer:
+        'To delete your account, go to settings, select "Account", and follow the instructions to delete your account permanently.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.8,
+        ),
+        children: const [
+          TextSpan(text: 'To delete your account:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Open Account Settings: Navigate to the settings and select "Account".\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Follow Instructions: Click on "Delete Account" and follow the prompts to confirm.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Will deleting my account remove all my data?',
+    answer: 'Yes, all your personal data will be permanently removed from our servers.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'Yes, deleting your account will remove all your data permanently.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'What should I do if I can\'t access my account?',
+    answer: 'If you cannot access your account, follow the password reset procedure or contact support for assistance.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'If you can’t access your account:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Try Password Reset: Click on "Forgot Password" and follow the steps.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Contact Support: If issues persist, reach out to customer support for help.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Are there any security measures in place to protect my account?',
+    answer: 'Yes, we implement advanced encryption and two-factor authentication for enhanced security.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(
+              text: 'Yes, several security measures are in place:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '- Encryption: Your data is encrypted to protect against unauthorized access.\n'),
+          TextSpan(
+              text:
+                  '- Two-Factor Authentication: We recommend enabling two-factor authentication for an added layer of security.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Can I deactivate my account instead of deleting it?',
+    answer: 'Yes, you have the option to deactivate your account temporarily without losing your data.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(
+              text: 'Yes, you can deactivate your account temporarily:\n',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Go to Account Settings: Find the "Account" section in settings.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Select Deactivate: Follow the instructions to deactivate your account temporarily.\n'),
+        ],
+      ),
+    ),
+  ),
+];
+
+final faqs = [
+  TutorialData(
+    question: 'What is the Verified App?',
+    answer: 'The Verified App is a mobile application designed to help users verify various documents securely.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(
+              text: 'The Verified App is designed to help users verify various documents securely:\n',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'User-Friendly Interface: Simple and intuitive navigation.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Document Security: Utilizes advanced encryption methods for data protection.\n'),
+          TextSpan(text: '3. '),
+          TextSpan(text: 'Real-Time Verification: Quick results for verification requests.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'How does the app protect my personal information?',
+    answer: 'The app uses encryption and strict data privacy policies to safeguard user information.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(
+              text: 'The app employs several measures to protect your personal information:\n',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '- Data Encryption: All sensitive data is encrypted.\n'),
+          TextSpan(text: '- Privacy Policies: Adheres to strict privacy policies to ensure data protection.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Is the Verified App free to use?',
+    answer: 'The app is free to download, but some verification features may require a fee.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'The Verified App is free to download:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '- Free Features: Basic verification features are available for free.\n'),
+          TextSpan(text: '- Paid Features: Some advanced features may require a payment or subscription.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Can I use the app on multiple devices?',
+    answer: 'Yes, you can log in on multiple devices using the same account.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'Yes, the app supports multiple devices:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '- Log In: Use your credentials to log in on any compatible device.\n'),
+          TextSpan(text: '- Sync: Your data will sync across devices for continuity.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'What should I do if I encounter technical issues?',
+    answer: 'Contact customer support through the app for assistance with technical issues.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'If you encounter technical issues:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '1. '),
+          TextSpan(text: 'Reach Out: Contact customer support through the app.\n'),
+          TextSpan(text: '2. '),
+          TextSpan(text: 'Provide Details: Share specifics about the issue for prompt assistance.\n'),
+        ],
+      ),
+    ),
+  ),
+  TutorialData(
+    question: 'Where can I find help resources?',
+    answer: 'Help resources are available within the app under the Help section.',
+    detailedAnswer: RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          color: Colors.black87,
+          fontSize: 16.0,
+          height: 1.6,
+        ),
+        children: const [
+          TextSpan(text: 'Help resources can be found:\n', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: '- In-App Help: Navigate to the "Help" section for FAQs and tutorials.\n'),
+          TextSpan(text: '- Online Resources: Visit our website for additional support materials.\n'),
+        ],
+      ),
+    ),
+  ),
+];
 
 var topics = ['Getting\nStarted', 'Search and\nVerification', 'Account\nManagement', 'FAQs'];
 var explainers = [
@@ -472,46 +1061,18 @@ var explainers = [
   'Answers common questions.'
 ];
 
-var xyz = {
-  'Search and Verification': [
-    'Search Functionality and Document Verification',
-    'Tracking Verification Process',
-    'Multiple Document Verification and Tips',
-    'Verification Process Duration and Limits',
-    'Ensuring Successful Verification',
-    'Accuracy and Reliability of Verification Results'
-  ],
-  'Account Management': [
-    'Account Creation and Information Modification',
-    'Password Management and Security Measures',
-    'Deactivating or Deleting Accounts',
-    'Managing Multiple Devices and Accounts',
-    'Account-related Notifications and Alerts'
-  ],
-  'Getting Started': [
-    'Initial Steps and Identity Verification',
-    'Previewing Verification Requirements',
-    'Tutorials and Guides for New Users',
-    'Prerequisites and Compatibility',
-    'Accessing Customer Support and Special Features',
-    'Common Mistakes to Avoid'
-  ],
-  'FAQs': [
-    'Understanding VerifyID Plus and its Functionality',
-    'Pricing Model and Subscription Fees',
-    'Security Measures and Privacy Protection',
-    'Supported Document Types',
-    'Accuracy in Identifying Fraudulent Documents',
-    'Usage for Personal and Business Purposes',
-    'User Restrictions and Requirements',
-    'Advantages over Traditional Verification Methods',
-    'Providing Feedback and Suggestions',
-    'Finding Additional Information and Resources'
-  ]
-};
+class TutorialData {
+  final String question;
+  final String answer;
+  final Widget detailedAnswer;
+
+  TutorialData({required this.question, required this.answer, required this.detailedAnswer});
+}
 
 class DetailedTutorialPage extends StatefulWidget {
-  const DetailedTutorialPage({super.key});
+  final Widget answer;
+  final String question;
+  const DetailedTutorialPage({super.key, required this.answer, required this.question});
 
   @override
   State<DetailedTutorialPage> createState() => _DetailedTutorialPageState();
@@ -538,10 +1099,9 @@ class _DetailedTutorialPageState extends State<DetailedTutorialPage> {
               titlePadding: const EdgeInsets.all(0),
               title: Container(
                 width: MediaQuery.of(context).size.width,
-                // height: 60,
-                padding: primaryPadding,
+                padding: primaryPadding.copyWith(top: 8, bottom: 8),
                 decoration: BoxDecoration(
-                  color: darkBlurColor,
+                  color: scaffoldBackgroundColor.withOpacity(0.5),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(16.0),
                     bottomRight: Radius.circular(16.0),
@@ -550,54 +1110,82 @@ class _DetailedTutorialPageState extends State<DetailedTutorialPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width - (100 + (primaryPadding.horizontal * 2)),
-                      child: Text(
-                        'Introduction Flutter $folded Google’s UI toolkit, offers a powerful scrolling system that enables developers',
-                        // style: const TextStyle(fontSize: 18),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                    Flexible(
+                      flex: 5,
+                      child: SizedBox(
+                        child: Text(
+                          widget.question,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
-                    TextButton(
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.all(EdgeInsets.zero),
-                          maximumSize: MaterialStateProperty.all(
-                            const Size(100, 40),
-                          )),
-                      onPressed: () {},
-                      child: Image.asset('assets/icons/youtube.png'),
+                    Flexible(
+                      flex: 1,
+                      child: TextButton(
+                        style: ButtonStyle(
+                          padding: WidgetStateProperty.all(
+                            const EdgeInsets.all(8).copyWith(right: 0),
+                          ),
+                          maximumSize: WidgetStateProperty.all(
+                            const Size(80, 40),
+                          ),
+                        ),
+                        onPressed: () {},
+                        child: Image.asset('assets/icons/youtube.png'),
+                      ),
                     )
                   ],
                 ),
               ),
               background: Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
+                decoration:  BoxDecoration(
+                  color: neutralGrey,
+                  borderRadius:const BorderRadius.only(
                     bottomLeft: Radius.circular(16.0),
                     bottomRight: Radius.circular(16.0),
                   ),
                 ),
                 clipBehavior: Clip.hardEdge,
-                child: Image.network(
-                  'https://images.unsplash.com/photo-1719937206255-cc337bccfc7d',
-                  fit: BoxFit.cover,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.network(
+                      'https://images.unsplash.com/photo-1719937206255-cc337bccfc7d',
+                      fit: BoxFit.cover,
+                    ),
+                    Positioned(
+                      top: 50,
+                      left: 20,
+                      child: VerifiedBackButton(
+                        key: const Key('learn-more-page-back-btn'),
+                        isLight: true,
+                        onTap: Navigator.of(context).pop,
+                      ),
+                    )
+                  ],
                 ),
               ),
               expandedTitleScale: 1,
             ),
             leadingWidth: 80.0,
-            leading: VerifiedBackButton(
-              key: const Key('acc-page-back-btn'),
-              isLight: true,
-              onTap: Navigator.of(context).pop,
-            ),
+            leading: const SizedBox.shrink(),
           ),
           SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: 12,
+              ),
               child: const Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
+                'Click on the YouTube icon to watch the full tutorial on YouTube.',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
               ),
             ),
           ),
@@ -605,13 +1193,11 @@ class _DetailedTutorialPageState extends State<DetailedTutorialPage> {
           SliverList(
             delegate: SliverChildListDelegate(
               List.generate(
-                100,
-                (index) => Padding(
+                20,
+                (index) => Container(
+                  key: ValueKey(index),
                   padding: const EdgeInsets.all(18.0),
-                  child: Text(
-                    '$index - Introduction Flutter, Google’s UI toolkit, offers a powerful scrolling system that enables developers to create dynamic and responsive mobile applications. A key component of this system is slivers. In this article, we’ll dive deep into slivers, exploring their types, use cases, and how they differ from traditional UI components. What Are Slivers? In Flutter, slivers are building blocks for creating intricate scrollable layouts. Unlike standard widgets, slivers are highly flexible and can adapt to the user’s scrolling behavior. They are particularly useful for building complex scrolling views with custom headers, parallax effects, and interactive app bars.',
-                    style: TextStyle(fontSize: 18),
-                  ),
+                  child: widget.answer,
                 ),
               ),
             ),

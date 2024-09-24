@@ -16,7 +16,6 @@ import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/data_view_item.dart';
-import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/popups/successful_action_popup.dart';
@@ -103,7 +102,7 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
                               child: Text(
-                                'Instantly confirm the legitimacy of personal information with our user-friendly app.',
+                                'Before we proceed, take a moment to review all the details. If everything looks good, you\'re all set to continue!',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   color: neutralDarkGrey,
@@ -289,7 +288,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                                       }
                                       if ((wallet.balance ?? 0) < POINTS_PER_TRANSACTION) {
                                         return await showTopUpBottomSheet(context);
-
                                       }
 
                                       /// send
@@ -299,7 +297,7 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                                         context: context,
                                         barrierDismissible: false,
                                         barrierColor: const Color.fromARGB(171, 0, 0, 0),
-                                        builder: (context) => const _DonePopUp(),
+                                        builder: (context) => _DonePopUp(),
                                       );
                                     }),
                               ),
@@ -376,8 +374,8 @@ class __DonePopUpState extends State<_DonePopUp> {
   Widget build(BuildContext context) {
     final person = context.watch<StoreBloc>().state.searchPerson;
     return SuccessfulActionModal(
-      title: 'Action & Done',
-      subtitle: 'Your Action of has been successfully processed. Thank you for your top-up! 🎉',
+      title: 'Created Successfully!',
+      subtitle: 'Your verification has been successfully submitted! The person will be notified and will complete the required steps soon. You will receive updates once it\'s completed 🎉',
       nextAction: () {
         /// send communication to [person]
         context.read<StoreBloc>().add(StoreEvent.willSendNotificationAfterVerification(
@@ -392,7 +390,7 @@ class __DonePopUpState extends State<_DonePopUp> {
             MaterialPageRoute(builder: (_) => const HomePage()),
             (_) => false,
           ).catchError((error) {
-           verifiedErrorLogger(error, StackTrace.current);
+            verifiedErrorLogger(error, StackTrace.current);
           }, test: (_) {
             return true;
           });
@@ -400,23 +398,17 @@ class __DonePopUpState extends State<_DonePopUp> {
       showDottedDivider: false,
       children: [
         ///
-        Padding(
-          padding: EdgeInsets.only(left: primaryPadding.left),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Choose how you want to share:',
-                style: GoogleFonts.dmSans(
-                  color: Theme.of(context).textTheme.bodyMedium?.color ??
-                      Theme.of(context).listTileTheme.subtitleTextStyle?.color,
-                  fontSize: 18,
-                  decoration: TextDecoration.underline,
-                ),
-                textAlign: TextAlign.left,
-              ),
-              const SizedBox.shrink()
-            ],
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: Text(
+            'How would you like to notify the candidate?',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 18.0,
+              fontStyle: FontStyle.normal,
+            ),
+            maxLines: 2,
+            textAlign: TextAlign.center,
           ),
         ),
 

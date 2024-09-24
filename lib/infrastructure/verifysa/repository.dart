@@ -18,12 +18,11 @@ class VerifySaRepository implements IVerifySaRepository {
   final Dio _httpClient;
 
   VerifySaRepository(this._httpClient) {
-    (_httpClient.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
-        (HttpClient dioClient) => dioClient
-          ..badCertificateCallback = ((X509Certificate cert, String host, int port) {
-            verifiedErrorLogger('CERT: $cert \n HOST: $host:$port \n Error: Bad Certificate Error');
-            return true;
-          });
+    (_httpClient.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (HttpClient dioClient) => dioClient
+      ..badCertificateCallback = ((X509Certificate cert, String host, int port) {
+        verifiedErrorLogger('CERT: $cert \n HOST: $host:$port \n Error: Bad Certificate Error');
+        return true;
+      });
   }
 
   @override
@@ -33,7 +32,12 @@ class VerifySaRepository implements IVerifySaRepository {
     required String clientId,
   }) async {
     try {
-      final headers = {'Content-Type': 'application/json'};
+      final headers = {
+        'Content-Type': 'application/json',
+        'x-client': clientId,
+        'x-client-sui': '-',
+        'x-client-env': 'test',
+      };
       final data = {
         'contact_number': phoneNumber,
         'reason': reason.value,
@@ -52,7 +56,7 @@ class VerifySaRepository implements IVerifySaRepository {
       } else {
         return left(Exception(response.statusMessage));
       }
-    } catch (error, stackTrace) { 
+    } catch (error, stackTrace) {
       verifiedErrorLogger(error, stackTrace);
       return left(Exception(error.toString()));
     }
@@ -65,7 +69,12 @@ class VerifySaRepository implements IVerifySaRepository {
     required String clientId,
   }) async {
     try {
-      final headers = {'Content-Type': 'application/json'};
+      final headers = {
+        'Content-Type': 'application/json',
+        'x-client': clientId,
+        'x-client-sui': '-',
+        'x-client-env': 'test',
+      };
       final data = {
         'id_number': idNumber,
         'reason': reason.value,
@@ -84,7 +93,7 @@ class VerifySaRepository implements IVerifySaRepository {
         return left(Exception(response.statusMessage));
       }
     } catch (error, stackTrace) {
-       verifiedErrorLogger(error, stackTrace);
+      verifiedErrorLogger(error, stackTrace);
       return left(Exception(error.toString()));
     }
   }
@@ -99,6 +108,9 @@ class VerifySaRepository implements IVerifySaRepository {
       final headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'x-client': clientId,
+        'x-client-sui': '-',
+        'x-client-env': 'test',
       };
       final data = {
         'api_key': verifySaApiKey,
@@ -119,7 +131,7 @@ class VerifySaRepository implements IVerifySaRepository {
         return left(Exception(response.statusMessage));
       }
     } catch (error, stackTrace) {
-       verifiedErrorLogger(error, stackTrace);
+      verifiedErrorLogger(error, stackTrace);
       return left(Exception(error.toString()));
     }
   }
@@ -127,7 +139,13 @@ class VerifySaRepository implements IVerifySaRepository {
   @override
   Future<ResourceHealthStatus> getHealthStatus() async {
     try {
-      final headers = {'x-nonce': await generateNonce(), 'Authorization': 'Bearer $storeApiKey'};
+      final headers = {
+        'x-nonce': await generateNonce(),
+        'Authorization': 'Bearer $storeApiKey',
+        'x-client': '-',
+        'x-client-sui': '-',
+        'x-client-env': 'test',
+      };
       final response = await _httpClient.get(
         'health-check?client=system',
         options: Options(
@@ -141,7 +159,7 @@ class VerifySaRepository implements IVerifySaRepository {
       }
       return ResourceHealthStatus.bad;
     } catch (error, stackTrace) {
-       verifiedErrorLogger(error, stackTrace);
+      verifiedErrorLogger(error, stackTrace);
       return ResourceHealthStatus.bad;
     }
   }

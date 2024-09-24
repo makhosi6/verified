@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/captured_candidate_details.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/helpers/extensions/user.dart';
 import 'package:verified/helpers/image.dart';
 import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/pages/home_page.dart';
@@ -73,7 +74,7 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                         padding: EdgeInsets.symmetric(
                             horizontal: primaryPadding.horizontal, vertical: primaryPadding.vertical * 2),
                         child: Text(
-                          'StakeWise brings solo stakers access to DeFi and liquidity! Mint osETH for your solo stake, and use Arbitrum, Aave, EigenLayer, and others',
+                          'To complete your verification, please upload/scan a clear image of your ID, passport. Ensure the document is fully visible and well-lit to avoid any delays in the process.',
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                             color: neutralDarkGrey,
@@ -231,8 +232,8 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                               ),
                               replaceCurrentPage: true,
                             ),
-                            label: DocumentType.values[index].name,
-                            buttonIcon: const Icon(Icons.verified_outlined),
+                            label: DocumentType.values[index].name.split('_').join(' ').capitalize().replaceAll('Id ', 'ID '),
+                            buttonIcon: Icon(docTypeIcon(DocumentType.values[index])),
                             buttonSize: ButtonSize.large,
                             hasBorderLining: true,
                           ),
@@ -250,3 +251,10 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
     );
   }
 }
+
+IconData? docTypeIcon(DocumentType? value) => switch (value) {
+      DocumentType.id_card => Icons.fact_check_outlined,
+      DocumentType.id_book => Icons.document_scanner_outlined,
+      DocumentType.passport => Icons.branding_watermark_outlined,
+      _ => Icons.verified_outlined
+    };

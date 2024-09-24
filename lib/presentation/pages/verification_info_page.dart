@@ -66,7 +66,7 @@ List<Widget> _getWidgets(BuildContext context) => [
       Padding(
         padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal / 3),
         child: Text(
-          'Instantly confirm the legitimacy of personal information with our user-friendly app.',
+          'We’re about to start your identity verification! In the next steps, you’ll need to use your camera to scan your face and ID documents. This helps us securely confirm your identity and keep your information safe. It’s quick, easy, and ensures a smooth process for you. Let’s get started when you’re ready!',
           style: TextStyle(
             fontWeight: FontWeight.w400,
             color: neutralGrey,
@@ -95,7 +95,7 @@ List<Widget> _getWidgets(BuildContext context) => [
             final args = ModalRoute.of(context)?.settings.arguments as VerificationPageArgs?;
             navigateToNamedRoute(context, arguments: args, routeName: '/secure', replaceCurrentPage: true);
           },
-          label: 'Scan My Face',
+          label: 'Get started',
           color: neutralGrey,
           hasIcon: false,
           buttonIcon: null,

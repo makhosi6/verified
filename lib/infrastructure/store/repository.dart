@@ -329,7 +329,8 @@ class StoreRepository implements IStoreRepository {
         ));
       }
     } on DioException {
-      return (await _genericGetRequest<T>('profile', data['id'], transform));
+      var id = data['id'] ?? data['uuid'] ?? data['jobUuid'];
+      return (await _genericGetRequest<T>('profile', id, transform));
     } catch (error, stackTrace) {
        verifiedErrorLogger(error, stackTrace);
       return left(
@@ -372,8 +373,9 @@ class StoreRepository implements IStoreRepository {
         'x-client-sui': _phone,
         'x-client-env': _env,
       };
+      var id = data['id'] ?? data['uuid'] ?? data['jobUuid'];
       var response = await _httpClient.put(
-        '$collection/resource/${data['id']}',
+        '$collection/resource/$id',
         options: Options(
           method: 'PUT',
           headers: headers,
@@ -546,11 +548,11 @@ class StoreRepository implements IStoreRepository {
 
   @override
   Future<Either<GenericApiError, GenericResponse>> makeIdVerificationRequest(VerificationRequest data) =>
-      _genericPostRequest('verification', data.toJson(), (_) => _);
+      _genericPostRequest('verification', data.toJson(), GenericResponse.fromJson);
 
   @override
   Future<Either<GenericApiError, GenericResponse>> makePassportVerificationRequest(VerificationRequest data) =>
-      _genericPostRequest('verification', data.toJson(), (_) => _);
+      _genericPostRequest('verification', data.toJson(), GenericResponse.fromJson);
 
   @override
   Future<Either<Exception, VerifyComprehensiveResponse>> comprehensiveVerification(
@@ -618,8 +620,8 @@ class StoreRepository implements IStoreRepository {
   }
 
   @override
-  Future<Either<GenericApiError, GenericApiError>> postDeviceData(Map<String, dynamic> device) =>
-      _genericPostRequest('devices', device, (_) => _);
+  Future<Either<GenericApiError, GenericResponse>> postDeviceData(Map<String, dynamic> device) =>
+      _genericPostRequest('devices', device, GenericResponse.fromJson);
 
   @override
   void setUserAndVariables({required String phone, required String user, required String env}) {

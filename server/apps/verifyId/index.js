@@ -4,7 +4,7 @@ const cors = require("cors");
 const path = require("node:path");
 const fs = require("node:fs");
 
-const PORT = process.env.VERIFYID_PORT || process.env.PORT || 5400;
+const PORT = process.env.VERIFYID_PORT || process.env.PORT || 5434;
 const HOST = process.env.HOST || "0.0.0.0";
 const server = express();
 ///
@@ -14,7 +14,7 @@ const Queue = require('../../packages/queue')
 const queue = new Queue({
     results: [],
     autostart: true,
-    timeout: 30000
+    timeout: 240000
 });
 queue.addEventListener('success', e => {
     console.log('job finished processing:', JSON.stringify(e, null, 2))

@@ -100,7 +100,7 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                       keyboardType: TextInputType.number,
                       controller: inputController,
                       inputFormatters: <TextInputFormatter>[
-                        CurrencyTextInputFormatter(
+                        CurrencyTextInputFormatter.currency(
                           symbol: 'R ',
                         )
                       ],

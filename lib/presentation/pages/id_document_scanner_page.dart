@@ -126,7 +126,8 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
 
       messages = messages.toSet().toList();
       widget.onMessage(messages);
-
+      verifiedLogger('MESSAGES: $messages');
+// (122.59650282118055)---->false|false|false|false|
       debugPrint('($brightness)---->$hasCodePdf417Barcode|$hasMrzCode|$hasFace|$hasCode39Barcode|');
 
       if (detectedSide != null && _brightness > 120) {

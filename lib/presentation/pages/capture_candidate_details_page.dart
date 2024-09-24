@@ -128,11 +128,11 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                   ///
                                   ...[
                                     CaptureUserDetailsInputOption(
-                                      hintText: 'Type their ID Number(Document Number)',
+                                      hintText: (capturedCandidateDetails?.documentType == DocumentType.passport.name) ? 'Type their Passport Number(Document Number)': 'Type their ID Number(Document Number)',
                                       initialValue: capturedCandidateDetails?.identityNumber ??
                                           capturedCandidateDetails?.passportNumber,
                                       label:
-                                          'Govt-issued ${documentType?.name == 'passport' ? 'Passport' : 'ID'} Number (optional)',
+                                          'Govt-issued ${documentType?.name == 'passport' ? 'Passport' : 'Id'} Number',
                                       inputMask: '000000 0000 000',
                                       autofocus: false,
                                       maxLength: 13,
@@ -143,7 +143,7 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                           return null;
                                         }
                                         if (idNumber == null || idNumber.isEmpty) {
-                                          return 'You have to provide a phone number or a ID number';
+                                          return 'You have to provide a ID number';
                                         }
 
                                         if (capturedCandidateDetails?.documentType == DocumentType.passport.name) {
@@ -158,48 +158,48 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                         _globalKeyCaptureCandidateDetailsPageForm.currentState?.validate();
                                       },
                                     ),
-                                    CaptureUserDetailsInputOption(
-                                      hintText: '000 000 0000',
-                                      initialValue: null,
-                                      label: 'Phone Number',
-                                      inputMask: '000 000 0000',
-                                      maxLength: 10,
-                                      autofocus: false,
-                                      inputFormatters: [],
-                                      keyboardType: TextInputType.number,
-                                      validator: (phone) {
-                                        var id = candidate.idNumber ??
-                                            capturedCandidateDetails?.identityNumber ??
-                                            capturedCandidateDetails?.identityNumber2 ??
-                                            capturedCandidateDetails?.cardNumber;
-                                        if (id != null && phone?.isEmpty == true) {
-                                          return null;
-                                        }
-                                        if (phone == null || phone.isEmpty) {
-                                          return 'You have to provide a phone number or a ID number';
-                                        }
-                                        return validateMobile(phone);
-                                      },
-                                      onChangeHandler: (phoneNumber) {
-                                        candidate = candidate.copyWith(phoneNumber: phoneNumber);
+                                    // CaptureUserDetailsInputOption(
+                                    //   hintText: '000 000 0000',
+                                    //   initialValue: null,
+                                    //   label: 'Phone Number',
+                                    //   inputMask: '000 000 0000',
+                                    //   maxLength: 10,
+                                    //   autofocus: false,
+                                    //   inputFormatters: [],
+                                    //   keyboardType: TextInputType.number,
+                                    //   validator: (phone) {
+                                    //     var id = candidate.idNumber ??
+                                    //         capturedCandidateDetails?.identityNumber ??
+                                    //         capturedCandidateDetails?.identityNumber2 ??
+                                    //         capturedCandidateDetails?.cardNumber;
+                                    //     if (id != null && phone?.isEmpty == true) {
+                                    //       return null;
+                                    //     }
+                                    //     if (phone == null || phone.isEmpty) {
+                                    //       return 'You have to provide a phone number or a ID number';
+                                    //     }
+                                    //     return validateMobile(phone);
+                                    //   },
+                                    //   onChangeHandler: (phoneNumber) {
+                                    //     candidate = candidate.copyWith(phoneNumber: phoneNumber);
 
-                                        /// and validate the form
-                                        _globalKeyCaptureCandidateDetailsPageForm.currentState?.validate();
-                                      },
-                                    ),
-                                    CaptureUserDetailsInputOption(
-                                      hintText: 'Type their email address',
-                                      initialValue: null,
-                                      label: 'Email address',
-                                      autofocus: false,
-                                      inputFormatters: [],
-                                      keyboardType: TextInputType.emailAddress,
-                                      validator: (_) => null,
-                                      onChangeHandler: (email) {
-                                        candidate = candidate.copyWith(email: email);
-                                      },
-                                    ),
-                                    CaptureUserDetailsInputOption(
+                                    //     /// and validate the form
+                                    //     _globalKeyCaptureCandidateDetailsPageForm.currentState?.validate();
+                                    //   },
+                                    // ),
+                                    // CaptureUserDetailsInputOption(
+                                    //   hintText: 'Type their email address',
+                                    //   initialValue: null,
+                                    //   label: 'Email address',
+                                    //   autofocus: false,
+                                    //   inputFormatters: [],
+                                    //   keyboardType: TextInputType.emailAddress,
+                                    //   validator: (_) => null,
+                                    //   onChangeHandler: (email) {
+                                    //     candidate = candidate.copyWith(email: email);
+                                    //   },
+                                    // ),
+                                  if(capturedCandidateDetails?.documentType == DocumentType.passport.name)  CaptureUserDetailsInputOption(
                                       hintText: 'Nationality',
                                       initialValue: capturedCandidateDetails?.nationality is String
                                           ? COUNTRIES_ISO_3366_ALPHA_3[capturedCandidateDetails?.nationality] ??
@@ -331,14 +331,15 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                           showDialog(
                                             context: context,
                                             builder: (context) => SuccessfulActionModal(
-                                              title: 'Generating build script completed',
+                                              title: 'Verification Complete!',
                                               subtitle:
-                                                  "To ignore certain requests from your Nginx logs, you can use the if directive within the http or server block of your Nginx configuration. Here's a basic example to exclude requests to a specific URL (like /healthcheck) from being logged",
+                                                  'Congratulations! Your verification process is now complete. Thank you for providing the necessary details.',
                                               nextAction: () => navigate(
                                                 context,
                                                 page: const HomePage(),
+                                                replaceCurrentPage: true
                                               ),
-                                              showDottedDivider: true,
+                                              showDottedDivider: false,
                                             ),
                                           );
                                         } else {

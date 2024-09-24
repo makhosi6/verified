@@ -106,7 +106,7 @@ function sendHelpEmailNotifications(helpRequest) {
       .then((result) => console.log(result))
       .catch((error) => console.error(error));
   } catch (error) {
-    console.log(error);
+    console.log({error, helpRequest});
   }
 }
 /**

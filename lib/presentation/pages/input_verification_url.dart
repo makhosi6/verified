@@ -77,7 +77,7 @@ class _InputVerificationURLState extends State<InputVerificationURL> {
           // padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal / 3),
           padding: EdgeInsets.only(bottom: primaryPadding.bottom * 2, top: primaryPadding.top * 2),
           child: const Text(
-            'Instantly confirm the legitimacy of personal information with our user-friendly app.',
+            'Paste the verification link provided to you to proceed to the verification process.',
             style: TextStyle(
               fontWeight: FontWeight.w400,
               fontSize: 14.0,

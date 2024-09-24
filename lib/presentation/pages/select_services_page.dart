@@ -61,7 +61,7 @@ class _SelectServicesPageState extends State<SelectServicesPage> {
                         Padding(
                           padding: EdgeInsets.only(bottom: primaryPadding.bottom),
                           child: Text(
-                            'Please type a phone/id number and click send to verify. Ensure accuracy and trust in your data effortlessly. ',
+                            'Select the type of verification you need. Pick the option that best fits your needs and proceed with confidence.',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: neutralDarkGrey,

@@ -9,7 +9,7 @@ class VerifySaDioClientService {
   /// instance of dio (singleton)
   static Dio instance = Dio(
     BaseOptions(
-      baseUrl: '$baseUrl/verify-id/api/v1/',
+      baseUrl: 'http://192.168.0.132:5434/api/v1/',
       headers: {
         'Authorization': 'Bearer $verifySaApiKey',
         'Accept': 'application/json',

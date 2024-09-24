@@ -107,12 +107,13 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
                             Padding(
                               padding: primaryPadding.copyWith(left: 0, right: 0),
                               child: const Text(
-                                'Please put your phone in front',
+                                'Your quick verification is complete! Below are the results based on the phone number provided',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   color: Colors.white,
                                   fontSize: 14.0,
                                 ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                             const ConfidenceBanner()
@@ -134,7 +135,7 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
                       child: Container(
                         constraints: appConstraints,
                         width: MediaQuery.of(context).size.width,
-                        padding: EdgeInsets.only(top: primaryPadding.top),
+                        padding: EdgeInsets.only(top: primaryPadding.top, bottom: primaryPadding.bottom),
                         child: (results == null || results.isEmpty)
                             ? const ResultsSkeleton(numberOfCards: 12, itemsPerCard: 5, cardsHasTitle: true)
                             : Column(
@@ -163,16 +164,21 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      Card(
-                                        child: SizedBox(
-                                          child: Column(
-                                            key: ValueKey(data),
-                                            children: List.generate(
-                                              keys.length,
-                                              (i) => _renderSliverListItems(
-                                                  key: keys[i],
-                                                  value: values[i] ?? 'Unknown',
-                                                  isLast: i == (keys.length - 1)),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                        child: Card(
+                                          color: const Color.fromARGB(255, 227, 240, 231),
+                                          elevation: 1.0,
+                                          child: SizedBox(
+                                            child: Column(
+                                              key: ValueKey(data),
+                                              children: List.generate(
+                                                keys.length,
+                                                (i) => _renderSliverListItems(
+                                                    key: keys[i],
+                                                    value: values[i] ?? 'Unknown',
+                                                    isLast: i == (keys.length - 1)),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -271,12 +277,13 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
                             Padding(
                               padding: primaryPadding.copyWith(left: 0, right: 0),
                               child: const Text(
-                                'Please put your phone in front',
+                                'Your quick verification is complete! Below are the results based on the ID number provided',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   color: Colors.white,
                                   fontSize: 14.0,
                                 ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                             const ConfidenceBanner()
@@ -358,7 +365,7 @@ class ResultsSkeleton extends StatelessWidget {
     return Column(
       children: List.generate(
         numberOfCards,
-        (index) => Skeletonizer.bones(
+        (index) => Skeletonizer.zone(
           containersColor: primaryColor,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

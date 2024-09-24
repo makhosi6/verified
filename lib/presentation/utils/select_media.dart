@@ -38,26 +38,22 @@ Future<File> compressForProfilePicture(File imageFile) async {
     final ogFileName = filename.split('.').first;
     final ogFileExt = filename.split('.').last;
 
-    // Read image bytes
     final imageBytes = await imageFile.readAsBytes();
 
-    // Decode image
     final decodedImage = Image.decodeImage(imageBytes);
 
     // Resize image to 320x320
     final resizedImage = Image.copyResize(decodedImage!, width: 320, height: 320);
 
-    // Convert resized image to Uint8List
     final resizedImageData = Image.encodePng(resizedImage);
 
-    // Compress the resized image data
     final compressedImageData = await FlutterImageCompress.compressWithList(
       resizedImageData,
       quality: 50,
     );
 
     // Create a temporary path for the compressed file
-    final tempDir = await getTemporaryDirectory(); // Get a temporary directory path
+    final tempDir = await getTemporaryDirectory(); 
     final compressedFile = File('${tempDir.path}/${ogFileName}_compressed.$ogFileExt');
 
     // Write compressed data to the file

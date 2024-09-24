@@ -341,7 +341,7 @@ async function _addToOrSubtractWallet(payload, eventType) {
         lastDepositAt: (eventType == eventTypes["payment.succeeded"]) ? Math.floor(Date.now() / 1000) : savedWallet.lastDepositAt,
 
     };
-    const _router = jsonServer.router(path.resolve("../apps/store/db/wallet.json"))
+    const _router = jsonServer.router(path.join( "apps" , "store/db/wallet.json"))
     const data = createItem(_router, wallet)
 }
 

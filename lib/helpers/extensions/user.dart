@@ -40,9 +40,9 @@ extension EmailFunctions on String {
 }
 
 extension StringExtension on String {
-  String? capitalize() {
+  String capitalize() {
     if (isEmpty) {
-      return null;
+      return this;
     }
     final asArr = split(' ');
     final isTwoOrMoreWords = asArr.length > 1;
