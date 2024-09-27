@@ -15,10 +15,10 @@ import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/native_scripts/main.dart';
 import 'package:verified/presentation/pages/app_signature_page.dart';
-import 'package:verified/presentation/pages/loading_page.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/pages/webviews/privacy_clause.dart';
@@ -26,6 +26,7 @@ import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/data_view_item.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
+import 'package:verified/presentation/utils/lottie_loader.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/utils/url_loader.dart';
@@ -40,12 +41,10 @@ import 'package:verified/presentation/widgets/text/list_title.dart';
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
 
-
-
   @override
   Widget build(BuildContext context) {
     GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-    GlobalKey<RefreshIndicatorState>(debugLabel: 'acc-page-refresh-token-key');
+        GlobalKey<RefreshIndicatorState>(debugLabel: 'acc-page-refresh-token-key');
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Container(
@@ -64,11 +63,10 @@ class AccountPage extends StatelessWidget {
         ),
         child: BaseButton(
           key: UniqueKey(),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (BuildContext context) => const SearchOptionsPage(),
-            ),
-          ),
+          onTap: () {
+            VerifiedAppAnalytics.logFeatureUsed(VerifiedAppAnalytics.FEATURE_VERIFY_FROM_ACCOUNT);
+            navigate(context, page: const SearchOptionsPage());
+          },
           label: 'Verify',
           color: Colors.white,
           iconBgColor: neutralYellow,
@@ -108,7 +106,11 @@ class AccountPageContent extends StatelessWidget {
         future: LocalUser.getUser(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const LoadingPage(noScaffold: false);
+            return Center(
+              child: LottieProgressLoader(
+                key: Key('app-splash-screen-loader-$key'),
+              ),
+            );
           }
 
           user = snapshot.data;
@@ -190,6 +192,10 @@ class AccountPageContent extends StatelessWidget {
                                     bgColor: neutralYellow,
                                     padding: const EdgeInsets.all(0),
                                     onTap: () {
+                                      VerifiedAppAnalytics.logActionTaken(
+                                          VerifiedAppAnalytics.ACTION_TOPUP_FROM_ACCOUNT);
+
+                                      ///
                                       showTopUpBottomSheet(context);
                                     },
                                     icon: Icons.add,
@@ -282,9 +288,14 @@ class AccountPageContent extends StatelessWidget {
                                                   context.read<AuthBloc>().add(const AuthEvent.signOut());
                                                   context.read<StoreBloc>().add(const StoreEvent.clearUser());
 
+                                                  ///
+                                                  VerifiedAppAnalytics.logActionTaken(
+                                                      VerifiedAppAnalytics.ACTION_LOGOUT);
+
+                                                  ///
                                                   // Navigator.of(context)
-                                                    // ..pop();
-                                                    // ..initState();
+                                                  // ..pop();
+                                                  // ..initState();
 
                                                   Future.delayed(const Duration(milliseconds: 700),
                                                       () => VerifiedAppNativeCalls.restartApp());
@@ -310,6 +321,13 @@ class AccountPageContent extends StatelessWidget {
                                                     ..add(StoreEvent.deleteUserProfile(user?.id ?? ''))
                                                     ..add(const StoreEvent.clearUser());
 
+                                                  ///
+                                                  VerifiedAppAnalytics.logActionTaken(
+                                                      VerifiedAppAnalytics.ACTION_LOGOUT);
+                                                  VerifiedAppAnalytics.logActionTaken(
+                                                      VerifiedAppAnalytics.ACTION_DELETED_ACCOUNT);
+
+                                                  ///
                                                   Navigator.of(context)
                                                     ..pop()
                                                     ..initState();
@@ -464,6 +482,8 @@ class __NotificationsSettingsState extends State<_NotificationsSettings> {
                 inApp = value ?? false;
               });
             }
+            VerifiedAppAnalytics.logActionTaken(
+                VerifiedAppAnalytics.ACTION_UPDATE_NOTIFICATION_SETTINGS, {'in_app_notifications': value});
           },
         ),
         SwitchListTile(
@@ -478,6 +498,10 @@ class __NotificationsSettingsState extends State<_NotificationsSettings> {
                 email = value ?? false;
               });
             }
+
+            ///
+            VerifiedAppAnalytics.logActionTaken(
+                VerifiedAppAnalytics.ACTION_UPDATE_NOTIFICATION_SETTINGS, {'email_notifications': value});
           },
         )
       ],
@@ -641,10 +665,13 @@ class _ProfileName extends StatelessWidget {
                             verifiedLogger('No files uploaded');
                           }
                         }).catchError((error) {
-                            verifiedErrorLogger(error, StackTrace.current);
+                          verifiedErrorLogger(error, StackTrace.current);
                         }, test: (_) {
                           return true;
                         });
+
+                        ///
+                        VerifiedAppAnalytics.logFeatureUsed(VerifiedAppAnalytics.FEATURE_UPDATE_PROFILE_PICTURE);
                       },
                       child: Container(
                         padding: const EdgeInsets.all(4.0),

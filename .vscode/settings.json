@@ -4,8 +4,10 @@
     "dart.lineLength": 120,
     "cmake.sourceDirectory": "/Users/makhosi/Desktop/projects/flutter_apps/verify_sa/server/node_modules/nan",
     "cSpell.words": [
-        "fluttertoast",
+        "appbase",
         "Appbase",
-        "appbase"
+        "comms",
+        "fluttertoast",
+        "pageview"
     ]
 }

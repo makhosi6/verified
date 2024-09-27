@@ -6,6 +6,7 @@ import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/candidate_request.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/data/countries.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/theme.dart';
@@ -67,6 +68,7 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
           return WillPopScope(
             onWillPop: () async {
               navigate(context, page: const HomePage(), replaceCurrentPage: true);
+              VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_BACK_FROM_CONFIRM_CANDIDATE_DETAILS);
               return false;
             },
             child: Scaffold(
@@ -90,7 +92,11 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                       leadingWidth: 80.0,
                       leading: VerifiedBackButton(
                         key: const Key('capture-candidate-details-page-back-btn'),
-                        onTap: () => navigate(context, page: const HomePage(), replaceCurrentPage: true),
+                        onTap: () {
+                          VerifiedAppAnalytics.logActionTaken(
+                              VerifiedAppAnalytics.ACTION_BACK_FROM_CONFIRM_CANDIDATE_DETAILS);
+                          navigate(context, page: const HomePage(), replaceCurrentPage: true);
+                        },
                         isLight: true,
                       ),
                     ),
@@ -109,8 +115,6 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                   Padding(
                                     padding: EdgeInsets.symmetric(horizontal: primaryPadding.horizontal),
                                     child: Text(
-                  
-
                                       'Fill in the required fields and follow any additional instructions for a successful verification.',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w400,
@@ -128,7 +132,9 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                   ///
                                   ...[
                                     CaptureUserDetailsInputOption(
-                                      hintText: (capturedCandidateDetails?.documentType == DocumentType.passport.name) ? 'Type their Passport Number(Document Number)': 'Type their ID Number(Document Number)',
+                                      hintText: (capturedCandidateDetails?.documentType == DocumentType.passport.name)
+                                          ? 'Type their Passport Number(Document Number)'
+                                          : 'Type their ID Number(Document Number)',
                                       initialValue: capturedCandidateDetails?.identityNumber ??
                                           capturedCandidateDetails?.passportNumber,
                                       label:
@@ -153,6 +159,9 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                       },
                                       onChangeHandler: (idNumber) {
                                         candidate = candidate.copyWith(idNumber: idNumber);
+                                        VerifiedAppAnalytics.logActionTaken(
+                                            VerifiedAppAnalytics.ACTION_CANDIDATE_DID_UPDATE_DETAILS,
+                                            {'value_name': 'id_number'});
 
                                         /// and validate the form
                                         _globalKeyCaptureCandidateDetailsPageForm.currentState?.validate();
@@ -199,21 +208,25 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                     //     candidate = candidate.copyWith(email: email);
                                     //   },
                                     // ),
-                                  if(capturedCandidateDetails?.documentType == DocumentType.passport.name)  CaptureUserDetailsInputOption(
-                                      hintText: 'Nationality',
-                                      initialValue: capturedCandidateDetails?.nationality is String
-                                          ? COUNTRIES_ISO_3366_ALPHA_3[capturedCandidateDetails?.nationality] ??
-                                              COUNTRIES_ISO_3166_ALPHA_2[capturedCandidateDetails?.nationality]
-                                          : null,
-                                      label: 'Nationality',
-                                      autofocus: false,
-                                      inputFormatters: [],
-                                      keyboardType: TextInputType.emailAddress,
-                                      validator: (_) => null,
-                                      onChangeHandler: (val) {
-                                        candidate = candidate.copyWith(nationality: val);
-                                      },
-                                    ),
+                                    if (capturedCandidateDetails?.documentType == DocumentType.passport.name)
+                                      CaptureUserDetailsInputOption(
+                                        hintText: 'Nationality',
+                                        initialValue: capturedCandidateDetails?.nationality is String
+                                            ? COUNTRIES_ISO_3366_ALPHA_3[capturedCandidateDetails?.nationality] ??
+                                                COUNTRIES_ISO_3166_ALPHA_2[capturedCandidateDetails?.nationality]
+                                            : null,
+                                        label: 'Nationality',
+                                        autofocus: false,
+                                        inputFormatters: [],
+                                        keyboardType: TextInputType.emailAddress,
+                                        validator: (_) => null,
+                                        onChangeHandler: (val) {
+                                          candidate = candidate.copyWith(nationality: val);
+                                          VerifiedAppAnalytics.logActionTaken(
+                                              VerifiedAppAnalytics.ACTION_CANDIDATE_DID_UPDATE_DETAILS,
+                                              {'value_name': 'nationality'});
+                                        },
+                                      ),
                                     CaptureUserDetailsInputOption(
                                       hintText: 'Date of Birth',
                                       initialValue: capturedCandidateDetails?.dayOfBirth != null
@@ -222,10 +235,13 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                       label: 'Date of Birth',
                                       autofocus: false,
                                       inputFormatters: [],
-                                      keyboardType: TextInputType.emailAddress,
+                                      keyboardType: TextInputType.text,
                                       validator: (_) => null,
-                                      onChangeHandler: (email) {
-                                        candidate = candidate.copyWith(email: email);
+                                      onChangeHandler: (dayOfBirth) {
+                                        candidate = candidate.copyWith(dayOfBirth: dayOfBirth);
+                                        VerifiedAppAnalytics.logActionTaken(
+                                            VerifiedAppAnalytics.ACTION_CANDIDATE_DID_UPDATE_DETAILS,
+                                            {'value_name': 'date_of_birth'});
                                       },
                                     ),
                                     CaptureUserDetailsInputOption(
@@ -238,6 +254,9 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                       keyboardType: TextInputType.text,
                                       validator: (_) => null,
                                       onChangeHandler: (notes) {
+                                        VerifiedAppAnalytics.logActionTaken(
+                                            VerifiedAppAnalytics.ACTION_CANDIDATE_DID_UPDATE_DETAILS,
+                                            {'value_name': 'notes'});
                                         candidate = candidate.copyWith(description: notes);
                                       },
                                     ),
@@ -274,7 +293,7 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                               onChange: inputOption.onChangeHandler,
                                             ),
                                           ))
-                                      .toList(),
+                                      ,
 
                                   ///
                                   Padding(
@@ -283,7 +302,7 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                       text: 'Need help? Visit our Help page for support!',
                                       onTap: () => navigate(
                                         context,
-                                        page: const LearnMorePage(),
+                                        page: LearnMorePage(),
                                       ),
                                     ),
                                   ),
@@ -294,10 +313,13 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                     child: BaseButton(
                                       key: UniqueKey(),
                                       onTap: () {
-                                        if (_globalKeyCaptureCandidateDetailsPageForm.currentState?.validate() == true) {
+                                        if (_globalKeyCaptureCandidateDetailsPageForm.currentState?.validate() ==
+                                            true) {
                                           context.read<StoreBloc>().add(
                                                 StoreEvent.createCandidateDetails(
-                                                  candidate.copyWith(jobUuid: jobUuid, ),
+                                                  candidate.copyWith(
+                                                    jobUuid: jobUuid,
+                                                  ),
                                                 ),
                                               );
 
@@ -334,11 +356,12 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                               title: 'Verification Complete!',
                                               subtitle:
                                                   'Congratulations! Your verification process is now complete. Thank you for providing the necessary details.',
-                                              nextAction: () => navigate(
-                                                context,
-                                                page: const HomePage(),
-                                                replaceCurrentPage: true
-                                              ),
+                                              nextAction: () {
+                                                navigate(context, page: const HomePage(), replaceCurrentPage: true);
+
+                                                VerifiedAppAnalytics.logActionTaken(
+                                                    VerifiedAppAnalytics.ACTION_CANDIDATE_COMPLETED_VERIFICATION);
+                                              },
                                               showDottedDivider: false,
                                             ),
                                           );

@@ -234,7 +234,7 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
         if (kDebugMode) {
           verifiedLogger('STATE \n\n$results\n: $state');
         }
-        final apiHealthStatus = context.read<StoreBloc>().state.resourceHealthStatus;
+  
         return Center(
           child: SizedBox(
             child: CustomScrollView(

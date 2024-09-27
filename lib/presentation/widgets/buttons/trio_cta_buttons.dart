@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/pages/transactions_page.dart';
@@ -28,11 +29,10 @@ class TrioHomeButtons extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _ClickableItem(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => const SearchOptionsPage(),
-              ),
-            ),
+            onTap: () {
+              VerifiedAppAnalytics.logFeatureUsed(VerifiedAppAnalytics.FEATURE_VERIFY_FROM_HOME);
+              navigate(context, page: const SearchOptionsPage());
+            },
             text: 'Verify',
             iconWidget: const Image(
               height: 23.0,
@@ -70,7 +70,10 @@ class TrioHomeButtons extends StatelessWidget {
                     );
                 }
               }
-              
+
+              ///
+              VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_TOPUP_FROM_HOME);
+
               showTopUpBottomSheet(context);
 
               ///

@@ -9,10 +9,8 @@ class TopUpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Container(
-        child: const Center(
-          child: Text('Top Up Page'),
-        ),
+      body: const Center(
+        child: Text('Top Up Page'),
       ),
     );
   }

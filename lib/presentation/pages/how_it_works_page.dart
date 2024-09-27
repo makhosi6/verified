@@ -5,13 +5,17 @@ import 'package:carousel_indicator/carousel_indicator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 
 class HowItWorksPage extends StatefulWidget {
-  const HowItWorksPage({super.key});
+   HowItWorksPage({super.key}){
+  VerifiedAppAnalytics.logActionTaken(
+      VerifiedAppAnalytics.ACTION_HOME_IT_WORKS);
+  }
 
   @override
   State<HowItWorksPage> createState() => _HowItWorksPageState();

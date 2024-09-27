@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/infrastructure/native_scripts/main.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
@@ -38,7 +39,10 @@ class VerifiedErrorPage extends StatelessWidget {
                       buttonSize: ButtonSize.small,
                       label: 'Refresh',
                       color: warningColor,
-                      onTap: VerifiedAppNativeCalls.restartApp,
+                      onTap: () {
+                        VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_REFRESH_APP_FROM_ERROR_PAGE);
+                        VerifiedAppNativeCalls.restartApp();
+                      },
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: primaryPadding.top),
@@ -52,7 +56,10 @@ class VerifiedErrorPage extends StatelessWidget {
                         buttonSize: ButtonSize.small,
                         label: 'Close',
                         color: errorColor,
-                        onTap: Navigator.of(context).pop,
+                        onTap: () {
+                          VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_CLOSE_APP_FROM_ERROR_PAGE);
+                          Navigator.of(context).pop();
+                        },
                       ),
                     ),
                   ],

@@ -10,6 +10,7 @@ import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/auth_providers.dart';
 import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/webviews/terms_of_use.dart';
 import 'package:verified/presentation/theme.dart';
@@ -85,6 +86,9 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () async {
                                       Navigator.of(context).pop();
+                                      VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_LOGIN, {
+                                        'page': '$redirect',
+                                      });
                                       await triggerSignUpBottomSheet(context: context, redirect: redirect);
                                     },
                                   style: GoogleFonts.ibmPlexSans(
@@ -137,7 +141,9 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
 
 /// type = "signin" | "signup"
 List<Widget> buttons(BuildContext context, {required String type}) {
-  void handler(AuthProvider provider) => context.read<AuthBloc>().add(AuthEvent.signInWithProvider(provider));
+  void handler(AuthProvider provider) {
+      VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_LOGIN, {'provider': provider.providerId, 'uuid': '$provider'});
+    context.read<AuthBloc>().add(AuthEvent.signInWithProvider(provider));}
   // void handle2(url) => navigate(
   //       context,
   //   page: VerifiedAuthWebView(
@@ -321,6 +327,12 @@ Future triggerSignUpBottomSheet<bool>({required BuildContext context, required W
                                     ..onTap = () async {
                                       try {
                                         Navigator.of(context).pop();
+                                        VerifiedAppAnalytics.logActionTaken(
+                                          VerifiedAppAnalytics.ACTION_LOGIN,
+                                          {
+                                            'page': 'AccountPage',
+                                          },
+                                        );
                                         await triggerAuthBottomSheet(context: context, redirect: AccountPage());
                                       } catch (error, stackTrace) {
                                         verifiedErrorLogger(error, stackTrace);

@@ -6,6 +6,7 @@ import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/choose_document_type_page.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
@@ -53,6 +54,7 @@ class _VerificationPageState extends State<VerificationPage> {
 
     return WillPopScope(
       onWillPop: () async {
+        VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_BACK_FROM_SELFIE_CAMERA);
         navigate(context, page: const HomePage(), replaceCurrentPage: true);
         return false;
       },
@@ -67,11 +69,14 @@ class _VerificationPageState extends State<VerificationPage> {
                   backBtn: VerifiedBackButton(
                     key: UniqueKey(),
                     isLight: true,
-                    onTap: () => navigate(
-                      context,
-                      page: const HomePage(),
-                      replaceCurrentPage: true,
-                    ),
+                    onTap: () {
+                      VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_BACK_FROM_SELFIE_CAMERA);
+                      navigate(
+                        context,
+                        page: const HomePage(),
+                        replaceCurrentPage: true,
+                      );
+                    },
                   ),
                   onCapture: (image) {
                     ///

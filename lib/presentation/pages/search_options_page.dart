@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/auth/auth_bloc.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/capture_details_page.dart';
 import 'package:verified/presentation/pages/input_form_page.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
@@ -68,7 +69,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                   tooltip: 'Information',
                   iconColor: darkerPrimaryColor.withOpacity(0.7),
                   bgColor: Colors.white,
-                  onTap: () => navigate(context, page: const LearnMorePage()),
+                  onTap: () => navigate(context, page: LearnMorePage()),
                   icon: Icons.help_rounded,
                   borderColor: darkerPrimaryColor.withOpacity(0.3),
                 ),
@@ -178,6 +179,12 @@ class _SearchOptionsPageContent extends StatelessWidget {
                               final user = context.read<StoreBloc>().state.userProfileData;
                               const selectedPage = InputFormPage();
                               if (user == null) {
+                                VerifiedAppAnalytics.logActionTaken(
+                                  VerifiedAppAnalytics.ACTION_LOGIN,
+                                  {
+                                    'page': '$selectedPage',
+                                  },
+                                );
                                 triggerAuthBottomSheet(context: context, redirect: selectedPage);
                               } else {
                                 navigate(context, page: selectedPage);
@@ -204,6 +211,12 @@ class _SearchOptionsPageContent extends StatelessWidget {
                             onTap: () {
                               final user = context.read<StoreBloc>().state.userProfileData;
                               if (user == null) {
+                                      VerifiedAppAnalytics.logActionTaken(
+                                  VerifiedAppAnalytics.ACTION_LOGIN,
+                                  {
+                                    'page': 'CaptureDetailsPage',
+                                  },
+                                );
                                 triggerAuthBottomSheet(context: context, redirect: CaptureDetailsPage());
 
                                 return;

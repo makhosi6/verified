@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/validation.dart';
 import 'package:verified/globals.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/verification_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/navigate.dart';
@@ -10,6 +11,7 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/inputs/generic_input.dart';
 
 final _globalKeyFormPage = GlobalKey<FormState>(debugLabel: 'input-verification-url-page-form-key');
+
 class InputVerificationURL extends StatefulWidget {
   const InputVerificationURL({super.key});
 
@@ -96,6 +98,8 @@ class _InputVerificationURLState extends State<InputVerificationURL> {
           onChange: (_) {},
           onTap: () => {},
           validator: (String? url) {
+            VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_VERIFICATION_VIA_URL, {'url': url});
+
             ///
             var urlSegments =
                 url.toString().split('/').where((segment) => UuidValidation.isValidUUID(fromString: segment));
@@ -138,6 +142,8 @@ class _InputVerificationURLState extends State<InputVerificationURL> {
                     setState(() {
                       inputValue = data.text.toString();
                     });
+                    VerifiedAppAnalytics.logActionTaken(
+                        VerifiedAppAnalytics.ACTION_DID_PASTE_A_VERIFICATION_URL, {'url': inputValue, 'mode': 'paste'});
                   }
                   WidgetsBinding.instance.addPostFrameCallback((_) => _globalKeyFormPage.currentState?.validate());
                 },
@@ -163,7 +169,7 @@ class _InputVerificationURLState extends State<InputVerificationURL> {
               if (uriUuidFragment != null && hasInvalidInput == false)
                 ActionButton(
                   tooltip: '',
-                    innerPadding: const EdgeInsets.all(12.0),
+                  innerPadding: const EdgeInsets.all(12.0),
                   icon: Icons.arrow_forward_ios_rounded,
                   hasBorderLining: true,
                   borderColor: Colors.green[100],

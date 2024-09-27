@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/input_verification_url.dart';
@@ -70,7 +71,10 @@ class HomePageContents extends StatelessWidget {
         ),
         child: BaseButton(
           key: const Key('main-search-fab'),
-          onTap: () => navigate(context, page: const SearchOptionsPage()),
+          onTap: () {
+            VerifiedAppAnalytics.logFeatureUsed(VerifiedAppAnalytics.FEATURE_VERIFY_FROM_HOME);
+            navigate(context, page: const SearchOptionsPage());
+          },
           label: 'Verify',
           color: Colors.white,
           iconBgColor: neutralYellow,
@@ -128,6 +132,9 @@ class HomePageContents extends StatelessWidget {
                       final user = context.read<StoreBloc>().state.userProfileData ?? (await LocalUser.getUser());
                       final page = AccountPage();
                       if (user == null) {
+                        VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_LOGIN, {
+                          'page': '$page'
+                        });
                         // ignore: use_build_context_synchronously
                         await triggerAuthBottomSheet(context: context, redirect: page);
                       } else {

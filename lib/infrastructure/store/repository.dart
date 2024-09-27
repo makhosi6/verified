@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
-import 'package:flutter/foundation.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/domain/interfaces/i_store_repository.dart';
 import 'package:verified/domain/models/communication_channels.dart';

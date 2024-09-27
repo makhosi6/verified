@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:appscheme/appscheme.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -27,6 +28,7 @@ import 'package:verified/domain/models/device.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/firebase_options.dart';
 import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/infrastructure/auth/repository.dart';
 import 'package:verified/infrastructure/payments/repository.dart';
@@ -40,10 +42,12 @@ import 'package:verified/presentation/pages/transactions_page.dart';
 import 'package:verified/presentation/pages/verification_info_page.dart';
 import 'package:verified/presentation/pages/verification_page.dart';
 import 'package:verified/presentation/theme.dart';
+import 'package:verified/presentation/utils/app_info.dart';
 import 'package:verified/presentation/utils/device_info.dart';
 import 'package:verified/presentation/utils/lottie_loader.dart';
 import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/services/dio.dart';
+import 'package:verified/services/navigator_observer.dart';
 import 'package:verified/services/notifications.dart';
 import 'package:rxdart/subjects.dart';
 
@@ -61,11 +65,25 @@ void main() async {
     // name: (kIsWeb || defaultTargetPlatform == TargetPlatform.iOS) ? null : 'firebasePrimaryInstance',
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  var device = await getCurrentDeviceInfo();
+  final device = await getCurrentDeviceInfo();
+  final package = await getVerifiedPackageInfo();
 
   /// Force disable Crashlytics in dev environment
   if (kDebugMode) await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
   FirebaseCrashlytics.instance.setUserIdentifier(device['id']);
+
+  ///
+  FirebaseAnalytics.instance
+    ..setUserProperty(
+      name: 'VERIFIED_SUI',
+      value: 'sui_${device['id']}',
+    )
+    ..setUserProperty(
+      name: 'VERIFIED_VERSION',
+      value: 'v${package['version']}',
+    );
+  FirebaseAnalytics.instance.setUserId(id: device['id']);
+  if (!kIsWeb) FirebaseAnalytics.instance.setDefaultEventParameters({'version': package['version']});
 
   /// Pass all uncaught errors from the framework to Crashlytics.
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
@@ -174,6 +192,7 @@ void main() async {
         theme: theme,
         debugShowCheckedModeBanner: false,
         title: 'Error: $displayAppName',
+        navigatorObservers: [VerifiedNavigatorObserver()],
         home: VerifiedErrorPage(
           key: Key('fallback-error-page-${details.hashCode}'),
           message: details.summary.toDescription(),
@@ -334,6 +353,7 @@ class _AppRootState extends State<AppRoot> {
   void _openAppLink(Uri uri) {
     var urlSegments = uri.toString().split('/').where((segment) => UuidValidation.isValidUUID(fromString: segment));
     verifiedLogger('A VALID UUID SEGMENT: $urlSegments');
+
     if (mounted) {
       setState(() {
         uriUuidFragment = urlSegments.isNotEmpty ? urlSegments.first : null;
@@ -346,8 +366,15 @@ class _AppRootState extends State<AppRoot> {
                     : SnackbarValue.unknown;
       });
 
+      ///
+      if (snackBarValue == SnackbarValue.success || snackBarValue == SnackbarValue.warning) {
+        VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_TRIGGER_VERIFICATION_WITH_DEEP_LINK);
+      }
+
+      ///
       verifiedLogger('Set Snackbar State: $uriUuidFragment  |  $snackBarValue');
-      //
+
+      ///
 
       Future.delayed(
         const Duration(seconds: 2),
@@ -522,6 +549,7 @@ class _AppRootState extends State<AppRoot> {
     ///
     return MaterialApp(
       navigatorKey: _navigatorKey,
+      navigatorObservers: [VerifiedNavigatorObserver()],
       builder: FToastBuilder(),
       debugShowCheckedModeBanner: false,
       theme: theme,

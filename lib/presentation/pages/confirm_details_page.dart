@@ -12,6 +12,7 @@ import 'package:verified/domain/models/wallet.dart';
 
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/theme.dart';
@@ -84,7 +85,11 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                   leadingWidth: 80.0,
                   leading: VerifiedBackButton(
                     key: const Key('captured-details-page-back-btn'),
-                    onTap: () => Navigator.pop(context),
+                    onTap: () {
+                      VerifiedAppAnalytics.logActionTaken(
+                          VerifiedAppAnalytics.ACTION_BACK_FROM_CONFIRM_CANDIDATE_DETAILS);
+                      Navigator.pop(context);
+                    },
                     isLight: true,
                   ),
                   actions: const [],
@@ -282,13 +287,14 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                                             ..add(StoreEvent.createWallet(wallet));
                                         }
                                       }
-                                      if (kDebugMode) {
-                                        verifiedLogger(wallet);
-                                        verifiedLogger('============');
-                                      }
+
                                       if ((wallet.balance ?? 0) < POINTS_PER_TRANSACTION) {
+                                        VerifiedAppAnalytics.logActionTaken(
+                                            VerifiedAppAnalytics.ACTION_TOPUP_DURING_VERIFICATION);
                                         return await showTopUpBottomSheet(context);
                                       }
+                                      VerifiedAppAnalytics.logActionTaken(
+                                          VerifiedAppAnalytics.ACTION_STARTED_VERIFICATION_PROCESS);
 
                                       /// send
                                       context.read<StoreBloc>().add(const StoreEvent.validateAndSubmit());
@@ -297,7 +303,7 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                                         context: context,
                                         barrierDismissible: false,
                                         barrierColor: const Color.fromARGB(171, 0, 0, 0),
-                                        builder: (context) => _DonePopUp(),
+                                        builder: (context) => const _DonePopUp(),
                                       );
                                     }),
                               ),
@@ -375,7 +381,8 @@ class __DonePopUpState extends State<_DonePopUp> {
     final person = context.watch<StoreBloc>().state.searchPerson;
     return SuccessfulActionModal(
       title: 'Created Successfully!',
-      subtitle: 'Your verification has been successfully submitted! The person will be notified and will complete the required steps soon. You will receive updates once it\'s completed 🎉',
+      subtitle:
+          'Your verification has been successfully submitted! The person will be notified and will complete the required steps soon. You will receive updates once it\'s completed 🎉',
       nextAction: () {
         /// send communication to [person]
         context.read<StoreBloc>().add(StoreEvent.willSendNotificationAfterVerification(
@@ -421,6 +428,8 @@ class __DonePopUpState extends State<_DonePopUp> {
                 email = value ?? false;
               });
             }
+            VerifiedAppAnalytics.logFeatureUsed(
+                VerifiedAppAnalytics.FEATURE_SEND_COMMS_TO_CANDIDATE, {'comms_channel': 'email', 'value': value});
           },
           title: const Text('Email'),
           subtitle: Text(
@@ -438,6 +447,8 @@ class __DonePopUpState extends State<_DonePopUp> {
                 sms = value ?? false;
               });
             }
+            VerifiedAppAnalytics.logFeatureUsed(
+                VerifiedAppAnalytics.FEATURE_SEND_COMMS_TO_CANDIDATE, {'comms_channel': 'sms', 'value': value});
           },
           title: const Text('SMS'),
           subtitle: Text(

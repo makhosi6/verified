@@ -9,6 +9,7 @@ import 'package:verified/app_config.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/select_media.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
@@ -66,7 +67,11 @@ Future showHelpPopUpForm(BuildContext context, {String? title}) async => await s
     });
 
 class _HelpForm extends StatefulWidget {
-  _HelpForm() : super(key: _helpFormGlobalKey);
+  _HelpForm() : super(key: _helpFormGlobalKey){
+
+  VerifiedAppAnalytics.logActionTaken(
+      VerifiedAppAnalytics.ACTION_LOG_SUPPORT_TICKET);
+  }
 
   @override
   State<_HelpForm> createState() => _HelpFormState();

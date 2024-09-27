@@ -8,6 +8,7 @@ class CandidateRequest {
     this.description,
     this.idNumber,
     this.nationality,
+    this.dayOfBirth,
   });
 
   CandidateRequest.fromJson(dynamic json) {
@@ -19,6 +20,7 @@ class CandidateRequest {
     description = json['description'];
     idNumber = json['idNumber'];
     nationality = json['nationality'];
+    dayOfBirth = json['dayOfBirth'];
   }
   String? jobUuid;
   String? image;
@@ -28,6 +30,7 @@ class CandidateRequest {
   String? email;
   String? description;
   String? nationality;
+  String? dayOfBirth;
   CandidateRequest copyWith({
     String? jobUuid,
     String? image,
@@ -37,6 +40,7 @@ class CandidateRequest {
     String? description,
     String? idNumber,
     String? nationality,
+    String? dayOfBirth,
   }) =>
       CandidateRequest(
         jobUuid: jobUuid ?? this.jobUuid,
@@ -47,6 +51,7 @@ class CandidateRequest {
         description: description ?? this.description,
         idNumber: idNumber ?? this.idNumber,
         nationality: nationality ?? this.nationality,
+        dayOfBirth: dayOfBirth ?? this.dayOfBirth,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -58,6 +63,7 @@ class CandidateRequest {
     map['description'] = description;
     map['idNumber'] = idNumber;
     map['nationality'] = nationality;
+    map['dayOfBirth'] = dayOfBirth;
     return map;
   }
 }

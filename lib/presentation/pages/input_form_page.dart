@@ -14,6 +14,7 @@ import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/pages/search_results_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
@@ -207,7 +208,7 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
                                 text: 'Need help? Visit our Help page for support!',
                                 onTap: () => navigate(
                                   context,
-                                  page: const LearnMorePage(),
+                                  page: LearnMorePage(),
                                 ),
                               ),
                             ),
@@ -276,7 +277,7 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
     ];
   }
 
-  Widget submitButton(BuildContext context, UserProfile? user)  {
+  Widget submitButton(BuildContext context, UserProfile? user) {
     return InputFormSubmitButton(
       pageButtonName: stackIndex == 0 ? 'Next' : 'Submit',
       nextHandler: () async {
@@ -324,11 +325,17 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
             verifiedLogger('============');
           }
           if ((wallet.balance ?? 0) < POINTS_PER_TRANSACTION) {
-           await showTopUpBottomSheet(context);
+            await showTopUpBottomSheet(context);
 
             return;
           }
-
+          ///
+          if (selectedFormType == FormType.idForm) {
+            VerifiedAppAnalytics.logFeatureUsed(VerifiedAppAnalytics.FEATURE_QUICK_VERIFICATION_ID);
+          }
+          if (selectedFormType == FormType.phoneNumberForm) {
+            VerifiedAppAnalytics.logFeatureUsed(VerifiedAppAnalytics.FEATURE_QUICK_VERIFICATION_PHONE);
+          }
           ///
           if (selectedFormType == FormType.idForm) {
             ///
@@ -366,6 +373,8 @@ class _InputFormPageState extends State<InputFormPage> with SingleTickerProvider
 
             return;
           }
+
+
 
           ///
           navigate(

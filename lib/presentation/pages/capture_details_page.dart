@@ -5,7 +5,7 @@ import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/search_request.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/logger.dart';
-import 'package:verified/presentation/pages/create_account_page.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
 import 'package:verified/presentation/pages/select_services_page.dart';
 import 'package:verified/presentation/theme.dart';
@@ -55,7 +55,13 @@ class CaptureDetailsPage extends StatelessWidget {
               leadingWidth: 80.0,
               leading: VerifiedBackButton(
                 key: const Key('captured-details-page-back-btn'),
-                onTap: () => Navigator.pop(context),
+                onTap: () {
+                  VerifiedAppAnalytics.logActionTaken(
+                    VerifiedAppAnalytics.ACTION_BACK_CREATE_CANDIDATE_DETAILS,
+                  );
+
+                  Navigator.pop(context);
+                },
                 isLight: true,
               ),
               actions: [
@@ -63,7 +69,23 @@ class CaptureDetailsPage extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 12.0),
                   child: BaseButton(
                     key: UniqueKey(),
-                    onTap: () => navigate(context, page: CreateAccountPage()),
+                    // onTap: () => navigate(context, page: CreateAccountPage()),
+                    onTap: () {
+                      VerifiedAppAnalytics.logFeatureUsed(
+                        VerifiedAppAnalytics.FEATURE_BULK_VERIFICATION,
+                      );
+
+                      ///
+                      ScaffoldMessenger.of(context).showMaterialBanner(
+                        MaterialBanner(
+                          padding: primaryPadding,
+                          content: const Text('Bulk Verification feature coming soon!'),
+                          leading: const Icon(Icons.donut_large_sharp),
+                          backgroundColor: neutralYellow,
+                          actions: const [IconButton(onPressed: null, icon: Icon(Icons.close_sharp))],
+                        ),
+                      );
+                    },
                     height: 49.0,
                     label: 'Bulk Verify',
                     borderColor: primaryColor,
@@ -221,7 +243,7 @@ class CaptureDetailsPage extends StatelessWidget {
                               text: 'Need help? Visit our Help page for support!',
                               onTap: () => navigate(
                                 context,
-                                page: const LearnMorePage(),
+                                page: LearnMorePage(),
                               ),
                             ),
                           ),

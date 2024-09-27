@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/theme.dart';
 
 class LearnMoreHighlightedButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
 
-  const LearnMoreHighlightedButton({super.key, required this.text, required this.onTap});
+  LearnMoreHighlightedButton({super.key, required this.text, required this.onTap}) {
+    VerifiedAppAnalytics.logActionTaken(
+      VerifiedAppAnalytics.ACTION_OPEN_LEARN_MORE,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

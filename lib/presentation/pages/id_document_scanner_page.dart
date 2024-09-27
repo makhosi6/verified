@@ -9,6 +9,7 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:verified/helpers/image.dart';
 import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/blinking_animation.dart';
@@ -154,7 +155,8 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
       }
 
       /// capture id_book front
-      verifiedLogger('MAYBE IT\'S AN ID_BOOK $hasFace|$hasCode39Barcode|$hasCode39Barcode2|$hasIdBookText|$barcodeText');
+      verifiedLogger(
+          'MAYBE IT\'S AN ID_BOOK $hasFace|$hasCode39Barcode|$hasCode39Barcode2|$hasIdBookText|$barcodeText');
       if (hasFace && (hasCode39Barcode2 || hasCode39Barcode) && hasIdBookText) {
         await captureImage(DetectSide.front.name);
       }
@@ -196,7 +198,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
 
           return hasMRZIdentifiers;
         } catch (error, stackTrace) {
-            verifiedErrorLogger(error, stackTrace);
+          verifiedErrorLogger(error, stackTrace);
           return false;
         }
       });
@@ -218,7 +220,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
 
       return false;
     } catch (error, stackTrace) {
-        verifiedErrorLogger(error, stackTrace);
+      verifiedErrorLogger(error, stackTrace);
 
       return false;
     }
@@ -241,7 +243,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
 
       return false;
     } catch (error, stackTrace) {
-        verifiedErrorLogger(error, stackTrace);
+      verifiedErrorLogger(error, stackTrace);
 
       return false;
     }
@@ -264,7 +266,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
 
       return false;
     } catch (error, stackTrace) {
-        verifiedErrorLogger(error, stackTrace);
+      verifiedErrorLogger(error, stackTrace);
 
       return false;
     }
@@ -287,7 +289,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
         return false;
       }
     } catch (error, stackTrace) {
-        verifiedErrorLogger(error, stackTrace);
+      verifiedErrorLogger(error, stackTrace);
 
       return false;
     }
@@ -410,6 +412,7 @@ class _IDDocumentScannerState extends State<IDDocumentScanner> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_BACK_FROM_DOC_SCANNER);
         navigate(context, page: const HomePage(), replaceCurrentPage: true);
         return false;
       },

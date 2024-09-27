@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
+import 'package:verified/presentation/pages/search_options_page.dart';
+import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
@@ -28,7 +31,10 @@ class TransactionPage extends StatelessWidget {
         ),
         child: BaseButton(
           key: UniqueKey(),
-          onTap: () {},
+          onTap: () {
+            VerifiedAppAnalytics.logFeatureUsed(VerifiedAppAnalytics.FEATURE_VERIFY_FROM_HISTORY);
+            navigate(context, page: const SearchOptionsPage());
+          },
           label: 'Verify',
           color: Colors.white,
           iconBgColor: neutralYellow,

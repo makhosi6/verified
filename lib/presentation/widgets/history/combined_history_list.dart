@@ -32,7 +32,7 @@ class CombinedHistoryList extends StatelessWidget {
       title: 'How it Works',
       subtitle: '',
       buttonText: 'Learn More',
-      onTap: () => navigate(context, page: const HowItWorksPage()),
+      onTap: () => navigate(context, page:  HowItWorksPage()),
     );
     return Container(
       width: MediaQuery.of(context).size.width - 12,
@@ -114,7 +114,7 @@ class CombinedHistoryList extends StatelessWidget {
                 title: 'Get the most out of Verified',
                 subtitle: '',
                 buttonText: 'Learn More',
-                onTap: () => navigate(context, page: const LearnMorePage()),
+                onTap: () => navigate(context, page: LearnMorePage()),
               ),
               if (showBanner == true)
                 SizedBox(

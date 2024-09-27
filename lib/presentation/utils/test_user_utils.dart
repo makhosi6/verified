@@ -7,6 +7,7 @@ import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/user_profile.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/app_info.dart';
 import 'package:verified/presentation/utils/device_info.dart';
@@ -44,6 +45,9 @@ void onLogInAsTestUser(BuildContext context) {
       }
     });
 
+    ///
+  VerifiedAppAnalytics.logFeatureUsed(
+      VerifiedAppAnalytics.FEATURE_TEST_USER_LOGIN);
     ///
     showDialog(
       context: context,

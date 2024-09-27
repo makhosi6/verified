@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/theme.dart';
 
 class LottieProgressLoader extends StatefulWidget {
@@ -11,11 +12,11 @@ class LottieProgressLoader extends StatefulWidget {
 
 class _LottieProgressLoaderState extends State<LottieProgressLoader> {
   late final Future<LottieComposition> _composition;
+  final start = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-
     _composition = AssetLottie('assets/lottie/verified_animating_logo.json').load();
   }
 
@@ -34,10 +35,11 @@ class _LottieProgressLoaderState extends State<LottieProgressLoader> {
         builder: (context, snapshot) {
           var composition = snapshot.data;
           if (composition != null) {
-            return Lottie(composition: composition);
+            return Lottie(key: Key('${start.millisecondsSinceEpoch}'), composition: composition);
           } else {
             return Center(
                 child: CircularProgressIndicator(
+              key: Key('${start.millisecondsSinceEpoch}'),
               color: darkerPrimaryColor,
             ));
           }
@@ -48,6 +50,11 @@ class _LottieProgressLoaderState extends State<LottieProgressLoader> {
 
   @override
   void dispose() {
+    final end = DateTime.now();
+    VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_PROGRESS_INDICATOR, {
+      'load_time_in_ms': end.millisecondsSinceEpoch - start.millisecondsSinceEpoch,
+      'timestamp': end.millisecondsSinceEpoch
+    });
     super.dispose();
   }
 }

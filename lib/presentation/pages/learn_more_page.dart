@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
 import 'package:verified/presentation/utils/navigate.dart';
@@ -8,7 +9,10 @@ import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/popups/help_form_popup.dart';
 
 class LearnMorePage extends StatefulWidget {
-  const LearnMorePage({super.key});
+   LearnMorePage({super.key}){
+      VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_READ_DOCUMENTATION);
+      VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_OPEN_LEARN_MORE);
+   }
 
   @override
   State<LearnMorePage> createState() => _LearnMorePageState();
@@ -53,7 +57,6 @@ class _LearnMorePageState extends State<LearnMorePage> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    ///
     return Scaffold(
         backgroundColor: const Color(0xFFF5FCF8),
         body: Center(
@@ -1072,7 +1075,9 @@ class TutorialData {
 class DetailedTutorialPage extends StatefulWidget {
   final Widget answer;
   final String question;
-  const DetailedTutorialPage({super.key, required this.answer, required this.question});
+  DetailedTutorialPage({super.key, required this.answer, required this.question}) {
+    VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_OPEN_DETAILED_TUTORIAL);
+  }
 
   @override
   State<DetailedTutorialPage> createState() => _DetailedTutorialPageState();
@@ -1131,7 +1136,9 @@ class _DetailedTutorialPageState extends State<DetailedTutorialPage> {
                             const Size(80, 40),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                            VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_OPEN_YOUTUBE_VIDEO);
+                        },
                         child: Image.asset('assets/icons/youtube.png'),
                       ),
                     )
@@ -1139,9 +1146,9 @@ class _DetailedTutorialPageState extends State<DetailedTutorialPage> {
                 ),
               ),
               background: Container(
-                decoration:  BoxDecoration(
+                decoration: BoxDecoration(
                   color: neutralGrey,
-                  borderRadius:const BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(16.0),
                     bottomRight: Radius.circular(16.0),
                   ),

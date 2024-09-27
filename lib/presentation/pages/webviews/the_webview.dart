@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'package:verified/helpers/app_info.dart';
@@ -89,6 +90,8 @@ class _TheWebViewState extends State<TheWebView> {
         ),
       )
       ..loadRequest(Uri.parse(widget.webURL));
+
+      VerifiedAppAnalytics.logFeatureUsed(VerifiedAppAnalytics.FEATURE_DID_TRIGGER_A_WEBVIEW, {'url': widget.webURL});
   }
 
   @override

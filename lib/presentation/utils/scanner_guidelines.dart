@@ -41,8 +41,8 @@ class _ScanDocsGuidelinesState extends State<ScanDocsGuidelines> {
           child: IconButton(
             alignment: Alignment.topLeft,
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 234, 248, 238)),
-              padding: MaterialStateProperty.all(const EdgeInsets.all(10)),
+              backgroundColor: WidgetStateProperty.all(const Color.fromARGB(255, 234, 248, 238)),
+              padding: WidgetStateProperty.all(const EdgeInsets.all(10)),
             ),
             icon: Icon(Icons.help_rounded, color: Colors.grey.shade900),
             onPressed: toggle,

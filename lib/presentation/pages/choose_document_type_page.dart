@@ -10,6 +10,7 @@ import 'package:verified/globals.dart';
 import 'package:verified/helpers/extensions/user.dart';
 import 'package:verified/helpers/image.dart';
 import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/id_document_scanner_page.dart';
 import 'package:verified/presentation/pages/verification_page.dart';
@@ -60,7 +61,11 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                 leadingWidth: 80.0,
                 leading: VerifiedBackButton(
                   key: const Key('choose-document-type-page-back-btn'),
-                  onTap: () => navigate(context, page: const HomePage(), replaceCurrentPage: true),
+                  onTap: (){
+                       VerifiedAppAnalytics.logActionTaken(
+                                            VerifiedAppAnalytics.ACTION_BACK_FROM_DOC_SCANNER);
+                    
+                    navigate(context, page: const HomePage(), replaceCurrentPage: true);},
                   isLight: true,
                 ),
               ),
@@ -193,12 +198,6 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                                 ((await convertToFormData(img.file, side: img.side)) as MultipartFile))
                                             .toList());
 
-                                        verifiedLogger(_documentScannerState.imageFiles.length);
-                                        verifiedLogger(_documentScannerState.imageFiles);
-                                        verifiedLogger(filesData);
-                                        verifiedLogger(filesData.map((e) => e.filename));
-                                        verifiedLogger(filesData.length);
-                                        // if (filesData.isEmpty && kDebugMode) exit(0);
                                         // ignore: use_build_context_synchronously
                                         ctx.read<StoreBloc>()
                                           ..add(StoreEvent.addCandidate(details))
@@ -222,6 +221,8 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                                           ),
                                         );
                                     }
+                                         VerifiedAppAnalytics.logActionTaken(
+                                            VerifiedAppAnalytics.ACTION_SELECT_DOC_TYPE, {'doc_type': DocumentType.values[index]});
                                   } catch (error, stackTrace) {
                                     // 31878): Error @ onNext of _choose docs Looking up a deactivated widget's ancestor is unsafe.
                                     debugPrintStack(stackTrace: stackTrace, label: 'Error @ onNext of _choose docs');
