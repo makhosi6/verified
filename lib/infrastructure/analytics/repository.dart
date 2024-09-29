@@ -1,4 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:verified/helpers/logger.dart';
 
 class VerifiedAppAnalytics {
@@ -91,19 +92,23 @@ class VerifiedAppAnalytics {
 
   /// Send feature usage event to analytics
   static void logFeatureUsed(String feature, [Map<String, dynamic>? args]) {
-    FirebaseAnalytics.instance.logEvent(
-      name: 'verified_app_feature_event',
-      parameters: {'feature': feature}..addAll(args ?? {}),
-    );
-    verifiedLogger('Feature used logged: $feature');
+    if (kReleaseMode) {
+      FirebaseAnalytics.instance.logEvent(
+        name: 'verified_app_feature_event',
+        parameters: {'feature': feature}..addAll(args ?? {}),
+      );
+      verifiedLogger('Feature used logged: $feature');
+    }
   }
 
   /// Send action event to analytics
   static void logActionTaken(String action, [Map<String, dynamic>? args]) {
-    FirebaseAnalytics.instance.logEvent(
-      name: 'verified_app_action_event',
-      parameters: {'action': action}..addAll(args ?? {}),
-    );
-    verifiedLogger('Action taken logged: $action');
+    if (kReleaseMode) {
+      FirebaseAnalytics.instance.logEvent(
+        name: 'verified_app_action_event',
+        parameters: {'action': action}..addAll(args ?? {}),
+      );
+      verifiedLogger('Action taken logged: $action');
+    }
   }
 }

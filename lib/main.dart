@@ -73,17 +73,19 @@ void main() async {
   FirebaseCrashlytics.instance.setUserIdentifier(device['id']);
 
   ///
-  FirebaseAnalytics.instance
-    ..setUserProperty(
-      name: 'VERIFIED_SUI',
-      value: 'sui_${device['id']}',
-    )
-    ..setUserProperty(
-      name: 'VERIFIED_VERSION',
-      value: 'v${package['version']}',
-    );
-  FirebaseAnalytics.instance.setUserId(id: device['id']);
-  if (!kIsWeb) FirebaseAnalytics.instance.setDefaultEventParameters({'version': package['version']});
+  if (kReleaseMode) {
+    FirebaseAnalytics.instance
+      ..setUserProperty(
+        name: 'VERIFIED_SUI',
+        value: 'sui_${device['id']}',
+      )
+      ..setUserProperty(
+        name: 'VERIFIED_VERSION',
+        value: 'v${package['version']}',
+      );
+    FirebaseAnalytics.instance.setUserId(id: device['id']);
+    if (!kIsWeb) FirebaseAnalytics.instance.setDefaultEventParameters({'version': package['version']});
+  }
 
   /// Pass all uncaught errors from the framework to Crashlytics.
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;

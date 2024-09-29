@@ -112,7 +112,14 @@ flutter build web --web-renderer canvaskit
 - `cd verified.byteestudio.com`
 - `cat certificate.crt ca_bundle.crt >> merged_certificate.crt`
 
+## firebase analytics debug view
 
+- ```bash
+  adb shell setprop log.tag.FA VERBOSE
+  adb shell setprop log.tag.FA-SVC VERBOSE
+  adb logcat -v time -s FA FA-SVC
+  adb shell setprop debug.firebase.analytics.app "com.byteestudio.verified"
+  ```
 
 ### check-out
 - https://regulaforensics.com

@@ -1,4 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verified/application/payments/payments_bloc.dart';
@@ -33,7 +34,8 @@ class PaymentPage extends StatelessWidget {
       );
     }
 
-    FirebaseAnalytics.instance.logBeginCheckout(
+   if (kReleaseMode) {
+     FirebaseAnalytics.instance.logBeginCheckout(
         value: checkout?.amount?.toDouble(),
         currency: checkout?.currency,
         items: [
@@ -44,6 +46,7 @@ class PaymentPage extends StatelessWidget {
           ),
         ],
         coupon: 'TOPUP');
+   }
 
     return TheWebView(
       hasBackBtn: false,

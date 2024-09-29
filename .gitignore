@@ -121,13 +121,13 @@ local.properties
 **/*.g.dart
 
 
-# hide DB collections
+# hide data files
 **/db/*.json
 **/*nonce.js
 **/*nonce.source.js
 **/raw.dart
 **/*.base64
-
+/android_old/
 /flutter
 /flutter_*
 
