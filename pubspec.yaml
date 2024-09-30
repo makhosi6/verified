@@ -69,7 +69,10 @@ dependencies:
   skeletonizer: ^1.0.1
   app_links: ^6.3.2
   uuid: ^4.0.0
-  appscheme: ^1.0.8
+  appscheme: 
+    git: 
+      url: https://github.com/makhosi6/flutter-scheme.git
+      ref: fix/remove-namespace
   camera: ^0.10.5+9
   flutter_beep: ^1.0.0
   face_camera:

@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:appscheme/appscheme.dart';
+// import 'package:appscheme/appscheme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -211,14 +212,13 @@ void main() async {
     ///
   }, (error, stackTrace) async {
     verifiedErrorLogger(error, stackTrace);
+    /// fb crush
     await FirebaseCrashlytics.instance.recordError(
       error,
       stackTrace,
       reason: error.toString(),
       fatal: true,
     );
-
-    /// fb crush
   });
 }
 
