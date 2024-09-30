@@ -86,6 +86,8 @@ dependencies:
   mrz_parser: ^2.0.0
   firebase_crashlytics: ^3.5.7
   firebase_analytics: ^10.10.7
+  flutter_signature_pad: ^3.0.1
+  hand_signature: ^3.0.3
 
 
 dev_dependencies:

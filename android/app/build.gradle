@@ -36,7 +36,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    namespace "com.byteestudio.verified"
+    namespace "com.byteestudio.verify_sa"
     compileSdkVersion flutter.compileSdkVersion
     compileSdk 34
     // ndkVersion flutter.ndkVersion

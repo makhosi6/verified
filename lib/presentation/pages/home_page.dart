@@ -8,6 +8,7 @@ import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/input_verification_url.dart';
+import 'package:verified/presentation/pages/permit_form_page.dart';
 import 'package:verified/presentation/pages/verification_page.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
@@ -111,9 +112,10 @@ class HomePageContents extends StatelessWidget {
                 Padding(
                   padding: primaryPadding,
                   child: InkWell(
-                    onTap: () => navigate(context, page: const InputVerificationURL()),
+                    // onTap: () => navigate(context, page: const InputVerificationURL()),
+                    onTap: () => navigate(context, page: PermitFormPage()),
                     child: Row(
-                      children: [
+                      children: [ 
                         Text(
                           'Start Verification',
                           style: GoogleFonts.dmSans(color: primaryColor),
@@ -130,7 +132,7 @@ class HomePageContents extends StatelessWidget {
                   onTap: () async {
                     try {
                       final user = context.read<StoreBloc>().state.userProfileData ?? (await LocalUser.getUser());
-                      final page = AccountPage();
+                      const page = AccountPage();
                       if (user == null) {
                         VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_LOGIN, {
                           'page': '$page'
