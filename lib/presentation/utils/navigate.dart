@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:verified/helpers/logger.dart';
 import 'package:verified/presentation/theme.dart';
 
-void navigate(BuildContext context, {required Widget page, bool replaceCurrentPage = false}) {
+void navigate<T extends Widget>(BuildContext context, {required Widget page, Object? arguments, bool replaceCurrentPage = false}) {
   try {
     verifiedLogger('Will navigate to $page');
     if (kReleaseMode) {
@@ -16,10 +16,13 @@ void navigate(BuildContext context, {required Widget page, bool replaceCurrentPa
         },
       );
     }
+    
     final navigator = replaceCurrentPage ? Navigator.of(context).pushReplacement : Navigator.of(context).push;
     navigator(
-      MaterialPageRoute<void>(
+      MaterialPageRoute<T>(
         builder: (BuildContext context) => page,
+        settings: RouteSettings(name: '$page', arguments: arguments),
+        
       ),
     );
   } catch (error, stackTrace) {

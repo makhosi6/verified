@@ -78,7 +78,7 @@ dependencies:
   face_camera:
     git:
       url: https://github.com/makhosi6/face_camera.git
-      ref: c2c50247f584d34d67db37342231acc3438c1008
+      ref: feature/verified
   flutter_mrz_scanner: ^2.1.0
   google_mlkit_face_detection: 0.11.0
   google_mlkit_barcode_scanning: 0.12.0
@@ -88,6 +88,8 @@ dependencies:
   firebase_analytics: ^10.10.7
   flutter_signature_pad: ^3.0.1
   hand_signature: ^3.0.3
+  syncfusion_flutter_signaturepad: ^27.1.51
+  file_picker: ^8.1.2
 
 
 dev_dependencies:

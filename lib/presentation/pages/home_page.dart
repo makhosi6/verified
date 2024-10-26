@@ -10,6 +10,7 @@ import 'package:verified/presentation/pages/account_page.dart';
 import 'package:verified/presentation/pages/input_verification_url.dart';
 import 'package:verified/presentation/pages/permit_form_page.dart';
 import 'package:verified/presentation/pages/verification_page.dart';
+import 'package:verified/presentation/utils/document_type.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
 import 'package:verified/presentation/theme.dart';
@@ -37,12 +38,14 @@ class HomePageContents extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> widgets = [
       GestureDetector(
-        onTap: () => navigateToNamedRoute(
-          context,
-          arguments: VerificationPageArgs(
-            '0000000-0000-0000-0000-00000000000',
-          ),
-        ),
+        onTap: () {
+          const placeholderUuid = '0000000-0000-0000-0000-00000000000';
+          context.read<StoreBloc>().add(const StoreEvent.validateVerificationLink(placeholderUuid));
+          navigateToNamedRoute(
+            context,
+            arguments: VerificationPageArgs(placeholderUuid),
+          );
+        },
         child: const Balance(
           key: Key('homepage-balance-section'),
         ),
@@ -91,7 +94,7 @@ class HomePageContents extends StatelessWidget {
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: <Widget>[
-             const AppErrorWarningIndicator(
+            const AppErrorWarningIndicator(
               key: Key('homepage_app_error_warning_indicator'),
             ),
             SliverAppBar(
@@ -112,10 +115,26 @@ class HomePageContents extends StatelessWidget {
                 Padding(
                   padding: primaryPadding,
                   child: InkWell(
-                    // onTap: () => navigate(context, page: const InputVerificationURL()),
-                    onTap: () => navigate(context, page: PermitFormPage()),
+                    onTap: () => navigate(context, page: PermitFormPage(), arguments: {
+                      'docType': DocumentType.passport,
+                      'jobUuid': '0000000-0000-0000-0000-00000000000',
+                    }),
                     child: Row(
-                      children: [ 
+                      children: [
+                        Text(
+                          'Test',
+                          style: GoogleFonts.dmSans(color: primaryColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: primaryPadding,
+                  child: InkWell(
+                    onTap: () => navigate(context, page: const InputVerificationURL()),
+                    child: Row(
+                      children: [
                         Text(
                           'Start Verification',
                           style: GoogleFonts.dmSans(color: primaryColor),
@@ -134,9 +153,7 @@ class HomePageContents extends StatelessWidget {
                       final user = context.read<StoreBloc>().state.userProfileData ?? (await LocalUser.getUser());
                       const page = AccountPage();
                       if (user == null) {
-                        VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_LOGIN, {
-                          'page': '$page'
-                        });
+                        VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_LOGIN, {'page': '$page'});
                         // ignore: use_build_context_synchronously
                         await triggerAuthBottomSheet(context: context, redirect: page);
                       } else {
@@ -144,7 +161,7 @@ class HomePageContents extends StatelessWidget {
                         navigate(context, page: page);
                       }
                     } catch (error, stackTrace) {
-                     verifiedErrorLogger(error, stackTrace);
+                      verifiedErrorLogger(error, stackTrace);
                     }
                   },
                   icon: Icons.person_2_outlined,
@@ -163,5 +180,3 @@ class HomePageContents extends StatelessWidget {
     );
   }
 }
-
-

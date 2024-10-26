@@ -33,7 +33,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   @override
   Widget build(BuildContext context) {
     ///
-    var borderColor = ThemeData(brightness: Brightness.light).textTheme.displayLarge?.color ?? Colors.black87;
+    var borderColor = ThemeData(brightness: Brightness.light).textTheme.displayLarge?.color ?? primaryColor;
 
     ///
     return WillPopScope(
@@ -138,7 +138,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                             ]
                                 .map(
                                   (inputOption) => Padding(
-                                    padding: const EdgeInsets.only(top: 20.0),
+                                    padding: EdgeInsets.symmetric(vertical: primaryPadding.vertical),
                                     child: GenericInputField(
                                       key: ValueKey(inputOption.hashCode),
                                       initialValue: inputOption.initialValue,

@@ -20,6 +20,7 @@ class StoreState with _$StoreState {
 
     ///
     required CandidateRequest? candidate,
+    required bool? invalidateVerificationLink,
     required SearchPerson? searchPerson,
     required GenericApiError? searchPersonError,
     required bool searchPersonHasError,
@@ -84,6 +85,13 @@ class StoreState with _$StoreState {
     required bool uploadsHasError,
     required bool uploadsDataLoading,
     required UploadResponse? uploadsData,
+
+    required GenericApiError? permitsUploadsError,
+    required bool permitsUploadsHasError,
+    required bool permitsUploadsDataLoading,
+    required List<UploadResponse>? permitsUploadsData,
+    required PermitVisaUploadBean? permitsVisaData,
+
   }) = _StoreState;
 
   factory StoreState.initial() => const StoreState(
@@ -120,6 +128,7 @@ class StoreState with _$StoreState {
 
         ///
         capturedCandidateDetails: null,
+        invalidateVerificationLink: null,
         isUploadingDocs: false,
 
         ///
@@ -164,5 +173,11 @@ class StoreState with _$StoreState {
         uploadsHasError: false,
         uploadsDataLoading: false,
         uploadsData: null,
+        
+        permitsUploadsError: null,
+        permitsUploadsHasError: false,
+        permitsUploadsDataLoading: false,
+        permitsUploadsData: null,
+        permitsVisaData: null
       );
 }

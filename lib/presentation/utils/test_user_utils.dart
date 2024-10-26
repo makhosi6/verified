@@ -1,10 +1,13 @@
 // ignore_for_file: prefer_single_quotes
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:verified/app_config.dart';
 import 'package:verified/domain/models/help_ticket.dart';
 import 'package:verified/domain/models/user_profile.dart';
+import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/analytics/repository.dart';
@@ -46,8 +49,8 @@ void onLogInAsTestUser(BuildContext context) {
     });
 
     ///
-  VerifiedAppAnalytics.logFeatureUsed(
-      VerifiedAppAnalytics.FEATURE_TEST_USER_LOGIN);
+    VerifiedAppAnalytics.logFeatureUsed(VerifiedAppAnalytics.FEATURE_TEST_USER_LOGIN);
+
     ///
     showDialog(
       context: context,
@@ -80,6 +83,7 @@ void onLogInAsTestUser(BuildContext context) {
                   validator: (code) {
                     if (code == ADMIN_CODE) {
                       final id = const Uuid().v4();
+                      var walletId = const Uuid().v4();
                       final hashCode = context.hashCode;
                       final testUserProfile = UserProfile.fromJson({
                         ...testUser,
@@ -89,10 +93,14 @@ void onLogInAsTestUser(BuildContext context) {
                         'name': 'Test User ($hashCode)',
                         "id": id,
                         "profileId": id,
+                        "walletId": walletId,
                         // "devices": [device],
                         "env": "test",
                       });
 
+                      ///
+                      var card = Random().nextInt(9999) + 1000;
+                      var amount = Random().nextInt(9999) + 3000;
                       ///clear current user
                       context.read<AuthBloc>().add(const AuthEvent.signOut());
                       context.read<StoreBloc>().add(const StoreEvent.clearUser());
@@ -122,7 +130,15 @@ void onLogInAsTestUser(BuildContext context) {
                         )
 
                         /// login as test user
-                        ..add(StoreEvent.createUserProfile(testUserProfile));
+                        ..add(StoreEvent.createUserProfile(testUserProfile))
+                        ..add(StoreEvent.createWallet(Wallet(
+                          id: walletId,
+                          profileId: testUserProfile.id,
+                          balance: amount,
+                          isoCurrencyCode: 'ZAR',
+                          accountHolderName: testUserProfile.actualName,
+                          accountName: '**********$card',
+                        )));
 
                       /// confirmation
                       WidgetsBinding.instance.addPostFrameCallback(

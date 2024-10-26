@@ -35,7 +35,8 @@ Color warningColor = Colors.amberAccent[700] ?? Colors.amberAccent;
 
 ///
 EdgeInsets primaryPadding = const EdgeInsets.all(16.0);
-
+///
+///light BG on canva: #f4fffa
 ///
 const scaffoldBackgroundColor = Color(0xFFF5FCF8);
 

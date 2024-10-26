@@ -12,6 +12,7 @@ import 'package:verified/domain/models/generic_response.dart';
 import 'package:verified/domain/models/generic_status_enum.dart';
 import 'package:verified/domain/models/passport_response_data.dart';
 import 'package:verified/domain/models/help_ticket.dart';
+import 'package:verified/domain/models/permit_upload_data.dart';
 import 'package:verified/domain/models/promotion.dart';
 import 'package:verified/domain/models/resource_health_status_enum.dart';
 import 'package:verified/domain/models/search_request.dart';
@@ -107,6 +108,43 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           );
           return null;
         },
+        validateVerificationLink: (e) async {
+          emit(state.copyWith(invalidateVerificationLink: false));
+
+          final data = await _storeRepository.getVerificationJob(jobUuid: e.jobUuid);
+
+          data.fold((error) {
+            emit(state.copyWith(invalidateVerificationLink: true));
+          }, (data) {
+            emit(state.copyWith(invalidateVerificationLink: data.id != e.jobUuid));
+          });
+
+          return null;
+        },
+        permitUploadDataEvnt: (e) async {
+          verifiedLogger('${e.data.toJson()}');
+          emit(state.copyWith(permitsVisaData: e.data));
+          return null;
+        },
+
+        ///
+        permitDocsUpload: (e) async {
+          emit(
+            state.copyWith(
+              isUploadingDocs: true,
+            ),
+          );
+          final data = await _storeRepository.uploadFiles(e.files);
+
+          emit(
+            state.copyWith(
+              isUploadingDocs: false,
+              permitsUploadsError: null,
+              permitsUploadsData: [data],
+            ),
+          );
+          return null;
+        },
 
         ///
         uploadPassportImage: (e) async {
@@ -159,6 +197,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
               candidateRequest: state.candidate,
               capturedCandidateDetails: state.capturedCandidateDetails,
               frontUploadedDocFiles: state.passportImageUploadResponse,
+              permitUploadData: state.permitsVisaData,
               uploadedSelfieImg: state.selfieUploadResponse,
             ),
           );
@@ -331,7 +370,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
             );
 
             add(StoreEvent.getAllHistory(data.profileId ?? data.id ?? ''));
-            add(StoreEvent.getWallet(data.walletId ?? ''));
+            if (data.walletId == null) add(StoreEvent.getWallet(data.walletId ?? ''));
             add(const StoreEvent.addDeviceData());
             LocalUser.setUser(data);
 

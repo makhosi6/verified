@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/presentation/pages/verification_page.dart';
 import 'package:verified/presentation/theme.dart';
@@ -37,7 +39,10 @@ class VerificationInfoPage extends StatelessWidget {
             leadingWidth: 80.0,
             leading: VerifiedBackButton(
               key: const Key('veri-info-page-back-btn'),
-              onTap: Navigator.of(context).pop,
+              onTap: () {
+                ScaffoldMessenger.of(context).clearMaterialBanners();
+                Navigator.of(context).pop();
+              },
             ),
           ),
           SliverList(
@@ -92,6 +97,40 @@ List<Widget> _getWidgets(BuildContext context) => [
         child: BaseButton(
           key: UniqueKey(),
           onTap: () {
+            bool? invalidateVerificationLink = context.read<StoreBloc>().state.invalidateVerificationLink;
+
+            if (invalidateVerificationLink == true) {
+              ///
+              ScaffoldMessenger.of(context)
+                ..clearMaterialBanners()
+                ..showMaterialBanner(
+                  MaterialBanner(
+                    padding: primaryPadding,
+                    content: const Text(
+                      'Invalid Link: The verification link you used is either expired or incorrect.',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                      maxLines: 2,
+                    ),
+                    leading: const Icon(
+                      Icons.info_outline_rounded,
+                      size: 24,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: errorColor,
+                    actions: [
+                      IconButton(
+                        onPressed: ScaffoldMessenger.of(context).clearMaterialBanners,
+                        icon: const Icon(
+                          Icons.close_sharp,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              return;
+            }
+
             final args = ModalRoute.of(context)?.settings.arguments as VerificationPageArgs?;
             navigateToNamedRoute(context, arguments: args, routeName: '/secure', replaceCurrentPage: true);
           },

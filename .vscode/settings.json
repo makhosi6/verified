@@ -2,11 +2,12 @@
     "java.configuration.updateBuildConfiguration": "interactive",
     "editor.minimap.maxColumn": 200,
     "dart.lineLength": 120,
-    "cmake.sourceDirectory": "/Users/makhosi/Desktop/projects/flutter_apps/verified/server/node_modules/nan",
+    "cmake.sourceDirectory": "/Users/makhosi/Desktop/projects/flutter_apps/verify_sa/server/node_modules/nan",
     "cSpell.words": [
         "appbase",
         "Appbase",
         "comms",
+        "Evnt",
         "fluttertoast",
         "pageview"
     ]

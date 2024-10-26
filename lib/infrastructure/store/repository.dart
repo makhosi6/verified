@@ -94,7 +94,7 @@ class StoreRepository implements IStoreRepository {
       return left(
         GenericApiError(
           status: 'unknown',
-          error: error.toString(),
+          error: '$error',
         ),
       );
     }
@@ -143,7 +143,7 @@ class StoreRepository implements IStoreRepository {
       } else {
         return left(
           GenericApiError(
-            status: response.statusCode.toString(),
+            status: '${response.statusCode}',
             error: response.statusMessage,
           ),
         );
@@ -153,7 +153,7 @@ class StoreRepository implements IStoreRepository {
       return left(
         GenericApiError(
           status: 'unknown',
-          error: error.toString(),
+          error: '$error',
         ),
       );
     }
@@ -274,7 +274,7 @@ class StoreRepository implements IStoreRepository {
       verifiedErrorLogger(error, stackTrace);
       return left(GenericApiError(
         status: 'unknown',
-        error: error.toString(),
+        error: '$error',
       ));
     }
   }
@@ -335,7 +335,7 @@ class StoreRepository implements IStoreRepository {
       return left(
         GenericApiError(
           status: 'unknown',
-          error: error.toString(),
+          error: '$error'
         ),
       );
     }
@@ -408,7 +408,7 @@ class StoreRepository implements IStoreRepository {
       return left(
         GenericApiError(
           status: 'unknown',
-          error: error.toString(),
+          error: '$error',
         ),
       );
     }
@@ -587,7 +587,7 @@ class StoreRepository implements IStoreRepository {
       }
     } catch (error, stackTrace) {
        verifiedErrorLogger(error, stackTrace);
-      return left(Exception(error.toString()));
+      return left(Exception('$error'));
     }
   }
 
@@ -617,6 +617,9 @@ class StoreRepository implements IStoreRepository {
       return null;
     }
   }
+  
+  @override
+  Future<Either<GenericApiError, GenericResponse>> getVerificationJob({required String jobUuid}) async => await _genericGetRequest<GenericResponse>('jobs', jobUuid, GenericResponse.fromJson);
 
   @override
   Future<Either<GenericApiError, GenericResponse>> postDeviceData(Map<String, dynamic> device) =>
@@ -630,4 +633,5 @@ class StoreRepository implements IStoreRepository {
 
     verifiedLogger('SET VARIABLES:::  $phone as $_phone  | $user  | $env');
   }
+
 }

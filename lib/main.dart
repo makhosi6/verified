@@ -139,10 +139,10 @@ void main() async {
   ///
   if (kDebugMode) {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      final host = (device['isPhysicalDevice'] == true) ? '192.168.0.132' : 'localhost';
+      final host = (device['isPhysicalDevice'] == true) ? '192.168.0.121' : 'localhost';
       await FirebaseAuth.instance.useAuthEmulator(host, 9099);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      await FirebaseAuth.instance.useAuthEmulator('192.168.0.132', 9099);
+      await FirebaseAuth.instance.useAuthEmulator('192.168.0.121', 9099);
     }
   }
 
@@ -212,6 +212,7 @@ void main() async {
     ///
   }, (error, stackTrace) async {
     verifiedErrorLogger(error, stackTrace);
+
     /// fb crush
     await FirebaseCrashlytics.instance.recordError(
       error,
@@ -439,12 +440,11 @@ class _AppRootState extends State<AppRoot> {
                   backgroundColor: warningColor,
                 ),
               );
-
+            const placeholderUuid = '0000000-0000-0000-0000-00000000000';
+            context.read<StoreBloc>().add(const StoreEvent.validateVerificationLink(placeholderUuid));
             navigateToNamedRoute(
               _navigatorKey.currentState?.context ?? context,
-              arguments: VerificationPageArgs(
-                __uriUuidFragment ?? '0000000-0000-0000-0000-00000000000',
-              ),
+              arguments: VerificationPageArgs(__uriUuidFragment ?? placeholderUuid),
               replaceCurrentPage: user == null,
             );
             break;
@@ -461,11 +461,10 @@ class _AppRootState extends State<AppRoot> {
                   backgroundColor: primaryColor,
                 ),
               );
-
+            const placeholderUuid = '0000000-0000-0000-0000-00000000000';
+            context.read<StoreBloc>().add(const StoreEvent.validateVerificationLink(placeholderUuid));
             navigateToNamedRoute(_navigatorKey.currentState?.context ?? context,
-                arguments: VerificationPageArgs(
-                  __uriUuidFragment ?? '0000000-0000-0000-0000-00000000000',
-                ),
+                arguments: VerificationPageArgs(__uriUuidFragment ?? placeholderUuid),
                 replaceCurrentPage: user == null);
             break;
           }

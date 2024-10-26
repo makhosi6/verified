@@ -87,10 +87,10 @@ class _SearchOptionsPageContent extends StatelessWidget {
                     //image
                     RawGestureDetector(
                       gestures: <Type, GestureRecognizerFactory>{
-                        // TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-                        //     () => TapGestureRecognizer(), (instance) {
-                        //   instance.onTap = () => debugPrint('ON TAP...');
-                        // }),
+                        TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+                            () => TapGestureRecognizer(), (instance) {
+                          instance.onTap = () => onLogInAsTestUser(context);
+                        }),
                         LongPressGestureRecognizer: GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>(
                           () => LongPressGestureRecognizer(
                             debugOwner: this,
@@ -183,7 +183,7 @@ class _SearchOptionsPageContent extends StatelessWidget {
                                   VerifiedAppAnalytics.ACTION_LOGIN,
                                   {
                                     'page': '$selectedPage',
-                                  },
+                                  }
                                 );
                                 triggerAuthBottomSheet(context: context, redirect: selectedPage);
                               } else {

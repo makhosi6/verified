@@ -58,7 +58,7 @@ class GenericInputField extends StatelessWidget {
           onTap: onTap,
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: TextStyle(color: Colors.grey[400]),
+            hintStyle: GoogleFonts.dmSans(color: Colors.grey[400]),
             border: const UnderlineInputBorder(),
           ),
           onChanged: onChange,
@@ -69,7 +69,7 @@ class GenericInputField extends StatelessWidget {
           //   return errorMsg;
           // },
           style: GoogleFonts.dmSans(
-            fontSize: 18.0,
+            // fontSize: 18.0,
             fontStyle: FontStyle.normal,
           ),
         )

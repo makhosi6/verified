@@ -31,7 +31,7 @@ class TrioHomeButtons extends StatelessWidget {
           _ClickableItem(
             onTap: () {
               VerifiedAppAnalytics.logFeatureUsed(VerifiedAppAnalytics.FEATURE_VERIFY_FROM_HOME);
-              navigate(context, page: const SearchOptionsPage());
+              navigate<SearchOptionsPage>(context, page: const SearchOptionsPage());
             },
             text: 'Verify',
             iconWidget: const Image(

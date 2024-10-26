@@ -81,6 +81,7 @@ class VerifiedAppAnalytics {
   static const String ACTION_BACK_FROM_CONFIRM_CANDIDATE_DETAILS = 'back_from_confirm_candidate_details';
   static const String ACTION_BACK_CREATE_CANDIDATE_DETAILS = 'back_from_create_candidate_details';
   static const String ACTION_CANDIDATE_DID_UPDATE_DETAILS = 'candidate_did_update_capture_details';
+  static const String ACTION_DID_UPLOAD_PERMIT_OR_VISA = 'did_upload_permit_or_visa';
   static const String ACTION_REFRESH_APP_FROM_ERROR_PAGE = 'refresh_app_from_error_page';
   static const String ACTION_CLOSE_APP_FROM_ERROR_PAGE = 'close_app_from_error_page';
   static const String ACTION_ON_SUCCESSFUL_PAYMENT = 'successful_payment';

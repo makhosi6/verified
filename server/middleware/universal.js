@@ -1,6 +1,7 @@
 const { uniqueIdentifier } = require("../packages/uuid");
 const { generateNonce } = require("../nonce.source");
 const jsonServer = require("json-server");
+const os = require("node:os");
 const request = require("request");
 const path = require("node:path");
 const { archiveRecord } = require("../usecases/store");
@@ -16,29 +17,47 @@ const PORT = process.env.PORT || process.env.PORT || 5400;
 const HOST = process.env.HOST || "0.0.0.0";
 
 const analytics = (req, res, next) => {
-  const { headers, params, query , connection} = req;
-  const ip = req.ip || headers['x-forwarded-for'] || connection.remoteAddress;
+  const { headers, params, query, connection } = req;
   const timestamp = Math.floor(Date.now() / 1000);
   const time = new Date(timestamp * 1000).toISOString();
   const sessionId = headers['x-session-id'] || 'unknown';
   const caller = headers["x-caller"] || 'unknown';
-  const userAgent = headers['user-agent'];
-  const referrer = headers['referer'] || headers['referrer'] || 'none';
 
-  logger.warn(`${time}`, {
-    ip,
+  const data = {
+    ip: req.ip || headers['x-forwarded-for'] || connection.remoteAddress,
+    userAgent: req.headers['user-agent'],
+    language: req.headers['accept-language'] || ['en-GB', 'en-US', 'en', 'zh-TW'],
+    referrer: req.headers['referer'] || req.headers['referrer'] || 'none',
+    proxyIp : req.headers['x-forwarded-for'],
+    cookies:  req.cookies,
+    connection: {
+      protocol: req.protocol,
+      secure: req.secure,
+      httpVersion: req.httpVersion,
+      method: req.method,
+      host: req.host,
+      url: req.originalUrl || req.url,
+      route: req.method + ' ' + req.originalUrl || req.url,
+    },
     caller,
     sessionId,
-    route: req.method + ' ' + req.url,
-    userAgent,
-    referrer,
     timestamp,
     time,
     headers,
     query,
-    params
-  });
+    params,
+    hostname: os.hostname(),
+    platform: os.platform(),
+    uptime: os.uptime(),
+    loadAverage: os.loadavg(),
+    totalMemory: os.totalmem(),
+    freeMemory: os.freemem(),
+    memoryUsage: process.memoryUsage(),
+    cpuUsage: process.cpuUsage(),
+    networkInterfaces: os.networkInterfaces(),
+  };
 
+  logger.warn(`${time}`, JSON.stringify(data, null, 2));
   next();
 };
 
@@ -58,7 +77,6 @@ const authenticate = (req, res, next) => {
 
 const authorization = (req, res, next) => {
   try {
-
     let isAuthorized =
       `${req.headers?.authorization}`.includes("TOKEN") ||
       `${req.headers?.authorization}`.includes("TOKEN_1") ||

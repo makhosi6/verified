@@ -9,7 +9,7 @@ class VerifySaDioClientService {
   /// instance of dio (singleton)
   static Dio instance = Dio(
     BaseOptions(
-      baseUrl: 'http://192.168.0.132:5434/api/v1/',
+      baseUrl: 'http://192.168.0.121:5434/api/v1/',
       headers: {
         'Authorization': 'Bearer $verifySaApiKey',
         'Accept': 'application/json',
@@ -20,7 +20,7 @@ class VerifySaDioClientService {
 
   static List<Interceptor> interceptors = [
     /// logger
-    // PrettyDioLogger(),
+    PrettyDioLogger(),
 
     /// for the purpose of caching
     InterceptorsWrapper(
@@ -60,7 +60,7 @@ class StoreDioClientService {
   static Dio instance = Dio(
     BaseOptions(
       // baseUrl: '$baseUrl/store/api/v1/',
-      baseUrl: 'http://192.168.0.132:5400/api/v1/',
+      baseUrl: 'http://192.168.0.121:5400/api/v1/',
       headers: {
         'Authorization': 'Bearer $storeApiKey',
         'Accept': 'application/json',
@@ -71,7 +71,7 @@ class StoreDioClientService {
 
   static List<Interceptor> interceptors = [
     /// logger
-    // PrettyDioLogger(),
+    PrettyDioLogger(),
 
     /// for the purpose of caching
     InterceptorsWrapper(

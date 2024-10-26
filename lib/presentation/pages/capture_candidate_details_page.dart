@@ -9,6 +9,7 @@ import 'package:verified/helpers/data/countries.dart';
 import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/learn_more_page.dart';
+import 'package:verified/presentation/pages/permit_form_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/document_type.dart';
 import 'package:verified/presentation/utils/learn_more_highlighted_btn.dart';
@@ -145,6 +146,9 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                       inputFormatters: [],
                                       keyboardType: TextInputType.number,
                                       validator: (idNumber) {
+                                        if (capturedCandidateDetails?.documentType == DocumentType.passport.name) {
+                                          return null;
+                                        }
                                         if (candidate.phoneNumber != null && idNumber?.isEmpty == true) {
                                           return null;
                                         }
@@ -152,16 +156,18 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                           return 'You have to provide a ID number';
                                         }
 
-                                        if (capturedCandidateDetails?.documentType == DocumentType.passport.name) {
-                                          return null;
-                                        }
-                                        return validateIdNumber(idNumber);
+                                        return (capturedCandidateDetails?.documentType == DocumentType.passport.name)
+                                            ? null
+                                            : validateIdNumber(idNumber);
                                       },
                                       onChangeHandler: (idNumber) {
                                         candidate = candidate.copyWith(idNumber: idNumber);
                                         VerifiedAppAnalytics.logActionTaken(
-                                            VerifiedAppAnalytics.ACTION_CANDIDATE_DID_UPDATE_DETAILS,
-                                            {'value_name': 'id_number'});
+                                          VerifiedAppAnalytics.ACTION_CANDIDATE_DID_UPDATE_DETAILS,
+                                          {
+                                            'value_name': 'id_number',
+                                          },
+                                        );
 
                                         /// and validate the form
                                         _globalKeyCaptureCandidateDetailsPageForm.currentState?.validate();
@@ -260,40 +266,39 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                         candidate = candidate.copyWith(description: notes);
                                       },
                                     ),
-                                  ]
-                                      .map((inputOption) => Padding(
-                                            padding: const EdgeInsets.only(top: 20.0),
-                                            child: GenericInputField(
-                                              key: ValueKey(inputOption.hashCode),
-                                              initialValue: inputOption.initialValue,
-                                              hintText: inputOption.hintText,
-                                              label: inputOption.label,
-                                              readOnly: inputOption.label == 'Nationality' ||
-                                                  inputOption.label == 'Date of Birth',
-                                              maxLines: inputOption.maxLines,
-                                              autofocus: inputOption.autofocus,
-                                              keyboardType: inputOption.keyboardType,
-                                              inputFormatters: [
-                                                ///
-                                                if (inputOption.keyboardType == TextInputType.number)
-                                                  FilteringTextInputFormatter.digitsOnly,
+                                  ].map((inputOption) => Padding(
+                                        // padding: const EdgeInsets.only(top: 20.0),
+                                        padding: EdgeInsets.symmetric(vertical: primaryPadding.vertical),
+                                        child: GenericInputField(
+                                          key: ValueKey(inputOption.hashCode),
+                                          initialValue: inputOption.initialValue,
+                                          hintText: inputOption.hintText,
+                                          label: inputOption.label,
+                                          readOnly: inputOption.label == 'Nationality' ||
+                                              inputOption.label == 'Date of Birth',
+                                          maxLines: inputOption.maxLines,
+                                          autofocus: inputOption.autofocus,
+                                          keyboardType: inputOption.keyboardType,
+                                          inputFormatters: [
+                                            ///
+                                            if (inputOption.keyboardType == TextInputType.number)
+                                              FilteringTextInputFormatter.digitsOnly,
 
-                                                ///
-                                                if (inputOption.maxLength != null)
-                                                  LengthLimitingTextInputFormatter(inputOption.maxLength),
+                                            ///
+                                            if (inputOption.maxLength != null)
+                                              LengthLimitingTextInputFormatter(inputOption.maxLength),
 
-                                                ///
-                                                if (inputOption.inputMask != null)
-                                                  VerifiedTextInputFormatter(mask: inputOption.inputMask),
+                                            ///
+                                            if (inputOption.inputMask != null)
+                                              VerifiedTextInputFormatter(mask: inputOption.inputMask),
 
-                                                ///
-                                                ...(inputOption.inputFormatters ?? [])
-                                              ],
-                                              validator: inputOption.validator,
-                                              onChange: inputOption.onChangeHandler,
-                                            ),
-                                          ))
-                                      ,
+                                            ///
+                                            ...(inputOption.inputFormatters ?? [])
+                                          ],
+                                          validator: inputOption.validator,
+                                          onChange: inputOption.onChangeHandler,
+                                        ),
+                                      )),
 
                                   ///
                                   Padding(
@@ -327,9 +332,19 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                               documentType == DocumentType.id_book) {
                                             context.read<StoreBloc>().add(const StoreEvent.makeIdVerificationRequest());
                                           } else if (documentType == DocumentType.passport) {
-                                            context
-                                                .read<StoreBloc>()
-                                                .add(const StoreEvent.makePassportVerificationRequest());
+                                            var nationality = capturedCandidateDetails?.nationality;
+                                            if (nationality != SA_COUNTRY_CODE_1 && nationality != SA_COUNTRY_CODE_2) {
+                                              navigate(context, page: PermitFormPage(), arguments: {
+                                                'docType': documentType,
+                                                'jobUuid': jobUuid,
+                                              });
+
+                                              return;
+                                            } else {
+                                              context
+                                                  .read<StoreBloc>()
+                                                  .add(const StoreEvent.makePassportVerificationRequest());
+                                            }
                                           } else {
                                             ScaffoldMessenger.of(context)
                                               ..clearSnackBars()
@@ -423,3 +438,6 @@ String? _formatDate(String? dayOfBirth) {
     return null;
   }
 }
+
+const SA_COUNTRY_CODE_1 = 'ZA';
+const SA_COUNTRY_CODE_2 = 'ZAF';

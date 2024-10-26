@@ -24,7 +24,7 @@ dynamic selectMediaConfig() => GalleryAssetPicker.initialize(GalleryConfig(
       },
     ));
 
-Future<MultipartFile?> convertToFormData(File? file, {String side = 'img'}) async {
+Future<MultipartFile?> convertToFormData(File? file, {String side = 'file'}) async {
   if (file == null) return null;
   String fileName = file.path.split('/').last;
   MultipartFile multipartFile = await MultipartFile.fromFile(file.path, filename: "${side}_$fileName");

@@ -25,10 +25,17 @@ class SearchResultsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: type == FormType.idForm
-            ? const IdVerificationSearchResultsPageContent()
-            : const ContactVerificationSearchResultsPageContent());
+    return WillPopScope(
+      onWillPop: () async {
+        var user = context.read<StoreBloc>().state.userProfileData;
+        context.read<StoreBloc>().add(StoreEvent.getAllHistory(user?.id ?? user?.profileId ?? ''));
+        return true;
+      },
+      child: Scaffold(
+          body: type == FormType.idForm
+              ? const IdVerificationSearchResultsPageContent()
+              : const ContactVerificationSearchResultsPageContent()),
+    );
   }
 }
 
@@ -37,6 +44,8 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var user = context.read<StoreBloc>().state.userProfileData;
+    var wallet = context.read<StoreBloc>().state.walletData;
     return BlocBuilder<VerifySaBloc, VerifySaState>(
       builder: (context, state) {
         if (state.contactTracingData == null || state.contactTracingDataLoading) {
@@ -47,8 +56,6 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
         final results = state.contactTracingData?.contactEnquiry?.results;
 
         if (results?.isNotEmpty == true) {
-          var user = context.read<StoreBloc>().state.userProfileData;
-          var wallet = context.read<StoreBloc>().state.walletData;
           if (wallet != null) {
             context.read<StoreBloc>()
               ..add(
@@ -125,7 +132,10 @@ class ContactVerificationSearchResultsPageContent extends StatelessWidget {
                   leadingWidth: 80.0,
                   leading: VerifiedBackButton(
                     key: const Key('search-results-page-back-btn'),
-                    onTap: () => Navigator.pop(context),
+                    onTap: () {
+                      context.read<StoreBloc>().add(StoreEvent.getAllHistory(user?.id ?? user?.profileId ?? ''));
+                      navigate(context, page: const SearchOptionsPage(), replaceCurrentPage: true);
+                    },
                   ),
                 ),
                 SliverList(
@@ -205,6 +215,8 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var user = context.read<StoreBloc>().state.userProfileData;
+    var wallet = context.read<StoreBloc>().state.walletData;
     return BlocBuilder<VerifySaBloc, VerifySaState>(
       builder: (context, state) {
         if (state.verifyIdDataLoading || state.verifyIdData == null) {
@@ -216,8 +228,6 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
         Map<String, dynamic>? results = state.verifyIdData?.verification?.toJson();
 
         if (results?.isNotEmpty == true) {
-          var user = context.read<StoreBloc>().state.userProfileData;
-          var wallet = context.read<StoreBloc>().state.walletData;
           if (wallet != null) {
             context.read<StoreBloc>()
               ..add(
@@ -234,7 +244,7 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
         if (kDebugMode) {
           verifiedLogger('STATE \n\n$results\n: $state');
         }
-  
+
         return Center(
           child: SizedBox(
             child: CustomScrollView(
@@ -295,7 +305,10 @@ class IdVerificationSearchResultsPageContent extends StatelessWidget {
                   leadingWidth: 80.0,
                   leading: VerifiedBackButton(
                     key: const Key('search-results-page-back-btn'),
-                    onTap: () => navigate(context, page: const SearchOptionsPage(), replaceCurrentPage: true),
+                    onTap: () {
+                      context.read<StoreBloc>().add(StoreEvent.getAllHistory(user?.id ?? user?.profileId ?? ''));
+                      navigate(context, page: const SearchOptionsPage(), replaceCurrentPage: true);
+                    },
                   ),
                 ),
                 SliverList(

@@ -40,7 +40,7 @@ async function getImageAsBase64(imageUrl) {
         throw new Error(`Error converting image to Base64: ${error.message}`);
     }
 }
-// getImageAsBase64('http://192.168.0.132:4334/static/1726375540143_436197820__CAP4403647766963341549.jpg').then(console.log)
+// getImageAsBase64('http://192.168.0.121:4334/static/1726375540143_436197820__CAP4403647766963341549.jpg').then(console.log)
 
 module.exports = {
     getImageAsBase64

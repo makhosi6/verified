@@ -49,8 +49,34 @@ class BaseButton extends StatelessWidget {
     required this.hasBorderLining,
     required this.buttonSize,
     required this.label,
-     this.onTap,
+    this.onTap,
   }) : super(key: key);
+
+  Widget iconOnly(BuildContext context) => InkWell(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+            color: bgColor,
+            border: hasBorderLining ? Border.all(color: borderColor ?? neutralGrey, width: 2.0) : null,
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+      child: Container(
+            height: 40.0,
+            width: 40.0,
+            padding: const EdgeInsets.all(4.0),
+            decoration: BoxDecoration(
+              color: iconBgColor ?? neutralGrey,
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: SizedBox(
+              width: 24.0,
+              height: 24.0,
+              child: buttonIcon,
+            ),
+          ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) => Container(

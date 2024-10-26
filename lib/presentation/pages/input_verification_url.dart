@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/validation.dart';
+import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/globals.dart';
 import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/verification_page.dart';
@@ -9,6 +10,7 @@ import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/inputs/generic_input.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 final _globalKeyFormPage = GlobalKey<FormState>(debugLabel: 'input-verification-url-page-form-key');
 
@@ -27,7 +29,7 @@ class _InputVerificationURLState extends State<InputVerificationURL> {
 
   @override
   Widget build(BuildContext context) {
-    var _widgets = _getWidgets(context);
+    var widgets = _getWidgets(context);
     return Scaffold(
       body: Form(
         key: _globalKeyFormPage,
@@ -61,11 +63,11 @@ class _InputVerificationURLState extends State<InputVerificationURL> {
                     width: MediaQuery.of(context).size.width - primaryPadding.horizontal,
                     constraints: appConstraints,
                     child: Center(
-                      child: _widgets[index],
+                      child: widgets[index],
                     ),
                   ),
                 ),
-                childCount: _widgets.length,
+                childCount: widgets.length,
               ),
             ),
           ],
@@ -149,13 +151,17 @@ class _InputVerificationURLState extends State<InputVerificationURL> {
                 },
               ),
               if ((inputValue != null && hasInvalidInput) || hasInvalidInput)
-                ActionButton(
-                  tooltip: '',
-                  innerPadding: const EdgeInsets.all(12.0),
-                  icon: Icons.backspace_rounded,
+                BaseButton(
+                  buttonSize: ButtonSize.small,
+                  label: '',
+                  buttonIcon: Icon(
+                    Icons.backspace_rounded,
+                    color: errorColor,
+                  ),
+                  hasIcon: true,
                   hasBorderLining: true,
                   borderColor: Colors.red[100],
-                  iconColor: errorColor,
+                  iconBgColor: Colors.white,
                   onTap: () async {
                     if (mounted) {
                       setState(() {
@@ -165,24 +171,55 @@ class _InputVerificationURLState extends State<InputVerificationURL> {
                     }
                   },
                   bgColor: Colors.white,
-                ),
+                ).iconOnly(context),
               if (uriUuidFragment != null && hasInvalidInput == false)
-                ActionButton(
-                  tooltip: '',
-                  innerPadding: const EdgeInsets.all(12.0),
-                  icon: Icons.arrow_forward_ios_rounded,
-                  hasBorderLining: true,
-                  borderColor: Colors.green[100],
-                  iconColor: primaryColor,
-                  onTap: () => navigateToNamedRoute(
-                    context,
-                    arguments: VerificationPageArgs(
-                      inputValue ?? '0000000-0000-0000-0000-00000000000',
+                BlocBuilder<StoreBloc, StoreState>(builder: (context, state) {
+                  return BaseButton(
+                    buttonIcon: Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: primaryColor,
                     ),
-                    replaceCurrentPage: true,
-                  ),
-                  bgColor: Colors.white,
-                ),
+                    hasBorderLining: true,
+                    label: '',
+                    borderColor: Colors.green[100],
+                    onTap: () {
+                      var urlSegments = inputValue
+                          .toString()
+                          .split('/')
+                          .where((segment) => UuidValidation.isValidUUID(fromString: segment));
+                      if (urlSegments.isNotEmpty) {
+                        context.read<StoreBloc>().add(StoreEvent.validateVerificationLink(urlSegments.first));
+                        navigateToNamedRoute(
+                          context,
+                          arguments: VerificationPageArgs(
+                            urlSegments.first,
+                          ),
+                          replaceCurrentPage: true,
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context)
+                          ..clearSnackBars()
+                          ..showSnackBar(
+                            SnackBar(
+                              showCloseIcon: true,
+                              closeIconColor: const Color.fromARGB(255, 254, 226, 226),
+                              duration: const Duration(seconds: 10),
+                              content: const Text(
+                                'Invalid verification link!',
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 254, 226, 226),
+                                ),
+                              ),
+                              backgroundColor: errorColor,
+                            ),
+                          );
+                      }
+                    },
+                    buttonSize: ButtonSize.small,
+                    hasIcon: true,
+                    bgColor: Colors.white,
+                  ).iconOnly(context);
+                }),
             ],
           ),
         )

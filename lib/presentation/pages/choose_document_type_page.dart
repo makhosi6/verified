@@ -55,7 +55,7 @@ class _ChooseDocumentPageState extends State<ChooseDocumentPage> {
                 flexibleSpace: AppBar(
                   automaticallyImplyLeading: true,
                   title: const Text(
-                    'Quick Verification',
+                    'Select ID Document',
                   ),
                 ),
                 leadingWidth: 80.0,
