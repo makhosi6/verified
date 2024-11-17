@@ -490,6 +490,7 @@ class __NotificationsSettingsState extends State<_NotificationsSettings> {
           title: const Text(
             'Email Notifications',
           ),
+          tileColor: scaffoldBackgroundColor,
           subtitle: Text('Important notification like payment receipts, and refund notification are mandatory' , style: TextStyle(color: neutralDarkGrey, fontSize: 13),),
           value: email,
           onChanged: (bool? value) {

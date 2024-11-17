@@ -26,7 +26,7 @@ class CombinedHistoryList extends StatelessWidget {
     var state = context.watch<StoreBloc>().state;
     var learnMoreBanner = ListItemBanner(
       type: BannerType.promotion,
-      bgColor: neutralGrey,
+      bgColor: scaffoldBackgroundColor,
       leadingIcon: Icons.local_library_outlined,
       leadingBgColor: primaryColor,
       title: 'How it Works',
@@ -51,7 +51,7 @@ class CombinedHistoryList extends StatelessWidget {
                   ),
                   ListItemBanner(
                     type: BannerType.defualt,
-                    bgColor: neutralGrey,
+                    bgColor: scaffoldBackgroundColor,
                     leadingIcon: Icons.rocket_launch_outlined,
                     leadingBgColor: primaryColor,
                     title: 'Top-Up and get rewarded with a free verification.',
@@ -108,7 +108,7 @@ class CombinedHistoryList extends StatelessWidget {
               ),
               ListItemBanner(
                 type: BannerType.learn_more,
-                bgColor: neutralGrey,
+                bgColor: scaffoldBackgroundColor,
                 leadingIcon: Icons.rocket_launch_outlined,
                 leadingBgColor: primaryColor,
                 title: 'Get the most out of Verified',

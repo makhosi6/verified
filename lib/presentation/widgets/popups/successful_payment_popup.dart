@@ -125,7 +125,7 @@ class _SuccessfulPaymentModalState extends State<SuccessfulPaymentModal> {
 
                   ListItemBanner(
                     type: BannerType.learn_more,
-                    bgColor: neutralGrey,
+                    bgColor: scaffoldBackgroundColor,
                     leadingIcon: Icons.rocket_launch_outlined,
                     leadingBgColor: primaryColor,
                     title: 'Get the most out of Verified',

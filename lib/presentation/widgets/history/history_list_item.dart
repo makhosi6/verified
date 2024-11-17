@@ -41,6 +41,7 @@ class TransactionListItem extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: ListTile(
           contentPadding: EdgeInsets.zero,
+          tileColor: scaffoldBackgroundColor,
           isThreeLine: isThreeLine,
           leading: leading,
           title: Text(
@@ -218,7 +219,7 @@ class ConfidenceBanner extends StatelessWidget {
       padding: const EdgeInsets.all(12.0),
       child: Container(
         decoration: BoxDecoration(
-          color: bgColor ?? primaryColor.withOpacity(0.2),
+          color: bgColor ?? scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(16.0),
           border: Border.all(color: Colors.white70, width: 2.5),
         ),
@@ -229,6 +230,7 @@ class ConfidenceBanner extends StatelessWidget {
             left: 12.0,
             right: 12.0,
           ),
+          tileColor: scaffoldBackgroundColor,
           isThreeLine: true,
           leading: Baseline(
             baselineType: TextBaseline.alphabetic,
@@ -300,10 +302,11 @@ class ListItemBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: bgColor ?? primaryColor.withOpacity(0.2),
+        color: bgColor ?? scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(16.0),
       ),
       child: ListTile(
+        tileColor: scaffoldBackgroundColor,
         contentPadding: const EdgeInsets.only(
           top: 8.0,
           bottom: 8.0,

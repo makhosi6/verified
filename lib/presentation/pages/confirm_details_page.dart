@@ -419,6 +419,7 @@ class __DonePopUpState extends State<_DonePopUp> {
         ///
         CheckboxListTile(
           value: email,
+          tileColor: scaffoldBackgroundColor,
           onChanged: (bool? value) {
             if (mounted) {
               setState(() {
@@ -438,6 +439,7 @@ class __DonePopUpState extends State<_DonePopUp> {
         ///
         CheckboxListTile(
           value: sms,
+          tileColor: scaffoldBackgroundColor,
           onChanged: (bool? value) {
             if (mounted) {
               setState(() {

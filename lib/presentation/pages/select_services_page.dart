@@ -184,6 +184,7 @@ class ListViewAsSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Card(
         child: ListTile(
+          tileColor: scaffoldBackgroundColor,
           leading: leading,
           title: Text(
             title,
