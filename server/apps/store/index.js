@@ -46,7 +46,8 @@ const {
   addTimestamps,
   lastLoginHook,
   onCreateAccountOrLoginHook,
-  updateOrPutHook
+  updateOrPutHook,
+  otherAccountWorkFlows
 } = require("../../middleware/store");
 const { notifyAdmin } = require("../../usecases/admin");
 const { updateCommsForJobs, handleCreateJob , handleVerificationRequest} = require("../../usecases/jobs");
@@ -76,6 +77,7 @@ server.use(authorization);
 server.use(authenticate);
 server.use(addTimestamps);
 server.use(addIdentifiers);
+server.use(otherAccountWorkFlows);
 server.use(onCreateAccountOrLoginHook);
 server.use(archiveOnDelete);
 server.use(updateOrPutHook);
@@ -91,7 +93,7 @@ server.use("/api/v1/ticket", tickets);
 server.use("/api/v1/history", history);
 server.use("/api/v1/profile", lastLoginHook, profile);
 server.use("/api/v1/promotion", promotion);
-server.use("/api/v1/wallet", wallet);
+server.use("/api/v1/wallet",noDeleteOperation, wallet);
 server.use("/api/v1/jobs", noDeleteOperation, jobs);
 server.use("/api/v1/cache", noDeleteOperation, cache);
 server.use("/api/v1/archive", noDeleteOperation, archive);

@@ -6,6 +6,8 @@ const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const { Request, Response, NextFunction } = require("express");
 const { getUserProfile } = require("../usecases/store");
+const { sendWelcomeEmailNotifications, sadToSeeYouGoEmailOnAccountDeletion } = require("../usecases/notifications");
+const { getOne } = require("../usecases/db_operations");
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "5400";
 
@@ -57,7 +59,7 @@ const addIdentifiers = (req, res, next) => {
     !req.url.includes("devices/resource")
   ) {
     req.body.id = uniqueIdentifier();
-  }else {
+  } else {
     console.log("addIdentifiers skip!!!");
   }
   next();
@@ -86,16 +88,37 @@ const lastLoginHook = (req, res, next) => {
  * @param {Response} res
  * @param {NextFunction} next
  */
+const otherAccountWorkFlows = async (req, res, next) => {
+  ///
+  if (req.url.includes("profile/resource")) {
+
+    if (req.method === "DELETE") {
+      const id = req.path.split('/').pop()
+      const user = getOne('profile', id);
+      sadToSeeYouGoEmailOnAccountDeletion(user);
+    }
+
+  }
+  next();
+}
+/**
+ * create a wallet and send a welcome email
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
 const onCreateAccountOrLoginHook = async (req, res, next) => {
   const walletId = uniqueIdentifier();
   const method = req.method.toUpperCase();
 
   /// also create a wallet on account creation
   if (method == "POST" && req.url.includes("profile/resource")) {
-    ///
+    /**@type {} */
     const storedUser = await getUserProfile(req?.body?.id || req?.body?.profileId);
     if (!(storedUser?.id)) {
+      const { email, actualName, displayName, name, phone } = storedUser || req?.body;
       // send a welcome email
+      sendWelcomeEmailNotifications({ name: (name || displayName || actualName || email), email, phone });
     }
 
     console.log({ method, walletId, storedUser });
@@ -213,7 +236,7 @@ async function updateOrPutHook(req, res, next) {
 
     const data = await response.json();
 
-    console.log({data, url, isSystemCall, METHOD});
+    console.log({ data, url, isSystemCall, METHOD });
     // Merge the fetched data with the original request body
     // This allows the PUT request to include additional data from the service
     req.body = {
@@ -257,8 +280,8 @@ async function updateWalletLastTopUp({ id, amount }) {
         lastDepositAt: Math.floor(Date.now() / 1000),
       }),
     })
-      .then((response) => response.text())
-      .then((result) => console.log("Successful Last seen update!!"))
+      .then((response) => response.json())
+      .then((result) => console.log("Successful Last seen update!!", result?.id,),)
       .catch((error) => console.log("error", error));
   } catch (error) {
     console.log({
@@ -277,4 +300,5 @@ module.exports = {
   updateLastSeen,
   onCreateAccountOrLoginHook,
   updateOrPutHook,
+  otherAccountWorkFlows
 };

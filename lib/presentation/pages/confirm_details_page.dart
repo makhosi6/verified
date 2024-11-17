@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,20 +8,19 @@ import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/communication_channels.dart';
 import 'package:verified/domain/models/services_options_enum.dart';
 import 'package:verified/domain/models/wallet.dart';
-
 import 'package:verified/globals.dart';
-import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/pages/top_up_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/data_view_item.dart';
+import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
 import 'package:verified/presentation/widgets/buttons/base_buttons.dart';
 import 'package:verified/presentation/widgets/popups/successful_action_popup.dart';
 
 class ConfirmDetailsPage extends StatefulWidget {
-  ConfirmDetailsPage({super.key});
+  const ConfirmDetailsPage({super.key});
 
   @override
   State<ConfirmDetailsPage> createState() => _ConfirmDetailsPageState();
@@ -385,22 +383,21 @@ class __DonePopUpState extends State<_DonePopUp> {
           'Your verification has been successfully submitted! The person will be notified and will complete the required steps soon. You will receive updates once it\'s completed 🎉',
       nextAction: () {
         /// send communication to [person]
-        context.read<StoreBloc>().add(StoreEvent.willSendNotificationAfterVerification(
-            CommsChannels(sms: sms, email: email, instanceId: person?.instanceId ?? '')));
+        context.read<StoreBloc>().add(
+              StoreEvent.willSendNotificationAfterVerification(
+                CommsChannels(
+                  sms: sms,
+                  email: email,
+                  instanceId: person?.instanceId ?? '',
+                ),
+              ),
+            );
 
         ///
-        Navigator.of(context)
-          ..pop()
-          ..pop()
-          ..pop()
-          ..pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const HomePage()),
-            (_) => false,
-          ).catchError((error) {
-            verifiedErrorLogger(error, StackTrace.current);
-          }, test: (_) {
-            return true;
-          });
+        Navigator.of(context).pop();
+
+        ///
+        navigate(context, page: const HomePage(), replaceCurrentPage: true);
       },
       showDottedDivider: false,
       children: [

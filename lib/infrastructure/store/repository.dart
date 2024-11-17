@@ -619,7 +619,7 @@ class StoreRepository implements IStoreRepository {
   }
   
   @override
-  Future<Either<GenericApiError, GenericResponse>> getVerificationJob({required String jobUuid}) async => await _genericGetRequest<GenericResponse>('jobs', jobUuid, GenericResponse.fromJson);
+  Future<Either<GenericApiError, SearchPerson>> getVerificationJob({required String jobUuid}) async => await _genericGetRequest<SearchPerson>('jobs', jobUuid, SearchPerson.fromJson);
 
   @override
   Future<Either<GenericApiError, GenericResponse>> postDeviceData(Map<String, dynamic> device) =>
@@ -631,7 +631,7 @@ class StoreRepository implements IStoreRepository {
     _user = user;
     _env = env;
 
-    verifiedLogger('SET VARIABLES:::  $phone as $_phone  | $user  | $env');
+    verifiedLogger('SET VARIABLES @ $this ::  $phone as $_phone  | $user  | $env');
   }
 
 }

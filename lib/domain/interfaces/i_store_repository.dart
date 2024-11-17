@@ -24,7 +24,7 @@ abstract class IStoreRepository {
   Future<Either<Exception, VerifyComprehensiveResponse>> comprehensiveVerification(
       {required SearchPerson? person, required String clientId});
 
-  Future<Either<GenericApiError, GenericResponse>> getVerificationJob({required String jobUuid});
+  Future<Either<GenericApiError, SearchPerson>> getVerificationJob({required String jobUuid});
 
   ///
   Future<UploadResponse> uploadFiles(List<MultipartFile> uploads);

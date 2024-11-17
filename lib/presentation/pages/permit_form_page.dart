@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_signature/signature.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/permit_type.dart';
 import 'package:verified/domain/models/permit_upload_data.dart';
@@ -15,9 +16,13 @@ import 'package:verified/globals.dart';
 import 'package:verified/helpers/image.dart';
 import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/analytics/repository.dart';
+import 'package:verified/presentation/pages/home_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/error_warning_indicator.dart';
+import 'package:verified/presentation/utils/navigate.dart';
 import 'package:verified/presentation/utils/select_media.dart';
+import 'package:verified/presentation/utils/trigger_auth_bottom_sheet.dart';
+import 'package:verified/presentation/utils/verification_done_bottom_sheet.dart';
 import 'package:verified/presentation/utils/verified_input_formatter.dart';
 import 'package:verified/presentation/utils/widget_generator_options.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
@@ -54,6 +59,8 @@ class PermitFormPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ///
+    final candidate = context.read<StoreBloc>().state.candidate;
+
     ///
     void onSignatureEnd() async {
       final path = signatureGlobalKey.currentState?.toPathList();
@@ -147,7 +154,7 @@ class PermitFormPage extends StatelessWidget {
                               CaptureUserDetailsInputOption(
                                 hintText: 'Enter the number printed on your permit.',
                                 initialValue: null,
-                                label: 'Permit Number',
+                                label:  '${selectedPermitType?.value ?? 'Permit'} Number',
                                 autofocus: false,
                                 maxLines: 1,
                                 inputFormatters: [],
@@ -256,7 +263,7 @@ class PermitFormPage extends StatelessWidget {
                                             items: PermitType.values
                                                 .map((permitType) => DropdownMenuItem<PermitType>(
                                                       value: permitType,
-                                                      child: Text(permitType.value ?? ''),
+                                                      child: Text(permitType.value),
                                                     ))
                                                 .toList(),
                                             onChanged: (permitType) {
@@ -403,11 +410,11 @@ class PermitFormPage extends StatelessWidget {
                                         // ),
                                         BaseButton(
                                           buttonIcon: Icon(Icons.backspace_rounded, color: errorColor),
+                                          borderColor: Colors.red[100],
                                           hasIcon: true,
                                           buttonSize: ButtonSize.small,
                                           label: '',
                                           hasBorderLining: true,
-                                          borderColor: Colors.red[100],
                                           onTap: () {
                                             signatureGlobalKey.currentState?.clear();
                                           },
@@ -429,13 +436,16 @@ class PermitFormPage extends StatelessWidget {
                                 onTap: () {
                                   verifiedLogger("SELECT_MEDIA_TYPE $selectedPermitType");
                                   verifiedLogger("SELECTED MEDIA  $selectedMedia");
-                                  final jobUuid = (ModalRoute.of(context)?.settings.arguments as Map)['jobUuid'] as String?;
+                                  final jobUuid =
+                                      (ModalRoute.of(context)?.settings.arguments as Map)['jobUuid'] as String?;
+
                                   ///
                                   context.read<StoreBloc>().add(
                                         StoreEvent.permitUploadDataEvnt(
                                           permitVisaUpload.copyWith(
                                             jobUuid:
-                                                context.read<StoreBloc>().state.capturedCandidateDetails?.jobUuid ?? jobUuid,
+                                                context.read<StoreBloc>().state.capturedCandidateDetails?.jobUuid ??
+                                                    jobUuid,
                                             permitNumber: permitNumber,
                                             permitType: permitTypeStr,
                                             signature: signaturePath,
@@ -456,6 +466,73 @@ class PermitFormPage extends StatelessWidget {
                                       () => context
                                           .read<StoreBloc>()
                                           .add(const StoreEvent.makePassportVerificationRequest()));
+
+                                  verificationDoneBottomSheet(
+                                    context,
+                                    title: 'Congratulations! Verification Complete',
+                                    msg:
+                                        'Would you like to set up your account (as ${candidate?.phoneNumber ?? candidate?.phoneNumber ?? candidate?.email ?? 'Candidate'}) to track your verification process?',
+                                    color: Colors.white,
+                                    lottieBuilder: Lottie.asset(
+                                      'assets/lottie/confetti.json',
+                                      fit: BoxFit.contain,
+                                    ),
+                                    actions: [
+                                      Padding(
+                                        padding: EdgeInsets.only(top: primaryPadding.top),
+                                        child: BaseButton(
+                                          key: UniqueKey(),
+                                          onTap: () {
+                                            VerifiedAppAnalytics.logActionTaken(
+                                                VerifiedAppAnalytics.ACTION_CANDIDATE_COMPLETED_VERIFICATION);
+                                            VerifiedAppAnalytics.logActionTaken(
+                                                VerifiedAppAnalytics.ACTION_NO_ACCOUNT_CREATED);
+
+                                            ///
+                                            navigate(
+                                              context,
+                                              page: const HomePage(),
+                                              replaceCurrentPage: true,
+                                            );
+                                          },
+                                          buttonIcon: const Icon(
+                                            Icons.close_rounded,
+                                          ),
+                                          hasIcon: true,
+                                          buttonSize: ButtonSize.large,
+                                          label: 'No, Thanks',
+                                          hasBorderLining: true,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: primaryPadding.top),
+                                        child: BaseButton(
+                                          key: UniqueKey(),
+                                          onTap: () {
+                                            VerifiedAppAnalytics.logActionTaken(
+                                                VerifiedAppAnalytics.ACTION_CANDIDATE_COMPLETED_VERIFICATION);
+                                            VerifiedAppAnalytics.logActionTaken(
+                                                VerifiedAppAnalytics.ACTION_ACCOUNT_CREATED);
+
+                                            ///
+                                            triggerAuthBottomSheet(context: context, redirect: const HomePage());
+                                          },
+                                          buttonIcon: const Icon(
+                                            Icons.check_rounded,
+                                            color: Colors.white,
+                                          ),
+                                          iconBgColor: primaryColor.withOpacity(0.5),
+                                          borderColor: litePrimaryColor,
+                                          bgColor: primaryColor,
+                                          hasIcon: true,
+                                          buttonSize: ButtonSize.large,
+                                          color: Colors.white,
+                                          label: 'Okay',
+                                          hasBorderLining: false,
+                                        ),
+                                      ),
+                                    ],
+                                  );
                                 },
                                 label: 'Next',
                                 color: neutralGrey,

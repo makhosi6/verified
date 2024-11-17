@@ -16,6 +16,9 @@ import 'package:verified/services/dio.dart';
 
 class VerifySaRepository implements IVerifySaRepository {
   final Dio _httpClient;
+  String _phone = '-';
+  String _user = '-';
+  String _env = '-';
 
   VerifySaRepository(this._httpClient) {
     (_httpClient.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (HttpClient dioClient) => dioClient
@@ -35,8 +38,8 @@ class VerifySaRepository implements IVerifySaRepository {
       final headers = {
         'Content-Type': 'application/json',
         'x-client': clientId,
-        'x-client-sui': '-',
-        'x-client-env': 'test',
+        'x-client-sui': _phone,
+        'x-client-env': _env,
       };
       final data = {
         'contact_number': phoneNumber,
@@ -72,8 +75,8 @@ class VerifySaRepository implements IVerifySaRepository {
       final headers = {
         'Content-Type': 'application/json',
         'x-client': clientId,
-        'x-client-sui': '-',
-        'x-client-env': 'test',
+        'x-client-sui': _phone,
+        'x-client-env': _env,
       };
       final data = {
         'id_number': idNumber,
@@ -109,8 +112,8 @@ class VerifySaRepository implements IVerifySaRepository {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'x-client': clientId,
-        'x-client-sui': '-',
-        'x-client-env': 'test',
+        'x-client-sui': _phone,
+        'x-client-env': _env,
       };
       final data = {
         'api_key': verifySaApiKey,
@@ -142,9 +145,9 @@ class VerifySaRepository implements IVerifySaRepository {
       final headers = {
         'x-nonce': await generateNonce(),
         'Authorization': 'Bearer $storeApiKey',
-        'x-client': '-',
-        'x-client-sui': '-',
-        'x-client-env': 'test',
+        'x-client': _user,
+        'x-client-sui': _phone,
+        'x-client-env': _env,
       };
       final response = await _httpClient.get(
         'health-check?client=system',
@@ -162,5 +165,14 @@ class VerifySaRepository implements IVerifySaRepository {
       verifiedErrorLogger(error, stackTrace);
       return ResourceHealthStatus.bad;
     }
+  }
+
+    @override
+  void setUserAndVariables({required String phone, required String user, required String env}) {
+    _phone = phone;
+    _user = user;
+    _env = env;
+
+    verifiedLogger('SET VARIABLES @ VerifySaRepository::  $phone as $_phone  | $user  | $env');
   }
 }

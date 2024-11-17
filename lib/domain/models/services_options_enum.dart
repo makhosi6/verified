@@ -2,7 +2,7 @@ enum ServiceOptionsEnum {
   
   identity_verification('Identity Verification (Default)'),
   facial_verification('Biometrics/Facial Verification'),
-  document_verification('Document Verification'),
+  document_verification('Document Integrity Verification'),
   all('All');
 
   const ServiceOptionsEnum(this.value);

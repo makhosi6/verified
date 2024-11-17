@@ -19,7 +19,6 @@ flutter_launcher_icons:
 dependencies:
   flutter:
     sdk: flutter
-
   cupertino_icons: ^1.0.2
   icons_plus: ^5.0.0
   google_fonts: ^6.2.1
@@ -90,6 +89,7 @@ dependencies:
   hand_signature: ^3.0.3
   syncfusion_flutter_signaturepad: ^27.1.51
   file_picker: ^8.1.2
+  material_dialogs: ^1.1.5
 
 
 dev_dependencies:

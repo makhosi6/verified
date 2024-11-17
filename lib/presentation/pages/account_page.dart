@@ -474,7 +474,7 @@ class __NotificationsSettingsState extends State<_NotificationsSettings> {
       children: [
         SwitchListTile(
           title: const Text('In-App push Notification'),
-          subtitle: const Text('Also have to enable OS notification'),
+          subtitle: Text('Also have to enable OS notification', style: TextStyle(color: neutralDarkGrey, fontSize: 13),),
           value: inApp,
           onChanged: (bool? value) {
             if (mounted) {
@@ -490,7 +490,7 @@ class __NotificationsSettingsState extends State<_NotificationsSettings> {
           title: const Text(
             'Email Notifications',
           ),
-          subtitle: const Text('important notification like payment receipts, and refund notification are mandatory'),
+          subtitle: Text('Important notification like payment receipts, and refund notification are mandatory' , style: TextStyle(color: neutralDarkGrey, fontSize: 13),),
           value: email,
           onChanged: (bool? value) {
             if (mounted) {

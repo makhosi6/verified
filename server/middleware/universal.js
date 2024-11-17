@@ -10,6 +10,12 @@ const Queue = require('../packages/queue');
 const { delay } = require("../utils/delay");
 const { getOne, createItem } = require("../usecases/db_operations");
 const { handleKycVerification } = require("../usecases/verifyid");
+const { VerifiedDocumentType, ResponseCode } = require("../utils/models");
+const { sendDiscordNotificationToAdmin,  sendFailedVerificationEmailNotifications,
+  sendPendingVerificationEmailNotifications,
+  sendSuccessfulVerificationEmailNotifications,
+  sendWelcomeCandidateEmailNotifications,
+  sendWelcomeVerifierEmailNotifications } = require("../usecases/notifications");
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
@@ -28,8 +34,8 @@ const analytics = (req, res, next) => {
     userAgent: req.headers['user-agent'],
     language: req.headers['accept-language'] || ['en-GB', 'en-US', 'en', 'zh-TW'],
     referrer: req.headers['referer'] || req.headers['referrer'] || 'none',
-    proxyIp : req.headers['x-forwarded-for'],
-    cookies:  req.cookies,
+    proxyIp: req.headers['x-forwarded-for'],
+    cookies: req.cookies,
     connection: {
       protocol: req.protocol,
       secure: req.secure,
@@ -52,9 +58,9 @@ const analytics = (req, res, next) => {
     loadAverage: os.loadavg(),
     totalMemory: os.totalmem(),
     freeMemory: os.freemem(),
-    memoryUsage: process.memoryUsage(),
-    cpuUsage: process.cpuUsage(),
-    networkInterfaces: os.networkInterfaces(),
+    // memoryUsage: process.memoryUsage(),
+    // cpuUsage: process.cpuUsage(),
+    networkInterfaces: Object.keys(os.networkInterfaces()),
   };
 
   logger.warn(`${time}`, JSON.stringify(data, null, 2));
@@ -164,11 +170,40 @@ function triggerVerificationAsyncTasks(queue) {
       // send push to user
       const job = getOne('jobs', instanceId)
 
-      await handleKycVerification(job)
-      // send email to client
-
       console.log('Will process the ', instanceId, ' job')
 
+      ///
+      if (!job) {
+        sendDiscordNotificationToAdmin('Job not found', {instanceId})
+        return;
+      }
+
+
+      // switch (job?.capturedCandidateDetails?.documentType) {
+      //   case VerifiedDocumentType.id_card:
+      //     {
+      //      const data = await handleKycVerification(job)
+      //      if(data.code === ResponseCode.success)
+      //      if(data.code === ResponseCode.failed)
+      //      if(data.code === ResponseCode.bad_request)
+      //       break;
+      //     }
+      //     case VerifiedDocumentType.id_book:
+      //     {
+      //       ///
+      //       break;
+      //     }
+      //     case VerifiedDocumentType.passport:
+      //     {
+      //       break;
+      //     }
+      //   default: {
+      //     /// malformed data
+      //     sendDiscordNotificationToAdmin('Malformed Data', {instanceId})
+      //     break;
+      //   }
+      // }
+   
     }));
     next();
   }

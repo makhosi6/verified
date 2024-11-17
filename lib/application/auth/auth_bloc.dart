@@ -242,7 +242,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               'lastSignInTime': (user?.metadata?.lastSignInTime?.millisecondsSinceEpoch ?? 0) ~/ 1000,
             },
             'env': 'prod',
-            
             'currentSui': null,
             'active': true,
             'softDeleted': false,

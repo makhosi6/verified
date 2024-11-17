@@ -19,10 +19,11 @@ class SearchPerson {
     bankAccountNumber = json['bankAccountNumber'];
     email = json['email'];
     description = json['description'];
-    selectedServices = json['selectedServices'];
+    selectedServices = List<String>.from(json['selectedServices']);
+    _instanceId = json['instanceId'];
   }
 
-  final String _instanceId = const Uuid().v4();
+  String _instanceId = const Uuid().v4();
   String get instanceId {
     return _instanceId;
   }

@@ -49,6 +49,8 @@ class VerifiedAppAnalytics {
   static const String ACTION_TRACK_VERIFICATION_STATUS = 'track_verification_status';
   static const String ACTION_LOGIN = 'login';
   static const String ACTION_LOGOUT = 'logout';
+  static const String ACTION_ACCOUNT_CREATED = 'a_candidate_created_account';
+  static const String ACTION_NO_ACCOUNT_CREATED = 'no_candidate_account_created';
   static const String ACTION_DELETED_ACCOUNT = 'delete_account';
   static const String ACTION_SWITCH_ACCOUNTS = 'switch_accounts';
   static const String ACTION_SEARCH = 'search';

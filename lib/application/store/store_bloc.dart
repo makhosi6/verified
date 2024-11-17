@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -116,7 +114,17 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           data.fold((error) {
             emit(state.copyWith(invalidateVerificationLink: true));
           }, (data) {
-            emit(state.copyWith(invalidateVerificationLink: data.id != e.jobUuid));
+            verifiedLogger('\n\nCHECK UNSAFE ID ${data.instanceId}\n\n');
+            emit(
+              state.copyWith(
+                candidate: CandidateRequest.fromJson({
+                  ...data.toJson(),
+                  'jobUuid': data.instanceId,
+                  'preferredName': data.name,
+                }),
+                invalidateVerificationLink: data.instanceId != e.jobUuid,
+              ),
+            );
           });
 
           return null;
@@ -245,7 +253,8 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
         ///
         createCandidateDetails: (e) {
-          verifiedLogger(e.candidate.toString());
+          verifiedLogger('CANDIDATE IS: ');
+          verifiedLogger(e.candidate?.toJson());
 
           emit(state.copyWith(candidate: e.candidate));
           return;

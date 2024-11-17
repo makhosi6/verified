@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
+import 'package:material_dialogs/material_dialogs.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
+import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/candidate_request.dart';
 import 'package:verified/globals.dart';
@@ -14,7 +18,9 @@ import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/document_type.dart';
 import 'package:verified/presentation/utils/learn_more_highlighted_btn.dart';
 import 'package:verified/presentation/utils/navigate.dart';
+import 'package:verified/presentation/utils/trigger_auth_bottom_sheet.dart';
 import 'package:verified/presentation/utils/validate_inputs.dart';
+import 'package:verified/presentation/utils/verification_done_bottom_sheet.dart';
 import 'package:verified/presentation/utils/verified_input_formatter.dart';
 import 'package:verified/presentation/utils/widget_generator_options.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
@@ -30,6 +36,13 @@ class CaptureCandidateDetailsPage extends StatefulWidget {
 }
 
 class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPage> {
+  @override
+  void initState() {
+    super.initState();
+    var _candidate = context.read<StoreBloc>().state.candidate;
+    candidate = (_candidate ?? CandidateRequest(jobUuid: ''));
+  }
+
   ///
   final _globalKeyCaptureCandidateDetailsPageForm =
       GlobalKey<FormState>(debugLabel: 'capture-candidate-details-page-key');
@@ -38,7 +51,7 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
   var keyboardType = TextInputType.number;
 
   ///
-  var candidate = CandidateRequest(jobUuid: '');
+  CandidateRequest? candidate;
 
   ///
   @override
@@ -149,7 +162,7 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                         if (capturedCandidateDetails?.documentType == DocumentType.passport.name) {
                                           return null;
                                         }
-                                        if (candidate.phoneNumber != null && idNumber?.isEmpty == true) {
+                                        if (candidate?.phoneNumber != null && idNumber?.isEmpty == true) {
                                           return null;
                                         }
                                         if (idNumber == null || idNumber.isEmpty) {
@@ -161,7 +174,7 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                             : validateIdNumber(idNumber);
                                       },
                                       onChangeHandler: (idNumber) {
-                                        candidate = candidate.copyWith(idNumber: idNumber);
+                                        candidate = candidate?.copyWith(idNumber: idNumber);
                                         VerifiedAppAnalytics.logActionTaken(
                                           VerifiedAppAnalytics.ACTION_CANDIDATE_DID_UPDATE_DETAILS,
                                           {
@@ -173,47 +186,39 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                         _globalKeyCaptureCandidateDetailsPageForm.currentState?.validate();
                                       },
                                     ),
-                                    // CaptureUserDetailsInputOption(
-                                    //   hintText: '000 000 0000',
-                                    //   initialValue: null,
-                                    //   label: 'Phone Number',
-                                    //   inputMask: '000 000 0000',
-                                    //   maxLength: 10,
-                                    //   autofocus: false,
-                                    //   inputFormatters: [],
-                                    //   keyboardType: TextInputType.number,
-                                    //   validator: (phone) {
-                                    //     var id = candidate.idNumber ??
-                                    //         capturedCandidateDetails?.identityNumber ??
-                                    //         capturedCandidateDetails?.identityNumber2 ??
-                                    //         capturedCandidateDetails?.cardNumber;
-                                    //     if (id != null && phone?.isEmpty == true) {
-                                    //       return null;
-                                    //     }
-                                    //     if (phone == null || phone.isEmpty) {
-                                    //       return 'You have to provide a phone number or a ID number';
-                                    //     }
-                                    //     return validateMobile(phone);
-                                    //   },
-                                    //   onChangeHandler: (phoneNumber) {
-                                    //     candidate = candidate.copyWith(phoneNumber: phoneNumber);
+                                    if (candidate?.phoneNumber != null)
+                                      CaptureUserDetailsInputOption(
+                                        hintText: '000 000 0000',
+                                        initialValue: candidate?.phoneNumber,
+                                        label: 'Phone Number',
+                                        inputMask: '000 000 0000',
+                                        maxLength: 10,
+                                        autofocus: false,
+                                        inputFormatters: [],
+                                        keyboardType: TextInputType.number,
+                                        validator: (phone) {
+                                          return null;
+                                        },
+                                        onChangeHandler: (phoneNumber) {
+                                          candidate = candidate?.copyWith(phoneNumber: phoneNumber);
 
-                                    //     /// and validate the form
-                                    //     _globalKeyCaptureCandidateDetailsPageForm.currentState?.validate();
-                                    //   },
-                                    // ),
-                                    // CaptureUserDetailsInputOption(
-                                    //   hintText: 'Type their email address',
-                                    //   initialValue: null,
-                                    //   label: 'Email address',
-                                    //   autofocus: false,
-                                    //   inputFormatters: [],
-                                    //   keyboardType: TextInputType.emailAddress,
-                                    //   validator: (_) => null,
-                                    //   onChangeHandler: (email) {
-                                    //     candidate = candidate.copyWith(email: email);
-                                    //   },
-                                    // ),
+                                          /// and validate the form
+                                          _globalKeyCaptureCandidateDetailsPageForm.currentState?.validate();
+                                        },
+                                      ),
+                                    if (candidate?.email != null)
+                                      CaptureUserDetailsInputOption(
+                                        hintText: 'Type their email address',
+                                        initialValue: candidate?.email,
+                                        label: 'Email address',
+                                        autofocus: false,
+                                        inputFormatters: [],
+                                        keyboardType: TextInputType.emailAddress,
+                                        validator: (_) => null,
+                                        onChangeHandler: (email) {
+                                          candidate = candidate?.copyWith(email: email);
+                                        },
+                                      ),
                                     if (capturedCandidateDetails?.documentType == DocumentType.passport.name)
                                       CaptureUserDetailsInputOption(
                                         hintText: 'Nationality',
@@ -227,29 +232,30 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                         keyboardType: TextInputType.emailAddress,
                                         validator: (_) => null,
                                         onChangeHandler: (val) {
-                                          candidate = candidate.copyWith(nationality: val);
+                                          candidate = candidate?.copyWith(nationality: val);
                                           VerifiedAppAnalytics.logActionTaken(
                                               VerifiedAppAnalytics.ACTION_CANDIDATE_DID_UPDATE_DETAILS,
                                               {'value_name': 'nationality'});
                                         },
                                       ),
-                                    CaptureUserDetailsInputOption(
-                                      hintText: 'Date of Birth',
-                                      initialValue: capturedCandidateDetails?.dayOfBirth != null
-                                          ? _formatDate(capturedCandidateDetails?.dayOfBirth)
-                                          : null,
-                                      label: 'Date of Birth',
-                                      autofocus: false,
-                                      inputFormatters: [],
-                                      keyboardType: TextInputType.text,
-                                      validator: (_) => null,
-                                      onChangeHandler: (dayOfBirth) {
-                                        candidate = candidate.copyWith(dayOfBirth: dayOfBirth);
-                                        VerifiedAppAnalytics.logActionTaken(
-                                            VerifiedAppAnalytics.ACTION_CANDIDATE_DID_UPDATE_DETAILS,
-                                            {'value_name': 'date_of_birth'});
-                                      },
-                                    ),
+                                    if (capturedCandidateDetails?.dayOfBirth != null)
+                                      CaptureUserDetailsInputOption(
+                                        hintText: 'Date of Birth',
+                                        initialValue: capturedCandidateDetails?.dayOfBirth != null
+                                            ? _formatDate(capturedCandidateDetails?.dayOfBirth)
+                                            : null,
+                                        label: 'Date of Birth',
+                                        autofocus: false,
+                                        inputFormatters: [],
+                                        keyboardType: TextInputType.text,
+                                        validator: (_) => null,
+                                        onChangeHandler: (dayOfBirth) {
+                                          candidate = candidate?.copyWith(dayOfBirth: dayOfBirth);
+                                          VerifiedAppAnalytics.logActionTaken(
+                                              VerifiedAppAnalytics.ACTION_CANDIDATE_DID_UPDATE_DETAILS,
+                                              {'value_name': 'date_of_birth'});
+                                        },
+                                      ),
                                     CaptureUserDetailsInputOption(
                                       hintText: 'Additional information',
                                       initialValue: null,
@@ -263,7 +269,7 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                         VerifiedAppAnalytics.logActionTaken(
                                             VerifiedAppAnalytics.ACTION_CANDIDATE_DID_UPDATE_DETAILS,
                                             {'value_name': 'notes'});
-                                        candidate = candidate.copyWith(description: notes);
+                                        candidate = candidate?.copyWith(description: notes);
                                       },
                                     ),
                                   ].map((inputOption) => Padding(
@@ -275,7 +281,9 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                           hintText: inputOption.hintText,
                                           label: inputOption.label,
                                           readOnly: inputOption.label == 'Nationality' ||
-                                              inputOption.label == 'Date of Birth',
+                                              inputOption.label == 'Date of Birth' ||
+                                              inputOption.label == 'Email address' ||
+                                              inputOption.label == 'Phone Number',
                                           maxLines: inputOption.maxLines,
                                           autofocus: inputOption.autofocus,
                                           keyboardType: inputOption.keyboardType,
@@ -322,8 +330,8 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                             true) {
                                           context.read<StoreBloc>().add(
                                                 StoreEvent.createCandidateDetails(
-                                                  candidate.copyWith(
-                                                    jobUuid: jobUuid,
+                                                  candidate?.copyWith(
+                                                    jobUuid: candidate?.jobUuid ?? jobUuid,
                                                   ),
                                                 ),
                                               );
@@ -363,22 +371,76 @@ class _CaptureCandidateDetailsPageState extends State<CaptureCandidateDetailsPag
                                                 ),
                                               );
                                           }
+                                          void onReject() {
+                                            VerifiedAppAnalytics.logActionTaken(
+                                                VerifiedAppAnalytics.ACTION_CANDIDATE_COMPLETED_VERIFICATION);
+                                            VerifiedAppAnalytics.logActionTaken(
+                                                VerifiedAppAnalytics.ACTION_NO_ACCOUNT_CREATED);
+
+                                            ///
+                                            navigate(
+                                              context,
+                                              page: const HomePage(),
+                                              replaceCurrentPage: true,
+                                            );
+                                          }
+
+                                          void onConfirm() {
+                                            VerifiedAppAnalytics.logActionTaken(
+                                                VerifiedAppAnalytics.ACTION_CANDIDATE_COMPLETED_VERIFICATION);
+                                            VerifiedAppAnalytics.logActionTaken(
+                                                VerifiedAppAnalytics.ACTION_ACCOUNT_CREATED);
+
+                                            ///
+                                            triggerAuthBottomSheet(context: context, redirect: const HomePage());
+                                          }
 
                                           ///  pop-up with a barrier to home-screen or put the call back inside a listener
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => SuccessfulActionModal(
-                                              title: 'Verification Complete!',
-                                              subtitle:
-                                                  'Congratulations! Your verification process is now complete. Thank you for providing the necessary details.',
-                                              nextAction: () {
-                                                navigate(context, page: const HomePage(), replaceCurrentPage: true);
-
-                                                VerifiedAppAnalytics.logActionTaken(
-                                                    VerifiedAppAnalytics.ACTION_CANDIDATE_COMPLETED_VERIFICATION);
-                                              },
-                                              showDottedDivider: false,
+                                          verificationDoneBottomSheet(
+                                            context,
+                                            msg:
+                                                'Would you like to set up your account (as ${candidate?.phoneNumber ?? candidate?.phoneNumber ?? candidate?.email ?? 'Candidate'}) to track your verification process?',
+                                            title: 'Congratulations! Verification Complete',
+                                            color: Colors.white,
+                                            lottieBuilder: Lottie.asset(
+                                              'assets/lottie/confetti.json',
+                                              fit: BoxFit.contain,
                                             ),
+                                            actions: [
+                                              Padding(
+                                                padding: EdgeInsets.only(top: primaryPadding.top),
+                                                child: BaseButton(
+                                                  key: UniqueKey(),
+                                                  onTap: onConfirm,
+                                                  buttonIcon: const Icon(
+                                                    Icons.check_rounded,
+                                                    color: Colors.white,
+                                                  ),
+                                                  iconBgColor: primaryColor.withOpacity(0.5),
+                                                  borderColor: litePrimaryColor,
+                                                  bgColor: primaryColor,
+                                                  hasIcon: true,
+                                                  buttonSize: ButtonSize.large,
+                                                  color: Colors.white,
+                                                  label: 'Okay',
+                                                  hasBorderLining: false,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(top: primaryPadding.top),
+                                                child: BaseButton(
+                                                  key: UniqueKey(),
+                                                  onTap: onReject,
+                                                  buttonIcon: const Icon(
+                                                    Icons.close_rounded,
+                                                  ),
+                                                  hasIcon: true,
+                                                  buttonSize: ButtonSize.large,
+                                                  label: 'No, Thanks',
+                                                  hasBorderLining: true,
+                                                ),
+                                              ),
+                                            ],
                                           );
                                         } else {
                                           ScaffoldMessenger.of(context)

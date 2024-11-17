@@ -139,10 +139,10 @@ void main() async {
   ///
   if (kDebugMode) {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      final host = (device['isPhysicalDevice'] == true) ? '192.168.0.121' : 'localhost';
+      final host = (device['isPhysicalDevice'] == true) ? '192.168.0.173' : 'localhost';
       await FirebaseAuth.instance.useAuthEmulator(host, 9099);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      await FirebaseAuth.instance.useAuthEmulator('192.168.0.121', 9099);
+      await FirebaseAuth.instance.useAuthEmulator('192.168.0.173', 9099);
     }
   }
 
@@ -223,6 +223,10 @@ void main() async {
   });
 }
 
+final verifySaRepository = VerifySaRepository(
+  VerifySaDioClientService.instance,
+);
+
 class RootAppWithBloc extends StatelessWidget {
   const RootAppWithBloc({
     super.key,
@@ -240,9 +244,7 @@ class RootAppWithBloc extends StatelessWidget {
         ),
         BlocProvider<VerifySaBloc>(
           create: (BuildContext context) => VerifySaBloc(
-            VerifySaRepository(
-              VerifySaDioClientService.instance,
-            ),
+            verifySaRepository,
           )..add(
               const VerifySaEvent.apiHealthCheck(),
             ),
@@ -420,7 +422,7 @@ class _AppRootState extends State<AppRoot> {
               ..showSnackBar(
                 SnackBar(
                   content: const Text(
-                    'Invalid Launch URL',
+                    'Invalid verification link',
                   ),
                   backgroundColor: errorColor,
                 ),
@@ -435,13 +437,13 @@ class _AppRootState extends State<AppRoot> {
               ..showSnackBar(
                 SnackBar(
                   content: const Text(
-                    'Warning: Minor error detected on the URL',
+                    'Warning: Minor issue detected on the verification link',
                   ),
                   backgroundColor: warningColor,
                 ),
               );
             const placeholderUuid = '0000000-0000-0000-0000-00000000000';
-            context.read<StoreBloc>().add(const StoreEvent.validateVerificationLink(placeholderUuid));
+            context.read<StoreBloc>().add(StoreEvent.validateVerificationLink(__uriUuidFragment ?? placeholderUuid));
             navigateToNamedRoute(
               _navigatorKey.currentState?.context ?? context,
               arguments: VerificationPageArgs(__uriUuidFragment ?? placeholderUuid),
@@ -462,7 +464,7 @@ class _AppRootState extends State<AppRoot> {
                 ),
               );
             const placeholderUuid = '0000000-0000-0000-0000-00000000000';
-            context.read<StoreBloc>().add(const StoreEvent.validateVerificationLink(placeholderUuid));
+            context.read<StoreBloc>().add(StoreEvent.validateVerificationLink(__uriUuidFragment ?? placeholderUuid));
             navigateToNamedRoute(_navigatorKey.currentState?.context ?? context,
                 arguments: VerificationPageArgs(__uriUuidFragment ?? placeholderUuid),
                 replaceCurrentPage: user == null);
@@ -628,6 +630,15 @@ class _AppRootState extends State<AppRoot> {
                     verifiedErrorLogger(error, stackTrace);
                   }
                 });
+              }
+
+              if (hasUser) {
+                ///
+                getCurrentDevice().then((device) => verifySaRepository.setUserAndVariables(
+                      phone: device?.uuid ?? 'unknown',
+                      user: state.userProfileData?.id ?? state.userProfileData?.profileId ?? 'unknown',
+                      env: (state.userProfileData ?? snapshot.data)?.env ?? 'test',
+                    ));
               }
             },
             child: BlocListener<AuthBloc, AuthState>(

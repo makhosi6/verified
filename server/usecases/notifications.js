@@ -1,5 +1,6 @@
 const request = require("request");
 const FCM = require("fcm-node");
+const { generateNonce } = require('../nonce.source')
 const logger = require("../packages/logger");
 const serverKey = process.env.FB_SERVER_TOKEN || "FB_SERVER_TOKEN";
 const fcm = new FCM(serverKey);
@@ -29,6 +30,14 @@ const fetch = (...args) =>
  * @property {Array<Object>} responses - Array containing responses to the complaint.
  * @property {number} updatedAt - The timestamp when the complaint was last updated.
  * @property {number} createdAt - The timestamp when the complaint was created.
+ */
+
+/**
+ * @typedef {Object} Person
+ * @property {string} name 
+ * @property {string} email
+ * @property {string} phone
+ * 
  */
 /**
  *
@@ -123,7 +132,7 @@ function sendWhatsappMessage(data) {
       method: "POST",
       url: `http://${host}/send`,
       headers: {
-        "x-nonce": "NONCE",
+        "x-nonce": generateNonce(),
         "Content-Type": "application/json",
         Authorization: "Bearer TOKEN",
       },
@@ -150,6 +159,59 @@ function sendSuccessfulRefundEmailNotifications(helpRequest) { }
  * @param {HelpRequest} helpRequest
  */
 function sendSuccessfulPaymentEmailNotifications(helpRequest) { }
+
+/**
+ * 
+ * @param {*} jobDetails 
+ */
+function sendSuccessfulVerificationEmailNotifications(jobDetails) { }
+/**
+ * 
+ * @param {*} jobDetails 
+ */
+function sendPendingVerificationEmailNotifications(jobDetails) { }
+/**
+ * 
+ * @param {*} jobDetails 
+ * @param {string} reason
+ */
+function sendFailedVerificationEmailNotifications(jobDetails, reason) { }
+/**
+ * 
+ * @param {Person} person 
+ */
+function sendWelcomeEmailNotifications(person) { }
+/**
+ * 
+ * @param {Person} person 
+ */
+function sadToSeeYouGoEmailOnAccountDeletion(person){
+  
+}
+
+/**
+ * 
+ * @param {string} message 
+ * @param {object} data 
+ */
+function _sendDiscordNotificationToAdmin(message, data) { }
+/**
+ * 
+ * @param {string} message 
+ * @param {object} data 
+ */
+function sendDiscordNotificationToAdmin(message, data) {
+  _sendDiscordNotificationToAdmin(message, data);
+  sendWhatsappMessage({message, data});
+  sendHelpEmailNotifications({
+    name: "Admin",
+    email: process.env.VERIFIED_ADMIN_EMAIL,
+    message: JSON.stringify({
+      message,
+      data,
+    }),
+  })
+}
 
 /**
  *
@@ -186,4 +248,10 @@ module.exports = {
   sendSuccessfulPaymentEmailNotifications,
   sendSuccessfulRefundEmailNotifications,
   sendHelpEmailNotifications,
+  sendFailedVerificationEmailNotifications,
+  sendPendingVerificationEmailNotifications,
+  sendSuccessfulVerificationEmailNotifications,
+  sendWelcomeEmailNotifications,
+  sendDiscordNotificationToAdmin,
+  sadToSeeYouGoEmailOnAccountDeletion
 };

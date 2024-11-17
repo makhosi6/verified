@@ -1,5 +1,6 @@
 const { generateNonce } = require("../nonce.source");
 const { getOne } = require("./db_operations");
+const { sendPendingVerificationEmailNotifications } = require("./notifications");
 const fetch = (...args) =>
     import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
@@ -63,6 +64,10 @@ async function handleCreateJob(req, res) {
         }
         const output = await _createJob(data);
 
+        sendPendingVerificationEmailNotifications(data)
+
+        
+
         res.send({ message: "success", status: 'OK', data: output, });
     } catch (error) {
         console.log(error);
@@ -105,8 +110,8 @@ async function _createJob(data) {
     const body = JSON.stringify(data);
     console.log({ body });
 
-    const requestOptions = { method: "POST", headers, body };
-    const response = await fetch(`${baseUrl}/jobs/resource`, requestOptions);
+    const options = { method: "POST", headers, body };
+    const response = await fetch(`${baseUrl}/jobs/resource`, options);
     const output = await response.json()
     if (output.id !== data.id) throw new Error('Bad data, check logs')
     return output;

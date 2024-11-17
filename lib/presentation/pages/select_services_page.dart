@@ -83,7 +83,8 @@ class _SelectServicesPageState extends State<SelectServicesPage> {
                             return Padding(
                               padding: EdgeInsets.only(bottom: primaryPadding.bottom),
                               child: ListViewAsSwitch(
-                                name: name.toString(),
+                                title: name.toString(),
+                                subtitle: name == ServiceOptionsEnum.document_verification ? 'Scans Machine Readable Zones(MRZ) to detect tampered, forged documents.': null,
                                 value: name == ServiceOptionsEnum.identity_verification
                                     ? true
                                     : (selectedValues[key] ?? false),
@@ -115,8 +116,6 @@ class _SelectServicesPageState extends State<SelectServicesPage> {
                                     /// and add the default value(s)
                                     ..add(ServiceOptionsEnum.identity_verification.toJson());
 
-                                    
-
                                   ///
                                   context.read<StoreBloc>().add(
                                         StoreEvent.selectJobsOrService(
@@ -138,7 +137,7 @@ class _SelectServicesPageState extends State<SelectServicesPage> {
                           padding: const EdgeInsets.symmetric(vertical: 40),
                           child: BaseButton(
                             key: UniqueKey(),
-                            onTap: () => navigate(context, page: ConfirmDetailsPage()),
+                            onTap: () => navigate(context, page: const ConfirmDetailsPage(), replaceCurrentPage: true),
                             label: 'Next',
                             color: neutralGrey,
                             hasIcon: false,
@@ -166,14 +165,16 @@ class _SelectServicesPageState extends State<SelectServicesPage> {
 }
 
 class ListViewAsSwitch extends StatelessWidget {
-  final String name;
+  final String title;
+  final String? subtitle;
   final bool value;
   final Color? color;
   final Widget? leading;
   final Function(bool) didChange;
   const ListViewAsSwitch({
     super.key,
-    required this.name,
+    required this.title,
+    required this.subtitle,
     required this.value,
     this.color,
     this.leading,
@@ -185,15 +186,16 @@ class ListViewAsSwitch extends StatelessWidget {
         child: ListTile(
           leading: leading,
           title: Text(
-            name,
+            title,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
+          subtitle: subtitle is String ? Text(subtitle ?? '', style: TextStyle(color: neutralDarkGrey, fontSize: 13),): null,
           trailing: Switch.adaptive(
             value: value,
             onChanged: didChange,
             activeColor: color,
             activeTrackColor: Colors.black,
-            thumbColor: color != null ? MaterialStateProperty.resolveWith<Color>((_) => color ?? primaryColor) : null,
+            thumbColor: color != null ? WidgetStateProperty.resolveWith<Color>((_) => color ?? primaryColor) : null,
           ),
         ),
       );
