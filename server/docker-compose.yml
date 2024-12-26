@@ -360,7 +360,7 @@ volumes:
 
 networks:
   emqx-bridge:
-    driver: bridge
+    external: true
   swarm-network:
     external: true
 
