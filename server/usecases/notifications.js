@@ -8,7 +8,7 @@ const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "9092";
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
-
+const nodemailer = require("nodemailer");
 /**
  * Represents a service complaint.
  *
@@ -95,8 +95,6 @@ function sendHelpEmailNotifications(helpRequest) {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
     headers.append("Authorization", "Bearer TOKEN");
-
-
     // 
     // AbortSignal.timeout ??= function timeout(ms) {
     //   const ctrl = new AbortController()
@@ -115,7 +113,7 @@ function sendHelpEmailNotifications(helpRequest) {
       .then((result) => console.log(result))
       .catch((error) => console.error(error));
   } catch (error) {
-    console.log({error, helpRequest});
+    console.log({ error, helpRequest });
   }
 }
 /**
@@ -185,8 +183,8 @@ function sendWelcomeEmailNotifications(person) { }
  * 
  * @param {Person} person 
  */
-function sadToSeeYouGoEmailOnAccountDeletion(person){
-  
+function sadToSeeYouGoEmailOnAccountDeletion(person) {
+
 }
 
 /**
@@ -202,7 +200,7 @@ function _sendDiscordNotificationToAdmin(message, data) { }
  */
 function sendDiscordNotificationToAdmin(message, data) {
   _sendDiscordNotificationToAdmin(message, data);
-  sendWhatsappMessage({message, data});
+  sendWhatsappMessage({ message, data });
   sendHelpEmailNotifications({
     name: "Admin",
     email: process.env.VERIFIED_ADMIN_EMAIL,
@@ -240,6 +238,37 @@ function sendWhatsappSend(helpRequest) {
     logger.error(error.message, error);
   }
 }
+/**
+ * 
+ * @param {string} taskLink 
+ * @param {object} jsonData
+ * @returns
+ */
+async function notifyTaggedPersons(taskLink, jsonData) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.VERIFIEDWEB_MAIL_HOST,
+    port: process.env.VERIFIEDWEB_MAIL_PORT,
+    secure: true,
+    auth: {
+      user: process.env.VERIFIEDWEB_MAIL_FROM_ADDRESS,
+      pass: process.env.VERIFIEDWEB_MAIL_PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.VERIFIEDWEB_MAIL_FROM_ADDRESS,
+    to: process.env.NOTION_USERS,
+    subject: "New Task Created in Notion",
+    text: `A new task has been created in Notion. Check it out here: ${taskLink} \n\n\nDATA: ${jsonData}`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Emails sent successfully.");
+  } catch (error) {
+    console.error("Error sending emails:", error);
+  }
+}
 
 module.exports = {
   sendPushNotifications,
@@ -253,5 +282,6 @@ module.exports = {
   sendSuccessfulVerificationEmailNotifications,
   sendWelcomeEmailNotifications,
   sendDiscordNotificationToAdmin,
-  sadToSeeYouGoEmailOnAccountDeletion
+  sadToSeeYouGoEmailOnAccountDeletion,
+  notifyTaggedPersons
 };

@@ -50,6 +50,7 @@ const {
     handleContactEnquiry,
     handleGetCreditsReq,
 } = require("../../usecases/verifyid");
+const { notificationsHook } = require("../../middleware/notification");
 
 ///
 
@@ -79,7 +80,7 @@ server.disable('x-powered-by');
 
 server.get("/api/v1/health-check", handleGetCreditsReq);
 server.get("/api/v1/my_credits", handleGetCreditsReq);
-server.post("/api/v1/contact_enquiry", handleContactEnquiry);
-server.post("/api/v1/said_verification", handleSaidVerification);
-server.post("/api/v1/comprehensive_verification", (_, res) => res.json({ "message": "successful" }));
+server.post("/api/v1/contact_enquiry", notificationsHook, handleContactEnquiry);
+server.post("/api/v1/said_verification", notificationsHook, handleSaidVerification);
+server.post("/api/v1/comprehensive_verification", notificationsHook, (_, res) => res.json({ "message": "successful" }));
 server.listen(PORT, () => console.log(`JSON Server is running @ http://${HOST}:${PORT}`));

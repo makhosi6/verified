@@ -2,10 +2,9 @@ version: "3.8"
 services:
   emqx1:
     image: emqx:5.0.26
-    #deploy:
-    #  resources:
-    #    limits:
-    #      memory: "200M"
+    deploy:
+      mode: replicated
+      replicas: 2
     container_name: emqx1
     environment:
       - TZ=Africa/Johannesburg
@@ -33,10 +32,9 @@ services:
 
   emqx2:
     image: emqx:5.0.26
-    #deploy:
-    #  resources:
-    #    limits:
-     #     memory: "200M"
+    deploy:
+      mode: replicated
+      replicas: 2
     container_name: emqx2
     environment:
       - TZ=Africa/Johannesburg
@@ -59,6 +57,8 @@ services:
   influxdb:
     image: influxdb:latest
     deploy:
+      mode: replicated
+      replicas: 2
       resources:
         limits:
           cpus: '0.5'
@@ -74,13 +74,17 @@ services:
       DOCKER_INFLUXDB_INIT_ORG: ${VERIFIED_INFLUXDB_ORG}
       DOCKER_INFLUXDB_INIT_BUCKET: ${VERIFIED_INFLUXDB_BUCKET}
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
+    restart: unless-stopped
+
 
   telegraf:
       image: telegraf:latest
       deploy:
-            resources:
-              limits:
-                memory: '200M'
+        mode: replicated
+        replicas: 2
+        resources:
+          limits:
+            memory: '200M'
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
         - ./apps/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
@@ -90,6 +94,7 @@ services:
         INFLUXDB_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
         INFLUXDB_ORG: ${VERIFIED_INFLUXDB_ORG}
         INFLUXDB_BUCKET: ${VERIFIED_INFLUXDB_BUCKET}
+      restart: unless-stopped
       depends_on:
         - influxdb
 
@@ -111,7 +116,6 @@ services:
       - ./log/nginx:/var/log/nginx
     restart: unless-stopped
     depends_on:
-      # - fb_notifications_service
       - payments_service
       - store_service
       - verify_id_service
@@ -120,17 +124,19 @@ services:
       - mrz_decoder_service
       - app_verified_io_service
     networks:
-      - local_bridge
+      - swarm-network
 
   payments_service:
     build:
       context: .
       dockerfile: ./apps/payments/Dockerfile
     deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '1G'
+        mode: replicated
+        replicas: 2
+        resources:
+          limits:
+            cpus: '0.5'
+            memory: '1G'
     volumes:
       - ./log/payments:/app/log/payments
     environment:
@@ -144,17 +150,19 @@ services:
       - FB_SERVER_TOKEN=${FB_SERVER_TOKEN}
     restart: unless-stopped
     networks:
-      - local_bridge
+      - swarm-network
 
   store_service:
     build:
       context: .
       dockerfile: ./apps/store/Dockerfile
     deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '1G'
+        mode: replicated
+        replicas: 2
+        resources:
+          limits:
+            cpus: '0.5'
+            memory: '1G'
     volumes:
       - ./apps/store/db:/app/apps/store/db
       - ./log/store:/app/log/store
@@ -163,19 +171,29 @@ services:
       - NODE_ENV=production
       - TZ=Africa/Johannesburg
       - STORE_PORT=${STORE_PORT}
+      - NOTION_DATABASE_ID=${NOTION_DATABASE_ID}
+      - NOTION_TOKEN=${NOTION_TOKEN}
+      - NOTION_USERS=${NOTION_USERS}
+      - VERIFIEDWEB_MAIL_FROM_ADDRESS=${VERIFIEDWEB_MAIL_FROM_ADDRESS}
+      - VERIFIEDWEB_MAIL_PASSWORD=${VERIFIEDWEB_MAIL_PASSWORD}
+      - VERIFIEDWEB_MAIL_HOST=${VERIFIEDWEB_MAIL_HOST}
+      - VERIFIEDWEB_MAIL_PORT=${VERIFIEDWEB_MAIL_PORT}
+      - VERIFIED_ADMIN_EMAIL=${VERIFIED_ADMIN_EMAIL}
     restart: unless-stopped
     networks:
-      - local_bridge
+      - swarm-network
 
   cdn_service:
     build:
       context: .
       dockerfile: ./apps/cdn/Dockerfile
     deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '1G'
+        mode: replicated
+        replicas: 2
+        resources:
+          limits:
+            cpus: '0.5'
+            memory: '1G'
     volumes:
       - ./apps/cdn/root:/app/apps/cdn/root
       - ./apps/cdn/static:/app/apps/cdn/static
@@ -185,17 +203,19 @@ services:
       - TZ=Africa/Johannesburg
     restart: unless-stopped
     networks:
-      - local_bridge
+      - swarm-network
 
   verify_id_service:
     build:
       context: .
       dockerfile: ./apps/verifyId/Dockerfile
     deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '1G'
+        mode: replicated
+        replicas: 2
+        resources:
+          limits:
+            cpus: '0.5'
+            memory: '1G'
     volumes:
       - ./log/verify_id:/app/log/verify_id
     environment:
@@ -203,13 +223,23 @@ services:
       - NODE_ENV=production
       - VERIFYID_PORT=${VERIFYID_PORT}
       - TZ=Africa/Johannesburg
+      - NOTION_DATABASE_ID=${NOTION_DATABASE_ID}
+      - NOTION_TOKEN=${NOTION_TOKEN}
+      - NOTION_USERS=${NOTION_USERS}
+      - VERIFIEDWEB_MAIL_FROM_ADDRESS=${VERIFIEDWEB_MAIL_FROM_ADDRESS}
+      - VERIFIEDWEB_MAIL_PASSWORD=${VERIFIEDWEB_MAIL_PASSWORD}
+      - VERIFIEDWEB_MAIL_HOST=${VERIFIEDWEB_MAIL_HOST}
+      - VERIFIEDWEB_MAIL_PORT=${VERIFIEDWEB_MAIL_PORT}
+      - VERIFIED_ADMIN_EMAIL=${VERIFIED_ADMIN_EMAIL}
     restart: unless-stopped
     networks:
-      - local_bridge
+      - swarm-network
 
   whatsapp_messaging_service:
     image: makhosi/whatsapp_hook:3.3.minimal
     deploy:
+      mode: replicated
+      replicas: 2
       resources:
         limits:
           cpus: '0.5'
@@ -223,11 +253,13 @@ services:
       - ./apps/whatsapp_messaging/db:/app/db
     restart: unless-stopped
     networks:
-      - local_bridge
+      - swarm-network
 
   mrz_decoder_service:
     image: makhosi/mrz_decoder:1.0.2
     deploy:
+      mode: replicated
+      replicas: 2
       resources:
         limits:
           memory: "512M"
@@ -239,11 +271,13 @@ services:
       - ./apps/image_transcoder/pkgs/mrz_decoder/:/app/
     restart: unless-stopped
     networks:
-      - local_bridge
+      - swarm-network
 
   mrz_reader_service:
     image: makhosi/mrz_reader:1.0.1
     deploy:
+      mode: replicated
+      replicas: 2
       resources:
         limits:
           memory: "512M"
@@ -254,11 +288,13 @@ services:
       - ./apps/image_transcoder/pkgs/mrz_reader/:/app/
     restart: unless-stopped
     networks:
-      - local_bridge
+      - swarm-network
 
   app_verified_io_service:
     image: makhosi/app_verified_io:latest
     deploy:
+      mode: replicated
+      replicas: 2
       resources:
         limits:
           memory: "512M"
@@ -285,11 +321,11 @@ services:
       TZ: Africa/Johannesburg
     ports:
       - "9000:80"
-    # volumes:
-    # - ./apps/app_verified_io:/var/www
     restart: unless-stopped
     networks:
-      - local_bridge
+      - swarm-network
+    depends_on:
+      - mysql_db_service
 
   mysql_db_service:
     image: mysql:8.0
@@ -298,6 +334,9 @@ services:
         limits:
           memory: "512M"
           cpus: '0.5'
+      placement:
+        constraints:
+          - node.role == manager
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${VERIFIEDWEB_DB_DATABASE}
@@ -309,7 +348,7 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - local_bridge
+      - swarm-network
 
 volumes:
   emqx1_data:
@@ -322,5 +361,6 @@ volumes:
 networks:
   emqx-bridge:
     driver: bridge
-  local_bridge:
-    driver: bridge
+  swarm-network:
+    external: true
+
