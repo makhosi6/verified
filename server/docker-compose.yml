@@ -99,9 +99,11 @@ services:
         - influxdb
 
   nginx_proxy:
-    build:
-      context: .
-      dockerfile: ./apps/nginx_proxy/Dockerfile
+    image: temp/nginx:latest
+    # 
+    # build:
+    #   context: .
+    #   dockerfile: ./apps/nginx_proxy/Dockerfile
     deploy:
       resources:
         limits:
@@ -127,9 +129,11 @@ services:
       - swarm-network
 
   payments_service:
-    build:
-      context: .
-      dockerfile: ./apps/payments/Dockerfile
+    image: temp/payments:latest
+    # 
+    # build:
+    #   context: .
+    #   dockerfile: ./apps/payments/Dockerfile
     deploy:
         mode: replicated
         replicas: 2
@@ -153,9 +157,10 @@ services:
       - swarm-network
 
   store_service:
-    build:
-      context: .
-      dockerfile: ./apps/store/Dockerfile
+    image: temp/store:latest
+    # build:
+    #   context: .
+    #   dockerfile: ./apps/store/Dockerfile
     deploy:
         mode: replicated
         replicas: 2
@@ -184,9 +189,12 @@ services:
       - swarm-network
 
   cdn_service:
-    build:
-      context: .
-      dockerfile: ./apps/cdn/Dockerfile
+    image: temp/cdn:latest
+    # docker build -t temp/cdn:latest -f ./apps/cdn/Dockerfile .
+    # 
+    # build:
+    #   context: .
+    #   dockerfile: ./apps/cdn/Dockerfile
     deploy:
         mode: replicated
         replicas: 2
@@ -206,9 +214,11 @@ services:
       - swarm-network
 
   verify_id_service:
-    build:
-      context: .
-      dockerfile: ./apps/verifyId/Dockerfile
+    image: temp/verify_id:latest
+    # 
+    # build:
+    #   context: .
+    #   dockerfile: ./apps/verifyId/Dockerfile
     deploy:
         mode: replicated
         replicas: 2
