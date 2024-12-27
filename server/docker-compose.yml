@@ -3,8 +3,9 @@ services:
   emqx1:
     image: emqx:5.0.26
     deploy:
-      mode: replicated
-      replicas: 2
+      placement:
+        constraints:
+          - node.role == manager
     container_name: emqx1
     environment:
       - TZ=Africa/Johannesburg
@@ -33,8 +34,9 @@ services:
   emqx2:
     image: emqx:5.0.26
     deploy:
-      mode: replicated
-      replicas: 2
+      placement:
+        constraints:
+          - node.role == manager
     container_name: emqx2
     environment:
       - TZ=Africa/Johannesburg
