@@ -82,10 +82,25 @@ flutter build web --web-renderer canvaskit
 
 ### run backend server
 
-- ```bash
+
+- Single node Docker
+```bash
     docker-compose build
     docker-compose -p verified up -d --force-recreate --build --remove-orphans --timestamps
-    docker-compose down
+    docker-compose down | docker stack rm verified
+  ```
+
+- Deploy with Docker Swarm
+  ```bash
+      docker stack deploy -c docker-compose.yml --with-registry-auth --resolve-image=always verified
+  ```
+- then force re-update
+  ```bash
+    for name in $(docker stack services --format '{{.Name}}' verified); do
+      echo "UPDATE => $name:"
+      docker service update --force "$name"
+      echo ""
+    done
 
   ```
 
@@ -108,6 +123,7 @@ flutter build web --web-renderer canvaskit
 - `adb shell am start -a android.intent.action.VIEW  -d "app://byteestudio.com/foo/secure/89b-12d3-a456-426614174000/123e4567-e89b-12d3-a456-426614174000" `
 
 ## buddle and merge certs
+
 - `cd localhost`
 - `cd verified.byteestudio.com`
 - `cat certificate.crt ca_bundle.crt >> merged_certificate.crt`
@@ -122,6 +138,7 @@ flutter build web --web-renderer canvaskit
   ```
 
 ### check-out
+
 - https://regulaforensics.com
 - https://usesmileid.com
 - https://regulaforensics.com
@@ -129,3 +146,13 @@ flutter build web --web-renderer canvaskit
 - https://dha.gov.za
 - https://www.mie.co.za
 - https://connect.iidentifii.com/
+
+
+- Build temp images for deployment:
+   - ```bash
+    docker build -t temp/cdn:latest -f ./apps/cdn/Dockerfile .
+    docker build -t temp/verify_id:latest -f ./apps/verifyId/Dockerfile .
+    docker build -t temp/nginx:latest -f ./apps/nginx_proxy/Dockerfile .
+    docker build -t temp/store:latest -f ./apps/store/Dockerfile .
+    docker build -t temp/payments:latest -f ./apps/payments/Dockerfile .
+  ``` 

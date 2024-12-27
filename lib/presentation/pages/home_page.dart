@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,8 +8,10 @@ import 'package:verified/helpers/logger.dart';
 import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/infrastructure/auth/local_user.dart';
 import 'package:verified/presentation/pages/account_page.dart';
+import 'package:verified/presentation/pages/id_document_scanner_page.dart';
 import 'package:verified/presentation/pages/input_verification_url.dart';
 import 'package:verified/presentation/pages/verification_page.dart';
+import 'package:verified/presentation/utils/document_type.dart';
 import 'package:verified/presentation/utils/verification_done_bottom_sheet.dart';
 import 'package:verified/presentation/widgets/history/combined_history_list.dart';
 import 'package:verified/presentation/pages/search_options_page.dart';
@@ -37,6 +40,21 @@ class HomePageContents extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> widgets = [
       GestureDetector(
+        // onTap: () {
+        //   navigate(context, page: const VerificationPage());
+        // },
+        //
+        // onTap: () {
+        //   navigate(context,
+        //       page: IDDocumentScanner(
+        //         onStateChanged: (state) {},
+        //         onNext: (BuildContext ctx, CameraEventsState? state) {},
+        //         onCapture: (File file, DetectSide side) {},
+        //         documentType: DocumentType.id_card,
+        //         onMessage: (List<String> msgs) {},
+        //       ));
+        // },
+        //
         onTap: () {
           const placeholderUuid = '0000000-0000-0000-0000-00000000000';
           context.read<StoreBloc>().add(const StoreEvent.validateVerificationLink(placeholderUuid));
