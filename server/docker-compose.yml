@@ -1,57 +1,5 @@
 version: "3.8"
 services:
-  emqx1:
-    image: emqx:5.0.26
-    deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-    environment:
-      - TZ=Africa/Johannesburg
-      - "EMQX_NODE_NAME=emqx@node1.emqx.io"
-      - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
-      - "EMQX_CLUSTER__STATIC__SEEDS=emqx@node1.emqx.io,emqx@node2.emqx.io"
-    healthcheck:
-      test: ["CMD", "/opt/emqx/bin/emqx_ctl", "status"]
-      interval: 5s
-      timeout: 25s
-      retries: 5
-    restart: unless-stopped
-    networks:
-      - emqx-bridge
-    ports:
-      - 1883:1883
-      - 8083:8083
-      - 8084:8084
-      - 8883:8883
-      - 18083:18083
-    volumes:
-      - emqx1_data:/opt/emqx/data
-
-  emqx2:
-    image: emqx:5.0.26
-    deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-    environment:
-      - TZ=Africa/Johannesburg
-      - "EMQX_NODE_NAME=emqx@node2.emqx.io"
-      - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
-      - "EMQX_CLUSTER__STATIC__SEEDS=emqx@node1.emqx.io,emqx@node2.emqx.io"
-    healthcheck:
-      test: ["CMD", "/opt/emqx/bin/emqx_ctl", "status"]
-      interval: 5s
-      timeout: 25s
-      retries: 5
-    restart: unless-stopped
-    networks:
-      - emqx-bridge
-    volumes:
-      - emqx2_data:/opt/emqx/data
-
   influxdb:
     image: influxdb:latest
     deploy:
@@ -359,16 +307,10 @@ services:
       - swarm-network
 
 volumes:
-  emqx1_data:
-    driver: local
-  emqx2_data:
-    driver: local
   influxdb_data:
     driver: local
 
 networks:
-  emqx-bridge: 
-    driver: overlay
   swarm-network:
     external: true
 
