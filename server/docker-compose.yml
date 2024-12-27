@@ -58,8 +58,6 @@ services:
 
   influxdb:
     image: influxdb:latest
-    env_file: 
-        ./.env
     deploy:
       mode: replicated
       replicas: 2
@@ -83,8 +81,6 @@ services:
 
   telegraf:
       image: telegraf:latest
-      env_file: 
-        ./.env
       deploy:
         mode: replicated
         replicas: 2
@@ -110,8 +106,6 @@ services:
     # build:
     #   context: .
     #   dockerfile: ./apps/nginx_proxy/Dockerfile
-    env_file: 
-        ./.env
     deploy:
       resources:
         limits:
@@ -142,8 +136,6 @@ services:
     # build:
     #   context: .
     #   dockerfile: ./apps/payments/Dockerfile
-    env_file: 
-        ./.env
     deploy:
         mode: replicated
         replicas: 2
@@ -171,8 +163,6 @@ services:
     # build:
     #   context: .
     #   dockerfile: ./apps/store/Dockerfile
-    env_file: 
-        ./.env
     deploy:
         mode: replicated
         replicas: 2
@@ -207,8 +197,6 @@ services:
     # build:
     #   context: .
     #   dockerfile: ./apps/cdn/Dockerfile
-    env_file: 
-        ./.env
     deploy:
         mode: replicated
         replicas: 2
@@ -233,8 +221,6 @@ services:
     # build:
     #   context: .
     #   dockerfile: ./apps/verifyId/Dockerfile
-    env_file: 
-        ./.env
     deploy:
         mode: replicated
         replicas: 2
@@ -263,8 +249,6 @@ services:
 
   whatsapp_messaging_service:
     image: makhosi/whatsapp_hook:3.3.minimal
-    env_file: 
-        ./.env
     deploy:
       mode: replicated
       replicas: 2
@@ -285,8 +269,6 @@ services:
 
   mrz_decoder_service:
     image: makhosi/mrz_decoder:1.0.2
-    env_file: 
-        ./.env
     deploy:
       mode: replicated
       replicas: 2
@@ -305,8 +287,6 @@ services:
 
   mrz_reader_service:
     image: makhosi/mrz_reader:1.0.1
-    env_file: 
-        ./.env
     deploy:
       mode: replicated
       replicas: 2
@@ -324,8 +304,6 @@ services:
 
   app_verified_io_service:
     image: makhosi/app_verified_io:latest
-    env_file: 
-        ./.env
     deploy:
       mode: replicated
       replicas: 2
@@ -363,8 +341,6 @@ services:
 
   mysql_db_service:
     image: mysql:8.0
-    env_file: 
-        ./.env
     deploy:
       resources:
         limits:
