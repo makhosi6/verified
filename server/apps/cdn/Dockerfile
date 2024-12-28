@@ -10,6 +10,6 @@ ENV TZ=Africa/Johannesburg
 
 COPY . .
 
-CMD ["ls" , "-la"]
+RUN ls -la
 
 CMD ["npm", "run", "cdn"]
