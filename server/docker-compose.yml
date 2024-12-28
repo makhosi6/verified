@@ -45,7 +45,7 @@ services:
         - influxdb
 
   nginx_proxy:
-    image: temp/nginx:latest
+    image: makhosi/verified_nginx:latest
     # 
     # build:
     #   context: .
@@ -75,7 +75,7 @@ services:
       - swarm-network
 
   payments_service:
-    image: temp/payments:latest
+    image: makhosi/verified_payments:latest
     # 
     # build:
     #   context: .
@@ -103,7 +103,7 @@ services:
       - swarm-network
 
   store_service:
-    image: temp/store:latest
+    image: makhosi/verified_store:latest
     # build:
     #   context: .
     #   dockerfile: ./apps/store/Dockerfile
@@ -135,8 +135,7 @@ services:
       - swarm-network
 
   cdn_service:
-    image: temp/cdn:latest
-    # docker build -t temp/cdn:latest -f ./apps/cdn/Dockerfile .
+    image: makhosi/verified_cdn:latest
     # 
     # build:
     #   context: .
@@ -160,7 +159,7 @@ services:
       - swarm-network
 
   verify_id_service:
-    image: temp/verify_id:latest
+    image: makhosi/verified_verify_id:latest
     # 
     # build:
     #   context: .

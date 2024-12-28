@@ -92,6 +92,7 @@ flutter build web --web-renderer canvaskit
 
 - Deploy with Docker Swarm
   ```bash
+      docker login -u makhosi
       docker stack deploy -c docker-compose.yml --with-registry-auth --resolve-image=always verified
   ```
 - then force re-update
@@ -150,9 +151,14 @@ flutter build web --web-renderer canvaskit
 
 - Build temp images for deployment:
    - ```bash
-    docker build -t temp/cdn:latest -f ./apps/cdn/Dockerfile .
-    docker build -t temp/verify_id:latest -f ./apps/verifyId/Dockerfile .
-    docker build -t temp/nginx:latest -f ./apps/nginx_proxy/Dockerfile .
-    docker build -t temp/store:latest -f ./apps/store/Dockerfile .
-    docker build -t temp/payments:latest -f ./apps/payments/Dockerfile .
+    docker build -t makhosi/verified_cdn:latest -f ./apps/cdn/Dockerfile .;docker push makhosi/verified_cdn:latest
+    docker build -t makhosi/verified_verify_id:latest -f ./apps/verifyId/Dockerfile .;docker push makhosi/verified_verify_id:latest
+    docker build -t makhosi/verified_nginx:latest -f ./apps/nginx_proxy/Dockerfile .;docker push makhosi/verified_nginx:latest
+    docker build -t makhosi/verified_store:latest -f ./apps/store/Dockerfile .;docker push makhosi/verified_store:latest
+    docker build -t makhosi/verified_payments:latest -f ./apps/payments/Dockerfile .;docker push makhosi/verified_payments:latest
   ``` 
+
+- export .env
+  ```bash
+    eval $(cat .env | sed 's/^/export /')
+  ```
