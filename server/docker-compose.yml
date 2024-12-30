@@ -1,10 +1,64 @@
 version: "3.8"
 services:
+  emqx1:
+    image: emqx:5.0.26
+    #deploy:
+    #  resources:
+    #    limits:
+    #      memory: "200M"
+    container_name: emqx1
+    environment:
+      - TZ=Africa/Johannesburg
+      - "EMQX_NODE_NAME=emqx@node1.emqx.io"
+      - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
+      - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
+    healthcheck:
+      test: ["CMD", "/opt/emqx/bin/emqx_ctl", "status"]
+      interval: 5s
+      timeout: 25s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      emqx-bridge:
+        aliases:
+          - node1.emqx.io
+    ports:
+      - 1883:1883
+      - 8083:8083
+      - 8084:8084
+      - 8883:8883
+      - 18083:18083
+    volumes:
+      - emqx1_data:/opt/emqx/data
+
+  emqx2:
+    image: emqx:5.0.26
+    #deploy:
+    #  resources:
+    #    limits:
+     #     memory: "200M"
+    container_name: emqx2
+    environment:
+      - TZ=Africa/Johannesburg
+      - "EMQX_NODE_NAME=emqx@node2.emqx.io"
+      - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
+      - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
+    healthcheck:
+      test: ["CMD", "/opt/emqx/bin/emqx_ctl", "status"]
+      interval: 5s
+      timeout: 25s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      emqx-bridge:
+        aliases:
+          - node2.emqx.io
+    volumes:
+      - emqx2_data:/opt/emqx/data
+
   influxdb:
     image: influxdb:latest
     deploy:
-      mode: replicated
-      replicas: 2
       resources:
         limits:
           cpus: '0.5'
@@ -20,17 +74,13 @@ services:
       DOCKER_INFLUXDB_INIT_ORG: ${VERIFIED_INFLUXDB_ORG}
       DOCKER_INFLUXDB_INIT_BUCKET: ${VERIFIED_INFLUXDB_BUCKET}
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
-    restart: unless-stopped
-
 
   telegraf:
       image: telegraf:latest
       deploy:
-        mode: replicated
-        replicas: 2
-        resources:
-          limits:
-            memory: '200M'
+            resources:
+              limits:
+                memory: '200M'
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
         - ./apps/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
@@ -40,16 +90,13 @@ services:
         INFLUXDB_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
         INFLUXDB_ORG: ${VERIFIED_INFLUXDB_ORG}
         INFLUXDB_BUCKET: ${VERIFIED_INFLUXDB_BUCKET}
-      restart: unless-stopped
       depends_on:
         - influxdb
 
   nginx_proxy:
-    image: makhosi/verified_nginx:latest
-    # 
-    # build:
-    #   context: .
-    #   dockerfile: ./apps/nginx_proxy/Dockerfile
+    build:
+      context: .
+      dockerfile: ./apps/nginx_proxy/Dockerfile
     deploy:
       resources:
         limits:
@@ -64,6 +111,7 @@ services:
       - ./log/nginx:/var/log/nginx
     restart: unless-stopped
     depends_on:
+      # - fb_notifications_service
       - payments_service
       - store_service
       - verify_id_service
@@ -72,21 +120,17 @@ services:
       - mrz_decoder_service
       - app_verified_io_service
     networks:
-      - swarm-network
+      - local_bridge
 
   payments_service:
-    image: makhosi/verified_payments:latest
-    # 
-    # build:
-    #   context: .
-    #   dockerfile: ./apps/payments/Dockerfile
+    build:
+      context: .
+      dockerfile: ./apps/payments/Dockerfile
     deploy:
-        mode: replicated
-        replicas: 2
-        resources:
-          limits:
-            cpus: '0.5'
-            memory: '1G'
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
     volumes:
       - ./log/payments:/app/log/payments
     environment:
@@ -100,20 +144,17 @@ services:
       - FB_SERVER_TOKEN=${FB_SERVER_TOKEN}
     restart: unless-stopped
     networks:
-      - swarm-network
+      - local_bridge
 
   store_service:
-    image: makhosi/verified_store:latest
-    # build:
-    #   context: .
-    #   dockerfile: ./apps/store/Dockerfile
+    build:
+      context: .
+      dockerfile: ./apps/store/Dockerfile
     deploy:
-        mode: replicated
-        replicas: 2
-        resources:
-          limits:
-            cpus: '0.5'
-            memory: '1G'
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
     volumes:
       - ./apps/store/db:/app/apps/store/db
       - ./log/store:/app/log/store
@@ -122,31 +163,19 @@ services:
       - NODE_ENV=production
       - TZ=Africa/Johannesburg
       - STORE_PORT=${STORE_PORT}
-      - NOTION_DATABASE_ID=${NOTION_DATABASE_ID}
-      - NOTION_TOKEN=${NOTION_TOKEN}
-      - NOTION_USERS=${NOTION_USERS}
-      - VERIFIEDWEB_MAIL_FROM_ADDRESS=${VERIFIEDWEB_MAIL_FROM_ADDRESS}
-      - VERIFIEDWEB_MAIL_PASSWORD=${VERIFIEDWEB_MAIL_PASSWORD}
-      - VERIFIEDWEB_MAIL_HOST=${VERIFIEDWEB_MAIL_HOST}
-      - VERIFIEDWEB_MAIL_PORT=${VERIFIEDWEB_MAIL_PORT}
-      - VERIFIED_ADMIN_EMAIL=${VERIFIED_ADMIN_EMAIL}
     restart: unless-stopped
     networks:
-      - swarm-network
+      - local_bridge
 
   cdn_service:
-    image: makhosi/verified_cdn:latest
-    # 
-    # build:
-    #   context: .
-    #   dockerfile: ./apps/cdn/Dockerfile
+    build:
+      context: .
+      dockerfile: ./apps/cdn/Dockerfile
     deploy:
-        mode: replicated
-        replicas: 2
-        resources:
-          limits:
-            cpus: '0.5'
-            memory: '1G'
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
     volumes:
       - ./apps/cdn/root:/app/apps/cdn/root
       - ./apps/cdn/static:/app/apps/cdn/static
@@ -156,21 +185,17 @@ services:
       - TZ=Africa/Johannesburg
     restart: unless-stopped
     networks:
-      - swarm-network
+      - local_bridge
 
   verify_id_service:
-    image: makhosi/verified_verify_id:latest
-    # 
-    # build:
-    #   context: .
-    #   dockerfile: ./apps/verifyId/Dockerfile
+    build:
+      context: .
+      dockerfile: ./apps/verifyId/Dockerfile
     deploy:
-        mode: replicated
-        replicas: 2
-        resources:
-          limits:
-            cpus: '0.5'
-            memory: '1G'
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
     volumes:
       - ./log/verify_id:/app/log/verify_id
     environment:
@@ -178,23 +203,13 @@ services:
       - NODE_ENV=production
       - VERIFYID_PORT=${VERIFYID_PORT}
       - TZ=Africa/Johannesburg
-      - NOTION_DATABASE_ID=${NOTION_DATABASE_ID}
-      - NOTION_TOKEN=${NOTION_TOKEN}
-      - NOTION_USERS=${NOTION_USERS}
-      - VERIFIEDWEB_MAIL_FROM_ADDRESS=${VERIFIEDWEB_MAIL_FROM_ADDRESS}
-      - VERIFIEDWEB_MAIL_PASSWORD=${VERIFIEDWEB_MAIL_PASSWORD}
-      - VERIFIEDWEB_MAIL_HOST=${VERIFIEDWEB_MAIL_HOST}
-      - VERIFIEDWEB_MAIL_PORT=${VERIFIEDWEB_MAIL_PORT}
-      - VERIFIED_ADMIN_EMAIL=${VERIFIED_ADMIN_EMAIL}
     restart: unless-stopped
     networks:
-      - swarm-network
+      - local_bridge
 
   whatsapp_messaging_service:
     image: makhosi/whatsapp_hook:3.3.minimal
     deploy:
-      mode: replicated
-      replicas: 2
       resources:
         limits:
           cpus: '0.5'
@@ -208,13 +223,11 @@ services:
       - ./apps/whatsapp_messaging/db:/app/db
     restart: unless-stopped
     networks:
-      - swarm-network
+      - local_bridge
 
   mrz_decoder_service:
     image: makhosi/mrz_decoder:1.0.2
     deploy:
-      mode: replicated
-      replicas: 2
       resources:
         limits:
           memory: "512M"
@@ -226,13 +239,11 @@ services:
       - ./apps/image_transcoder/pkgs/mrz_decoder/:/app/
     restart: unless-stopped
     networks:
-      - swarm-network
+      - local_bridge
 
   mrz_reader_service:
     image: makhosi/mrz_reader:1.0.1
     deploy:
-      mode: replicated
-      replicas: 2
       resources:
         limits:
           memory: "512M"
@@ -243,13 +254,11 @@ services:
       - ./apps/image_transcoder/pkgs/mrz_reader/:/app/
     restart: unless-stopped
     networks:
-      - swarm-network
+      - local_bridge
 
   app_verified_io_service:
     image: makhosi/app_verified_io:latest
     deploy:
-      mode: replicated
-      replicas: 2
       resources:
         limits:
           memory: "512M"
@@ -276,11 +285,11 @@ services:
       TZ: Africa/Johannesburg
     ports:
       - "9000:80"
+    # volumes:
+    # - ./apps/app_verified_io:/var/www
     restart: unless-stopped
     networks:
-      - swarm-network
-    depends_on:
-      - mysql_db_service
+      - local_bridge
 
   mysql_db_service:
     image: mysql:8.0
@@ -289,9 +298,6 @@ services:
         limits:
           memory: "512M"
           cpus: '0.5'
-      placement:
-        constraints:
-          - node.role == manager
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${VERIFIEDWEB_DB_DATABASE}
@@ -303,13 +309,18 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - swarm-network
+      - local_bridge
 
 volumes:
+  emqx1_data:
+    driver: local
+  emqx2_data:
+    driver: local
   influxdb_data:
     driver: local
 
 networks:
-  swarm-network:
-    external: true
-
+  emqx-bridge:
+    driver: bridge
+  local_bridge:
+    driver: bridge
