@@ -162,19 +162,3 @@ flutter build web --web-renderer canvaskit
   ```bash
     eval $(cat .env | sed 's/^/export /')
   ```
-  
-```
-  docker run -d --privileged \
-  --name=wireshark \
-  --net=host \
-  --cap-add=NET_ADMIN \
-  --security-opt seccomp=unconfined \
-  -e PUID=1000 \
-  -e PGID=1000 \
-  -e TZ=Etc/UTC \
-  -p 3000:3000 \
-  -p 3001:3001 \
-  -v wireshark:/config \
-  --restart unless-stopped \
-  lscr.io/linuxserver/wireshark:latest
-```
