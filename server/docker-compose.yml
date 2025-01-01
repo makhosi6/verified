@@ -133,6 +133,8 @@ services:
           memory: '1G'
     volumes:
       - ./log/payments:/app/log/payments
+    ports:
+      - "5436:5436"
     environment:
       - TZ=Africa/Johannesburg
       - PORT=${PAYMENTS_PORT}
@@ -158,6 +160,8 @@ services:
     volumes:
       - ./apps/store/db:/app/apps/store/db
       - ./log/store:/app/log/store
+    ports:
+      - "5400:5400"
     environment:
       - PORT=${STORE_PORT}
       - NODE_ENV=production
@@ -183,6 +187,8 @@ services:
     environment:
       - PORT=${CDN_PORT}
       - TZ=Africa/Johannesburg
+    ports:
+      - "4334:4334"
     restart: unless-stopped
     networks:
       - local_bridge
@@ -198,6 +204,8 @@ services:
           memory: '1G'
     volumes:
       - ./log/verify_id:/app/log/verify_id
+    ports:
+      - "5434:5434"
     environment:
       - PORT=${VERIFYID_PORT}
       - NODE_ENV=production
