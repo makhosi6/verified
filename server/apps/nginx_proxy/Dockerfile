@@ -2,6 +2,7 @@ FROM nginx:latest
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./apps/nginx_proxy/localhost/ /cert/localhost/
 COPY ./apps/nginx_proxy/verified.byteestudio.com/ /cert/verified.byteestudio.com/
+COPY ./apps/nginx_proxy/json.verified-za.id/ /cert/json.verified-za.id/
 COPY ./apps/nginx_proxy/nginx.conf /etc/nginx/conf.d/default.conf
 
 #
