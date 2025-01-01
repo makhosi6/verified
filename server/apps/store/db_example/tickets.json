@@ -1,24 +1,4 @@
 {
 
-    "resource": [{
-        "id": 35467,
-        "profileId": 888887,
-        "timestamp": 2121331,
-        "isResolved": true,
-        "type": "billing/refund|serviceComplaint|deleteInfo|other",
-        "comment": {
-            "title": "How do I open the safe",
-            "body": "The smoke is very colorful."
-        },
-        "preferedCommunicationChannel": "email|whatsapp|SMS",
-        "response": [
-            {
-                "title": "How do I open the safe",
-                "body": "The smoke is very colorful."
-            }
-        ]
-    }
-
-
-]
+    "resource": []
 }
