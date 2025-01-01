@@ -241,29 +241,19 @@ function sendWhatsappSend(helpRequest) {
 /**
  * 
  * @param {string} taskLink 
- * @param {object} jsonData
+ * @param {object} data
  * @returns
  */
-async function notifyTaggedPersons(taskLink, jsonData) {
-  const transporter = nodemailer.createTransport({
-    host: process.env.VERIFIEDWEB_MAIL_HOST,
-    port: process.env.VERIFIEDWEB_MAIL_PORT,
-    secure: true,
-    auth: {
-      user: process.env.VERIFIEDWEB_MAIL_FROM_ADDRESS,
-      pass: process.env.VERIFIEDWEB_MAIL_PASSWORD,
-    },
-  });
-
-  const mailOptions = {
-    from: process.env.VERIFIEDWEB_MAIL_FROM_ADDRESS,
-    to: process.env.NOTION_USERS,
-    subject: "New Task Created in Notion",
-    text: `A new task has been created in Notion. Check it out here: ${taskLink} \n\n\nDATA: ${jsonData}`,
-  };
-
+async function notifyTaggedPersons(taskLink, data) {
   try {
-    await transporter.sendMail(mailOptions);
+    (process.env.NOTION_USERS || process.env.VERIFIED_ADMIN_EMAIL || '').split(',').map(email => sendHelpEmailNotifications({
+      name: "Notion Admin",
+      email,
+      message: JSON.stringify({
+        message: `A new task has been created in Notion. Check it out here: ${taskLink}`,
+        data,
+      }),
+    }))
     console.log("Emails sent successfully.");
   } catch (error) {
     console.error("Error sending emails:", error);

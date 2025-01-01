@@ -14,7 +14,7 @@ const notificationsHook = async (req, res, next) => {
             'COMP_VERIFICATION' : 'UNKNOWN');
 
     if (url && !event.includes('UNKNOWN')) {
-        const task = await createNotionTask("New Task Created in Notion", `${event}: A new task has been created in Notion. ${url}`, taggedEmails);
+        const task = await createNotionTask(`${event}: ${url}`, ` A new task has been created  Notion. \n\n ${req.body}`, process.env.NOTION_USER || '');
 
         if (task) {
             await notifyTaggedPersons(task?.url || url, { event: task, request: req.body });
