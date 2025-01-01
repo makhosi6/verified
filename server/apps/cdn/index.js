@@ -5,7 +5,7 @@ const path = require('path')
 const compression = require('compression');
 const morgan = require('morgan')
 const app = express()
-const PORT = process.env.FB_NOTIF_PORT || process.env.PORT || 4334;
+const PORT = process.env.PORT || 4334;
 const HOST = process.env.HOST || "0.0.0.0";
 const { analytics } = require('../../middleware/universal');
 
