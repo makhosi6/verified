@@ -86,7 +86,28 @@ function sendPushNotifications({ token, title, body }) {
  * @property {string} message - The message containing details or text.
  * 
  */
+/**
+ * @param {HelpRequest} helpRequest
+ */
+function sendTextOnlyEmailNotifications(helpRequest) {
+  try {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", "Bearer TOKEN");
+    // 
 
+    fetch("https://byteestudio.com/api/send-contact-info", {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(helpRequest)
+    })
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.error(error));
+  } catch (error) {
+    console.log({ error, helpRequest });
+  }
+}
 /**
  * @param {HelpRequest} helpRequest
  */
@@ -246,14 +267,16 @@ function sendWhatsappSend(helpRequest) {
  */
 async function notifyTaggedPersons(taskLink, data) {
   try {
-    (process.env.NOTION_USERS || process.env.VERIFIED_ADMIN_EMAIL || '').split(',').map(email => sendHelpEmailNotifications({
-      name: "Notion Admin",
-      email,
-      message: JSON.stringify({
-        message: `A new task has been created in Notion. Check it out here: ${taskLink}`,
-        data,
-      }),
-    }))
+    (process.env.NOTION_USERS || process.env.VERIFIED_ADMIN_EMAIL || '').split(',').map(function (email) {
+    sendTextOnlyEmailNotifications({
+        name: "Notion Admin",
+        email,
+        message: JSON.stringify({
+          message: `A new task has been created in Notion. Check it out here: ${taskLink}`,
+          data,
+        }),
+      });
+    })
     console.log("Emails sent successfully.");
   } catch (error) {
     console.error("Error sending emails:", error);
@@ -267,6 +290,7 @@ module.exports = {
   sendSuccessfulPaymentEmailNotifications,
   sendSuccessfulRefundEmailNotifications,
   sendHelpEmailNotifications,
+  sendTextOnlyEmailNotifications,
   sendFailedVerificationEmailNotifications,
   sendPendingVerificationEmailNotifications,
   sendSuccessfulVerificationEmailNotifications,
