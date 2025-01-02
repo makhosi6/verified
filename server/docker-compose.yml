@@ -67,6 +67,7 @@ services:
       - "8086:8086"
     volumes:
       - influxdb_data:/var/lib/influxdb
+    restart: unless-stopped
     environment:
       DOCKER_INFLUXDB_INIT_MODE: setup
       DOCKER_INFLUXDB_INIT_USERNAME: ${VERIFIED_INFLUXDB_ADMIN_USER}
@@ -81,6 +82,7 @@ services:
             resources:
               limits:
                 memory: '200M'
+      restart: unless-stopped
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
         - ./apps/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
