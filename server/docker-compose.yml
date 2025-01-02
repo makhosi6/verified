@@ -135,6 +135,8 @@ services:
       - ./log/payments:/app/log/payments
     ports:
       - "5436:5436"
+    env_file:
+      - ./.env
     environment:
       - TZ=Africa/Johannesburg
       - PORT=${PAYMENTS_PORT}
@@ -162,6 +164,8 @@ services:
       - ./log/store:/app/log/store
     ports:
       - "5400:5400"
+    env_file:
+      - ./.env
     environment:
       - PORT=${STORE_PORT}
       - NODE_ENV=production
@@ -184,6 +188,8 @@ services:
       - ./apps/cdn/root:/app/apps/cdn/root
       - ./apps/cdn/static:/app/apps/cdn/static
       - ./log/cdn:/app/log/cdn
+    env_file:
+      - ./.env
     environment:
       - PORT=${CDN_PORT}
       - TZ=Africa/Johannesburg
@@ -206,6 +212,8 @@ services:
       - ./log/verify_id:/app/log/verify_id
     ports:
       - "5434:5434"
+    env_file:
+      - ./.env
     environment:
       - PORT=${VERIFYID_PORT}
       - NODE_ENV=production
