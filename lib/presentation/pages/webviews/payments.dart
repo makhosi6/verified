@@ -7,7 +7,6 @@ import 'package:verified/application/store/store_bloc.dart';
 import 'package:verified/domain/models/wallet.dart';
 import 'package:verified/helpers/currency.dart';
 import 'package:verified/infrastructure/analytics/repository.dart';
-import 'package:verified/presentation/pages/loading_page.dart';
 import 'package:verified/presentation/pages/webviews/the_webview.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/utils/lottie_loader.dart';
@@ -27,32 +26,34 @@ class PaymentPage extends StatelessWidget {
     final currency = context.watch<PaymentsBloc>().state.paymentData?.currency ?? 'R';
 
     if (url == null) {
-      return const Center(
-        child: LottieProgressLoader(
-          key: Key('app-splash-screen-loader-for-payments'),
+      return const Scaffold(
+        body:  Center(
+          child: LottieProgressLoader(
+            key: Key('app-splash-screen-loader-for-payments'),
+          ),
         ),
       );
     }
 
-   if (kReleaseMode) {
-     FirebaseAnalytics.instance.logBeginCheckout(
-        value: checkout?.amount?.toDouble(),
-        currency: checkout?.currency,
-        items: [
-          AnalyticsEventItem(
-            itemName: 'TopUp',
-            itemId: checkout?.metadata?.checkoutId,
-            price: checkout?.amount?.toDouble(),
-          ),
-        ],
-        coupon: 'TOPUP');
-   }
+    if (kReleaseMode) {
+      FirebaseAnalytics.instance.logBeginCheckout(
+          value: checkout?.amount?.toDouble(),
+          currency: checkout?.currency,
+          items: [
+            AnalyticsEventItem(
+              itemName: 'TopUp',
+              itemId: checkout?.metadata?.checkoutId,
+              price: checkout?.amount?.toDouble(),
+            ),
+          ],
+          coupon: 'TOPUP');
+    }
 
     return TheWebView(
       hasBackBtn: false,
       webURL: url,
       onPageCancelled: () {
-            VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_ON_PAYMENT_CANCELLED);
+        VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_ON_PAYMENT_CANCELLED);
         ScaffoldMessenger.of(context)
           ..clearSnackBars()
           ..showSnackBar(
@@ -72,7 +73,7 @@ class PaymentPage extends StatelessWidget {
         /// then go back
         Navigator.of(context).pop();
       },
-      onPageSuccess: (_) {
+      onPageSuccess: () {
         VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_ON_SUCCESSFUL_PAYMENT);
 
         /// go back
@@ -102,7 +103,7 @@ class PaymentPage extends StatelessWidget {
           ),
         );
       },
-      onPageFailed: (_) {
+      onPageFailed: () {
         VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_ON_FAILED_PAYMENT);
         showDialog(
           context: context,

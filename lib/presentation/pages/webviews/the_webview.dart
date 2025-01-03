@@ -1,10 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'package:verified/helpers/app_info.dart';
+import 'package:verified/helpers/logger.dart';
+import 'package:verified/infrastructure/analytics/repository.dart';
 import 'package:verified/presentation/pages/error_page.dart';
 import 'package:verified/presentation/theme.dart';
 import 'package:verified/presentation/widgets/buttons/app_bar_action_btn.dart';
@@ -14,17 +15,17 @@ class TheWebView extends StatefulWidget {
 
   String webURL;
 
-  Function? onPageSuccess;
-  Function? onPageFailed;
-  Function? onPageCancelled;
+  Function onPageSuccess;
+  Function onPageFailed;
+  Function onPageCancelled;
 
   TheWebView({
     Key? key,
     this.hasBackBtn = true,
-    this.onPageSuccess,
-    this.onPageFailed,
-    this.onPageCancelled,
     required this.webURL,
+    required this.onPageSuccess,
+    required this.onPageFailed,
+    required this.onPageCancelled,
   }) : super(key: key);
 
   @override
@@ -74,16 +75,32 @@ class _TheWebViewState extends State<TheWebView> {
               });
             }
           },
+          onUrlChange: (change) {
+            print("ON_URL_CHANGE == ${change.url}");
+          },
           onNavigationRequest: (NavigationRequest request) {
             String url = request.url;
+            print(url);
             if (url.contains('verified.byteestudio.com')) {
               ///
-              if (url == 'https://verified.byteestudio.com/success') widget.onPageSuccess?.call();
-              if (url == 'https://verified.byteestudio.com/cancelled') widget.onPageCancelled?.call();
-              if (url == 'https://verified.byteestudio.com/failed') widget.onPageFailed?.call();
+              print('IF  ' + url);
+              if (url.contains('/success')) {
+                print('success');
+                widget.onPageSuccess();
+              }
 
+              if (url.contains('/cancelled')) {
+                print('cancelled');
+                widget.onPageCancelled();
+              }
+              if (url.contains('/failed')) {
+                print('failed');
+                widget.onPageFailed();
+              }
               //
               return NavigationDecision.prevent;
+            } else {
+              verifiedErrorLogger('ELSE + ' + url);
             }
             return NavigationDecision.navigate;
           },
@@ -99,7 +116,7 @@ class _TheWebViewState extends State<TheWebView> {
     if (hasError) return VerifiedErrorPage(message: errorMsg);
 
     return Container(
-      color: Colors.grey.shade100,
+      color: Colors.white,
       child: SafeArea(
         child: Scaffold(
           body: SizedBox(

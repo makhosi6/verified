@@ -11,7 +11,7 @@ const { delay } = require("../utils/delay");
 const { getOne, createItem } = require("../usecases/db_operations");
 const { handleKycVerification } = require("../usecases/verifyid");
 const { VerifiedDocumentType, ResponseCode } = require("../utils/models");
-const { sendDiscordNotificationToAdmin,  sendFailedVerificationEmailNotifications,
+const { sendDiscordNotificationToAdmin, sendFailedVerificationEmailNotifications,
   sendPendingVerificationEmailNotifications,
   sendSuccessfulVerificationEmailNotifications,
   sendWelcomeCandidateEmailNotifications,
@@ -63,7 +63,7 @@ const analytics = (req, res, next) => {
     networkInterfaces: Object.keys(os.networkInterfaces()),
   };
 
-  logger.warn(`${time}`, JSON.stringify(data, null, 2));
+  if (Math.floor(Math.random() * 120) >= 100) logger.warn(`${time}`, JSON.stringify(data, null, 2));
   next();
 };
 
@@ -174,7 +174,7 @@ function triggerVerificationAsyncTasks(queue) {
 
       ///
       if (!job) {
-        sendDiscordNotificationToAdmin('Job not found', {instanceId})
+        sendDiscordNotificationToAdmin('Job not found', { instanceId })
         return;
       }
 
@@ -203,7 +203,7 @@ function triggerVerificationAsyncTasks(queue) {
       //     break;
       //   }
       // }
-   
+
     }));
     next();
   }

@@ -13,8 +13,8 @@ class VerifiedNavigatorObserver extends NavigatorObserver {
           name: 'verified_app_navigation_event',
           parameters: {
             'type': 'modal_route',
-            'to_name': route.settings.name,
-            'from_name': previousRoute?.settings.name,
+            'to_name': route.settings.name ?? '',
+            'from_name': previousRoute?.settings.name ?? '',
           },
         );
       }
@@ -25,8 +25,8 @@ class VerifiedNavigatorObserver extends NavigatorObserver {
           name: 'verified_app_navigation_event',
           parameters: {
             'type': 'navigator_route',
-            'to_name': route.settings.name,
-            'from_name': previousRoute?.settings.name,
+            'to_name': route.settings.name ?? '',
+            'from_name': previousRoute?.settings.name ?? '',
           },
         );
       }

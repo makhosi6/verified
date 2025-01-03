@@ -6,6 +6,11 @@ class PrivacyClauseWebView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  return TheWebView(webURL: 'https://byteestudio.com/verified/privacy-policy');
+    return TheWebView(
+      webURL: 'https://byteestudio.com/verified/privacy-policy',
+      onPageCancelled: () {},
+      onPageFailed: () {},
+      onPageSuccess: () {},
+    );
   }
 }

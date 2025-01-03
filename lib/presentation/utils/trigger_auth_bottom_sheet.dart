@@ -141,9 +141,14 @@ FutureOr triggerAuthBottomSheet({required BuildContext context, required Widget 
 
 /// type = "signin" | "signup"
 List<Widget> buttons(BuildContext context, {required String type}) {
+  
   void handler(AuthProvider provider) {
-      VerifiedAppAnalytics.logActionTaken(VerifiedAppAnalytics.ACTION_LOGIN, {'provider': provider.providerId, 'uuid': '$provider'});
-    context.read<AuthBloc>().add(AuthEvent.signInWithProvider(provider));}
+    verifiedErrorLogger(Exception('DID INVOKE THE LOGIN FUNCTION....'), StackTrace.current);
+    VerifiedAppAnalytics.logActionTaken(
+        VerifiedAppAnalytics.ACTION_LOGIN, {'provider': provider.providerId, 'uuid': '$provider'});
+    context.read<AuthBloc>().add(AuthEvent.signInWithProvider(provider));
+  }
+
   // void handle2(url) => navigate(
   //       context,
   //   page: VerifiedAuthWebView(

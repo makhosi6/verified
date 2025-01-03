@@ -210,9 +210,9 @@ class _SuggestedTopUpState extends State<SuggestedTopUp> {
                             PaymentCheckoutRequest(
                               currency: 'ZAR',
                               amount: parsedAmount,
-                              successUrl: 'http://verified.byteestudio.com/success',
-                              cancelUrl: 'http://verified.byteestudio.com/cancelled',
-                              failureUrl: 'http://verified.byteestudio.com/failed',
+                              successUrl: 'https://verified.byteestudio.com/success',
+                              cancelUrl: 'https://verified.byteestudio.com/cancelled',
+                              failureUrl: 'https://verified.byteestudio.com/failed',
                               metadata: PaymentMetadata(
                                 walletId: wallet?.id ?? user.walletId,
                                 payerId: user.id,

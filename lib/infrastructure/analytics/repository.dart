@@ -94,7 +94,7 @@ class VerifiedAppAnalytics {
   static const String ACTION_LOG_SUPPORT_TICKET = 'log_a_support_help_ticket';
 
   /// Send feature usage event to analytics
-  static void logFeatureUsed(String feature, [Map<String, dynamic>? args]) {
+  static void logFeatureUsed(String feature, [dynamic args]) {
     if (kReleaseMode) {
       FirebaseAnalytics.instance.logEvent(
         name: 'verified_app_feature_event',
@@ -105,7 +105,7 @@ class VerifiedAppAnalytics {
   }
 
   /// Send action event to analytics
-  static void logActionTaken(String action, [Map<String, dynamic>? args]) {
+  static void logActionTaken(String action, [dynamic args]) {
     if (kReleaseMode) {
       FirebaseAnalytics.instance.logEvent(
         name: 'verified_app_action_event',

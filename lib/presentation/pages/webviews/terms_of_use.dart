@@ -6,6 +6,11 @@ class TermOfUseWebView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TheWebView(webURL: 'https://byteestudio.com/verified/terms-of-service');
+    return TheWebView(
+      webURL: 'https://byteestudio.com/verified/terms-of-service',
+      onPageCancelled: (_) {},
+      onPageFailed: (_) {},
+      onPageSuccess: (_) {},
+    );
   }
 }

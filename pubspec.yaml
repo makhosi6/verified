@@ -38,8 +38,8 @@ dependencies:
   percent_indicator: ^4.2.3
   shared_preferences: ^2.2.1
   intl: ^0.18.1
-  firebase_auth: ^4.10.0
-  firebase_core: ^2.16.0
+  firebase_auth: ^5.3.4
+  firebase_core: ^3.9.0
   firebase_auth_platform_interface: 
   flutter_overlay_loader: ^2.0.0
   http: ^1.1.0
@@ -53,7 +53,7 @@ dependencies:
       ref: ed56d6bc3749e4f0ce576e61e533f2a973a5ec62
   fluttertoast: ^8.2.4
   package_info_plus: ^8.0.2
-  firebase_messaging: ^14.7.10
+  firebase_messaging: ^15.1.6
   flutter_local_notifications: ^17.2.3
   rxdart: ^0.28.0
   flutter_native_splash: ^2.3.7
@@ -83,8 +83,8 @@ dependencies:
   google_mlkit_barcode_scanning: 0.12.0
   google_mlkit_text_recognition: 0.13.0
   mrz_parser: ^2.0.0
-  firebase_crashlytics: ^3.5.7
-  firebase_analytics: ^10.10.7
+  firebase_crashlytics: ^4.2.0
+  firebase_analytics: ^11.3.6
   flutter_signature_pad: ^3.0.1
   hand_signature: ^3.0.3
   syncfusion_flutter_signaturepad: ^27.1.51
