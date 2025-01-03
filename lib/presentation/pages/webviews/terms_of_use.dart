@@ -8,9 +8,9 @@ class TermOfUseWebView extends StatelessWidget {
   Widget build(BuildContext context) {
     return TheWebView(
       webURL: 'https://byteestudio.com/verified/terms-of-service',
-      onPageCancelled: (_) {},
-      onPageFailed: (_) {},
-      onPageSuccess: (_) {},
+      onPageCancelled: () {},
+      onPageFailed: () {},
+      onPageSuccess: () {},
     );
   }
 }
