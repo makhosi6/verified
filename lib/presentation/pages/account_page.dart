@@ -813,7 +813,7 @@ Map<String, String> getAppInfo(BuildContext context) {
         ? 'https://www.apple.com/app-store/12454534636'
         : (TargetPlatform.android == defaultTargetPlatform)
             ? 'https://play.google.com/store/apps/details?id=com.byteestudio.verified'
-            : 'http://192.168.0.134'
+            : 'https://verified-za.id/'
   };
 }
 

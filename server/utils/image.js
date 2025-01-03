@@ -42,7 +42,6 @@ async function getImageAsBase64(imageUrl) {
         return null;
     }
 }
-// getImageAsBase64('http://192.168.0.173:4334/static/1726375540143_436197820__CAP4403647766963341549.jpg').then(console.log)
 
 module.exports = {
     getImageAsBase64

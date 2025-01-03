@@ -76,11 +76,11 @@ class _TheWebViewState extends State<TheWebView> {
           },
           onNavigationRequest: (NavigationRequest request) {
             String url = request.url;
-            if (url.contains('192.168.0.13')) {
+            if (url.contains('verified.byteestudio.com')) {
               ///
-              if (url.contains('success')) widget.onPageSuccess?.call();
-              if (url.contains('cancelled')) widget.onPageCancelled?.call();
-              if (url.contains('failed')) widget.onPageFailed?.call();
+              if (url == 'https://verified.byteestudio.com/success') widget.onPageSuccess?.call();
+              if (url == 'https://verified.byteestudio.com/cancelled') widget.onPageCancelled?.call();
+              if (url == 'https://verified.byteestudio.com/failed') widget.onPageFailed?.call();
 
               //
               return NavigationDecision.prevent;
@@ -91,7 +91,7 @@ class _TheWebViewState extends State<TheWebView> {
       )
       ..loadRequest(Uri.parse(widget.webURL));
 
-      VerifiedAppAnalytics.logFeatureUsed(VerifiedAppAnalytics.FEATURE_DID_TRIGGER_A_WEBVIEW, {'url': widget.webURL});
+    VerifiedAppAnalytics.logFeatureUsed(VerifiedAppAnalytics.FEATURE_DID_TRIGGER_A_WEBVIEW, {'url': widget.webURL});
   }
 
   @override
@@ -99,7 +99,7 @@ class _TheWebViewState extends State<TheWebView> {
     if (hasError) return VerifiedErrorPage(message: errorMsg);
 
     return Container(
-      color:Colors.grey.shade100,
+      color: Colors.grey.shade100,
       child: SafeArea(
         child: Scaffold(
           body: SizedBox(

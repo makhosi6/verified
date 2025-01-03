@@ -9,7 +9,7 @@ class VerifySaDioClientService {
   /// instance of dio (singleton)
   static Dio instance = Dio(
     BaseOptions(
-      baseUrl: 'http://192.168.0.173:5434/api/v1/',
+      baseUrl: 'https://json.verified-za.id/verify-id/api/v1/',
       headers: {
         'Authorization': 'Bearer $verifySaApiKey',
         'Accept': 'application/json',
@@ -59,8 +59,7 @@ class StoreDioClientService {
   /// instance of dio (singleton)
   static Dio instance = Dio(
     BaseOptions(
-      // baseUrl: '$baseUrl/store/api/v1/',
-      baseUrl: 'http://192.168.0.173:5400/api/v1/',
+      baseUrl: '${baseUrl}store/api/v1/',
       headers: {
         'Authorization': 'Bearer $storeApiKey',
         'Accept': 'application/json',
@@ -110,7 +109,7 @@ class PaymentsDioClientService {
   /// instance of dio (singleton)
   static Dio instance = Dio(
     BaseOptions(
-      baseUrl: '$baseUrl/payments/api/v1/',
+      baseUrl: '${baseUrl}payments/api/v1/',
       headers: {
         'Authorization': 'Bearer $storeApiKey',
         // 'x-nonce': 'MjAyM184XzI1XzFfMTc1MTMyYjJmOTkwMDE1NmVkOTIzNmU0YTc3M2Y2ZGNhOGUxNzUxMzJiMmY5MWY3MjM2',

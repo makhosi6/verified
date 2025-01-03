@@ -1,14 +1,13 @@
 const { generateNonce } = require("../nonce.source");
+const logger = require("../packages/logger");
 const { getOne } = require("./db_operations");
 const { sendPendingVerificationEmailNotifications } = require("./notifications");
 const fetch = (...args) =>
     import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
-const baseUrl = 'http://0.0.0.0:5400/api/v1' || 'http://192.168.0.134/store/api/v1' || 'https://verified.byteestudio.com/store/api/v1';
+const baseUrl = process.env.NODE_ENV ? 'https://json.verified-za.id/store/api/v1' : 'http://192.168.0.134/store/api/v1'
 async function updateCommsForJobs(req, res) {
     try {
-
-
         const { sms, email, instanceId: uuid } = req?.body;
         ///
         const headers = new Headers();
@@ -32,7 +31,7 @@ async function updateCommsForJobs(req, res) {
             .catch((error) => console.error(error));
 
     } catch (error) {
-
+        logger.info('error from updateCommsForJobs', error)
     } finally {
         res.send({ message: "success", status: 'OK', });
     }
@@ -65,8 +64,6 @@ async function handleCreateJob(req, res) {
         const output = await _createJob(data);
 
         sendPendingVerificationEmailNotifications(data)
-
-        
 
         res.send({ message: "success", status: 'OK', data: output, });
     } catch (error) {

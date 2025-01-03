@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:verified/app_config.dart';
 import 'package:verified/domain/models/verified_web_auth_user.dart';
 import 'package:verified/helpers/logger.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -78,7 +79,7 @@ class _TheWebViewState extends State<TheWebView> {
           onNavigationRequest: (NavigationRequest request) {
             String url = request.url;
 
-            if (!url.contains('192.168.0.134:9000')) {
+            if (!url.contains(WEB_AUTH_SERVER)) {
               ///
               if (url.contains('success')) widget.onPageSuccess?.call(null);
               if (url.contains('cancelled')) widget.onPageCancelled?.call();
@@ -91,7 +92,7 @@ class _TheWebViewState extends State<TheWebView> {
             verifiedLogger(Uri.parse(url).queryParameters);
             verifiedLogger(url);
             verifiedLogger('=========================================\n\n\n\n\n');
-            if (url.contains('192.168.0.134:9000')) {
+            if (url.contains(WEB_AUTH_SERVER)) {
               var uri = Uri.parse(url);
 
               ///
