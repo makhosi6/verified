@@ -1,21 +1,53 @@
 {
-  "emulators": {
-    "auth": {
-      "port": 9099,
-      "host": "0.0.0.0"
+    "emulators": {
+        "auth": {
+            "port": 9099
+        },
+        "ui": {
+            "enabled": true
+        },
+        "singleProjectMode": true
     },
-    "hub":{
-      "name": "hub",
-      "host": "0.0.0.0",
-      "port": 4400
-    },  
-    "ui": {
-      "host": "0.0.0.0",
-      "enabled": true
+    "remoteconfig": {
+        "template": "remoteconfig.template.json"
     },
-    "singleProjectMode": true
-  },
-  "remoteconfig": {
-    "template": "remoteconfig.template.json"
-  }
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "verifiedapp-73c16",
+                    "appId": "1:444267806901:android:464410b1ba2416f5ddbefc",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "ios": {
+                "default": {
+                    "projectId": "verifiedapp-73c16",
+                    "appId": "1:444267806901:ios:1432e4f82812336fddbefc",
+                    "uploadDebugSymbols": true,
+                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
+                }
+            },
+            "macos": {
+                "default": {
+                    "projectId": "verifiedapp-73c16",
+                    "appId": "1:444267806901:ios:1432e4f82812336fddbefc",
+                    "uploadDebugSymbols": true,
+                    "fileOutput": "macos/Runner/GoogleService-Info.plist"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "verifiedapp-73c16",
+                    "configurations": {
+                        "android": "1:444267806901:android:464410b1ba2416f5ddbefc",
+                        "ios": "1:444267806901:ios:1432e4f82812336fddbefc",
+                        "macos": "1:444267806901:ios:1432e4f82812336fddbefc",
+                        "web": "1:444267806901:web:397e7bef121d27beddbefc",
+                        "windows": "1:444267806901:web:397e7bef121d27beddbefc"
+                    }
+                }
+            }
+        }
+    }
 }

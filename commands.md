@@ -331,3 +331,7 @@ bantime = -1
 findtime = 86400
 maxretry = 3
 ```
+
+
+dart pub global activate flutterfire_cli
+flutterfire configure --project=verifiedapp-73c16

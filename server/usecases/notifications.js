@@ -2,13 +2,15 @@ const request = require("request");
 const FCM = require("fcm-node");
 const { generateNonce } = require('../nonce.source')
 const logger = require("../packages/logger");
-const serverKey = process.env.FB_SERVER_TOKEN || "FB_SERVER_TOKEN";
-const fcm = new FCM(serverKey);
+
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "9092";
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
-const nodemailer = require("nodemailer");
+const serviceAccount = require('../utils/verifiedapp-73c16-b8fddaa68c6e.json');
+const { sendFCMNotification } = require("./fcm");
+
+
 /**
  * Represents a service complaint.
  *
@@ -58,26 +60,19 @@ const nodemailer = require("nodemailer");
  * @param {PushNotification} notification
  */
 function sendPushNotifications({ token, title, body }) {
-  const message = {
-    to: token,
-    collapseKey: "verified_notifications_0234",
-    collapse_key: "verified_notifications_9211",
-    notification: {
-      title,
-      body,
-    },
-  };
-  console.log({
-    message,
-  });
-  fcm.send(message, function (err, response) {
-    if (err) {
-      console.log("Something has gone wrong!", err);
-    } else {
-      console.log("Successfully sent with response: ", response);
+  sendFCMNotification({
+    message: {
+      token,
+      notification: { title, body }
     }
-  });
+  })
+    .then((response) => {
+      console.log('Message ID:', response);
+    })
+    .catch((error) =>
+      logger.error("DETAILS: ", error));
 }
+
 /**
  *
  * @typedef {Object} HelpRequest
@@ -268,7 +263,7 @@ function sendWhatsappSend(helpRequest) {
 async function notifyTaggedPersons(taskLink, data) {
   try {
     (process.env.NOTION_USERS || process.env.VERIFIED_ADMIN_EMAIL || '').split(',').map(function (email) {
-    sendTextOnlyEmailNotifications({
+      sendTextOnlyEmailNotifications({
         name: "Notion Admin",
         email,
         message: JSON.stringify({
@@ -282,6 +277,8 @@ async function notifyTaggedPersons(taskLink, data) {
     console.error("Error sending emails:", error);
   }
 }
+const token = 'erz6GOASRzaYg0pwTukj7V:APA91bEw9K6OZ58cKWU7LEALS8DRZNqWNswtrGobc-3R5mj-Whs1XztrN6lNVxgJbsUricvL8xr53tfRQJICwvpMH8hoB257vd8OrXR943L1GT2pOeZaD3s';
+sendPushNotifications({ token, title: "TypeError, Node.js v20.8.0", body: "Cannot destructure property 'token' of 'undefined' as it is undefined" })
 
 module.exports = {
   sendPushNotifications,
