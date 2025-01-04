@@ -134,5 +134,6 @@ local.properties
 /verifiedapp-*.json
 /verified-*.json
 firebase.json
+lib/firebase_options.dart
 
 

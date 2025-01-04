@@ -63,6 +63,7 @@ async function handleCreateJob(req, res) {
         }
         const output = await _createJob(data);
 
+        
         sendPendingVerificationEmailNotifications(data)
 
         res.send({ message: "success", status: 'OK', data: output, });
