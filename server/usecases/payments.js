@@ -2,6 +2,7 @@ const { uniqueIdentifier } = require("../packages/uuid");
 const { generateNonce } = require("../nonce.source");
 const jsonServer = require("json-server");
 const request = require('request')
+const path = require('path')
 const express = require('express')
 const fetch = (...args) => import('node-fetch').then(({
     default: fetch
