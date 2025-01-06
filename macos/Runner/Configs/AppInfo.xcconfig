@@ -8,7 +8,7 @@
 PRODUCT_NAME = verified
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.byteestudio.Verified
+PRODUCT_BUNDLE_IDENTIFIER = com.byteestudio.verified
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2023 com.byteestudio. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2025 com.byteestudio. All rights reserved.

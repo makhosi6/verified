@@ -1,7 +1,7 @@
 name: verified
 description: Instantly confirm the legitimacy of personal information with our user-friendly app. Ensure accuracy and trust in your data effortlessly.
 publish_to: "none" 
-version: 1.2.46+12
+version: 1.3.0+13
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -50,7 +50,7 @@ dependencies:
   gallery_asset_picker: 
     git:
       url: https://github.com/makhosi6/gallery_asset_picker.git
-      ref: ed56d6bc3749e4f0ce576e61e533f2a973a5ec62
+      ref: feature/verified
   fluttertoast: ^8.2.4
   package_info_plus: ^8.0.2
   firebase_messaging: ^15.1.6
@@ -68,10 +68,7 @@ dependencies:
   skeletonizer: ^1.0.1
   app_links: ^6.3.2
   uuid: ^4.0.0
-  appscheme: 
-    git: 
-      url: https://github.com/makhosi6/flutter-scheme.git
-      ref: fix/remove-namespace
+  appscheme: ^1.1.0
   camera: ^0.10.5+9
   flutter_beep: ^1.0.0
   face_camera:
@@ -130,4 +127,5 @@ flutter:
     - assets/images/
     - assets/lottie/
     - assets/gif/
-    - server/
+    - server/nonce.source.js
+    - server/nonce.js

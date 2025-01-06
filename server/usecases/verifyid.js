@@ -14,7 +14,7 @@ const VERIFYID_3RD_PARTY_TOKEN =
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "5400";
 const ADMIN_EMAIL = process.env.VERIFIED_ADMIN_EMAIL || 'admin@byteestudio.com'
-const CDN = process.env.CDN_BASE_URL || 'https://json.verified-za.id/static/';
+const CDN = process.env.CDN_BASE_URL || 'https://68.183.47.172/static/';
 const { getImageAsBase64 } = require('.././utils/image');
 const { ResponseCode } = require("../utils/models");
 

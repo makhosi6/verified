@@ -335,3 +335,8 @@ maxretry = 3
 
 dart pub global activate flutterfire_cli
 flutterfire configure --project=verifiedapp-73c16
+
+
+
+## SHA certificate fingerprints 
+keytool -list -v -keystore /Users/makhosi/Desktop/projects/flutter_apps/verify_sa/android/verified.jks -alias verified

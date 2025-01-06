@@ -5,7 +5,7 @@ const { sendPendingVerificationEmailNotifications } = require("./notifications")
 const fetch = (...args) =>
     import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
-const baseUrl = process.env.NODE_ENV ? 'https://json.verified-za.id/store/api/v1' : 'http://192.168.0.134/store/api/v1'
+const baseUrl = process.env.NODE_ENV ? 'https://68.183.47.172/store/api/v1' : 'http://192.168.0.134/store/api/v1'
 async function updateCommsForJobs(req, res) {
     try {
         const { sms, email, instanceId: uuid } = req?.body;

@@ -235,7 +235,7 @@ async function sendNotification(payload, notificationType) {
         let user = await getUserProfile(payload.metadata.payerId);
         console.log({ notification, notificationType, user });
         if (!user?.notificationToken) {
-            console.log("USER NOTIFICATION TOKEN NOT FOUND => ", user.id)
+            console.log("USER NOTIFICATION TOKEN NOT FOUND => ", user)
             return;
         }
         ///

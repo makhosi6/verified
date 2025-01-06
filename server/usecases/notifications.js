@@ -2,12 +2,10 @@ const request = require("request");
 const FCM = require("fcm-node");
 const { generateNonce } = require('../nonce.source')
 const logger = require("../packages/logger");
-
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "9092";
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
-const serviceAccount = require('../utils/verifiedapp-73c16-b8fddaa68c6e.json');
 const { sendFCMNotification } = require("./fcm");
 
 
@@ -277,9 +275,6 @@ async function notifyTaggedPersons(taskLink, data) {
     console.error("Error sending emails:", error);
   }
 }
-const token = 'erz6GOASRzaYg0pwTukj7V:APA91bEw9K6OZ58cKWU7LEALS8DRZNqWNswtrGobc-3R5mj-Whs1XztrN6lNVxgJbsUricvL8xr53tfRQJICwvpMH8hoB257vd8OrXR943L1GT2pOeZaD3s';
-sendPushNotifications({ token, title: "TypeError, Node.js v20.8.0", body: "Cannot destructure property 'token' of 'undefined' as it is undefined" })
-
 module.exports = {
   sendPushNotifications,
   sendWhatsappSend,
