@@ -1,0 +1,158 @@
+name: Flutter Build
+
+on:
+  push:
+    tags:
+      - v*
+
+permissions:
+  contents: write
+
+jobs:
+  build_ios:
+    name: Build Flutter (iOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+            
+      # lib/app_config.dart
+      - name: Write app config file
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.APP_CONFIG }}
+          filename: "lib/app_config.dart"
+          is-executable: false
+          working-directory: "./"
+
+      # server/nonce.dart
+      - name: Write nonce generator(server/nonce.dart)
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.NONCE_GEN }}
+          filename: "server/nonce.dart"
+          is-executable: false
+          working-directory: "./"
+
+      # lib/helpers/security/nonce.private.dart
+      - name: Write nonce helper(lib/helpers/security/nonce.private.dart)
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.NONCE }}
+          filename: "lib/helpers/security/nonce.private.dart"
+          is-executable: false
+          working-directory: "./"
+
+      - run: flutter pub get
+      - run: flutter clean
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter test
+      - run:   flutter build ios --release --no-codesign
+
+      # - name: Archive iOS Build
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     generateReleaseNotes: false
+      #     artifacts: "build/ios/iphoneos/*.app"
+      
+      
+
+  build_apk:
+    name: Build Flutter (Android)
+    runs-on: ubuntu-latest
+    env:
+      JAVA_VERSION: "12.x"
+      FLUTTER_VERSION: "3.7.x"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
+      # lib/app_config.dart
+      - name: Write app config file
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.APP_CONFIG }}
+          filename: "lib/app_config.dart"
+          is-executable: false
+          working-directory: "./"
+
+      # android/key.properties
+      - name: Write android key.properties
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.KEY_PROPERTIES }}
+          filename: "android/key.properties"
+          is-executable: false
+          working-directory: "./"
+
+      # Add/Write Android signing certs
+      - name: Write Android signing certificates(.pem)
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.PEM_FILE }}
+          filename: "android/verified.pem"
+          is-executable: false
+          working-directory: "./"
+        # Add/Write Android signing certs
+      - name: Write Android signing certificates(.jks)
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.JKS_FILE }}
+          filename: "android/verified.jks"
+          is-executable: false
+          working-directory:
+            "./"
+        # Add/Write Android signing certs II
+      - name: Write Android signing certificates(.jks) No.2
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.JKS_FILE }}
+          filename: "android/app/verified.jks"
+          is-executable: false
+          working-directory:
+            "./"
+
+            # server/nonce.dart
+      - name: Write nonce generator(server/nonce.dart)
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.NONCE_GEN }}
+          filename: "server/nonce.dart"
+          is-executable: false
+          working-directory: "./"
+
+      # lib/helpers/security/nonce.private.dart
+      - name: Write nonce helper(lib/helpers/security/nonce.private.dart)
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.NONCE }}
+          filename: "lib/helpers/security/nonce.private.dart"
+          is-executable: false
+          working-directory: "./"
+
+      - name: Log file system as a tree
+        run: |
+          echo ${{ github.workspace }}
+          echo $GITHUB_WORKSPACE
+          ls ${{ github.workspace }}/android/
+      # Example Flutter build and test step
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter test
+      - run: flutter build apk --split-per-abi # by different arch
+      - run: flutter build apk # a fat apk for every arch
+      - name: Create a Release APK
+        uses: ncipollo/release-action@v1
+        with:
+          # artifacts: "build/app/outputs/apk/release/*.apk"
+          artifacts: "build/app/outputs/flutter-apk/*.apk"
