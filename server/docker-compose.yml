@@ -23,11 +23,11 @@ services:
         aliases:
           - node1.emqx.io
     ports:
-      - 1883:1883
-      - 8083:8083
-      - 8084:8084
-      - 8883:8883
-      - 18083:18083
+      - 8083 # WebSocket
+      - 18083 # EMQX Dashboard
+      - 1883 # TCP
+      - 8084 # WebSocket over TLS
+      - 8883 # SSL/TLS
     volumes:
       - emqx1_data:/opt/emqx/data
 
@@ -36,7 +36,7 @@ services:
     #deploy:
     #  resources:
     #    limits:
-     #     memory: "200M"
+    #     memory: "200M"
     container_name: emqx2
     environment:
       - TZ=Africa/Johannesburg
@@ -56,15 +56,45 @@ services:
     volumes:
       - emqx2_data:/opt/emqx/data
 
+  certbot-init:
+    image: certbot/certbot:latest
+    container_name: certbot-init
+    restart: on-failure
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    command: >
+      sh -c '
+      certbot certonly --webroot -w /var/www/certbot -n --agree-tos
+      --email ${VERIFIED_ADMIN_EMAIL} --no-eff-email
+      -d json.verified-za.id -d www.json.verified-za.id -d localhost
+      -d api.verified-za.id -d www.api.verified-za.id &&
+      cp /etc/letsencrypt/live/* /etc/letsencrypt/live/
+      '
+
+    networks:
+      - local_bridge
+
+  certbot-renew:
+    image: certbot/certbot:latest
+    container_name: certbot-renew
+    restart: unless-stopped
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    command: renew --quiet --post-hook "nginx -s reload"
+    networks:
+      - local_bridge
+
   influxdb:
     image: influxdb:latest
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: '1G'
+          cpus: "0.5"
+          memory: "1G"
     ports:
-      - "8086:8086"
+      - "8086"
     volumes:
       - influxdb_data:/var/lib/influxdb
     restart: unless-stopped
@@ -77,23 +107,23 @@ services:
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
 
   telegraf:
-      image: telegraf:latest
-      deploy:
-            resources:
-              limits:
-                memory: '200M'
-      restart: unless-stopped
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-        - ./apps/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-        - ./log/nginx:/var/log/nginx:ro
-      environment:
-        INFLUXDB_URL: http://influxdb:8086
-        INFLUXDB_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
-        INFLUXDB_ORG: ${VERIFIED_INFLUXDB_ORG}
-        INFLUXDB_BUCKET: ${VERIFIED_INFLUXDB_BUCKET}
-      depends_on:
-        - influxdb
+    image: telegraf:latest
+    deploy:
+      resources:
+        limits:
+          memory: "200M"
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./apps/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ./log/nginx:/var/log/nginx:ro
+    environment:
+      INFLUXDB_URL: http://influxdb:8086
+      INFLUXDB_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
+      INFLUXDB_ORG: ${VERIFIED_INFLUXDB_ORG}
+      INFLUXDB_BUCKET: ${VERIFIED_INFLUXDB_BUCKET}
+    depends_on:
+      - influxdb
 
   nginx_proxy:
     build:
@@ -102,18 +132,20 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: '1G'
+          cpus: "0.5"
+          memory: "1G"
     ports:
       - "80:80"
       - "443:443"
-      - "2202:2202"
+      - "8883:8883"
     volumes:
       - ./apps/nginx_proxy/nginx.conf:/etc/nginx/nginx.conf
       - ./log/nginx:/var/log/nginx
     restart: unless-stopped
     depends_on:
       # - fb_notifications_service
+      - certbot-init
+      - certbot-renew
       - payments_service
       - store_service
       - verify_id_service
@@ -131,12 +163,12 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: '1G'
+          cpus: "0.5"
+          memory: "1G"
     volumes:
       - ./log/payments:/app/log/payments
     ports:
-      - "5436:5436"
+      - "5436"
     env_file:
       - ./.env
     environment:
@@ -159,13 +191,13 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: '1G'
+          cpus: "0.5"
+          memory: "1G"
     volumes:
       - ./apps/store/db:/app/apps/store/db
       - ./log/store:/app/log/store
     ports:
-      - "5400:5400"
+      - "5400"
     env_file:
       - ./.env
     environment:
@@ -184,8 +216,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: '1G'
+          cpus: "0.5"
+          memory: "1G"
     volumes:
       - ./apps/cdn/root:/app/apps/cdn/root
       - ./apps/cdn/static:/app/apps/cdn/static
@@ -196,7 +228,7 @@ services:
       - PORT=${CDN_PORT}
       - TZ=Africa/Johannesburg
     ports:
-      - "4334:4334"
+      - "4334"
     restart: unless-stopped
     networks:
       - local_bridge
@@ -208,12 +240,12 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: '1G'
+          cpus: "0.5"
+          memory: "1G"
     volumes:
       - ./log/verify_id:/app/log/verify_id
     ports:
-      - "5434:5434"
+      - "5434"
     env_file:
       - ./.env
     environment:
@@ -230,13 +262,13 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: '200M'
+          cpus: "0.5"
+          memory: "200M"
     environment:
       - TZ=Africa/Johannesburg
     ports:
-      - "9092:9092"
-      - "9093:9093"
+      - "9092"
+      - "9093"
     volumes:
       - ./apps/whatsapp_messaging/db:/app/db
     restart: unless-stopped
@@ -249,10 +281,10 @@ services:
       resources:
         limits:
           memory: "512M"
-          cpus: '0.5'
+          cpus: "0.5"
 
     ports:
-      - "5694:5694"
+      - "5694"
     volumes:
       - ./apps/image_transcoder/pkgs/mrz_decoder/:/app/
     restart: unless-stopped
@@ -265,9 +297,9 @@ services:
       resources:
         limits:
           memory: "512M"
-          cpus: '0.5'
+          cpus: "0.5"
     ports:
-      - "5693:5693"
+      - "5693"
     volumes:
       - ./apps/image_transcoder/pkgs/mrz_reader/:/app/
     restart: unless-stopped
@@ -280,7 +312,7 @@ services:
       resources:
         limits:
           memory: "512M"
-          cpus: '0.5'
+          cpus: "0.5"
     tty: true
     environment:
       APP_NAME: ${VERIFIEDWEB_APP_NAME}
@@ -302,7 +334,7 @@ services:
       MAIL_FROM_NAME: ${VERIFIEDWEB_MAIL_FROM_NAME}
       TZ: Africa/Johannesburg
     ports:
-      - "9000:80"
+      - "80"
     # volumes:
     # - ./apps/app_verified_io:/var/www
     restart: unless-stopped
@@ -315,7 +347,7 @@ services:
       resources:
         limits:
           memory: "512M"
-          cpus: '0.5'
+          cpus: "0.5"
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${VERIFIEDWEB_DB_DATABASE}
