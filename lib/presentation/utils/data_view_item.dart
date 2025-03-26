@@ -33,7 +33,7 @@ class DataViewItem extends StatelessWidget {
               : Expanded(
                   child: Text(
                     value,
-                    maxLines: 1,
+                    maxLines: 2,
                     style: const TextStyle(
                       overflow: TextOverflow.ellipsis,
                     ),

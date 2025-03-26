@@ -107,7 +107,7 @@ List<Widget> _getWidgets(BuildContext context) => [
                   MaterialBanner(
                     padding: primaryPadding,
                     content: const Text(
-                      'Invalid Link: The verification link you used is either expired or incorrect.',
+                      'Invalid Link: The verification link you used is invalid.',
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                       maxLines: 2,
                     ),

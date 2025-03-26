@@ -1,6 +1,7 @@
 import UIKit
 import Flutter
 import app_links
+import FirebaseCore
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,7 +10,8 @@ import app_links
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
-
+    ///
+    FirebaseApp.configure()
     // Retrieve the link from parameters
     if let url = AppLinks.shared.getLink(launchOptions: launchOptions) {
       // We have a link, propagate it to your Flutter app

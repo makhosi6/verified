@@ -107,23 +107,24 @@ services:
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
 
   telegraf:
-    image: telegraf:latest
-    deploy:
-      resources:
-        limits:
-          memory: "200M"
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./apps/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-      - ./log/nginx:/var/log/nginx:ro
-    environment:
-      INFLUXDB_URL: http://influxdb:8086
-      INFLUXDB_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
-      INFLUXDB_ORG: ${VERIFIED_INFLUXDB_ORG}
-      INFLUXDB_BUCKET: ${VERIFIED_INFLUXDB_BUCKET}
-    depends_on:
-      - influxdb
+      image: telegraf:latest
+      deploy:
+            resources:
+              limits:
+                memory: '200M'
+      restart: unless-stopped
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ./apps/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+        - ./log/nginx:/var/log/nginx:ro
+      environment:
+        PUBLIC_IP_ADDR: ${PUBLICHOST}
+        INFLUXDB_URL: http://influxdb:8086
+        INFLUXDB_TOKEN: ${VERIFIED_INFLUXDB_TOKEN}
+        INFLUXDB_ORG: ${VERIFIED_INFLUXDB_ORG}
+        INFLUXDB_BUCKET: ${VERIFIED_INFLUXDB_BUCKET}
+      depends_on:
+        - influxdb
 
   nginx_proxy:
     build:
@@ -140,6 +141,12 @@ services:
       - "8883:8883"
     volumes:
       - ./apps/nginx_proxy/nginx.conf:/etc/nginx/nginx.conf
+      - ./apps/nginx_proxy/localhost:/cert/localhost/
+      - ./apps/nginx_proxy/verified.byteestudio.com:/cert/verified.byteestudio.com/
+      - ./apps/nginx_proxy/demo.verified-za.id:/cert/demo.verified-za.id/
+      - ./apps/nginx_proxy/json.verified-za.id:/cert/json.verified-za.id/
+      - ./apps/nginx_proxy/api.verified-za.id:/cert/api.verified-za.id/
+      - ./apps/nginx_proxy/reusable_locations.conf:/etc/nginx/includes/reusable_locations.conf
       - ./log/nginx:/var/log/nginx
     restart: unless-stopped
     depends_on:

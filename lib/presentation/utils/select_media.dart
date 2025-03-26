@@ -27,7 +27,7 @@ dynamic selectMediaConfig() => GalleryAssetPicker.initialize(GalleryConfig(
 Future<MultipartFile?> convertToFormData(File? file, {String side = 'file'}) async {
   if (file == null) return null;
   String fileName = file.path.split('/').last;
-  MultipartFile multipartFile = await MultipartFile.fromFile(file.path, filename: "${side}_$fileName");
+  MultipartFile multipartFile = await MultipartFile.fromFile(file.path, filename: "${side}_$fileName".toLowerCase());
   return multipartFile;
 }
 
@@ -54,7 +54,7 @@ Future<File> compressForProfilePicture(File imageFile) async {
 
     // Create a temporary path for the compressed file
     final tempDir = await getTemporaryDirectory(); 
-    final compressedFile = File('${tempDir.path}/${ogFileName}_compressed.$ogFileExt');
+    final compressedFile = File('${tempDir.path}/${ogFileName}_compressed.$ogFileExt'.toLowerCase());
 
     // Write compressed data to the file
     await compressedFile.writeAsBytes(compressedImageData);

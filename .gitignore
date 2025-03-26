@@ -135,5 +135,7 @@ local.properties
 /verified-*.json
 firebase.json
 lib/firebase_options.dart
+/history.*
+/*.txt
 
 

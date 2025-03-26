@@ -1,10 +1,7 @@
-// ignore_for_file: no_leading_underscores_for_local_identifiers
-
 import 'dart:async';
 import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:appscheme/appscheme.dart';
-// import 'package:appscheme/appscheme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -137,7 +134,9 @@ void main() async {
   );
 
   ///
-  if (kDebugMode) {
+  /// FirebaseFirestore.instance.settings = {};
+  ///
+  if (kDebugMode && kIsWeb) {
     if (defaultTargetPlatform == TargetPlatform.android) {
       final host = (device['isPhysicalDevice'] == true) ? '192.168.0.149' : 'localhost';
       await FirebaseAuth.instance.useAuthEmulator(host, 9099);
